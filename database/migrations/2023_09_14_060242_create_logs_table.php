@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_keys', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('key', 100)->unique();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->text('details')->nullable();
+            $table->unsignedBigInteger('profile_id');
+            $table->string('log_type'); // create/update/delete
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_keys');
+        Schema::dropIfExists('logs');
     }
 };

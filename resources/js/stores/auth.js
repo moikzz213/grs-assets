@@ -23,6 +23,7 @@ const encryptData = (data) => {
 export const useAuthStore = defineStore("authUser", {
     state: () => ({
         auth: useLocalStorage("authUser", {}),
+        auth_capabilities: null
     }),
     getters: {
         user: (state) => {
@@ -45,8 +46,22 @@ export const useAuthStore = defineStore("authUser", {
                 ? decryptData(state.auth.data).is_logged_in
                 : null;
         },
+        access: (state) => {
+            return state.auth && state.auth.data
+                ? decryptData(state.auth.data).q
+                : null;
+        },
+        capabilities: (state) => {
+            return state.auth_capabilities;
+        }
     },
     actions: {
+        setCapabilities(path) {
+            this.auth_capabilities = null;
+            this.auth_capabilities = this.access.filter(
+                (o, i) => path == o.slug
+            )[0].capabilities;
+        },
         async setCredentials(res) {
             // save to localstorage
             useStorage(
@@ -55,8 +70,9 @@ export const useAuthStore = defineStore("authUser", {
                     data: encryptData({
                         u: res.user,
                         t: res.token ? res.token : null,
-                        r: [res.user.role],
+                        r: res.user.role,
                         is_logged_in: true,
+                        q: res.access,
                     }),
                 },
                 localStorage,
@@ -66,7 +82,6 @@ export const useAuthStore = defineStore("authUser", {
             );
         },
         async logout() {
-            // this.auth = null;
             this.auth = {};
         },
     },

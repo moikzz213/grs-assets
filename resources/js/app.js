@@ -35,52 +35,55 @@ const authStore = useAuthStore();
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./router/routes";
 const router = createRouter({
-    // history: createWebHistory(process.env.BASE_URL),
-    // history: createWebHistory(import.meta.env.VITE_APP_URL),
-    // history: createWebHistory(import.meta.env.APP_URL),
     history: createWebHistory(),
     routes,
 });
-router.beforeEach((to, from, next) => {
-    let hasTheSameRoles = false;
-    if (to.meta.role) {
-        let checkRoles = [];
-        checkRoles = to.meta.role.filter((r) => {
-            if (
-                authStore.authRole &&
-                authStore.authRole.length > 0 &&
-                authStore.authRole.includes(r) == true
-            ) {
-                return r;
-            }
-        });
-        hasTheSameRoles = checkRoles.length > 0 ? true : false;
+
+function returnAccess(slug) {
+    let hasAccess = false;
+
+    authStore.access.map((o, i) => {
+        if (slug == o.slug) {
+            hasAccess = true;
+        }
+    });
+    return hasAccess;
+}
+
+function validateAccess(slug) {
+    let hasAccess = false;
+    if (
+        authStore?.user?.status == "active" &&
+        authStore?.authRole == "superadmin"
+    ) {
+        hasAccess = true;
+    } else if (
+        authStore?.user?.status == "active" && returnAccess(slug)
+    ) {
+        hasAccess = true;
     }
 
-    if (to.meta.requiresAuth && !authStore.authIsLoggedIn) {
-        // is not logged in
-        next("/login");
-    } else {
-        // is logged in
-        if (to.meta.role && hasTheSameRoles) {
-            next();
-        } else if (to.meta.role && !hasTheSameRoles) {
-            next("/unauthorized");
-        } else {
-            // check if in login page
-            // if (to.name === "Login") {
-            //     next("/");
-            // } else {
-            //     next();
-            // }
-            next();
-        }
+    return hasAccess;
+}
+
+router.beforeEach((to, from, next) => {
+    if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn == false || authStore.authIsLoggedIn == null)) {
+        next();
+    } else if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn || authStore.authIsLoggedIn == true)) {
+        next({ name: 'Dashboard' });
+    } else if (to.meta.requiresAuth && (authStore.authIsLoggedIn == null || authStore.authIsLoggedIn == false)) {
+        next({ name: 'Login' });
+    } else if (authStore.authIsLoggedIn && (to.name != 'Unauthorized' && to.name != 'Dashboard' && to.name != 'Account') && !validateAccess(to.meta.title)) {
+        next({ name: 'Unauthorized' });
     }
+    next();
 });
 router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
+ 
+    authStore.setCapabilities(to.meta.title.toLowerCase());
 });
 app.use(router);
 
@@ -94,24 +97,6 @@ app.use(vuetify);
  * App Component
  */
 import App from "./App.vue";
-app.component("App", App);
-
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
-//     app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
-// });
-
-/**
- * Finally, we will attach the application instance to a HTML element with
- * an "id" attribute of "app". This element is included with the "auth"
- * scaffolding. Otherwise, you will need to add an element yourself.
- */
-
+app.component("App", App); 
+ 
 app.mount("#app");

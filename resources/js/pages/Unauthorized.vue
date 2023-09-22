@@ -8,8 +8,16 @@
           :title="'Unauthorized'"
           :text="'You do not have the right permission to access this page.'"
         >
-        </v-alert>
+        </v-alert>  
+
       </div>
     </v-row>
   </v-container>
 </template>
+<script setup>
+console.log("hete");
+</script>
+
+<style lang="scss" scoped>
+
+</style>

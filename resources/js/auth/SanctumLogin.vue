@@ -7,17 +7,18 @@
       <WhiteLogo width="100%" />
       <div class="text-subtitle-1 text-white">{{ appName }}</div>
     </div>
+
     <v-card class="mt-8 pa-3 rounded-lg elevation-3" width="90%" max-width="450">
       <v-card-title class="px-5 pb-0 primary--text">Login</v-card-title>
-      <v-card-text class="py-5">
-        <v-form autocomplete="off" ref="form">
+      <v-card-text class="py-4">
+        <v-form autocomplete="off" ref="form" @keydown.enter="login">
           <v-text-field
             v-model="credentials.login"
             variant="outlined"
             required
             class="border-radius"
             autocomplete="off"
-            label="Username or Email"
+            label="Enter Employee Code"
           >
           </v-text-field>
           <v-text-field
@@ -25,7 +26,7 @@
             variant="outlined"
             required
             autocomplete="off"
-            label="Password"
+            label="Enter Password"
             type="password"
           >
           </v-text-field>
@@ -38,6 +39,8 @@
             :loading="loadingLogin"
             >Login</v-btn
           >
+            <v-btn variant="text" class="mt-3" @click="resetPassword">Reset Password</v-btn>
+          <div class="text-error mt-2">{{ hasError == true ? message : "" }}</div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -48,50 +51,92 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import axios from "axios";
+import { authApi } from "@/services/axiosToken";
 import GuestLayout from "../layouts/GuestLayout.vue";
 import WhiteLogo from "@/Components/logo/WhiteLogo.vue";
-const appName = ref(import.meta.env.VITE_APP_NAME);
-const authStore = useAuthStore();
-const router = useRouter();
+ 
 
-// Check if already loggedin
+// router
+const router = useRouter();
+ 
+const appName = ref(import.meta.env.VITE_APP_NAME);
+const key = ref(import.meta.env.VITE_APP_KEY);
+// authStore
+const authStore = useAuthStore();
 if (authStore.authIsLoggedIn == true) {
-  router.push({ name: "Home" });
+  router.push({ path: "/dashboard" });
 }
 
-// Login
-const credentials = ref({
-  login: "admin",
-  password: "admin@112211",
-});
+// login
 const loadingLogin = ref(false);
+const credentials = ref({
+  login: "102266",
+  password: "102266",
+  url: key.value,
+});
+
+const hasError = ref(false);
+const message = ref("");
+
 const login = async () => {
   loadingLogin.value = true;
+  authLogin()
+    .then((res) => { 
+
+      if(!res){ 
+        return;
+      }
+
+       let redirectPath = "/dashboard"; 
+       let user = JSON.stringify(res.data.user);
+       let token = res.data.token;
+
+       axios.get('/api/fetch/log-profile/'+ user + '/' +token).then((q) => { 
+         let user_access = q.data.access.map(a => {
+           return a;
+         }) 
+
+         res.data.access = user_access;
+         authStore
+           .setCredentials( res.data )
+           .then(() => { 
+            window.location = redirectPath; 
+           });
+
+       }).catch((err) => {
+           console.log("errrr 1", err);
+       });
+    })
+    .catch((err) => {
+      console.log(err);
+      hasError.value = true;
+      message.value = "Enter Username and Password...";
+      loadingLogin.value = false;
+    });
+};
+
+const resetPassword = () => {
+  router.push({ path: 'reset-password' });
+}
+
+// auth login to sanctum
+const authLogin = async () => {
+  message.value = "";
   let data = {
     username: credentials.value.login,
     password: credentials.value.password,
+    url: credentials.value.url,
   };
-  await axios
-    .get("/sanctum/csrf-cookie")
-    .then((res) => {
-      console.log("csrf-cookie", res);
-      axios
-        .post("/api/sanctumlogin", data)
-        .then((loginres) => {
-          console.log("loginres", loginres);
-          authStore.setCredentials(loginres.data).then(() => {
-            console.log("setCredentials");
-            loadingLogin.value = false;
-            router.push({ path: "/admin" });
-          });
-        })
-        .catch((loginerr) => {
-          console.log("loginerr", loginerr);
-        });
-    })
-    .catch((err) => {
-      console.log("err", err);
-    });
-};
+  
+  const response = await authApi.post("/api/sanctumlogin",data );
+  
+  if (response.data.status == false) {
+    hasError.value = true;
+    message.value = response.data.message;
+    loadingLogin.value = false;
+    return false;
+  }
+  return response;
+}; 
+ 
 </script>

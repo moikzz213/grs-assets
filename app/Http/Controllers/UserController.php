@@ -9,18 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function changePassword(Request $request)
-    {
-        $validated = $request->validate([
-            'password' => 'required|confirmed|min:9',
-        ]);
-        $user = User::where('id', $request['user_id'])->update([
-            'password' => Hash::make($request['password'])
-        ]);
-        return response()->json([
-            'message' => "Password updated successfully"
-        ], 200);
-    }
+    
 
     public function saveProfile(Request $request)
     {
@@ -40,38 +29,10 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function saveUser(Request $request)
-    {
-        $user = new User;
-        $check = $user->find($request['id']);
-        $userArray = array(
-            'status' => $request['status'],
-            'role' => $request['role'],
-            'username' => $request['username'],
-            'email' => $request['email'],
-            'phone_no' => $request['phone_no']
-        );
-        if($check){
-            $user = $check;
-            $check->update($userArray);
-        }else{
-            $user->create($userArray);
-        }
-        return response()->json([
-            'message' => "User updated successfully",
-            'user' => $user
-        ], 200);
-    }
-
-    public function getSingleUser($id)
-    {
-        $user = User::where('id', $id)->with('profile')->first();
-        return response()->json($user, 200);
-    }
-
     public function getUsers()
-    {
-        $users = User::paginate(10);
-        return response()->json($users, 200);
+    {  
+        $profiles = Profile::orderBy('role', 'ASC')->paginate(10);
+        return response()->json($profiles, 200);
     }
+    
 }

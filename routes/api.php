@@ -22,12 +22,13 @@ use App\Http\Controllers\UserController;
 // });
 Route::post('/sanctumlogin', [UserApiController::class, 'login']);
 Route::post('/sanctumlogout', [UserApiController::class, 'logout']);
-Route::middleware('auth:sanctum')->get('/checkuser', [UserApiController::class, 'sanctumCheckUser']);
 
 /**
  * Loggedin Routes
  */
-Route::middleware('auth:sanctum')->group(function () {
+Route::get('/fetch/log-profile/{ecode}/{token}', [ProfileController::class, 'fetchProfile'])->name('fetch.profile');
+
+Route::middleware('authkey')->group(function () {
     // Account
     Route::prefix('account')->group(function () {
         // save

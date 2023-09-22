@@ -16,7 +16,7 @@ axios.defaults.headers.common = {
     'X-Requested-With': 'XMLHttpRequest',
     'Content-Type': 'application/jsons'
 };
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

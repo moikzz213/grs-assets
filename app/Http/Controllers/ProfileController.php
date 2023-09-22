@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
+use App\Models\ClientKey;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -27,6 +28,20 @@ class ProfileController extends Controller
     public function getProfileById($id)
     {
         $profile = Profile::where('user_id', $id)->first();
+        return response()->json($profile, 200);
+    }
+
+    public function fetchProfile($ecode, $token)
+    { 
+        $data = json_decode($ecode);
+        
+        $profile = Profile::where('ecode', $data->username)->with('access')->first(); 
+
+        $clientKey = ClientKey::firstOrCreate([
+            'key' => $token,
+            'username' => $data->username,
+        ]); 
+
         return response()->json($profile, 200);
     }
 }

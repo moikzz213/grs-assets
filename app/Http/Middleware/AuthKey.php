@@ -15,13 +15,17 @@ class AuthKey
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
+    { 
         $bearerToken = request()->bearerToken();
+         
+        if(!$bearerToken){
+            return response()->json('Unauthorized', 401);
+        }
+        
         $checkClientKey = ClientKey::where('key', $bearerToken)->exists();
-        if (!$checkClientKey) {
-            // abort(401);
+        if (!$checkClientKey) { 
             return response()->json('Unauthorized', 401);
         }
         return $next($request);
     }
-}
+} 

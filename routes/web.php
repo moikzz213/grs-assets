@@ -24,48 +24,21 @@ use App\Http\Controllers\PublicPageController;
 // Auth::routes();
 Auth::routes([
     'register' => false
-]);
-
-Route::get('/', [PageController::class, 'home'])->name('home');
-
-/**
- * Error pages
- */
-Route::get('/unauthorized', [PageController::class, 'home'])->name('unauthorized');
-
-
-/**
- * Save Client Access
- */
-Route::post('/client/savekey', [ClientKeyController::class, 'saveKey'])->name('client.key.save');
-Route::post('/client/removekey', [ClientKeyController::class, 'removeKey'])->name('client.access.remove');
-
-/**
- * Sanctum login
- */
-Route::get('/access', [PublicPageController::class, 'access'])->name('sanctum.login');
+]);  
 
 /**
  * Admin routes
  */
-Route::prefix('admin')->group(function () {
-    Route::get('/', [PageController::class, 'home'])->name('admin');
-    Route::get('/{slug}', [PageController::class, 'home'])->name('admin.slug');
 
-    // users
-    Route::get('/users/{id}', [PageController::class, 'home'])->name('admin.single.user');
-    Route::get('/users/page/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
-    // users axios
-    Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name('admin.get.single.user');
-});
+Route::get('/', [PageController::class, 'home'])->name('admin');
+Route::get('/{slug}', [PageController::class, 'home'])->name('admin.slug');
 
-/**
- * Normal routes
- */
-Route::prefix('u')->group(function () {
-    Route::get('/', [PageController::class, 'home'])->name('normal');
-    Route::get('/{slug}', [PageController::class, 'home'])->name('normal.slug');
-});
+// users
+Route::get('/users/{id}', [PageController::class, 'home'])->name('admin.single.user');
+Route::get('/users/page/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
+// users axios
+Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name('admin.get.single.user');
+
 
 /**
  * Accout routes
@@ -73,8 +46,9 @@ Route::prefix('u')->group(function () {
 Route::prefix('account')->group(function () {
     Route::get('/', [PageController::class, 'home'])->name('account');
 });
+ 
 
 /**
- * Custom authentication
+ * Save Client Access
  */
-Route::post('login', [CustomAuthController::class, 'login'])->name('custom.login');
+Route::post('/client/removekey', [ClientKeyController::class, 'removeKey'])->name('client.access.remove');

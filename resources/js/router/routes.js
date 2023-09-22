@@ -10,17 +10,6 @@ export const routes = [
      * https://techvblogs.com/blog/spa-authentication-laravel-9-sanctum-vue3-vite
      */
 
-    {
-        path: "/",
-        component: () => import("../pages/admin/Dashboard.vue"),
-        name: "Home",
-        meta: {
-            requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Home",
-        },
-    },
-
     /**
      * Auth Login
      */
@@ -37,70 +26,51 @@ export const routes = [
     /**
      * Admin routes
      */
+
     {
-        path: "/admin",
-        component: () => import("../pages/admin/Dashboard.vue"),
-        name: "Admin",
-        meta: {
-            requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Dashboard",
-        },
-    },
-    {
-        path: "/admin/dashboard",
+        path: "/dashboard",
         component: () => import("../pages/admin/Dashboard.vue"),
         name: "Dashboard",
         meta: {
             requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Dashboard",
-            // meta: {
-            //     middleware: [
-            //         isAuthenticated
-            //     ]
-            // }
+            title: "dashboard",
         },
     },
     {
-        path: "/admin/users",
+        path: "/asset-list",
+        component: () => import("../pages/admin/users/Users.vue"),
+        name: "asset-list",
+        meta: {
+            requiresAuth: true,
+            title: "asset-list",
+        },
+    },
+    {
+        path: "/users",
         component: () => import("../pages/admin/users/Users.vue"),
         name: "Users",
         meta: {
             requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Users",
+            title: "users",
         },
     },
     {
-        path: "/admin/users/page/:page",
+        path: "/users/page/:page",
         component: () => import("../pages/admin/users/Users.vue"),
         name: "PaginatedUsers",
         meta: {
             requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Users",
+            title: "users",
         },
     },
 
     {
-        path: "/admin/users/:id",
+        path: "/users/:id",
         component: () => import("../pages/admin/users/EditUser.vue"),
         name: "EditUser",
         meta: {
             requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Edit User",
-        },
-    },
-    {
-        path: "/admin/logs",
-        component: () => import("../pages/admin/Logs.vue"),
-        name: "Logs",
-        meta: {
-            requiresAuth: true,
-            role: ["admin", "normal"],
-            title: "Logs",
+            title: "users",
         },
     },
 
