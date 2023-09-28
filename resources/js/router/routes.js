@@ -32,7 +32,7 @@ export const routes = [
         component: () => import("../pages/admin/Dashboard.vue"),
         name: "Dashboard",
         meta: {
-            requiresAuth: true,
+            requiresAuth: true, 
             title: "dashboard",
         },
     },

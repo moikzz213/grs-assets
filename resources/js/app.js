@@ -37,12 +37,12 @@ import { routes } from "./router/routes";
 const router = createRouter({
     history: createWebHistory(),
     routes,
-}); 
+});
 
 function returnAccess(slug) {
     let hasAccess = false;
 
-    authStore.access.map((o, i) => { 
+    authStore.access.map((o, i) => {
         if (slug == o.slug) {
             hasAccess = true;
         }
@@ -52,34 +52,42 @@ function returnAccess(slug) {
 
 function validateAccess(slug) {
     let hasAccess = false;
-   
+
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
+    } else if (slug == 'dashboard' || slug == 'account') {
+        hasAccess = true;
     } else if (
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(slug)
     ) {
-        hasAccess = true; 
+        hasAccess = true;
     }
-  
+
     return hasAccess;
 }
 
 router.beforeEach((to, from, next) => {
-    
-    if(from.fullPath == '/' && !to.name) {
-        next({ name: 'Login' });
-    }else if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn == false || authStore.authIsLoggedIn == null)) {
-        next();
-    } else if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn || authStore.authIsLoggedIn == true)) {
-        next({ name: 'Dashboard' });
-    } else if (to.meta.requiresAuth && (authStore.authIsLoggedIn == null || authStore.authIsLoggedIn == false)) {
-        next({ name: 'Login' });
-    } else if (authStore.authIsLoggedIn && (to.name != 'Unauthorized' && to.name != 'Dashboard' && to.name != 'Account') && !validateAccess(to.meta.title)) {
-        next({ name: 'Unauthorized' });
+
+    if (to.meta.requiresAuth === false) {
+        // public route
+        if (authStore.authIsLoggedIn) {
+            next({ name: 'Dashboard' });
+        }
+
+    } else {
+        // private route
+        if (authStore.authIsLoggedIn) {
+            if (!validateAccess(to.meta.title)) {
+                next({ name: 'Unauthorized' });
+            }
+        } else {
+            next({ name: 'Login' });
+        }
     }
+
     next();
 });
 
@@ -87,7 +95,7 @@ router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
- 
+
     authStore.setCapabilities(to.meta.title.toLowerCase());
 
 });
@@ -103,9 +111,9 @@ app.use(vuetify);
  * App Component
  */
 import App from "./App.vue";
-app.component("App", App); 
- 
-authStore.checkUser().then(() => {  
+app.component("App", App);
+
+authStore.checkUser().then(() => {
 
     app.mount("#app");
 });
