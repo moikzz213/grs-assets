@@ -29,10 +29,42 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function getUsers()
-    {  
-        $profiles = Profile::orderBy('role', 'ASC')->paginate(10);
-        return response()->json($profiles, 200);
-    }
+    public function getUsers(Request $request)
+    {
+        $paginate = $request->show;
+        $search = $request->search;
+
+        $sort = "";
+        $orderBy = $request['sort'];
+
+        $profiles = new Profile;
+        
+        if($orderBy){
+            $orderBy = json_decode($orderBy);
+            $field = $orderBy[0];
+            $sort = $orderBy[1];
+            $profiles = $profiles->orderBy($field, $sort);
+        }else{
+            $profiles = $profiles->orderBy('status', 'ASC')->orderBy('role', 'ASC')->orderBy('first_name', 'ASC');
+        }
     
+        if($search){
+            $profiles->where('ecode', 'like', '%'.$search.'%')
+            ->orWhere('username', 'like', '%'.$search.'%')
+            ->orWhere('display_name', 'like', '%'.$search.'%')
+            ->orWhere('role', 'like', '%'.$search.'%');
+
+            $profiles = $profiles->get();
+            $dataArray['data'] = $profiles->toArray();
+        }else{
+            $dataArray = $profiles->paginate($paginate);
+        }
+       
+        return response()->json($dataArray, 200);
+    }
+
+    public function validateUser($ecode){
+        $query = Profile::where('ecode', $ecode)->first();
+        return response()->json($query, 200);
+    }
 }

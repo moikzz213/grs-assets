@@ -57,7 +57,7 @@ import ChangePassword from "./ChangePassword.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 
-const sbOptions = ref({
+const sbOptions = ref({ 
   status: false,
   type: "primary",
   text: null,
@@ -68,7 +68,7 @@ const authStore = useAuthStore();
 const user = ref({
   loading: false,
   data: Object.assign({}, authStore.user),
-});
+}); 
 
 // tabs
 const currentForm = ref("profile");

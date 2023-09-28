@@ -37,12 +37,12 @@ import { routes } from "./router/routes";
 const router = createRouter({
     history: createWebHistory(),
     routes,
-});
+}); 
 
 function returnAccess(slug) {
     let hasAccess = false;
 
-    authStore.access.map((o, i) => {
+    authStore.access.map((o, i) => { 
         if (slug == o.slug) {
             hasAccess = true;
         }
@@ -52,22 +52,26 @@ function returnAccess(slug) {
 
 function validateAccess(slug) {
     let hasAccess = false;
+   
     if (
-        authStore?.user?.status == "active" &&
+        authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
     } else if (
-        authStore?.user?.status == "active" && returnAccess(slug)
+        authStore?.user?.status.toLowerCase() == "active" && returnAccess(slug)
     ) {
-        hasAccess = true;
+        hasAccess = true; 
     }
-
+  
     return hasAccess;
 }
 
 router.beforeEach((to, from, next) => {
-    if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn == false || authStore.authIsLoggedIn == null)) {
+    
+    if(from.fullPath == '/' && !to.name) {
+        next({ name: 'Login' });
+    }else if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn == false || authStore.authIsLoggedIn == null)) {
         next();
     } else if ((!to.name || to.name == 'Login') && (authStore.authIsLoggedIn || authStore.authIsLoggedIn == true)) {
         next({ name: 'Dashboard' });
@@ -78,12 +82,14 @@ router.beforeEach((to, from, next) => {
     }
     next();
 });
+
 router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
  
     authStore.setCapabilities(to.meta.title.toLowerCase());
+
 });
 app.use(router);
 
@@ -99,4 +105,7 @@ app.use(vuetify);
 import App from "./App.vue";
 app.component("App", App); 
  
-app.mount("#app");
+authStore.checkUser().then(() => {  
+
+    app.mount("#app");
+});

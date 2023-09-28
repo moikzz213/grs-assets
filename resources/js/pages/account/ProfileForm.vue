@@ -4,54 +4,90 @@
       >Profile Settings</v-card-title
     >
     <v-card-text>
-      <Form as="v-form" :validation-schema="validation">
+      <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
         <Field
-          name="full_name"
-          v-slot="{ field, errors }"
-          v-model="profileData.data.full_name"
+          name="ecode"
+          v-slot="{ field }"
+          v-model="profileData.data.ecode"
         >
           <v-text-field
-            v-model="profileData.data.full_name"
+            v-model="profileData.data.ecode"
+            v-bind="field"
+            label="Employee ID"
+            density="compact"
+            hide-details
+            variant="outlined"
+            class="mb-2"
+          :disabled="true"
+          />
+        </Field>
+        <Field
+          name="display_name"
+          v-slot="{ field, errors }"
+          v-model="profileData.data.display_name"
+        >
+          <v-text-field
+            v-model="profileData.data.display_name"
             v-bind="field"
             label="Full name"
-            variant="outlined"
-            class="mb-2"
-            :error-messages="errors"
-          />
-        </Field>
-        <Field name="dob" v-slot="{ field, errors }" v-model="profileData.data.dob">
-          <v-text-field
-            v-bind="field"
-            type="date"
-            label="Date of Birth"
-            :model-value="profileData.data.dob"
+            density="compact"
+            hide-details
             variant="outlined"
             class="mb-2"
             :error-messages="errors"
           />
         </Field>
         <Field
-          name="nationality"
+          name="first_name"
           v-slot="{ field, errors }"
-          v-model="profileData.data.nationality"
+          v-model="profileData.data.first_name"
         >
-          <v-autocomplete
-            v-model="profileData.data.nationality"
+          <v-text-field
+            v-model="profileData.data.first_name"
             v-bind="field"
-            :items="nationalityList"
-            item-title="name"
-            item-value="name"
-            label="Nationality"
+            label="First name"
+            density="compact"
+            hide-details
             variant="outlined"
             class="mb-2"
             :error-messages="errors"
-          ></v-autocomplete>
+          />
         </Field>
+        <Field
+          name="last_name"
+          v-slot="{ field, errors }"
+          v-model="profileData.data.last_name"
+        >
+          <v-text-field
+            v-model="profileData.data.last_name"
+            v-bind="field"
+            label="Last name"
+            density="compact"
+            variant="outlined"
+            hide-details
+            class="mb-2"
+            :error-messages="errors"
+          />
+        </Field>
+         
+          <v-autocomplete
+            v-bind="field" 
+            label="Company"
+            :items="companies"
+            v-model="profileData.data.company_id"
+            item-value="id"
+            item-title="title"
+            variant="outlined"
+            density="compact"
+            class="mb-2"
+          /> 
+         
         <v-btn
           color="primary"
-          size="large"
+          size="small"
           :loading="profileData.loading"
           @click="saveProfile"
+          :disabled="!meta.valid"
           >Save</v-btn
         >
       </Form>
@@ -63,9 +99,10 @@ import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useRoute } from "vue-router";
-import { axiosToken } from "@/services/axiosToken";
+import { clientKey } from "@/services/axiosToken";
 import nationalities from "@/json/nationalities.json";
 import { useAuthStore } from "@/stores/auth";
+import axios from "axios";
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -79,47 +116,54 @@ const profileData = ref({
   loading: false,
   data: {
     user_id: route.params.id,
-    full_name: null,
+    display_name: null,
     dob: null,
     nationality: null,
   },
 });
-profileData.value.data = Object.assign({}, props.user);
+profileData.value.data = Object.assign({}, props.user); 
+ 
 watch(
   () => props.user,
   (newVal) => {
-    profileData.value.data = Object.assign({}, newVal);
-    // profileData.value.data = { ...profileData.value.data, ...newVal };
+    profileData.value.data = Object.assign({}, newVal); 
   }
 );
-const getProfile = async () => {
-  await axiosToken(authStore.token)
-    .get("/api/account/profile/" + props.user.id)
-    .then((res) => {
-      profileData.value.data = Object.assign({}, res.data);
-    })
-    .catch((err) => {
-      profileData.value.loading = false;
-      console.log("getProfile", err);
-    });
+
+const getProfile =  () => { 
+    profileData.value.data = props.user.profile;  
 };
+if(props.user?.id){
 getProfile();
+}
+
+const companies = ref([]);
+
+const fetchCompanies = async () => { 
+  await axios.get('/api/fetch/companies').then((res) => {
+    companies.value= res.data;
+  })
+  
+}
+fetchCompanies();
 
 // save profile
 let validation = yup.object({
-  full_name: yup.string(),
-  dob: yup.string(),
-  nationality: yup.string().notRequired(),
+  ecode: yup.string().required(),
+  display_name: yup.string().required(),
+  first_name: yup.string().required(),
+  last_name: yup.string().required(), 
 });
+
 const saveProfile = async () => {
   profileData.value.loading = true;
   profileData.value.data = {
     ...profileData.value.data,
     ...{
-      id: props.user.id,
+      id: props.user?.profile?.id? props.user.profile.id : props.user.id,
     },
   };
-  await axiosToken(authStore.token)
+  await clientKey(authStore.token)
     .post("/api/account/profile/save", profileData.value.data)
     .then((response) => {
       profileData.value.loading = false;
@@ -127,7 +171,7 @@ const saveProfile = async () => {
     })
     .catch((err) => {
       profileData.value.loading = false;
-      console.log(err.response.data);
+     
     });
 };
 </script>

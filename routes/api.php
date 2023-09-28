@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserApiController;
-use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,14 +38,22 @@ Route::middleware('authkey')->group(function () {
         // profile
         Route::get('/profile/{id}', [ProfileController::class, 'getProfileById'])->name('profile.get.by.id');
         Route::post('/profile/save', [ProfileController::class, 'saveProfile'])->name('profile.save');
+        Route::post('/create-new/profile', [ProfileController::class, 'createNewProfile'])->name('profile.create.new');
     });
-
+    
     /**
      * Users
      */
     Route::prefix('user')->group(function () {
         Route::get('/all', [UserController::class, 'getUsers'])->name('admin.get.all.users');
     });
+    
+    Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
+    
+    Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');
+    Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
+    Route::post('/store-page/settings', [PageController::class, 'storeUpdate'])->name('admin.storeUpdate');
+    Route::post('/store-page/settings-capabilities/profile', [ProfileController::class, 'storePageCapabilities'])->name('profile.page.capabilities');
 });
 
-
+Route::get('/fetch/companies', [CompanyController::class, 'fetchData'])->name('admin.fetch.companies');

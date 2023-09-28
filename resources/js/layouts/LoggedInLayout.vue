@@ -309,7 +309,7 @@ const logout = () => {
         .then(() => {
             authStore.logout().then(() => {
                 loadingLogout.value = false;
-                localStorage.removeItem("authClient");
+                localStorage.removeItem("authUser");
                 window.location = "/login";
             });
         })

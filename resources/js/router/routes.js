@@ -37,6 +37,15 @@ export const routes = [
         },
     },
     {
+        path: "/pages",
+        component: () => import("../pages/admin/slugs/Slugs.vue"),
+        name: "Pages",
+        meta: {
+            requiresAuth: true,
+            title: "pages",
+        },
+    },
+    {
         path: "/asset-list",
         component: () => import("../pages/admin/users/Users.vue"),
         name: "asset-list",

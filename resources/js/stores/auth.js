@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { useLocalStorage, useStorage } from "@vueuse/core";
 import CryptoJS from "crypto-js";
+import axios from "axios";
+import { axiosToken } from "@/services/axiosToken";
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
@@ -60,7 +62,7 @@ export const useAuthStore = defineStore("authUser", {
             this.auth_capabilities = null;
             this.auth_capabilities = this.access.filter(
                 (o, i) => path == o.slug
-            )[0].capabilities;
+            )[0]?.capabilities;
         },
         async setCredentials(res) {
             // save to localstorage
@@ -80,6 +82,47 @@ export const useAuthStore = defineStore("authUser", {
                     mergeDefaults: true,
                 }
             );
+        },
+
+        async checkUser() {
+            if (this.token) {
+                await axiosToken(this.token)
+                    .get("/api/checkuser")
+                    .then((res) => {
+
+                        localStorage.removeItem("authUser");
+                        if (res.data?.user) {
+                            let user = JSON.stringify(res.data.user);
+                            let token = res.data.token;
+
+                            axios
+                                .get("/api/fetch/log-profile/" + user + "/" + token)
+                                .then((q) => {
+                                    if (q.data) {
+
+                                        let user_access = q.data.access.map((a) => {
+                                            return a;
+                                        });
+
+                                        res.data.access = user_access;
+                                        res.data.user.role = q.data.role;
+                                        res.data.user.profile = q.data;
+                                        this.setCredentials(res.data);
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log("errrr 1", err);
+                                });
+                        }
+                    })
+                    .catch((err) => {
+
+                        localStorage.removeItem("authUser");
+                        window.location = "/login";
+                    });
+
+            }
+
         },
         async logout() {
             this.auth = {};

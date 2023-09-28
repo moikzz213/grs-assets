@@ -12,27 +12,19 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // $user = new \App\Models\User([
-        //     'username' => 'admin',
-        //     'email'      => 'indemnetest+100@gmail.com',
-        //     'phone_no'  => 5034324324,
-        //     'password'   => bcrypt('admin@112211'),
-        //     'status'     => 'active', // active, disabled, trashed
-        //     'role'       => 'admin'
-        // ]);
-        // $user->save();
+        $user = new \App\Models\Profile([
+            'username' => '100194',
+            'ecode' => '100194',
+            'email'      => 'jacob@gagroup.net',
+            'display_name'  => 'Jacob Calit',
+            'first_name'  => 'Jacob',
+            'last_name'  => 'Calit',
+            'company_id'   => 1,
+            'status'     => 'active', // active, disabled, trashed
+            'role'       => 'superadmin'
+        ]);
+        $user->save();
 
-        // $faker = \Faker\Factory::create();
-        // for ($i = 0; $i < 50; $i++) {
-        //     $dummyUser = new \App\Models\User([
-        //         'username' => 'user-'.$i,
-        //         'email'      => 'indemnetest+'.$i.'@gmail.com',
-        //         'phone_no'  => '5034324324'.$i,
-        //         'password'   => bcrypt('admin@112211'),
-        //         'status'     => 'active', // active, disabled, trashed
-        //         'role'       => 'admin'
-        //     ]);
-        //     $dummyUser->save();
-        // }
+        
     }
 }

@@ -5,8 +5,10 @@
     >
     <v-card-text>
       <Form as="v-form" :validation-schema="validation">
-        <div class="mb-2 text-body-2">Status</div>
-        <v-menu>
+        <div class="d-flex ">
+          <div class="mb-2 text-body-2 mr-2 mt-2">Status</div>
+         
+        <v-menu :disabled="isOwnAccount">
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="mb-6" :color="statusColor">
               {{ user.data.status }}
@@ -26,32 +28,39 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <Field name="username" v-slot="{ field, errors }" v-model="user.data.username">
+        </div>
+       
           <v-text-field
             v-model="user.data.username"
             v-bind="field"
             label="Username"
             variant="outlined"
+            density="compact"
+            hide-details
             class="mb-2"
-            :error-messages="errors"
+            :disabled="true"
           />
-        </Field>
+       
         <Field name="email" v-slot="{ field, errors }" v-model="user.data.email">
           <v-text-field
             v-model="user.data.email"
             v-bind="field"
             label="Email"
             variant="outlined"
+            density="compact"
+            hide-details
             class="mb-2"
             :error-messages="errors"
           />
         </Field>
-        <Field name="phone_no" v-slot="{ field, errors }" v-model="user.data.phone_no">
+        <Field name="contact" v-slot="{ field, errors }" v-model="user.data.contact">
           <v-text-field
-            v-model="user.data.phone_no"
+            v-model="user.data.contact"
             v-bind="field"
             type="number"
-            label="Phone number"
+            density="compact"
+            hide-details
+            label="Contact number"
             variant="outlined"
             class="mb-2"
             :error-messages="errors"
@@ -63,6 +72,8 @@
             v-bind="field"
             :items="roleList"
             label="Role"
+            density="compact"
+           
             variant="outlined"
             class="mb-2"
             :error-messages="errors"
@@ -81,21 +92,25 @@ import * as yup from "yup";
 import { Form, Field } from "vee-validate";
 import { mdiCircleMedium } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
-import { axiosToken } from "@/services/axiosToken";
+import { clientKey } from "@/services/axiosToken";
 const authStore = useAuthStore();
 const props = defineProps(["user"]);
 const user = ref({
   loading: false,
   data: Object.assign({}, props.user),
 });
+const isOwnAccount = ref(true);
+console.log("props.user",props.user);
 watch(
   () => props.user,
   (newVal) => {
+   
+    isOwnAccount.value = false;
     user.value.data = newVal;
   }
 );
 const emit = defineEmits(["saved"]);
-
+ 
 /**
  * Status
  */
@@ -120,6 +135,7 @@ const statusColor = computed(() => {
   return color;
 });
 const selectStatus = (selected) => {
+  console.log("selected",selected);
   user.value.data.status = selected;
 };
 
@@ -129,33 +145,21 @@ const roleList = ref(["normal", "admin"]);
  * Submit user
  */
 let validation = yup.object({
-  username: yup.string().required(),
-  email: yup.string().email(),
-  phone_no: yup.number().required(),
+  
+  email: yup.string().email()
 });
 const saveUser = async () => {
   let data = user.value.data;
-  user.value.loading = true;
-  await axiosToken(authStore.token)
-    .post("/api/account/save", data)
+  user.value.loading = true; 
+ 
+  await clientKey(authStore.token)
+  .post("/api/account/profile/save", data)
     .then((response) => {
-      localStorage.removeItem("authUser");
-      authStore
-        .setCredentials({
-          user: response.data.user,
-          token: authStore.token,
-        })
-        .then(() => {
-          user.value.loading = false;
-          emit("saved", response.data.message);
-        })
-        .catch((err) => {
-          console.log("setCredentials", err);
-        });
+      user.value.loading = false;  
+      emit("saved", response.data.message);
     })
     .catch((err) => {
       user.value.loading = false;
-      console.log(err.response.data);
     });
 };
 </script>

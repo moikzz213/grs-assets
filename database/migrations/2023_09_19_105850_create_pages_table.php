@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 50); // Dashboard, Users, etc
             $table->string('slug',80); 
-            $table->string('link'); 
+            $table->string('link')->nullable();
             $table->timestamps();
         });
     }

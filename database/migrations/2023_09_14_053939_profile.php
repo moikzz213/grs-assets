@@ -13,8 +13,8 @@ return new class extends Migration
     {
 
         Schema::create('profiles', function (Blueprint $table) {
-            $table->id();
-            $table->string('status', 15)->nullable()->default('active');; // active, inactive
+            $table->id(); 
+            $table->string('status', 15)->nullable()->default('active'); // active, inactive
             $table->string('ecode', 25)->unique()->nullable();
             $table->string('username', 50)->nullable();
             $table->string('superior_ecode', 15)->nullable();
