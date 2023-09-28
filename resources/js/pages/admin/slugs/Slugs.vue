@@ -112,15 +112,30 @@ const deleteFn = (index) => {
 
 const savePage = async function(){
     btnLoading.value = true;
+    let slugMissing = false;
     let dataForm = pageSlug.value.map((o,i) =>{
         delete o["id"];
         delete o["created_at"];
         delete o["updated_at"];
         delete o["link"];
+        if(!o.slug || !o.title){
+            slugMissing = true;
+        } 
         return o;
     });
     let formData = {data: dataForm, author: authStore.user.profile.id}
- 
+     if(slugMissing){
+        sbOptions.value = {
+                status: true,
+                type: "error",
+                text: "Fill-up the fields",
+            };
+
+            setTimeout(() => {
+                btnLoading.value = false;
+            }, 1000);
+        return;
+     }
     await clientKey(authStore.token)
         .post("/api/store-page/settings",formData)
         .then((res) => { 

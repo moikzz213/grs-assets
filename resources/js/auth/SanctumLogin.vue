@@ -100,6 +100,13 @@ const login = async () => {
             axios
                 .get("/api/fetch/log-profile/" + user + "/" + token)
                 .then((q) => {
+                    if(!q.data.id){
+                        hasError.value = true;
+                        message.value = "Your account has not been created for this application. Contact Administrator";
+                        loadingLogin.value = false;
+                        return;
+                    }
+
                     let user_access = q.data.access.map((a) => {
                         return a;
                     });
@@ -117,9 +124,9 @@ const login = async () => {
                 });
         })
         .catch((err) => {
-            console.log(err);
+             
             hasError.value = true;
-            message.value = "Enter Username and Password...";
+            message.value = err.response.data.message;
             loadingLogin.value = false;
         });
 };
