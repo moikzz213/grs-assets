@@ -43,16 +43,18 @@ class UserController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $profiles = $profiles->orderBy($field, $sort);
+            $profiles = $profiles->whereNot('role', 'superadmin')->orderBy($field, $sort);
         }else{
-            $profiles = $profiles->orderBy('status', 'ASC')->orderBy('role', 'ASC')->orderBy('first_name', 'ASC');
+            $profiles = $profiles->whereNot('role', 'superadmin')->orderBy('status', 'ASC')->orderBy('role', 'ASC')->orderBy('first_name', 'ASC');
         }
     
         if($search){
-            $profiles->where('ecode', 'like', '%'.$search.'%')
-            ->orWhere('username', 'like', '%'.$search.'%')
-            ->orWhere('display_name', 'like', '%'.$search.'%')
-            ->orWhere('role', 'like', '%'.$search.'%');
+            $profiles->whereNot('role', 'superadmin')->where(function($q) use($search){
+                $q->where('ecode', 'like', '%'.$search.'%')
+                ->orWhere('username', 'like', '%'.$search.'%')
+                ->orWhere('display_name', 'like', '%'.$search.'%')
+                ->orWhere('role', 'like', '%'.$search.'%');
+            }); 
 
             $profiles = $profiles->get();
             $dataArray['data'] = $profiles->toArray();

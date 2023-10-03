@@ -100,9 +100,9 @@ const login = async () => {
             axios
                 .get("/api/fetch/log-profile/" + user + "/" + token)
                 .then((q) => {
-                    if(!q.data.id){
+                    if(!q.data.id){ 
                         hasError.value = true;
-                        message.value = "Your account has not been created for this application. Contact Administrator";
+                        message.value = q.data;
                         loadingLogin.value = false;
                         return;
                     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\accessUms;
 use App\Models\Profile;
 use App\Models\ClientKey;
 use Illuminate\Http\Request;
@@ -36,6 +37,10 @@ class ProfileController extends Controller
 
     public function createNewProfile(Request $request)
     { 
+        $request->validate([
+            'ecode' => 'required|string'          
+        ]);
+        
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
@@ -49,6 +54,8 @@ class ProfileController extends Controller
             'designation' => $request['designation'], 
         );
         $profile = Profile::create($profileArray);
+
+        accessUms::dispatch(['ecode' => $request['ecode'], 'status' => 'active'])->onQueue('default'); 
 
         return response()->json([
             'message' => 'New Profile has successfully created',
@@ -78,8 +85,10 @@ class ProfileController extends Controller
     public function fetchProfile($ecode, $token){ 
         $data = json_decode($ecode);
         
-        $profile = Profile::where('ecode', $data->username)->with('access')->first(); 
-
+        $profile = Profile::whereIn('status', ['active', 'Active'])->where('ecode', $data->username)->with('access')->first(); 
+        if(!$profile){ 
+            return response()->json('Your account has not been created for this application. Contact Administrator', 200);
+        }
         $clientKey = ClientKey::firstOrCreate([
             'key' => $token,
             'username' => $data->username,
