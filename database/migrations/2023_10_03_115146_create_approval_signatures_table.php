@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('approval_signatures', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
-            $table->string('code', 10)->unique();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('approval_setup_id');
+            $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('approval_signatures');
     }
 };

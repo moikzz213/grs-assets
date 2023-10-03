@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100);
-            $table->string('code', 15);
-            $table->string('area', 150)->nullable();
-            $table->unsignedBigInteger('company_id')->default(null)->nullable();
+            $table->string('code', 15)->unique();
+            $table->string('area', 150)->nullable(); 
             $table->timestamps();
         });
     }
