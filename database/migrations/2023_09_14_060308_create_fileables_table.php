@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('fileables', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
-            $table->string('code', 10)->unique();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('file_id');
+            $table->unsignedBigInteger('fileable_id');
+            $table->string('fileable_type'); // Model Class
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('fileables');
     }
 };
