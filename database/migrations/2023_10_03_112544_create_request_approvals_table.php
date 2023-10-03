@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('request_approvals', function (Blueprint $table) {
             $table->id();
-            $table->string('original_name', 150)->nullable();
-            $table->string('title', 150)->nullable();
-            $table->string('disk', 150)->nullable();
-            $table->string('path', 150)->nullable();
-            $table->string('type', 50)->nullable(); // post, employee
-            $table->string('mime', 80)->nullable();
+            $table->unsignedBigInteger('request_asset_id');
             $table->unsignedBigInteger('profile_id');
+            $table->string('approval_type',50);
+            $table->string('approval_section',50);
+            $table->unsignedTinyInteger('orders')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('request_approvals');
     }
 };
