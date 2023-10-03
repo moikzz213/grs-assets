@@ -13,8 +13,8 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {
         $user = new \App\Models\Profile([
-            'username' => '100194',
-            'ecode' => '100194',
+            'username' => 'local101',
+            'ecode' => 'local101',
             'email'      => 'jacob@gagroup.net',
             'display_name'  => 'Jacob Calit',
             'first_name'  => 'Jacob',
@@ -25,6 +25,6 @@ class UsersTableSeeder extends Seeder
         ]);
         $user->save();
 
-        
+
     }
 }
