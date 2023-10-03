@@ -185,7 +185,7 @@ const toggleTheme = () => {
 const authStore = useAuthStore();
 
 let arrrr = ['edit', 'add', 'delete'];
-console.log(JSON.stringify(arrrr));
+ 
 const router = useRouter();
 const commonNav = ref([
     {
@@ -258,6 +258,7 @@ const moderatorNav = ref([
     },
 ]);
 const openPage = (openPath) => {
+    console.log("openPath",openPath);
     menu.value = false;
     router
         .push({

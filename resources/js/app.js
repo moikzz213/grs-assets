@@ -52,13 +52,13 @@ function returnAccess(slug) {
 
 function validateAccess(slug) {
     let hasAccess = false;
-
+    console.log("slug",slug);
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if (slug == 'dashboard' || slug == 'account') {
+    } else if (slug.toLowerCase() == 'dashboard' || slug.toLowerCase() == 'account') {
         hasAccess = true;
     } else if (
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(slug)
