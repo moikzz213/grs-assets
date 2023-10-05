@@ -1,7 +1,7 @@
 <template>
   <div id="component">
     <file-pond
-      name="test"
+      name="upload"
       ref="pond"
       allow-multiple="true"
       v-bind:server="myServer"
@@ -35,7 +35,7 @@ const FilePond = vueFilePond(
 );
 
 export default {
-  name: "HelloWorld",
+  name: "FilePondUploader",
   data: function () {
     return {
       // fake server to simulate loading a 'local' server file and processing a file

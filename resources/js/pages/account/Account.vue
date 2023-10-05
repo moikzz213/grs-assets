@@ -7,7 +7,7 @@
           <v-btn
             :color="`${currentForm == 'profile' ? 'primary' : 'white'} `"
             size="large"
-            class="mr-3"
+            class="mr-3 mb-1"
             :loading="user.loading"
             @click="() => openForm('profile')"
             >profile</v-btn
@@ -15,7 +15,7 @@
           <v-btn
             :color="`${currentForm == 'account' ? 'primary' : 'white'} `"
             size="large"
-            class="mr-3"
+            class="mr-3 mb-1"
             :loading="user.loading"
             @click="() => openForm('account')"
             >Account</v-btn
@@ -23,7 +23,7 @@
           <v-btn
             :color="`${currentForm == 'change_password' ? 'primary' : 'white'} `"
             size="large"
-            class="mr-3"
+            class="mr-3 mb-1"
             :loading="user.loading"
             @click="() => openForm('change_password')"
             >Change Password</v-btn
@@ -57,7 +57,7 @@ import ChangePassword from "./ChangePassword.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 
-const sbOptions = ref({ 
+const sbOptions = ref({
   status: false,
   type: "primary",
   text: null,
@@ -68,7 +68,7 @@ const authStore = useAuthStore();
 const user = ref({
   loading: false,
   data: Object.assign({}, authStore.user),
-}); 
+});
 
 // tabs
 const currentForm = ref("profile");

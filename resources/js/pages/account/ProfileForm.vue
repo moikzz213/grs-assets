@@ -5,7 +5,14 @@
     >
     <v-card-text>
       <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
-        <Uploader />
+        <div style="width: 100%; max-width: 320px; border-radius: 12px" class="mb-6">
+          <v-img
+            :src="'./assets/images/placeholder-user.png'"
+            class="rounded-lg mb-2"
+          ></v-img>
+          <Uploader />
+          <!-- <Uploader /> -->
+        </div>
         <Field name="ecode" v-slot="{ field }" v-model="profileData.data.ecode">
           <v-text-field
             v-model="profileData.data.ecode"
@@ -81,7 +88,8 @@
   </v-card>
 </template>
 <script setup>
-import Uploader from "@/components/uploader/Uploader.vue";
+// import Uploader from "@/studio/Uploader.vue";
+import Uploader from "@/studio/Uploader.vue";
 import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
