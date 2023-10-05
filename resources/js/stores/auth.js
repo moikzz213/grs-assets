@@ -98,7 +98,8 @@ export const useAuthStore = defineStore("authUser", {
                             axios
                                 .get("/api/fetch/log-profile/" + user + "/" + token)
                                 .then((q) => {
-                                    if (q.data) {
+                                    if (q.data && q.data.id) {
+                                        console.log("q.data",q.data);
 
                                         let user_access = q.data.access.map((a) => {
                                             return a;
@@ -108,15 +109,19 @@ export const useAuthStore = defineStore("authUser", {
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;
                                         this.setCredentials(res.data);
+                                    }else{  
+                                        this.logout();
+                                        window.location = "/login";
                                     }
                                 })
-                                .catch((err) => {
-                                    console.log("errrr 1", err);
+                                .catch((err) => { 
+                                    this.logout();
+                                    window.location = "/login";
                                 });
                         }
                     })
                     .catch((err) => {
-
+                        
                         localStorage.removeItem("authUser");
                         window.location = "/login";
                     });

@@ -257,8 +257,7 @@ const moderatorNav = ref([
         ],
     },
 ]);
-const openPage = (openPath) => {
-    console.log("openPath",openPath);
+const openPage = (openPath) => { 
     menu.value = false;
     router
         .push({

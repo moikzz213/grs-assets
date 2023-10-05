@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('asset_id');
             $table->string('service_type',50); 
             $table->string('status',50);
-            $table->string('assignee',50)->nullable(); 
+            $table->unsignedBigInteger('assignee')->nullable(); 
             $table->string('date_start',50)->nullable(); 
             $table->string('date_received',50)->nullable(); 
             $table->text('remarks')->nullable(); 
