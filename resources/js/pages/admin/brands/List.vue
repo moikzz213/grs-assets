@@ -48,13 +48,14 @@
                                 >
                                     Brand
                                 </th>
+                                 
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('profile_id')"
                                 >
-                                    Last Updated By
+                                    Updated By
                                 </th>
-                                
+
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('status')"
@@ -80,8 +81,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in dataObj.data" :key="item.id">
-                                <td>{{ item.title }}</td>
-                                <td>{{ item.display_name }}</td> 
+                                <td>{{ item.title }}</td>  
+                                <td>{{ item.profile?.display_name }}</td>
                                 <td>
                                     <v-chip
                                         class="text-uppercase"
@@ -98,8 +99,8 @@
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
-                                        <v-icon
-                                            size="small"
+                                        <v-btn
+                                            :loading="iconLoading" 
                                             v-if="
                                                 authStore.user.role ==
                                                     'superadmin' ||
@@ -107,23 +108,57 @@
                                                     'edit'
                                                 )
                                             "
-                                            @click="() => editData(item.id)"
+                                            @click="() => editData(item)"
                                             :icon="mdiPencil"
-                                            class="mx-1"
-                                        />
-                                        <v-icon
-                                            size="small"
+                                            title="Edit"
+                                            density="compact"
+                                            class="mx-2"
+                                        ></v-btn>
+                                        <v-btn
+                                        density="compact"
+                                            :loading="iconLoading"
+                                            :icon="mdiEyeOff"
                                             v-if="
-                                                authStore.user.role ==
+                                                item.status == 'active' &&
+                                                (authStore.user.role ==
                                                     'superadmin' ||
-                                                authStore.capabilities?.includes(
-                                                    'delete'
-                                                )
+                                                    authStore.capabilities?.includes(
+                                                        'delete'
+                                                    ))
                                             "
-                                            @click="() => deleteData(item.id)"
-                                            :icon="mdiTrashCan"
-                                            class="mx-1"
-                                        />
+                                            @click="
+                                                () =>
+                                                    deleteData(
+                                                        item.id,
+                                                        'disabled'
+                                                    )
+                                            "
+                                            title="Disable"
+                                            class="mx-2 text-error"
+                                        >
+                                        </v-btn>
+                                        <v-btn
+                                            :loading="iconLoading"
+                                            density="compact"
+                                            v-if="
+                                                item.status == 'disabled' &&
+                                                (authStore.user.role ==
+                                                    'superadmin' ||
+                                                    authStore.capabilities?.includes(
+                                                        'delete'
+                                                    ))
+                                            "
+                                            @click="
+                                                () =>
+                                                    deleteData(
+                                                        item.id,
+                                                        'active'
+                                                    )
+                                            "
+                                            :icon="mdiEyeCheck"
+                                            title="Enable"
+                                            class="mx-2 text-success"
+                                        ></v-btn>
                                     </div>
                                 </td>
                             </tr>
@@ -147,7 +182,15 @@
                     :disabled="dataObj.loading"
                 ></v-pagination>
             </div>
-        </v-row>  
+        </v-row>
+        <DialogForm
+            :free-form="freeForm"
+            :add-new-dialog="addNewDialog"
+            title="Brand"
+            :data-object="dataObject"
+            @cancelled="cancelledAction"
+            @save="saveData"
+        />
         <AppSnackBar :options="sbOptions" />
     </v-container>
 </template>
@@ -155,13 +198,13 @@
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { onMounted, ref, watch } from "vue";
-import { mdiPencil, mdiTrashCan } from "@mdi/js";
+import { mdiPencil, mdiEyeOff, mdiEyeCheck } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { encryptData, decryptData } from "@/composables/encrypt";
 import AppSnackBar from "@/components/AppSnackBar.vue";
-
+import DialogForm from "@/components/DialogForm.vue";
 const sbOptions = ref({
     status: false,
     type: "primary",
@@ -179,7 +222,7 @@ const totalPageCount = ref(0);
 const totalResult = ref(0);
 const search = ref("");
 const showRows = ref([10, 20, 50, 100]);
-const showPerPage = ref(10); 
+const showPerPage = ref(10);
 
 const filterRows = () => {
     fetchAllData();
@@ -263,22 +306,82 @@ watch(currentPage, (newValue, oldValue) => {
     }
 });
 
-const editData = (id) => {
-    
+const cancelledAction = (v) => {
+    dataObject.value = {};
+    addNewDialog.value = v;
 };
 
-const deleteData = (item) => {
-    console.log("delete", item);
+const saveData = async (data) => {
+    addNewDialog.value = false;
+    data.profile_id = authStore.user.profile.id;
+    await clientKey(authStore.token)
+        .post("/api/brands/store-update/data", data)
+        .then((res) => {
+            sbOptions.value = {
+                status: true,
+                type: "success",
+                text: res.data.message,
+            };
+            fetchAllData();
+        })
+        .catch((err) => {
+            dataObj.value.loading = false;
+            console.log(err);
+        });
+};
+
+const dataObject = ref({});
+
+const freeForm = ref([
+    { name: "title", label: "Brand", required: true, type: "text" },
+]);
+
+const editData = (data) => {
+    dataObject.value = Object.assign({}, data);
+    dataObject.value.type = "brand";
+    addNewDialog.value = true;
+};
+
+const iconLoading = ref(false);
+const deleteData = async (id, status) => {
+    sbOptions.value = {
+        status: true,
+        type: "info",
+        text: "Please wait...",
+    };
+    iconLoading.value = true;
+    let form = {
+        id: id,
+        status: status,
+        profile_id: authStore.user.profile.id,
+    };
+    await clientKey(authStore.token)
+        .post("/api/brands/status-change/data", form)
+        .then((res) => {
+            setTimeout(() => {
+                sbOptions.value = {
+                    status: true,
+                    type: "success",
+                    text: res.data.message,
+                };
+                fetchAllData();
+                iconLoading.value = false;
+            }, 600);
+        })
+        .catch((err) => {
+            dataObj.value.loading = false;
+            console.log(err);
+        });
 };
 
 const addNewDialog = ref(false);
 const addNew = () => {
+    dataObject.value = "";
     addNewDialog.value = true;
-}; 
+};
 
 onMounted(() => {
     let vsearch = localStorage.getItem("brand-search");
-
     if (vsearch) {
         search.value = decryptData(vsearch);
     }

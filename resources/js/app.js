@@ -78,13 +78,14 @@ function validateAccess(data) {
     return hasAccess;
 }
 
-router.beforeEach((to, from, next) => {
-     
-    if (to.path == '/' || to.meta.requiresAuth === false) {
+router.beforeEach((to, from, next) => { 
+    if (to.path == '/' && !to.meta.requiresAuth) { 
         // public route
         if (authStore.authIsLoggedIn) {
             next({ name: 'Dashboard' }); 
-        }
+        } 
+       
+        next({ name: 'Login' });
     } else {
         
         // private route
@@ -94,7 +95,7 @@ router.beforeEach((to, from, next) => {
             }else if (!validateAccess(to.meta)) {
                 next({ name: 'Unauthorized' });
             } 
-        } else {  
+        } else if(to.path != '/login') {
             next({ name: 'Login' });
         }
     }

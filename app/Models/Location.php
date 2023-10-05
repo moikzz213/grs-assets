@@ -12,6 +12,11 @@ class Location extends Model
 
     public function profile()
     {
-        return $this->hasMany(Profile::class);
+        return $this->belongsTo(Profile::class);
+    }
+
+    public function logs()
+    {
+        return $this->morphToMany(Log::class, 'loggable');
     }
 }

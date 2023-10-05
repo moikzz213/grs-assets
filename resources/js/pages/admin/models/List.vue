@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <AppPageHeader title="Users List" />
+        <AppPageHeader title="Model List" />
         <v-row class="mb-3">
             <v-col class="v-col-12 mt-1 col-sm-12 py-0">
                 <v-card class="px-5">
@@ -38,34 +38,24 @@
                 </v-card>
             </v-col>
             <div class="v-col-12">
-                <v-card :loading="users.loading">
+                <v-card :loading="dataObj.loading">
                     <v-table>
                         <thead>
                             <tr>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('role')"
+                                    @click="OrderByField('title')"
                                 >
-                                    Role
+                                    Model
                                 </th>
+                                 
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('display_name')"
+                                    @click="OrderByField('profile_id')"
                                 >
-                                    Name
+                                    Updated By
                                 </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('username')"
-                                >
-                                    Username
-                                </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('email')"
-                                >
-                                    Email
-                                </th>
+
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('status')"
@@ -90,11 +80,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in users.data" :key="item.id">
-                                <td>{{ item.role }}</td>
-                                <td>{{ item.display_name }}</td>
-                                <td>{{ item.username }}</td>
-                                <td>{{ item.email }}</td>
+                            <tr v-for="item in dataObj.data" :key="item.id">
+                                <td>{{ item.title }}</td>  
+                                <td>{{ item.profile?.display_name }}</td>
                                 <td>
                                     <v-chip
                                         class="text-uppercase"
@@ -111,8 +99,8 @@
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
-                                        <v-icon
-                                            size="small"
+                                        <v-btn
+                                            :loading="iconLoading" 
                                             v-if="
                                                 authStore.user.role ==
                                                     'superadmin' ||
@@ -120,30 +108,64 @@
                                                     'edit'
                                                 )
                                             "
-                                            @click="() => editUser(item.id)"
+                                            @click="() => editData(item)"
                                             :icon="mdiPencil"
-                                            class="mx-1"
-                                        />
-                                        <v-icon
-                                            size="small"
+                                            title="Edit"
+                                            density="compact"
+                                            class="mx-2"
+                                        ></v-btn>
+                                        <v-btn
+                                        density="compact"
+                                            :loading="iconLoading"
+                                            :icon="mdiEyeOff"
                                             v-if="
-                                                authStore.user.role ==
+                                                item.status == 'active' &&
+                                                (authStore.user.role ==
                                                     'superadmin' ||
-                                                authStore.capabilities?.includes(
-                                                    'delete'
-                                                )
+                                                    authStore.capabilities?.includes(
+                                                        'delete'
+                                                    ))
                                             "
-                                            @click="() => deleteUser(item.id)"
-                                            :icon="mdiTrashCan"
-                                            class="mx-1"
-                                        />
+                                            @click="
+                                                () =>
+                                                    deleteData(
+                                                        item.id,
+                                                        'disabled'
+                                                    )
+                                            "
+                                            title="Disable"
+                                            class="mx-2 text-error"
+                                        >
+                                        </v-btn>
+                                        <v-btn
+                                            :loading="iconLoading"
+                                            density="compact"
+                                            v-if="
+                                                item.status == 'disabled' &&
+                                                (authStore.user.role ==
+                                                    'superadmin' ||
+                                                    authStore.capabilities?.includes(
+                                                        'delete'
+                                                    ))
+                                            "
+                                            @click="
+                                                () =>
+                                                    deleteData(
+                                                        item.id,
+                                                        'active'
+                                                    )
+                                            "
+                                            :icon="mdiEyeCheck"
+                                            title="Enable"
+                                            class="mx-2 text-success"
+                                        ></v-btn>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </v-table>
                     <v-sheet
-                        v-if="users.data.length == 0"
+                        v-if="dataObj.data.length == 0"
                         class="pa-3 text-center w-100"
                         >No records found</v-sheet
                     >
@@ -157,83 +179,18 @@
                     variant="elevated"
                     active-color="primary"
                     density="comfortable"
-                    :disabled="users.loading"
+                    :disabled="dataObj.loading"
                 ></v-pagination>
             </div>
         </v-row>
-
-        <v-dialog
-            width="600"
-            persistent
-            v-model="addNewDialog"
-            @keydown.esc="cancelAddNew"
-        >
-            <v-card class="pt-3">
-                <v-card-title class="text-h6 d-flex"
-                    >New User <v-spacer></v-spacer
-                    ><small class="text-error">{{ errorMessage }}</small>
-                    <v-spacer></v-spacer
-                ></v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <div class="v-col-12 v-col-md-6">
-                            <v-text-field
-                                :loading="ecodeLoading"
-                                density="compact"
-                                variant="outlined"
-                                autofocus
-                                label="Search Employee ID"
-                                :append-inner-icon="mdiMagnify"
-                                hide-details
-                                v-model="employeeCode"
-                                @keydown.enter="fetchUMSEcode"
-                                @click:append-inner="fetchUMSEcode"
-                            ></v-text-field>
-                        </div>
-                        <div class="v-col-12 v-col-md-6 text-caption">
-                            <v-autocomplete
-                                density="compact"
-                                variant="outlined" 
-                                label="Role"
-                                :items="roleList"
-                                hide-details
-                                v-model="profileRole"
-                            ></v-autocomplete>
-                        </div> 
-                        <div class="v-col-12 v-col-md-6 text-caption py-1">
-                            Name: {{ profileData?.profile?.fullname }}
-                        </div>
-                        <div
-                            class="v-col-12 v-col-md-6 text-caption my-auto py-1"
-                        >
-                            Status: {{ profileData.status }}
-                        </div>
-                        <div class="v-col-12 v-col-md-6 text-caption py-1">
-                            Email:{{ profileData?.email }}
-                        </div>
-                        <div class="v-col-12 text-caption py-1">
-                            Company: {{ profileData?.profile?.company?.title }}
-                        </div>
-                    </v-row>
-                </v-card-text>
-                <v-divider class="mt-2"></v-divider>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                        size="small"
-                        text="cancel"
-                        @click="cancelAddNew"
-                    ></v-btn>
-                    <v-btn
-                        size="small"
-                        v-if="confirmOk"
-                        color="secondary"
-                        @click="saveData"
-                        >Confirm</v-btn
-                    >
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+        <DialogForm
+            :free-form="freeForm"
+            :add-new-dialog="addNewDialog"
+            title="Model"
+            :data-object="dataObject"
+            @cancelled="cancelledAction"
+            @save="saveData"
+        />
         <AppSnackBar :options="sbOptions" />
     </v-container>
 </template>
@@ -241,13 +198,13 @@
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { onMounted, ref, watch } from "vue";
-import { mdiPencil, mdiTrashCan, mdiMagnify } from "@mdi/js";
+import { mdiPencil, mdiEyeOff, mdiEyeCheck } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
-import { clientKey, authApi } from "@/services/axiosToken";
+import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { encryptData, decryptData } from "@/composables/encrypt";
 import AppSnackBar from "@/components/AppSnackBar.vue";
-
+import DialogForm from "@/components/DialogForm.vue";
 const sbOptions = ref({
     status: false,
     type: "primary",
@@ -257,7 +214,7 @@ const sbOptions = ref({
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const users = ref({
+const dataObj = ref({
     loading: false,
     data: [],
 });
@@ -266,27 +223,20 @@ const totalResult = ref(0);
 const search = ref("");
 const showRows = ref([10, 20, 50, 100]);
 const showPerPage = ref(10);
-const roleList = ref([
-    { title: "Normal", value: "normal" },
-    { title: "Asset Supervisor-Project", value: "asset-supervisor-project" },
-    { title: "Asset Supervisor-WH", value: "asset-supervisor-wh" },
-    { title: "Admin", value: "admin" },
-    { title: "manager", value: "manager" },
-]);
 
 const filterRows = () => {
-    getAllUsers();
+    fetchAllData();
 };
 
 const searchData = () => {
-    localStorage.setItem("user-search", encryptData(search.value));
-    getAllUsers();
+    localStorage.setItem("model-search", encryptData(search.value));
+    fetchAllData();
 };
 
 const clearSearch = () => {
     search.value = "";
-    localStorage.setItem("user-search", "");
-    getAllUsers();
+    localStorage.setItem("model-search", "");
+    fetchAllData();
 };
 
 const currentPage = ref(
@@ -297,7 +247,7 @@ const orderBy = ref([]);
 const sortBy = ref("");
 const orderByCount = ref(0);
 const OrderByField = (v) => {
-    users.value.loading = true;
+    dataObj.value.loading = true;
 
     orderBy.value[0] = v;
     if (orderByCount.value % 2) {
@@ -308,14 +258,14 @@ const OrderByField = (v) => {
     orderByCount.value++;
 
     sortBy.value = JSON.stringify(orderBy.value);
-    getAllUsers();
+    fetchAllData();
 };
 
-const getAllUsers = async () => {
-    users.value.loading = true;
+const fetchAllData = async () => {
+    dataObj.value.loading = true;
     await clientKey(authStore.token)
         .get(
-            "/api/user/all?page=" +
+            "/api/models/all?page=" +
                 currentPage.value +
                 "&show=" +
                 showPerPage.value +
@@ -334,11 +284,11 @@ const getAllUsers = async () => {
             totalResult.value = res.data.total
                 ? res.data.total
                 : res.data.length;
-            users.value.data = res.data.data ? res.data.data : res.data;
-            users.value.loading = false;
+            dataObj.value.data = res.data.data ? res.data.data : res.data;
+            dataObj.value.loading = false;
         })
         .catch((err) => {
-            users.value.loading = false;
+            dataObj.value.loading = false;
             console.log(err);
         });
 };
@@ -346,134 +296,95 @@ watch(currentPage, (newValue, oldValue) => {
     if (currentPage.value && newValue != oldValue) {
         router
             .push({
-                name: "PaginatedUsers",
+                name: "PaginatedModels",
                 params: {
                     page: currentPage.value,
                 },
             })
             .catch((err) => {});
-        getAllUsers(currentPage.value);
+        fetchAllData(currentPage.value);
     }
 });
 
-const editUser = (id) => {
-    router
-        .push({
-            name: "EditUser",
-            params: {
-                id: id,
-            },
+const cancelledAction = (v) => {
+    dataObject.value = {};
+    addNewDialog.value = v;
+};
+
+const saveData = async (data) => {
+    addNewDialog.value = false;
+    data.profile_id = authStore.user.profile.id;
+    await clientKey(authStore.token)
+        .post("/api/models/store-update/data", data)
+        .then((res) => {
+            sbOptions.value = {
+                status: true,
+                type: "success",
+                text: res.data.message,
+            };
+            fetchAllData();
         })
         .catch((err) => {
+            dataObj.value.loading = false;
             console.log(err);
         });
 };
 
-const deleteUser = (item) => {
-    console.log("delete", item);
-};
+const dataObject = ref({});
 
-const addNewDialog = ref(false);
-const addNew = () => {
+const freeForm = ref([
+    { name: "title", label: "Model", required: true, type: "text" },
+]);
+
+const editData = (data) => {
+    dataObject.value = Object.assign({}, data);
+    dataObject.value.type = "model";
     addNewDialog.value = true;
 };
 
-const confirmOk = ref(false);
-const ecodeLoading = ref(false);
-const employeeCode = ref("");
-const profileData = ref("");
-const profileRole = ref("");
-const errorMessage = ref("");
-const profileObject = ref({});
-const fetchUMSEcode = () => {
-    profileObject.value = {};
-    confirmOk.value = false;
-    if (!employeeCode.value) {
-        return;
-    }
-    errorMessage.value = "";
-    clientKey(authStore.token)
-        .get("/api/admin/add-new/profile-by/ecode/" + employeeCode.value)
-        .then((res) => {
-            if (res.data.id) {
-                errorMessage.value = "Profile already registered.";
-                return;
-            }
-
-            authApi
-                .post("/api/fetch-user/other-application", {
-                    ecode: employeeCode.value,
-                    key: "SFFjUDI2S1p0bUpWcit2Y21wNlJhQ1p5WndyQUR2Mnpoc0hERmt0RVBUMD0",
-                    user: "TW9pa3p6q",
-                })
-                .then((res) => {
-                    ecodeLoading.value = false;
-                    profileData.value = res.data;
-                    if (res.data?.id) {
-                        profileRole.value = res.data.role;
-                        confirmOk.value = true;
-                        // form to be save
-                        profileObject.value = res.data;
-                    } else {
-                        errorMessage.value =
-                            "Profile not found. Contact IT department.";
-                    }
-                });
-        });
-};
-
-const saveData = async () => {
+const iconLoading = ref(false);
+const deleteData = async (id, status) => {
     sbOptions.value = {
         status: true,
         type: "info",
         text: "Please wait...",
     };
-    let names = profileObject.value.profile.fullname.split(" ");
-    let formObject = {
-        display_name: profileObject.value.profile.fullname,
-        email: profileObject.value.email,
-        first_name: names[0],
-        last_name: names.slice(-1)[0],
-        role: profileRole.value,
-        company_id: profileObject.value.profile.company_id,
-        ecode: profileObject.value.profile.ecode,
-        username: profileObject.value.profile.ecode,
-        designation: profileObject.value.profile.position,
+    iconLoading.value = true;
+    let form = {
+        id: id,
+        status: status,
+        profile_id: authStore.user.profile.id,
     };
-
     await clientKey(authStore.token)
-        .post("/api/account/create-new/profile", formObject)
-        .then((response) => {
-            addNewDialog.value = false;
-            sbOptions.value = {
-                status: true,
-                type: "success",
-                text: response.data.message,
-            };
-
-            cancelAddNew();
-            getAllUsers();
-
+        .post("/api/models/status-change/data", form)
+        .then((res) => {
+            setTimeout(() => {
+                sbOptions.value = {
+                    status: true,
+                    type: "success",
+                    text: res.data.message,
+                };
+                fetchAllData();
+                iconLoading.value = false;
+            }, 600);
         })
         .catch((err) => {
-            
+            dataObj.value.loading = false;
+            console.log(err);
         });
 };
 
-const cancelAddNew = () => {
-    addNewDialog.value = false;
-    profileRole.value = "";
-    confirmOk.value = false;
-    profileData.value = {};
-    employeeCode.value = '';
-    profileObject.value = {};
+const addNewDialog = ref(false);
+const addNew = () => {
+    dataObject.value = "";
+    addNewDialog.value = true;
 };
-onMounted(() => {
-    let vsearch = localStorage.getItem("user-search");
 
+onMounted(() => {
+    let vsearch = localStorage.getItem("model-search");
     if (vsearch) {
         search.value = decryptData(vsearch);
     }
-    getAllUsers();
+    fetchAllData();
 });
 </script>
