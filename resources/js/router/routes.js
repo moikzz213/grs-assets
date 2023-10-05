@@ -12,7 +12,7 @@ export const routes = [
 
     /**
      * Auth Login
-     */
+     */ 
     {
         path: "/login",
         component: () => import("../auth/SanctumLogin.vue"),
@@ -80,6 +80,119 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "users",
+            type: "edit"
+        },
+    },
+
+    {
+        path: "/brands",
+        component: () => import("../pages/admin/brands/List.vue"),
+        name: "Brands",
+        meta: {
+            requiresAuth: true,
+            title: "brands",
+        },
+    },
+    {
+        path: "/brands/page/:page",
+        component: () => import("../pages/admin/brands/List.vue"),
+        name: "PaginatedBrands",
+        meta: {
+            requiresAuth: true,
+            title: "brands",
+        },
+    },
+
+    {
+        path: "/companies",
+        component: () => import("../pages/admin/companies/List.vue"),
+        name: "Companies",
+        meta: {
+            requiresAuth: true,
+            title: "companies",
+        },
+    },
+    {
+        path: "/companies/page/:page",
+        component: () => import("../pages/admin/companies/List.vue"),
+        name: "PaginatedCompanies",
+        meta: {
+            requiresAuth: true,
+            title: "companies",
+        },
+    },
+
+    {
+        path: "/locations",
+        component: () => import("../pages/admin/locations/List.vue"),
+        name: "Locations",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
+    {
+        path: "/locations/page/:page",
+        component: () => import("../pages/admin/locations/List.vue"),
+        name: "PaginatedLocations",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
+    {
+        path: "/categories",
+        component: () => import("../pages/admin/categories/List.vue"),
+        name: "Categories",
+        meta: {
+            requiresAuth: true,
+            title: "categories",
+        },
+    },
+    {
+        path: "/categories/page/:page",
+        component: () => import("../pages/admin/categories/List.vue"),
+        name: "PaginatedCategories",
+        meta: {
+            requiresAuth: true,
+            title: "categories",
+        },
+    },
+    {
+        path: "/models",
+        component: () => import("../pages/admin/models/List.vue"),
+        name: "Models",
+        meta: {
+            requiresAuth: true,
+            title: "models",
+        },
+    },
+    {
+        path: "/models/page/:page",
+        component: () => import("../pages/admin/models/List.vue"),
+        name: "PaginatedModels",
+        meta: {
+            requiresAuth: true,
+            title: "models",
+        },
+    },
+
+    {
+        path: "/vendors",
+        component: () => import("../pages/admin/vendors/List.vue"),
+        name: "Vendors",
+        meta: {
+            requiresAuth: true,
+            title: "vendors",
+        },
+    },
+    {
+        path: "/vendors/page/:page",
+        component: () => import("../pages/admin/vendors/List.vue"),
+        name: "PaginatedVendors",
+        meta: {
+            requiresAuth: true,
+            title: "vendors",
         },
     },
 

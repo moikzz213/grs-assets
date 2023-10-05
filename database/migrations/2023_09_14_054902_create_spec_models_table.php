@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('spec_models', function (Blueprint $table) {
             $table->id();
             $table->string('title', 60);
+            $table->string('status', 15)->default('active'); 
             $table->unsignedBigInteger('brand_id')->nullable();
+            $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });
     }

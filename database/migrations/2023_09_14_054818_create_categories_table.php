@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title', 100);
             $table->string('code', 10)->unique();
+            $table->string('status', 15)->default('active'); 
             $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });
     }

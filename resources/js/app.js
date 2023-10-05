@@ -39,29 +39,38 @@ const router = createRouter({
     routes,
 });
 
-function returnAccess(slug) {
+function returnAccess(data) {
     let hasAccess = false;
 
     authStore.access.map((o, i) => {
-        if (slug == o.slug) {
+        if (data.title == o.slug) {
             hasAccess = true;
+            
+            if(data.type && data.type == 'edit' ){
+                if(o.capabilities.includes('edit')){
+                    hasAccess = true; 
+                }else{
+                    hasAccess = false; 
+                }
+            }
+            
         }
     });
     return hasAccess;
 }
 
-function validateAccess(slug) {
+function validateAccess(data) {
     let hasAccess = false;
-    console.log("slug",slug);
+    
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if (slug.toLowerCase() == 'dashboard' || slug.toLowerCase() == 'account') {
+    } else if (data?.title?.toLowerCase() == 'dashboard' || data?.title?.toLowerCase() == 'account') {
         hasAccess = true;
     } else if (
-        authStore?.user?.status.toLowerCase() == "active" && returnAccess(slug)
+        authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
     ) {
         hasAccess = true;
     }
@@ -70,24 +79,25 @@ function validateAccess(slug) {
 }
 
 router.beforeEach((to, from, next) => {
-
-    if (to.meta.requiresAuth === false) {
+     
+    if (to.path == '/' || to.meta.requiresAuth === false) {
         // public route
         if (authStore.authIsLoggedIn) {
-            next({ name: 'Dashboard' });
+            next({ name: 'Dashboard' }); 
         }
-
     } else {
+        
         // private route
-        if (authStore.authIsLoggedIn) {
-            if (!validateAccess(to.meta.title)) {
+        if (authStore.authIsLoggedIn) { 
+            if(to.meta.title?.toLowerCase() == 'unauthorized'){
+
+            }else if (!validateAccess(to.meta)) {
                 next({ name: 'Unauthorized' });
-            }
-        } else {
+            } 
+        } else {  
             next({ name: 'Login' });
         }
     }
-
     next();
 });
 

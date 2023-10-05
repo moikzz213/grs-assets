@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('title', 100);
             $table->string('code', 15)->unique();
             $table->string('area', 150)->nullable(); 
+            $table->string('status', 15)->default('active'); 
+            $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });
     }

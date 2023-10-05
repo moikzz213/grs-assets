@@ -67,7 +67,7 @@ const returnAccess = (slug, type = null) => {
     }
    if(!hasAccess){
         authStore.access?.map((o, i) => {
-            if (slug == o.slug) {
+            if (slug == o.slug) { 
                 hasAccess = true;
                 if (type == "group") {
                     groupNull = false;

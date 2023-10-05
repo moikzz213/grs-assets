@@ -4,9 +4,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserApiController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SpecModelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,9 +52,15 @@ Route::middleware('authkey')->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/all', [UserController::class, 'getUsers'])->name('admin.get.all.users');
     });
+
+    Route::get('/brands/all', [BrandController::class, 'fetchData'])->name('admin.get.all.brands');
+    Route::get('/models/all', [SpecModelController::class, 'fetchData'])->name('admin.get.all.models');
+    Route::get('/categories/all', [CategoryController::class, 'fetchData'])->name('admin.get.all.categories');
+    Route::get('/companies/all', [CompanyController::class, 'fetchDataObj'])->name('admin.get.all.companies');
+    Route::get('/locations/all', [LocationController::class, 'fetchData'])->name('admin.get.all.locations');
+    Route::get('/vendors/all', [VendorController::class, 'fetchData'])->name('admin.get.all.vendors');
     
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
-    
     Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');
     Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
     Route::post('/store-page/settings', [PageController::class, 'storeUpdate'])->name('admin.storeUpdate');
