@@ -39,24 +39,24 @@ const router = createRouter({
     routes,
 });
 
-function returnAccess(data) {
-    let hasAccess = false;
-
-    authStore.access.map((o, i) => {
-        if (data.title == o.slug) {
-            hasAccess = true;
-            
-            if(data.type && data.type == 'edit' ){
-                if(o.capabilities.includes('edit')){
-                    hasAccess = true; 
-                }else{
-                    hasAccess = false; 
+function returnAccess(data) { 
+        let hasAccess = false;
+        
+        authStore.access.map((o, i) => {
+            if (data.title == o.slug) {
+                hasAccess = true;
+                
+                if(data.type && data.type == 'edit' ){
+                    if(o.capabilities.includes('edit')){
+                        hasAccess = true; 
+                    }else{
+                        hasAccess = false; 
+                    }
                 }
+                
             }
-            
-        }
-    });
-    return hasAccess;
+        });
+        return hasAccess;
 }
 
 function validateAccess(data) {
@@ -106,9 +106,7 @@ router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
-
-    authStore.setCapabilities(to.meta.title.toLowerCase());
-
+        localStorage.setItem('current-pg', to.meta.title.toLowerCase());
 });
 app.use(router);
 
@@ -124,7 +122,6 @@ app.use(vuetify);
 import App from "./App.vue";
 app.component("App", App);
 
-authStore.checkUser().then(() => {
-
+authStore.checkUser().then(() => { 
     app.mount("#app");
 });
