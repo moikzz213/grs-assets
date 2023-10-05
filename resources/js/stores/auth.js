@@ -9,7 +9,7 @@ import { axiosToken } from "@/services/axiosToken";
 // the first argument is a unique id of the store across your application
 
 const dk = "mel182";
-
+ 
 // decrypt data
 const decryptData = (data) => {
     return data
@@ -25,7 +25,8 @@ const encryptData = (data) => {
 export const useAuthStore = defineStore("authUser", {
     state: () => ({
         auth: useLocalStorage("authUser", {}),
-        auth_capabilities: null
+        auth_capabilities: null,
+        auth_access: null,
     }),
     getters: {
         user: (state) => {
@@ -48,23 +49,16 @@ export const useAuthStore = defineStore("authUser", {
                 ? decryptData(state.auth.data).is_logged_in
                 : null;
         },
-        access: (state) => {
-            return state.auth && state.auth.data
-                ? decryptData(state.auth.data).q
-                : null;
+        access: (state) => { 
+            console.log("getters",state.auth_access);
+            return state.auth_access ? state.auth_access : ( state.auth && state.auth.data ? decryptData(state.auth.data).q : null );
         },
         capabilities: (state) => {
             return state.auth_capabilities;
         }
     },
-    actions: {
-        setCapabilities(path) {
-            this.auth_capabilities = null;
-            this.auth_capabilities = this.access.filter(
-                (o, i) => path == o.slug
-            )[0]?.capabilities;
-        },
-        async setCredentials(res) {
+    actions: { 
+        async setCredentials(res) { 
             // save to localstorage
             useStorage(
                 "authUser",
@@ -84,7 +78,15 @@ export const useAuthStore = defineStore("authUser", {
             );
         },
 
+        setCapabilities(path) {
+            this.auth_capabilities = null;
+            this.auth_capabilities = this.access.filter(
+                (o, i) => path == o.slug
+            )[0]?.capabilities;
+        },
+
         async checkUser() {
+            console.log("checker");
             if (this.token) {
                 await axiosToken(this.token)
                     .get("/api/checkuser")
@@ -98,17 +100,17 @@ export const useAuthStore = defineStore("authUser", {
                             axios
                                 .get("/api/fetch/log-profile/" + user + "/" + token)
                                 .then((q) => {
+                                 console.log("setters",q.data.access);
                                     if (q.data && q.data.id) {
-                                        console.log("q.data",q.data);
+                                        this.auth_access = null;
+                                        this.auth_access = q.data.access;
+                                        
 
-                                        let user_access = q.data.access.map((a) => {
-                                            return a;
-                                        });
-
-                                        res.data.access = user_access;
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;
+                                        res.data.access = q.data.access;
                                         this.setCredentials(res.data);
+                                        this.setCapabilities(localStorage.getItem('current-pg'));
                                     }else{  
                                         this.logout();
                                         window.location = "/login";
@@ -121,14 +123,12 @@ export const useAuthStore = defineStore("authUser", {
                         }
                     })
                     .catch((err) => {
-                        
                         localStorage.removeItem("authUser");
                         window.location = "/login";
                     });
-
             }
-
         },
+        
         async logout() {
             this.auth = {};
         },
