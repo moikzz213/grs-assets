@@ -54,6 +54,7 @@ export const routes = [
             title: "asset-list",
         },
     },
+    // users
     {
         path: "/users",
         component: () => import("../pages/admin/users/Users.vue"),
@@ -83,7 +84,7 @@ export const routes = [
             type: "edit"
         },
     },
-
+    // brands
     {
         path: "/brands",
         component: () => import("../pages/admin/brands/List.vue"),
@@ -102,7 +103,7 @@ export const routes = [
             title: "brands",
         },
     },
-
+    // companies
     {
         path: "/companies",
         component: () => import("../pages/admin/companies/List.vue"),
@@ -121,7 +122,7 @@ export const routes = [
             title: "companies",
         },
     },
-
+    // locations
     {
         path: "/locations",
         component: () => import("../pages/admin/locations/List.vue"),
@@ -140,6 +141,7 @@ export const routes = [
             title: "locations",
         },
     },
+    // categories
     {
         path: "/categories",
         component: () => import("../pages/admin/categories/List.vue"),
@@ -158,6 +160,7 @@ export const routes = [
             title: "categories",
         },
     },
+    // models
     {
         path: "/models",
         component: () => import("../pages/admin/models/List.vue"),
@@ -176,7 +179,7 @@ export const routes = [
             title: "models",
         },
     },
-
+    // vendors
     {
         path: "/vendors",
         component: () => import("../pages/admin/vendors/List.vue"),
@@ -193,6 +196,45 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "vendors",
+        },
+    },
+    // approval setup
+    {
+        path: "/approval-setup/:type",
+        component: () => import("../pages/admin/approvalsetup/List.vue"),
+        name: "Approvals",
+        meta: {
+            requiresAuth: true,
+            title: "approval-setup",
+        },
+    },
+    {
+        path: "/approval-setup/:type/page/:page",
+        component: () => import("../pages/admin/approvalsetup/List.vue"),
+        name: "PaginatedApprovals",
+        meta: {
+            requiresAuth: true,
+            title: "approval-setup",
+        },
+    },
+    {
+        path: "/approval-setup/:type/new",
+        component: () => import("../pages/admin/approvalsetup/NewData.vue"),
+        name: "NewApproval",
+        meta: {
+            requiresAuth: true,
+            title: "approval-setup",
+            type: "new"
+        },
+    },
+    {
+        path: "/approval-setup/:type/update/id/:id",
+        component: () => import("../pages/admin/approvalsetup/EditData.vue"),
+        name: "EditApproval",
+        meta: {
+            requiresAuth: true,
+            title: "approval-setup",
+            type: "edit"
         },
     },
 

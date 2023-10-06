@@ -12,6 +12,7 @@ use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SpecModelController;
+use App\Http\Controllers\ApprovalSetupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/locations/all', [LocationController::class, 'fetchData'])->name('admin.get.all.locations');
     Route::get('/vendors/all', [VendorController::class, 'fetchData'])->name('admin.get.all.vendors');
     Route::get('/companies/all', [CompanyController::class, 'fetchDataObj'])->name('admin.get.all.companies');
+    Route::get('/approval-setups/all/{type}', [ApprovalSetupController::class, 'fetchData'])->name('admin.get.all.approvals');
     
     // Store - Update data
     Route::post('/companies/store-update/data', [CompanyController::class, 'storeUpdate'])->name('admin.store.update.companies');
@@ -84,6 +86,11 @@ Route::middleware('authkey')->group(function () {
     Route::post('/vendors/store-update/data', [VendorController::class, 'storeUpdate'])->name('admin.store.update.vendors');
     Route::post('/vendors/status-change/data', [VendorController::class, 'statusChangeData'])->name('admin.status.change.vendors');
     Route::get('/fetch/vendors/non-paginated/data', [VendorController::class, 'nonPaginatedData'])->name('admin.fetch.non.vendors');
+
+    Route::post('/approval-setups/store-update/data', [ApprovalSetupController::class, 'storeUpdate'])->name('admin.store.update.approvals');
+    Route::post('/approval-setups/status-change/data', [ApprovalSetupController::class, 'statusChangeData'])->name('admin.status.change.approvals');
+    Route::get('/fetch/approval-setups/non-paginated/data/{type}', [ApprovalSetupController::class, 'nonPaginatedData'])->name('admin.fetch.non.approvals');
+    Route::get('/fetch/approval-setups/single-data/{id}', [ApprovalSetupController::class, 'fetchDataByID'])->name('admin.fetch.by.id');
     
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
     Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');

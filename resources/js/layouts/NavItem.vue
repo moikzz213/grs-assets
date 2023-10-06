@@ -66,6 +66,7 @@ const returnAccess = (slug, type = null) => {
         hasAccess = true;
     }
    if(!hasAccess){
+   
         authStore.access?.map((o, i) => {
             if (slug == o.slug) { 
                 hasAccess = true;
@@ -75,7 +76,7 @@ const returnAccess = (slug, type = null) => {
             }
         });
     }
-   
+    
     return hasAccess;
 };
 </script>
