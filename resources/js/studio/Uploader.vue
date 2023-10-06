@@ -14,12 +14,26 @@
         <v-card>
           <v-card-title>Upload</v-card-title>
           <v-card-text>
-            <FilePondUploader />
+            <!--
+                v-on:processfile="upload"
+              v-on:processfiles="upload"
+             -->
+            <file-pond
+              name="filepond"
+              ref="pond"
+              instantUpload="false"
+              allow-multiple="true"
+              accepted-file-types="image/jpeg, image/png, application/pdf"
+              v-bind:server="serverOptions"
+              v-bind:files="selectedFiles"
+              v-on:init="handleFilePondInit"
+              :credits="{}"
+            />
             <div class="d-flex">
               <v-btn class="ml-auto mr-1" flat @click="isActive.value = false"
                 >Cancel</v-btn
               >
-              <v-btn color="primary">Upload</v-btn>
+              <v-btn color="primary" @click="upload">Upload</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -29,6 +43,186 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { mdiCloudUpload } from "@mdi/js";
-import FilePondUploader from "./FilePondUploader.vue";
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
+// Import Vue FilePond
+import vueFilePond from "vue-filepond";
+
+// Import FilePond styles
+import "filepond/dist/filepond.min.css";
+
+// Import FilePond plugins
+// Please note that you need to install these plugins separately
+// `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation filepond-plugin-file-validate-type --save`
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+
+const pond = ref(null);
+
+// Create component
+const FilePond = vueFilePond(
+  FilePondPluginFileValidateType,
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview
+);
+
+const selectedFiles = ref([
+  //   {
+  //     source: "photo.jpeg",
+  //     options: {
+  //       type: "local",
+  //     },
+  //   },
+]);
+
+// fake server to simulate loading a 'local' server file and processing a file
+const serverOptions = {
+  // timeout: 7000,
+  //   process: async (
+  //     fieldName,
+  //     file,
+  //     load,
+  //     progress,
+  //     metadata,
+  //     error,
+  //     abort,
+  //     transfer,
+  //     options
+  //   ) => {
+  //     // fieldName is the name of the input field
+  //     // file is the actual file object to send
+  //     const formData = new FormData();
+  //     formData.append(fieldName, file, file.name);
+  //     formData.append("profile_id", authStore.user.profile.id);
+
+  //     // if (error) {
+  //     //   console.log("error", error);
+  //     //   return;
+  //     // }
+
+  //     await axios({
+  //       method: "post",
+  //       url: "api/file/upload",
+  //       data: formData,
+  //       headers: {
+  //         "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
+  //         Authorization: `Bearer ${authStore.token}`,
+  //         "Content-Type":
+  //           "multipart/form-data; charset=utf-8; boundary=" +
+  //           Math.random().toString().substring(2),
+  //         withCredentials: false,
+  //       },
+  //       onUploadProgress: (e) => {
+  //         // updating progress indicator
+  //         progress(e.lengthComputable, e.loaded, e.total);
+  //       },
+  //     })
+  //       .then((response) => {
+  //         console.log("respons", respons);
+  //         // passing the file id to FilePond
+  //         load(response.data.data.id);
+  //       })
+  //       .catch((thrown) => {
+  //         error("oh no");
+
+  //         if (axios.isCancel(thrown)) {
+  //           console.log("Request canceled", thrown.message);
+  //         } else {
+  //           // handle error
+  //         }
+  //       });
+  //   },
+  //   labelFileProcessingError: () => {
+  //     // replaces the error on the FilePond error label
+  //     console.log("serverResponse.message", serverResponse.message);
+  //     return serverResponse.message;
+  //   },
+//   https://pqina.nl/filepond/docs/api/server/#advanced
+  process: {
+    url: "./api/file/upload",
+    method: "POST",
+    headers: {
+      "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
+      Authorization: `Bearer ${authStore.token}`,
+      "Content-Type":
+        "multipart/form-data; charset=utf-8; boundary=" +
+        Math.random().toString().substring(2),
+      withCredentials: false,
+    },
+    // withCredentials: false,
+    onload: (response) => response.key,
+    onerror: (response) => response.data,
+    ondata: (formData) => {
+      formData.append("profile_id", authStore.user.profile.id);
+      return formData;
+    },
+  },
+  revert: null,
+  restore: null,
+  load: null,
+  fetch: null,
+  // revert: "./revert",
+  // restore: "./restore/",
+  // load: "./load/",
+  // fetch: "./fetch/",
+  //   process: (fieldName, file, metadata, load) => {
+  //     console.log("fieldName", fieldName);
+  //     console.log("file", file);
+  //     console.log("metadata", metadata);
+  //     console.log("load", load);
+  //     // simulates uploading a file
+  //     //   setTimeout(() => {
+  //     //     load(Date.now());
+  //     //   }, 1500);
+  //   },
+  // load: (source, load) => {
+  //   // simulates loading a file from the server
+  //   fetch(source)
+  //     .then((res) => res.blob())
+  //     .then(load);
+  // },
+};
+const upload = async () => {
+  console.log("pond.value", pond.value);
+  pond.value.processFiles();
+  //   pond.value
+  //     .processFiles()
+  //     .then((res) => {
+  //       console.log("processFiles", res);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err", err);
+  //     });
+};
+
+const handleFilePondInit = () => {
+  // FilePond instance methods are available on `this.$refs.pond`
+
+  /* eslint-disable */
+  console.log("FilePond has initialized");
+};
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+h3 {
+  margin: 40px 0 0;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
+</style>
