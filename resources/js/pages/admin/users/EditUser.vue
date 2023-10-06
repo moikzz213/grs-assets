@@ -69,7 +69,7 @@
                                     hide-details
                                     variant="outlined"
                                     density="compact"
-                                    label=" Access Pages"
+                                    label=" Access / View Pages"
                                 ></v-checkbox>
                                 <v-btn
                                     class="ml-5"

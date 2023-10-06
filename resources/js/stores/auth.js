@@ -50,7 +50,7 @@ export const useAuthStore = defineStore("authUser", {
                 : null;
         },
         access: (state) => { 
-            console.log("getters",state.auth_access);
+           
             return state.auth_access ? state.auth_access : ( state.auth && state.auth.data ? decryptData(state.auth.data).q : null );
         },
         capabilities: (state) => {
@@ -86,7 +86,8 @@ export const useAuthStore = defineStore("authUser", {
         },
 
         async checkUser() {
-            console.log("checker");
+            console.log("checkuser 111");
+            this.auth_access = null;
             if (this.token) {
                 await axiosToken(this.token)
                     .get("/api/checkuser")
@@ -100,11 +101,11 @@ export const useAuthStore = defineStore("authUser", {
                             axios
                                 .get("/api/fetch/log-profile/" + user + "/" + token)
                                 .then((q) => {
-                                 console.log("setters",q.data.access);
+                                
                                     if (q.data && q.data.id) {
-                                        this.auth_access = null;
+                                       
                                         this.auth_access = q.data.access;
-                                        
+                                        console.log("checkuser");
 
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;
@@ -123,6 +124,7 @@ export const useAuthStore = defineStore("authUser", {
                         }
                     })
                     .catch((err) => {
+                        localStorage.removeItem('current-pg')
                         localStorage.removeItem("authUser");
                         window.location = "/login";
                     });
@@ -130,6 +132,7 @@ export const useAuthStore = defineStore("authUser", {
         },
         
         async logout() {
+            localStorage.removeItem('current-pg')
             this.auth = {};
         },
     },

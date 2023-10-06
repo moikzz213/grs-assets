@@ -39,29 +39,32 @@ const router = createRouter({
     routes,
 });
 
-function returnAccess(data) { 
-        let hasAccess = false;
-        
-        authStore.access.map((o, i) => {
-            if (data.title == o.slug) {
-                hasAccess = true;
-                
-                if(data.type && data.type == 'edit' ){
-                    if(o.capabilities.includes('edit')){
-                        hasAccess = true; 
-                    }else{
-                        hasAccess = false; 
-                    }
+function returnAccess(data) {
+    let hasAccess = false;
+    authStore.access.map((o) => {
+        if (data.title == o.slug) {
+            hasAccess = true;
+
+            if (data.type && (data.type == 'edit' || data.type == 'new')) {
+                hasAccess = false;
+
+                if (o.capabilities.includes('edit')) {
+                    hasAccess = true;
+                } else if (o.capabilities.includes('new')) {
+                    hasAccess = true;
+                } else {
+                    hasAccess = false;
                 }
-                
+
             }
-        });
-        return hasAccess;
+        }
+    });
+
+    return hasAccess;
 }
 
 function validateAccess(data) {
     let hasAccess = false;
-    
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
@@ -78,35 +81,36 @@ function validateAccess(data) {
     return hasAccess;
 }
 
-router.beforeEach((to, from, next) => { 
-    if (to.path == '/' && !to.meta.requiresAuth) { 
+router.beforeEach((to, from, next) => {
+    if (to.path == '/' && !to.meta.requiresAuth) {
         // public route
         if (authStore.authIsLoggedIn) {
-            next({ name: 'Dashboard' }); 
-        } 
-       
+            next({ name: 'Dashboard' });
+        }
+
         next({ name: 'Login' });
     } else {
-        
-        // private route
-        if (authStore.authIsLoggedIn) { 
-            if(to.meta.title?.toLowerCase() == 'unauthorized'){
 
-            }else if (!validateAccess(to.meta)) {
+        // private route
+        if (authStore.authIsLoggedIn) {
+            if (to.meta.title?.toLowerCase() == 'unauthorized') {
+
+            } else if (!validateAccess(to.meta)) {
                 next({ name: 'Unauthorized' });
-            } 
-        } else if(to.path != '/login') {
+            }
+        } else if (to.path != '/login') {
             next({ name: 'Login' });
         }
     }
-    next();
+    next(); 
 });
 
 router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
-        localStorage.setItem('current-pg', to.meta.title.toLowerCase());
+    localStorage.setItem('current-pg', to.meta.title.toLowerCase());
+    authStore.setCapabilities(to.meta.title.toLowerCase());
 });
 app.use(router);
 
@@ -122,6 +126,6 @@ app.use(vuetify);
 import App from "./App.vue";
 app.component("App", App);
 
-authStore.checkUser().then(() => { 
+authStore.checkUser().then(() => {
     app.mount("#app");
 });
