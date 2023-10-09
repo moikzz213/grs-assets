@@ -23,10 +23,17 @@
               ref="pond"
               instantUpload="false"
               allow-multiple="true"
+              maxFileSize="5MB"
+              :maxFiles="5"
+              :maxParallelUploads="2"
               accepted-file-types="image/jpeg, image/png, application/pdf"
               v-bind:server="serverOptions"
               v-bind:files="selectedFiles"
               v-on:init="handleFilePondInit"
+              v-on:error="handleFilePondError"
+              :allowPdfPreview="true"
+              :pdfPreviewHeight="320"
+              :pdfComponentExtraParams="'toolbar=0&view=fit&page=1'"
               :credits="{}"
             />
             <div class="d-flex">
@@ -59,17 +66,21 @@ import "filepond/dist/filepond.min.css";
 // Please note that you need to install these plugins separately
 // `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation filepond-plugin-file-validate-type --save`
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginPdfPreview from "filepond-plugin-pdf-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 
 const pond = ref(null);
 
 // Create component
 const FilePond = vueFilePond(
+  FilePondPluginFileValidateSize,
   FilePondPluginFileValidateType,
   FilePondPluginImageExifOrientation,
-  FilePondPluginImagePreview
+  FilePondPluginImagePreview,
+  FilePondPluginPdfPreview
 );
 
 const selectedFiles = ref([
@@ -82,125 +93,122 @@ const selectedFiles = ref([
 ]);
 
 // fake server to simulate loading a 'local' server file and processing a file
+// https://stackoverflow.com/questions/65989017/filepond-send-a-blank-request-to-server
 const serverOptions = {
+  url: "",
   // timeout: 7000,
-  //   process: async (
-  //     fieldName,
-  //     file,
-  //     load,
-  //     progress,
-  //     metadata,
-  //     error,
-  //     abort,
-  //     transfer,
-  //     options
-  //   ) => {
-  //     // fieldName is the name of the input field
-  //     // file is the actual file object to send
-  //     const formData = new FormData();
-  //     formData.append(fieldName, file, file.name);
-  //     formData.append("profile_id", authStore.user.profile.id);
+  process: (
+    fieldName,
+    file,
+    load,
+    progress,
+    metadata,
+    error,
+    abort,
+    transfer,
+    options
+  ) => {
+    // fieldName is the name of the input field
+    // file is the actual file object to send
+    const formData = new FormData();
+    formData.append(fieldName, file, file.name);
+    formData.append("profile_id", authStore.user.profile.id);
 
-  //     // if (error) {
-  //     //   console.log("error", error);
-  //     //   return;
-  //     // }
+    const request = new XMLHttpRequest();
+    request.open("POST", "/api/file/upload");
 
-  //     await axios({
-  //       method: "post",
-  //       url: "api/file/upload",
-  //       data: formData,
-  //       headers: {
-  //         "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-  //         Authorization: `Bearer ${authStore.token}`,
-  //         "Content-Type":
-  //           "multipart/form-data; charset=utf-8; boundary=" +
-  //           Math.random().toString().substring(2),
-  //         withCredentials: false,
-  //       },
-  //       onUploadProgress: (e) => {
-  //         // updating progress indicator
-  //         progress(e.lengthComputable, e.loaded, e.total);
-  //       },
-  //     })
-  //       .then((response) => {
-  //         console.log("respons", respons);
-  //         // passing the file id to FilePond
-  //         load(response.data.data.id);
-  //       })
-  //       .catch((thrown) => {
-  //         error("oh no");
+    request.setRequestHeader(
+      "X-CSRF-TOKEN",
+      document.getElementsByTagName("meta")["csrf-token"].content
+    );
+    request.setRequestHeader("Authorization", `Bearer ${authStore.token}`);
 
-  //         if (axios.isCancel(thrown)) {
-  //           console.log("Request canceled", thrown.message);
-  //         } else {
-  //           // handle error
-  //         }
-  //       });
-  //   },
+    request.upload.onprogress = (e) => {
+      progress(e.lengthComputable, e.loaded, e.total);
+    };
+
+    request.onload = function () {
+      if (request.status >= 200 && request.status < 300) {
+        console.log("request.responseText", request.responseText);
+        // load(request.responseText);
+      } else {
+        error("Process Error");
+      }
+    };
+
+    request.send(formData);
+
+    return {
+      abort: () => {
+        request.abort();
+
+        abort();
+      },
+    };
+
+    // if (error) {
+    //   console.log("error", error);
+    //   return;
+    // }
+    // await axios({
+    //   method: "post",
+    //   url: "/api/file/upload",
+    //   data: formData,
+    //   headers: {
+    //     "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
+    //     Authorization: `Bearer ${authStore.token}`,
+    //     "Content-Type":
+    //       "multipart/form-data; charset=utf-8; boundary=" +
+    //       Math.random().toString().substring(2),
+    //     withCredentials: false,
+    //   },
+    //   onUploadProgress: (e) => {
+    //     // updating progress indicator
+    //     progress(e.lengthComputable, e.loaded, e.total);
+    //   },
+    // })
+    //   .then((response) => {
+    //     console.log("then response", response);
+    //     // passing the file id to FilePond
+    //     load(response.data.data.id);
+    //   })
+    //   .catch((thrown) => {
+    //     error("oh no");
+    //     if (axios.isCancel(thrown)) {
+    //       console.log("Request canceled", thrown.message);
+    //     } else {
+    //       // handle error
+    //     }
+    //   });
+  },
   //   labelFileProcessingError: () => {
   //     // replaces the error on the FilePond error label
   //     console.log("serverResponse.message", serverResponse.message);
   //     return serverResponse.message;
   //   },
-//   https://pqina.nl/filepond/docs/api/server/#advanced
-  process: {
-    url: "./api/file/upload",
-    method: "POST",
-    headers: {
-      "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-      Authorization: `Bearer ${authStore.token}`,
-      "Content-Type":
-        "multipart/form-data; charset=utf-8; boundary=" +
-        Math.random().toString().substring(2),
-      withCredentials: false,
-    },
-    // withCredentials: false,
-    onload: (response) => response.key,
-    onerror: (response) => response.data,
-    ondata: (formData) => {
-      formData.append("profile_id", authStore.user.profile.id);
-      return formData;
-    },
-  },
+  //   https://pqina.nl/filepond/docs/api/server/#advanced
   revert: null,
   restore: null,
   load: null,
   fetch: null,
-  // revert: "./revert",
-  // restore: "./restore/",
-  // load: "./load/",
-  // fetch: "./fetch/",
-  //   process: (fieldName, file, metadata, load) => {
-  //     console.log("fieldName", fieldName);
-  //     console.log("file", file);
-  //     console.log("metadata", metadata);
-  //     console.log("load", load);
-  //     // simulates uploading a file
-  //     //   setTimeout(() => {
-  //     //     load(Date.now());
-  //     //   }, 1500);
-  //   },
-  // load: (source, load) => {
-  //   // simulates loading a file from the server
-  //   fetch(source)
-  //     .then((res) => res.blob())
-  //     .then(load);
-  // },
 };
 const upload = async () => {
   console.log("pond.value", pond.value);
   pond.value.processFiles();
   //   pond.value
   //     .processFiles()
-  //     .then((res) => {
-  //       console.log("processFiles", res);
+  //     .then((files) => {
+  //       console.log("files", files);
   //     })
   //     .catch((err) => {
   //       console.log("err", err);
   //     });
 };
 
+const handleFilePondError = (file, status) => {
+  console.log("file", file);
+  console.log(" status", status);
+};
 const handleFilePondInit = () => {
   // FilePond instance methods are available on `this.$refs.pond`
 
