@@ -10,8 +10,7 @@
             :src="'./assets/images/placeholder-user.png'"
             class="rounded-lg mb-2"
           ></v-img>
-          <Uploader />
-          <!-- <Uploader /> -->
+          <SingleUploader />
         </div>
         <Field name="ecode" v-slot="{ field }" v-model="profileData.data.ecode">
           <v-text-field
@@ -88,8 +87,8 @@
   </v-card>
 </template>
 <script setup>
-// import Uploader from "@/studio/Uploader.vue";
-import Uploader from "@/studio/Uploader.vue";
+// import SingleUploader from "@/studio/SingleUploader.vue";
+import SingleUploader from "@/studio/SingleUploader.vue";
 import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";

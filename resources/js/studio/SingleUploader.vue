@@ -1,52 +1,27 @@
 <template>
   <div>
-    <v-dialog width="600" persistent>
-      <template v-slot:activator="{ props }">
-        <v-btn
-          v-bind="props"
-          color="primary"
-          :prepend-icon="mdiCloudUpload"
-          text="Upload"
-        >
-        </v-btn>
-      </template>
-      <template v-slot:default="{ isActive }">
-        <v-card>
-          <v-card-title>Upload</v-card-title>
-          <v-card-text>
-            <!--
-                v-on:processfile="upload"
-              v-on:processfiles="upload"
-             -->
-            <file-pond
-              name="filepond"
-              ref="pond"
-              instantUpload="false"
-              allow-multiple="true"
-              maxFileSize="5MB"
-              :maxFiles="5"
-              :maxParallelUploads="2"
-              accepted-file-types="image/jpeg, image/png, application/pdf"
-              v-bind:server="serverOptions"
-              v-bind:files="selectedFiles"
-              v-on:init="handleFilePondInit"
-              v-on:error="handleFilePondError"
-              :allowPdfPreview="true"
-              :pdfPreviewHeight="320"
-              :imagePreviewHeight="200"
-              :pdfComponentExtraParams="'toolbar=0&view=fit&page=1'"
-              :credits="{}"
-            />
-            <div class="d-flex">
-              <v-btn class="ml-auto mr-1" flat @click="isActive.value = false"
-                >Cancel</v-btn
-              >
-              <v-btn color="primary" @click="upload">Upload</v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </template>
-    </v-dialog>
+    <file-pond
+      name="filepond"
+      ref="pond"
+      instantUpload="false"
+      maxFileSize="5MB"
+      accepted-file-types="image/jpeg, image/png, application/pdf"
+      v-bind:server="serverOptions"
+      v-bind:files="selectedFiles"
+      v-on:init="handleFilePondInit"
+      v-on:error="handleFilePondError"
+      :credits="{}"
+      :imagePreviewHeight="250"
+      :imageResizeTargetWidth="200"
+      :imageResizeTargetHeight="200"
+      imageCropAspectRatio="1:1"
+      stylePanelLayout="integrated"
+      styleLoadIndicatorPosition="center bottom"
+      styleProgressIndicatorPosition="right bottom"
+      styleButtonRemoveItemPosition="left bottom"
+      styleButtonProcessItemPosition="right bottom"
+    />
+    <!-- <v-btn color="primary" @click="upload">Upload</v-btn> -->
   </div>
 </template>
 
@@ -69,18 +44,30 @@ import "filepond/dist/filepond.min.css";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginImageCrop from "filepond-plugin-image-crop";
+import FilePondPluginImageResize from "filepond-plugin-image-resize";
+import FilePondPluginImageTransform from "filepond-plugin-image-transform";
+
 import FilePondPluginPdfPreview from "filepond-plugin-pdf-preview";
+
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+
+import FilePondPluginImageEdit from "filepond-plugin-image-edit";
+import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
 
 const pond = ref(null);
 
 // Create component
 const FilePond = vueFilePond(
   FilePondPluginFileValidateSize,
-  FilePondPluginFileValidateType,
   FilePondPluginImageExifOrientation,
   FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  FilePondPluginImageCrop,
+  FilePondPluginImageResize,
+  FilePondPluginImageTransform,
+  FilePondPluginImageEdit,
   FilePondPluginPdfPreview
 );
 
@@ -109,29 +96,37 @@ const serverOptions = {
     transfer,
     options
   ) => {
+    console.log("process file", file);
+
     // fieldName is the name of the input field
     // file is the actual file object to send
     const formData = new FormData();
     formData.append(fieldName, file, file.name);
     formData.append("profile_id", authStore.user.profile.id);
+    formData.append("file_id", file.id);
 
+    // set XMLHttpRequest
     const request = new XMLHttpRequest();
     request.open("POST", "/api/file/upload");
 
+    // set headers
     request.setRequestHeader(
       "X-CSRF-TOKEN",
       document.getElementsByTagName("meta")["csrf-token"].content
     );
     request.setRequestHeader("Authorization", `Bearer ${authStore.token}`);
 
+    // set upload
     request.upload.onprogress = (e) => {
       progress(e.lengthComputable, e.loaded, e.total);
     };
 
+    // set on load
     request.onload = function () {
       if (request.status >= 200 && request.status < 300) {
         console.log("request.responseText", request.responseText);
         // load(request.responseText);
+        console.log("selectedFiles", selectedFiles.value);
       } else {
         error("Process Error");
       }
@@ -233,20 +228,5 @@ li {
 }
 a {
   color: #42b983;
-}
-
-.filepond--item {
-  width: calc(50% - 0.5em) !important;
-}
-@media (min-width: 30em) {
-  .filepond--item {
-    width: calc(50% - 0.5em);
-  }
-}
-
-@media (min-width: 50em) {
-  .filepond--item {
-    width: calc(33.33% - 0.5em);
-  }
 }
 </style>
