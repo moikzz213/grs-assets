@@ -49,7 +49,7 @@
                         @click="drawer = !drawer"
                         size="small"
                     ></v-app-bar-nav-icon>
-                    <div class="ml-1 text-body-1 text-pirmary">
+                    <div class="ml-1 text-body-1 text-pirmary" >
                         {{ appName }}
                     </div>
                 </div>
@@ -135,8 +135,9 @@
                         </v-btn>
                     </div>
                 </v-card>
-            </v-menu>
+            </v-menu> 
         </v-app-bar>
+        
         <v-main>
             <slot />
         </v-main>
@@ -182,9 +183,7 @@ const toggleTheme = () => {
     localStorage.setItem("gag_dark_theme", theme.global.name.value);
 }; 
 // navigatio
-const authStore = useAuthStore();
-
-let arrrr = ['edit', 'add', 'delete'];
+const authStore = useAuthStore(); 
  
 const router = useRouter();
 const commonNav = ref([
@@ -243,6 +242,12 @@ const moderatorNav = ref([
                 slug: "vendors",
             },
             {
+                title: "Approval Setup",
+                icon: mdiStoreSettings,
+                path: "/approval-setup/request-asset",
+                slug: "approval-setup",
+            },
+            {
                 title: "Pages",
                 icon: mdiBookshelf,
                 path: "/pages",
@@ -257,8 +262,7 @@ const moderatorNav = ref([
         ],
     },
 ]);
-const openPage = (openPath) => {
-    console.log("openPath",openPath);
+const openPage = (openPath) => { 
     menu.value = false;
     router
         .push({

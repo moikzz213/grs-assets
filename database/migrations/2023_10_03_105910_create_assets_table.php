@@ -30,7 +30,7 @@ return new class extends Migration
             $table->decimal('price', 10,2)->nullable();
             $table->string('po_number', 50)->nullable();
             $table->date('purchased_date')->nullable();
-            $table->text('remarks')->nullable(); 
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }
