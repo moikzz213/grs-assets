@@ -1,17 +1,16 @@
 <template>
   <v-card>
-    <v-card-title class="text-primary text-capitalize mb-3"
-      >Profile Settings</v-card-title
-    >
+    <v-card-title class="text-primary text-capitalize">Profile Settings</v-card-title>
     <v-card-text>
       <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
-        <div style="width: 100%; max-width: 320px; border-radius: 12px" class="mb-6">
+        <!-- <div style="width: 100%; max-width: 320px; border-radius: 12px" class="mb-6">
           <v-img
             :src="'./assets/images/placeholder-user.png'"
             class="rounded-lg mb-2"
           ></v-img>
-          <SingleUploader />
-        </div>
+        </div> -->
+        <SingleUploader class="mb-6" :options="{ size: '320px' }" />
+
         <Field name="ecode" v-slot="{ field }" v-model="profileData.data.ecode">
           <v-text-field
             v-model="profileData.data.ecode"

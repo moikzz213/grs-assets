@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <v-sheet
+    class="rounded-lg overflow-hidden"
+    :height="uploadOptions.size"
+    :width="uploadOptions.size"
+    color="grey-lighten-3"
+  >
     <file-pond
       name="filepond"
       ref="pond"
@@ -11,9 +16,9 @@
       v-on:init="handleFilePondInit"
       v-on:error="handleFilePondError"
       :credits="{}"
-      :imagePreviewHeight="250"
-      :imageResizeTargetWidth="200"
-      :imageResizeTargetHeight="200"
+      :imagePreviewHeight="uploadOptions.size"
+      :imageResizeTargetWidth="uploadOptions.size"
+      :imageResizeTargetHeight="uploadOptions.size"
       imageCropAspectRatio="1:1"
       stylePanelLayout="integrated"
       styleLoadIndicatorPosition="center bottom"
@@ -22,20 +27,14 @@
       styleButtonProcessItemPosition="right bottom"
     />
     <!-- <v-btn color="primary" @click="upload">Upload</v-btn> -->
-  </div>
+  </v-sheet>
 </template>
 
 <script setup>
-import axios from "axios";
 import { mdiCloudUpload } from "@mdi/js";
-import { ref } from "vue";
-import { useAuthStore } from "@/stores/auth";
-const authStore = useAuthStore();
-
+import { ref, watch } from "vue";
 // Import Vue FilePond
 import vueFilePond from "vue-filepond";
-
-// Import FilePond styles
 import "filepond/dist/filepond.min.css";
 
 // Import FilePond plugins
@@ -56,6 +55,9 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css
 import FilePondPluginImageEdit from "filepond-plugin-image-edit";
 import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
 
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
 const pond = ref(null);
 
 // Create component
@@ -71,9 +73,26 @@ const FilePond = vueFilePond(
   FilePondPluginPdfPreview
 );
 
+const props = defineProps({
+  options: {
+    type: Object,
+    default: null,
+  },
+});
+const uploadOptions = ref({
+  size: "",
+});
+watch(
+  () => props.options,
+  (newVal) => {
+    uploadOptions.value = { ...uploadOptions.value, ...newVal };
+    console.log("uploadOptions.value", uploadOptions.value);
+  }
+);
+
 const selectedFiles = ref([
   //   {
-  //     source: "photo.jpeg",
+  //     source: window.location.origin + "/assets/images/placeholder-user.png",
   //     options: {
   //       type: "local",
   //     },
@@ -137,45 +156,9 @@ const serverOptions = {
     return {
       abort: () => {
         request.abort();
-
         abort();
       },
     };
-
-    // if (error) {
-    //   console.log("error", error);
-    //   return;
-    // }
-    // await axios({
-    //   method: "post",
-    //   url: "/api/file/upload",
-    //   data: formData,
-    //   headers: {
-    //     "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-    //     Authorization: `Bearer ${authStore.token}`,
-    //     "Content-Type":
-    //       "multipart/form-data; charset=utf-8; boundary=" +
-    //       Math.random().toString().substring(2),
-    //     withCredentials: false,
-    //   },
-    //   onUploadProgress: (e) => {
-    //     // updating progress indicator
-    //     progress(e.lengthComputable, e.loaded, e.total);
-    //   },
-    // })
-    //   .then((response) => {
-    //     console.log("then response", response);
-    //     // passing the file id to FilePond
-    //     load(response.data.data.id);
-    //   })
-    //   .catch((thrown) => {
-    //     error("oh no");
-    //     if (axios.isCancel(thrown)) {
-    //       console.log("Request canceled", thrown.message);
-    //     } else {
-    //       // handle error
-    //     }
-    //   });
   },
   //   labelFileProcessingError: () => {
   //     // replaces the error on the FilePond error label
@@ -211,11 +194,14 @@ const handleFilePondInit = () => {
   /* eslint-disable */
   console.log("FilePond has initialized");
 };
+const customStyle = ref({
+  size: "320px",
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
+<style>
+/* h3 {
   margin: 40px 0 0;
 }
 ul {
@@ -228,5 +214,12 @@ li {
 }
 a {
   color: #42b983;
+} */
+
+.filepond--root,
+.filepond--root .filepond--drop-label {
+  height: v-bind("uploadOptions.size");
+  min-height: v-bind("uploadOptions.size");
+  max-height: v-bind("uploadOptions.size");
 }
 </style>
