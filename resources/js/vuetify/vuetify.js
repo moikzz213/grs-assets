@@ -5,7 +5,7 @@ import * as directives from "vuetify/directives";
 
 // components
 // import components from "./components"; // manual imports
-import * as components from "vuetify/components";
+import * as components from "vuetify/components"; // import all
 
 // icon library - https://pictogrammers.com/library/mdi/
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
