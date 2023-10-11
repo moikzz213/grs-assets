@@ -108,6 +108,7 @@
         </v-card>
       </v-menu>
     </v-app-bar>
+
     <v-main>
       <slot />
     </v-main>
@@ -152,8 +153,6 @@ const toggleTheme = () => {
 };
 // navigatio
 const authStore = useAuthStore();
-
-let arrrr = ["edit", "add", "delete"];
 
 const router = useRouter();
 const commonNav = ref([
@@ -212,6 +211,12 @@ const moderatorNav = ref([
         slug: "vendors",
       },
       {
+        title: "Approval Setup",
+        icon: mdiStoreSettings,
+        path: "/approval-setup/request-asset",
+        slug: "approval-setup",
+      },
+      {
         title: "Pages",
         icon: mdiBookshelf,
         path: "/pages",
@@ -227,7 +232,6 @@ const moderatorNav = ref([
   },
 ]);
 const openPage = (openPath) => {
-  console.log("openPath", openPath);
   menu.value = false;
   router
     .push({

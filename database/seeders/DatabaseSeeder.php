@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             Locations::class,
             Companies::class,
             UsersTableSeeder::class,
+            PageTableSeeder::class,
         ]);
     }
 }

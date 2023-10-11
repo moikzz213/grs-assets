@@ -5,9 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserApiController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SpecModelController;
+use App\Http\Controllers\ApprovalSetupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +57,45 @@ Route::middleware('authkey')->group(function () {
 
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
 
+    // fetch data
+    Route::get('/brands/all', [BrandController::class, 'fetchData'])->name('admin.get.all.brands');
+    Route::get('/models/all', [SpecModelController::class, 'fetchData'])->name('admin.get.all.models');
+    Route::get('/categories/all', [CategoryController::class, 'fetchData'])->name('admin.get.all.categories');
+    Route::get('/locations/all', [LocationController::class, 'fetchData'])->name('admin.get.all.locations');
+    Route::get('/vendors/all', [VendorController::class, 'fetchData'])->name('admin.get.all.vendors');
+    Route::get('/companies/all', [CompanyController::class, 'fetchDataObj'])->name('admin.get.all.companies');
+    Route::get('/approval-setups/all/{type}', [ApprovalSetupController::class, 'fetchData'])->name('admin.get.all.approvals');
+
+    // Store - Update data
+    Route::post('/companies/store-update/data', [CompanyController::class, 'storeUpdate'])->name('admin.store.update.companies');
+    Route::post('/companies/status-change/data', [CompanyController::class, 'statusChangeData'])->name('admin.status.change.companies');
+
+    Route::post('/locations/store-update/data', [LocationController::class, 'storeUpdate'])->name('admin.store.update.locations');
+    Route::post('/locations/status-change/data', [LocationController::class, 'statusChangeData'])->name('admin.status.change.locations');
+    Route::get('/fetch/locations/non-paginated/data', [LocationController::class, 'nonPaginatedData'])->name('admin.fetch.non.locations');
+
+    Route::post('/brands/store-update/data', [BrandController::class, 'storeUpdate'])->name('admin.store.update.brands');
+    Route::post('/brands/status-change/data', [BrandController::class, 'statusChangeData'])->name('admin.status.change.brands');
+    Route::get('/fetch/brands/non-paginated/data', [BrandController::class, 'nonPaginatedData'])->name('admin.fetch.non.brands');
+
+    Route::post('/categories/store-update/data', [CategoryController::class, 'storeUpdate'])->name('admin.store.update.categories');
+    Route::post('/categories/status-change/data', [CategoryController::class, 'statusChangeData'])->name('admin.status.change.categories');
+    Route::get('/fetch/categories/non-paginated/data', [CategoryController::class, 'nonPaginatedData'])->name('admin.fetch.non.paginate');
+
+    Route::post('/models/store-update/data', [SpecModelController::class, 'storeUpdate'])->name('admin.store.update.models');
+    Route::post('/models/status-change/data', [SpecModelController::class, 'statusChangeData'])->name('admin.status.change.models');
+    Route::get('/fetch/models/non-paginated/data', [SpecModelController::class, 'nonPaginatedData'])->name('admin.fetch.non.models');
+
+    Route::post('/vendors/store-update/data', [VendorController::class, 'storeUpdate'])->name('admin.store.update.vendors');
+    Route::post('/vendors/status-change/data', [VendorController::class, 'statusChangeData'])->name('admin.status.change.vendors');
+    Route::get('/fetch/vendors/non-paginated/data', [VendorController::class, 'nonPaginatedData'])->name('admin.fetch.non.vendors');
+
+    Route::post('/approval-setups/store-update/data', [ApprovalSetupController::class, 'storeUpdate'])->name('admin.store.update.approvals');
+    Route::post('/approval-setups/status-change/data', [ApprovalSetupController::class, 'statusChangeData'])->name('admin.status.change.approvals');
+    Route::get('/fetch/approval-setups/non-paginated/data/{type}', [ApprovalSetupController::class, 'nonPaginatedData'])->name('admin.fetch.non.approvals');
+    Route::get('/fetch/approval-setups/single-data/{id}', [ApprovalSetupController::class, 'fetchDataByID'])->name('admin.fetch.by.id');
+
+    Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
     Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');
     Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
     Route::post('/store-page/settings', [PageController::class, 'storeUpdate'])->name('admin.storeUpdate');
