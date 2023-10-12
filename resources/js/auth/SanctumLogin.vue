@@ -39,7 +39,9 @@
             :loading="loadingLogin"
             >Login</v-btn
           >
-          <v-btn variant="text" class="mt-3" @click="resetPassword">Reset Password</v-btn>
+          <v-btn variant="text" class="mt-3" block @click="resetPassword"
+            >Reset Password</v-btn
+          >
           <div class="text-error mt-2">
             {{ hasError == true ? message : "" }}
           </div>
@@ -71,8 +73,8 @@ if (authStore.authIsLoggedIn == true) {
 // login
 const loadingLogin = ref(false);
 const credentials = ref({
-  login: "",
-  password: "",
+  login: "local101",
+  password: "local101",
   url: key.value,
 });
 

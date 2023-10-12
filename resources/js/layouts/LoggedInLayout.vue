@@ -144,6 +144,7 @@ import {
   mdiWatermark,
   mdiGlobeModel,
   mdiWeatherNight,
+  mdiDevices,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -171,10 +172,10 @@ const commonNav = ref([
     slug: "dashboard",
   },
   {
-    title: "Asset List",
-    icon: mdiMapMarkerRadius,
-    path: "/asset-list",
-    slug: "asset-list",
+    title: "Asset",
+    icon: mdiDevices,
+    path: "/asset",
+    slug: "asset",
   },
 ]);
 const moderatorNav = ref([

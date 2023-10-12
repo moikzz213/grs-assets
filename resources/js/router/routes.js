@@ -12,7 +12,7 @@ export const routes = [
 
     /**
      * Auth Login
-     */ 
+     */
     {
         path: "/login",
         component: () => import("../auth/SanctumLogin.vue"),
@@ -32,7 +32,7 @@ export const routes = [
         component: () => import("../pages/admin/Dashboard.vue"),
         name: "Dashboard",
         meta: {
-            requiresAuth: true, 
+            requiresAuth: true,
             title: "dashboard",
         },
     },
@@ -45,15 +45,27 @@ export const routes = [
             title: "pages",
         },
     },
+    // {
+    //     path: "/asset-list",
+    //     component: () => import("../pages/admin/users/Users.vue"),
+    //     name: "asset-list",
+    //     meta: {
+    //         requiresAuth: true,
+    //         title: "asset-list",
+    //     },
+    // },
+
+    // assets
     {
-        path: "/asset-list",
-        component: () => import("../pages/admin/users/Users.vue"),
+        path: "/assets",
+        component: () => import("../pages/asset/Asset.vue"),
         name: "asset-list",
         meta: {
             requiresAuth: true,
             title: "asset-list",
         },
     },
+
     // users
     {
         path: "/users",
@@ -81,7 +93,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "users",
-            type: "edit"
+            type: "edit",
         },
     },
     // brands
@@ -224,7 +236,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "approval-setup",
-            type: "new"
+            type: "new",
         },
     },
     {
@@ -234,7 +246,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "approval-setup",
-            type: "edit"
+            type: "edit",
         },
     },
 
