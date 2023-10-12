@@ -8,19 +8,28 @@
       color="black"
       :expand-on-hover="false"
     >
-      <div class="d-flex flex-column h-100">
-        <v-list-item
-          nav
-          :prepend-avatar="logo"
-          :title="appName"
-          class="mb-3"
-        ></v-list-item>
+      <div class="d-flex flex-column" style="height: 100%">
+        <!-- :prepend-avatar="logo" -->
+        <v-list-item nav :title="appName" class="mb-3">
+          <template v-slot:prepend>
+            <v-avatar size="40">
+              <v-img :src="logo"></v-img>
+            </v-avatar>
+            <!-- <v-icon :icon="sub.icon" class="mx-auto"></v-icon> -->
+          </template>
+        </v-list-item>
         <v-divider></v-divider>
-        <v-list nav>
-          <nav-item v-for="item in commonNav" :key="item.title" :nav="item"></nav-item>
-          <nav-item v-for="item in moderatorNav" :key="item.title" :nav="item"></nav-item>
-          <v-divider></v-divider>
-        </v-list>
+        <div class="overflow-y-auto gag-scroll" style="height: calc(100% - 120px)">
+          <v-list nav>
+            <nav-item v-for="item in commonNav" :key="item.title" :nav="item"></nav-item>
+            <nav-item
+              v-for="item in moderatorNav"
+              :key="item.title"
+              :nav="item"
+            ></nav-item>
+            <v-divider></v-divider>
+          </v-list>
+        </div>
         <v-divider></v-divider>
         <v-list nav class="mt-auto">
           <v-list-item
@@ -108,7 +117,6 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-
     <v-main>
       <slot />
     </v-main>
