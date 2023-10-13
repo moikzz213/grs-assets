@@ -63,12 +63,15 @@ Route::middleware('authkey')->group(function () {
     Route::get('/categories/all', [CategoryController::class, 'fetchData'])->name('admin.get.all.categories');
     Route::get('/locations/all', [LocationController::class, 'fetchData'])->name('admin.get.all.locations');
     Route::get('/vendors/all', [VendorController::class, 'fetchData'])->name('admin.get.all.vendors');
-    Route::get('/companies/all', [CompanyController::class, 'fetchDataObj'])->name('admin.get.all.companies');
     Route::get('/approval-setups/all/{type}', [ApprovalSetupController::class, 'fetchData'])->name('admin.get.all.approvals');
 
     // Store - Update data
+    Route::get('/companies/all', [CompanyController::class, 'fetchDataObj'])->name('admin.get.all.companies');
     Route::post('/companies/store-update/data', [CompanyController::class, 'storeUpdate'])->name('admin.store.update.companies');
     Route::post('/companies/status-change/data', [CompanyController::class, 'statusChangeData'])->name('admin.status.change.companies');
+    Route::get('/companies/status-change/data', [CompanyController::class, 'statusChangeData'])->name('admin.status.change.companies');
+    Route::get('/company/state/list', [CompanyController::class, 'getCompanyList'])->name('admin.companies.list');
+
 
     Route::post('/locations/store-update/data', [LocationController::class, 'storeUpdate'])->name('admin.store.update.locations');
     Route::post('/locations/status-change/data', [LocationController::class, 'statusChangeData'])->name('admin.status.change.locations');

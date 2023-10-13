@@ -144,7 +144,9 @@ import {
   mdiWatermark,
   mdiGlobeModel,
   mdiWeatherNight,
-  mdiDevices,
+  mdiCubeOutline,
+  mdiArchivePlusOutline,
+  mdiArchiveSettingsOutline
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -172,10 +174,22 @@ const commonNav = ref([
     slug: "dashboard",
   },
   {
-    title: "Asset",
-    icon: mdiDevices,
-    path: "/asset",
-    slug: "asset",
+    title: "Assets",
+    icon: mdiCubeOutline,
+    subs: [
+        {
+        title: "Assets",
+        icon: mdiArchiveSettingsOutline,
+        path: "/asset-list",
+        slug: "asset-list",
+      },
+      {
+        title: "Add Asset",
+        icon: mdiArchivePlusOutline ,
+        path: "/asset-list/add",
+        slug: "asset-add",
+      },
+    ],
   },
 ]);
 const moderatorNav = ref([

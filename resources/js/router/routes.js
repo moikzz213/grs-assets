@@ -57,12 +57,21 @@ export const routes = [
 
     // assets
     {
-        path: "/assets",
-        component: () => import("../pages/asset/Asset.vue"),
+        path: "/asset-list",
+        component: () => import("../pages/assets/Assets.vue"),
         name: "asset-list",
         meta: {
             requiresAuth: true,
-            title: "asset-list",
+            title: "assets",
+        },
+    },
+    {
+        path: "/asset-list/add",
+        component: () => import("../pages/assets/AddAsset.vue"),
+        name: "add-asset",
+        meta: {
+            requiresAuth: true,
+            title: "asset",
         },
     },
 
