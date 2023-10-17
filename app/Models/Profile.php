@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Log;
+use App\Models\Asset;
 use App\Models\Access;
 use App\Models\Company;
 use App\Models\ClientKey;
@@ -33,5 +34,15 @@ class Profile extends Model
     public function logs()
     {
         return $this->morphToMany(Log::class, 'loggable');
+    }
+
+    public function created_assets()
+    {
+        return $this->hasMany(Asset::class);
+    }
+
+    public function last_updated_assets()
+    {
+        return $this->hasMany(Asset::class);
     }
 }
