@@ -27,8 +27,7 @@ const loader = ref({
 });
 watch(
   () => props.options,
-  (newVal) => {
-    console.log("props.options", props.options);
+  (newVal) => { 
     loader.value = { ...loader.value, ...newVal };
   }
 );

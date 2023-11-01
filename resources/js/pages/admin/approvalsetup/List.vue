@@ -7,16 +7,15 @@
                     <v-btn
                         :class="`${
                             isActive == 'request-asset' ? 'tab-active' : ''
-                        } ml-7`"
-
+                        }  v-col-12 v-col-md-3 mx-2`"
                         @click="changeType('request-asset')"
                         >Request Asset Approvals</v-btn
                     >
                     <v-btn
                         :class="`${
                             isActive == 'transfer-asset' ? 'tab-active' : ''
-                        } ml-3`"
-                         @click="changeType('transfer-asset')"
+                        }   v-col-12 v-col-md-3 mx-2`"
+                        @click="changeType('transfer-asset')"
                         >Transfer Asset Approvals</v-btn
                     >
                 </div>

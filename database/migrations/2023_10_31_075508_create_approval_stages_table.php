@@ -18,10 +18,10 @@ return new class extends Migration
             /**
              *  asset-monitoring / commercial-manager / releasing / technical-operation / area-manager / operation-director /
              * receiver / ceo
-             */
-            
-            $table->string('stages',50);
-            $table->string('types',20); // requestor / verify / approve / confirm / receiver
+             */ 
+           
+            $table->string('types',20)->nullable(); // requestor / verify / approve / confirm / receiver
+            $table->unsignedTinyInteger('sort')->default(0);
 
             $table->timestamps();
         });

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Log;
-use App\Models\ApprovalStages;
+use App\Models\ApprovalStage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,7 +14,7 @@ class ApprovalSetup extends Model
 
     public function stages()
     {
-        return $this->hasMany(ApprovalStages::class);
+        return $this->hasMany(ApprovalStage::class);
     }
 
     public function profile()

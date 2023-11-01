@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Log;
 use App\Models\Access;
 use App\Models\Company;
+use App\Models\ApprovalStages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -27,5 +28,10 @@ class Profile extends Model
     public function logs()
     {
         return $this->morphToMany(Log::class, 'loggable');
+    }
+
+    public function stage()
+    {
+        return $this->belongsToMany(ApprovalStages::class);
     }
 }
