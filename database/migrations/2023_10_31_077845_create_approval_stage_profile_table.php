@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('approval_stage_profile', function (Blueprint $table) {
             $table->id();
-            $table->string('meta_type',80);
-            $table->text('meta_value')->nullable();
+            $table->unsignedBigInteger('approval_stage_id');
             $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('approval_stage_profile');
     }
 };

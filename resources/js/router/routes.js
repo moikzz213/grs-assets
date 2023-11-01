@@ -46,6 +46,24 @@ export const routes = [
         },
     },
     {
+        path: "/notifications",
+        component: () => import("../pages/admin/notifications/Notifications.vue"),
+        name: "Notifications",
+        meta: {
+            requiresAuth: true,
+            title: "notifications",
+        },
+    },
+    {
+        path: "/others",
+        component: () => import("../pages/admin/others/Others.vue"),
+        name: "Others",
+        meta: {
+            requiresAuth: true,
+            title: "others",
+        },
+    },
+    {
         path: "/asset-list",
         component: () => import("../pages/admin/users/Users.vue"),
         name: "asset-list",

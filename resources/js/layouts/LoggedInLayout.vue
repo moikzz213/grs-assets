@@ -164,6 +164,8 @@ import {
     mdiStoreSettings,
     mdiWatermark,
     mdiGlobeModel,
+    mdiBellRing,
+    mdiAnimation,
     mdiWeatherNight,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
@@ -243,7 +245,7 @@ const moderatorNav = ref([
             },
             {
                 title: "Approval Setup",
-                icon: mdiStoreSettings,
+                icon: mdiCog,
                 path: "/approval-setup/request-asset",
                 slug: "approval-setup",
             },
@@ -252,6 +254,18 @@ const moderatorNav = ref([
                 icon: mdiBookshelf,
                 path: "/pages",
                 slug: "pages",
+            },
+            {
+                title: "Notifications",
+                icon: mdiBellRing,
+                path: "/notifications",
+                slug: "notifications",
+            },
+            {
+                title: "Others",
+                icon: mdiAnimation,
+                path: "/others",
+                slug: "others",
             },
             {
                 title: "Users",
