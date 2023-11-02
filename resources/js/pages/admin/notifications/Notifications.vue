@@ -7,7 +7,7 @@
                 <v-card class="px-5" :loading="page.loading">
                     <v-card-text>
                         <v-btn
-                            @click="savePage()"
+                            @click="saveData()"
                             :loading="btnLoading"
                             size="small"
                             color="secondary"
@@ -240,9 +240,8 @@ import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
 import AppPageHeader from "@/components/ApppageHeader.vue";
-import AppSnackbar from "@/components/AppSnackBar.vue";
-
-const pageSlug = ref([{ title: "", slug: "" }]);
+import AppSnackbar from "@/components/AppSnackBar.vue"; 
+ 
 const authStore = useAuthStore();
 const btnLoading = ref(false);
 
@@ -269,11 +268,26 @@ const sbOptions = ref({
     type: "info",
     text: null,
 });
-const fetchPage = async () => {
+const fetchData = async () => {
     await clientKey(authStore.token)
-        .get("/api/fetch/pages-slug")
+        .get("/api/fetch/notification-setup")
         .then((res) => {
-            pageSlug.value = res.data;
+            dataObj.value = [
+                {meta_type: 'maintenance-receiver', 'meta_value' : res.data[0].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'maintenance-receiver', 'meta_value' : res.data[1].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'maintenance-receiver', 'meta_value' : res.data[2].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'maintenance-receiver', 'meta_value' : res.data[3].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'incident-receiver', 'meta_value' : res.data[4].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'incident-receiver', 'meta_value' : res.data[5].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'incident-receiver', 'meta_value' : res.data[6].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'incident-receiver', 'meta_value' : res.data[7].meta_value, profile_id: authStore.user.profile.id}, 
+                {meta_type: 'first_notification', 'meta_value' : res.data[8].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'second_notification', 'meta_value' : res.data[9].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'third_notification', 'meta_value' : res.data[10].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'request_transfer', 'meta_value' : res.data[11].meta_value, profile_id: authStore.user.profile.id},
+                {meta_type: 'incidents', 'meta_value' : res.data[12].meta_value, profile_id: authStore.user.profile.id}, 
+            ];
+            
             page.value.loading = false;
         })
         .catch((err) => {
@@ -281,9 +295,9 @@ const fetchPage = async () => {
             console.log(err);
         });
 };
-fetchPage();
+fetchData();
 
-const savePage = async function () {
+const saveData = async function () {
     btnLoading.value = true;
   
     let formData = {data: dataObj.value, profile_id: authStore.user.profile.id}

@@ -2,11 +2,53 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Brand;
+use App\Models\Company;
+use App\Models\Category;
+use App\Models\Location;
+use App\Models\Warranty;
+use App\Models\SpecModel;
+use App\Models\Maintenance;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Asset extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function model()
+    {
+        return $this->belongsTo(SpecModel::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function warranty()
+    {
+        return $this->hasMany(Warranty::class);
+    }
+
+    public function maintenance()
+    {
+        return $this->hasMany(Maintenance::class);
+    }
 }

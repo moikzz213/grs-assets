@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class NotificationController extends Controller
 {
     public function fetchData(){
-        $query = Notification::orderBy('meta_type', 'ASC')->get(); 
+        $query = Notification::orderBy('id', 'ASC')->get(); 
         return response()->json($query, 200);
     }
 

@@ -70,7 +70,7 @@ function validateAccess(data) {
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if (data?.title?.toLowerCase() == 'dashboard' || data?.title?.toLowerCase() == 'account') {
+    } else if (data?.title?.toLowerCase() == 'scan' || data?.title?.toLowerCase() == 'dashboard' || data?.title?.toLowerCase() == 'account') {
         hasAccess = true;
     } else if (
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
