@@ -6,17 +6,25 @@
           <v-card
           @click="scanBarcodeFn"
             color="primary"
-            height="80"
+            height="50"
             width="100%"
             class="d-flex align-center justify-center rounded-lg"
           > 
           <div class="text-h6 text-capitalize text-center">SCAN BARCODE <v-icon class="ml-2" size="large" :icon="mdiBarcodeScan" ></v-icon></div>
         </v-card>
-        <StreamBarcodeReader v-if="isEnable"  @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+        <v-card 
+        v-if="isEnable"
+            color="primary"
+            height="120"
+            width="100%"
+            class="d-flex align-center justify-center rounded-lg"
+          >  
+          <StreamBarcodeReader   @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+        </v-card>
          
         </div>
       </v-row>
-      <v-row v-if="dataObj.asset_code">
+      <v-row v-if="dataObj.asset_code" style="max-width:600px;" class="mx-auto">
         <div class="v-col-6 py-1"> COMPANY: </div> <div class="v-col-6 py-1">{{ dataObj.company ? dataObj.company.title : '' }}</div>
         <div class="v-col-6 py-1"> LOCATION: </div> <div class="v-col-6 py-1">{{ dataObj.location ? dataObj.location.title : ''}}</div>
         <div class="v-col-6 py-1"> CATEGORY: </div> <div class="v-col-6 py-1">{{ dataObj.category ? dataObj.category.title : '' }}</div>
@@ -27,14 +35,27 @@
         <div class="v-col-6 py-1"> MODEL: </div> <div class="v-col-6 py-1">{{ dataObj.model ? dataObj.model.title : ''  }}</div>
         <div class="v-col-6 py-1"> SPECIFICATION: </div> <div class="v-col-6 py-1">{{ dataObj.specification  }}</div>
         <v-divider></v-divider>
-        <div class="v-col-12 py-1"> WARRANTY </div>
+        <div class="v-col-12 py-1 font-weight-bold"> WARRANTY </div>
         <div class="v-col-6 py-1"> START DATE: </div> <div class="v-col-6 py-1">{{  warrantyData.warranty_start_date }}</div>
         <div class="v-col-6 py-1"> END DATE: </div> <div class="v-col-6 py-1">{{ warrantyData.warranty_end_date }}</div>
         <v-divider></v-divider>
-        <div class="v-col-12 py-1"> AMC VENDOR </div>
+        <div class="v-col-12 py-1 font-weight-bold"> AMC VENDOR </div>
         <div class="v-col-6 py-1"> VENDOR </div> <div class="v-col-6 py-1">{{ warrantyData.vendor ? warrantyData.vendor.title : ''  }}</div>
         <div class="v-col-6 py-1"> START DATE: </div> <div class="v-col-6 py-1">{{ warrantyData.warranty_end_date }}</div>
         <div class="v-col-6 py-1"> END DATE: </div> <div class="v-col-6 py-1">{{ warrantyData.warranty_start_date}}</div>
+        <v-divider ></v-divider>
+        <div class="v-col-12 py-1 font-weight-bold"> MAINTENANCE </div>
+        <div class="v-col-12 py-4" style="background-color: #e0e0e0;" v-if="dataObj.maintenance.length > 0">
+          <v-row v-for="(item, index) in dataObj.maintenance" :key="item.id">
+            <div class="v-col-6 py-1"> STATUS: </div> <div class="v-col-6 py-1 text-uppercase"> {{item.status}}</div>
+            <div class="v-col-6 py-1"> SERVICE TYPE: </div> <div class="v-col-6 py-1"> {{item.service_type}}</div>
+            <div class="v-col-6 py-1"> DATE RECEIVED: </div> <div class="v-col-6 py-1"> {{item.date_received}}</div>
+            <div class="v-col-6 py-1"> DATE STARTED: </div> <div class="v-col-6 py-1"> {{item.date_start}}</div>
+            <div class="v-col-6 py-1"> COST: </div> <div class="v-col-6 py-1"> {{item.cost}}</div>
+            <div class="v-col-6 py-1"> REMARKS: </div> <div class="v-col-6 py-1"> {{item.remarks}}</div>
+            <v-divider></v-divider>
+          </v-row>
+        </div>
       </v-row>
     </v-container>
   </template>
@@ -62,7 +83,7 @@ const onDecode = async (result) => {
              if(res.data.warranty.length > 0){
               warrantyData.value = res.data.warranty[res.data.warranty.length - 1];
              }
-
+             console.log("res.data",res.data);
              isEnable.value = false;
              
         })
