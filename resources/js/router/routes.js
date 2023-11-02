@@ -1,6 +1,3 @@
-// import Dashboard from "../pages/admin/Dashboard.vue";
-// import Users from "../admin//Users.vue";
-// import Large from "../admin//Large.vue";
 export const routes = [
     /**
      * Auth
@@ -34,6 +31,15 @@ export const routes = [
         meta: {
             requiresAuth: true, 
             title: "dashboard",
+        },
+    },
+    {
+        path: "/scan",
+        component: () => import("../pages/admin/scanBarcode/Data.vue"),
+        name: "Scan",
+        meta: {
+            requiresAuth: true, 
+            title: "scan",
         },
     },
     {

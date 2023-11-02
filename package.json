@@ -19,6 +19,7 @@
         "pinia": "^2.1.6",
         "vee-validate": "^4.11.1",
         "vite-plugin-vuetify": "^1.0.2",
+        "vue-barcode-reader": "^1.0.3",
         "vue-router": "^4.2.4",
         "vuetify": "^3.3.14",
         "yup": "^1.2.0"

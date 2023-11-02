@@ -167,6 +167,7 @@ import {
     mdiBellRing,
     mdiAnimation,
     mdiWeatherNight,
+    mdiBarcodeScan,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -194,6 +195,12 @@ const commonNav = ref([
         icon: mdiHomeOutline,
         path: "/dashboard",
         slug: "dashboard",
+    },
+    {
+        title: "Scan Barcode",
+        icon: mdiBarcodeScan,
+        path: "/scan",
+        slug: "scan",
     },
     {
         title: "Asset List",

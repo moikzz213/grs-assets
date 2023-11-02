@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\VendorController;
@@ -106,6 +107,9 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch-global/setup-status', [StatusController::class, 'fetchData'])->name('admin.fetch.status.data');
 
     Route::post('/store-update/notification', [NotificationController::class, 'storeUpdate'])->name('admin.notification.store.update');
+    Route::get('/fetch/notification-setup', [NotificationController::class, 'fetchData'])->name('admin.notification.fetch');
+
+    Route::get('/fetch/asset-info/by/asset-code/{code}', [AssetController::class, 'fetchAssetCode'])->name('admin.asset.fetch.code');
 });
 
 Route::get('/fetch/companies', [CompanyController::class, 'fetchData'])->name('admin.fetch.companies');

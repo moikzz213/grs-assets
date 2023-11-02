@@ -97,7 +97,7 @@
                                                 : mdiEyeRefresh
                                             : mdiTrashCan
                                     }`"
-                                    @click="deleteFn(index, item)"
+                                    @click="deleteFn(index, item, 'status')"
                                     size="x-small"
                                     :color="`${
                                         item && item.status == 'disabled'
@@ -211,7 +211,7 @@
                                                 : mdiEyeRefresh
                                             : mdiTrashCan
                                     }`"
-                                    @click="deleteFn(index, item)"
+                                    @click="deleteFn(index, item, 'condition')"
                                     size="x-small"
                                     :color="`${
                                         item && item.status == 'disabled'
@@ -325,7 +325,7 @@
                                                 : mdiEyeRefresh
                                             : mdiTrashCan
                                     }`"
-                                    @click="deleteFn(index, item)"
+                                    @click="deleteFn(index, item, 'incident')"
                                     size="x-small"
                                     :color="`${
                                         item && item.status == 'disabled'
@@ -425,7 +425,7 @@ const fetchPage = async () => {
 };
 fetchPage();
 
-const deleteFn = async (index, item) => {
+const deleteFn = async (index, item, type) => {
     if (item.id) {
         sbOptions.value = {
             status: true,
@@ -440,9 +440,21 @@ const deleteFn = async (index, item) => {
         };
         storeUpdate(storeData);
     } else {
-        let rows = statusData.value;
-        rows.splice(index, 1);
-        statusData.value = [...rows];
+        if(type == 'status'){
+            let rows = statusData.value;
+            rows.splice(index, 1);
+            statusData.value = [...rows];
+        }else if(type == 'condition'){
+            let rows = conditionData.value;
+            rows.splice(index, 1);
+            conditionData.value = [...rows];
+        }else{
+            
+            let rows = incidentData.value;
+            rows.splice(index, 1);
+            incidentData.value = [...rows];
+        
+        }
     }
 };
 
