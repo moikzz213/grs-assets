@@ -168,6 +168,7 @@ import {
     mdiAnimation,
     mdiWeatherNight,
     mdiBarcodeScan,
+    mdiTools,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -201,6 +202,12 @@ const commonNav = ref([
         icon: mdiBarcodeScan,
         path: "/scan",
         slug: "scan",
+    },
+    {
+        title: "Report Incident",
+        icon: mdiTools,
+        path: "/report-incident",
+        slug: "report-incident",
     },
     {
         title: "Asset List",

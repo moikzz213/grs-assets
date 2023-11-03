@@ -35,13 +35,53 @@ export const routes = [
     },
     {
         path: "/scan",
-        component: () => import("../pages/admin/scanBarcode/Data.vue"),
+        component: () => import("../pages/normal/scanBarcode/Data.vue"),
         name: "Scan",
         meta: {
             requiresAuth: true, 
             title: "scan",
         },
     },
+
+    {
+        path: "/report-incident",
+        component: () => import("../pages/normal/incidents/List.vue"),
+        name: "Incident",
+        meta: {
+            requiresAuth: true,
+            title: "report-incident",
+        },
+    },
+    {
+        path: "/report-incident/page/:page",
+        component: () => import("../pages/normal/incidents/List.vue"),
+        name: "PaginatedIncident",
+        meta: {
+            requiresAuth: true,
+            title: "report-incident",
+        },
+    },
+    {
+        path: "/report-incident/new",
+        component: () => import("../pages/normal/incidents/NewData.vue"),
+        name: "NewIncident",
+        meta: {
+            requiresAuth: true,
+            title: "report-incident",
+            type: "new"
+        },
+    },
+    {
+        path: "/report-incident/update/id/:id",
+        component: () => import("../pages/normal/incidents/EditData.vue"),
+        name: "EditIncident",
+        meta: {
+            requiresAuth: true,
+            title: "report-incident",
+            type: "edit"
+        },
+    },
+
     {
         path: "/pages",
         component: () => import("../pages/admin/slugs/Slugs.vue"),
