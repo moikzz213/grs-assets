@@ -1,24 +1,24 @@
 <template>
   <v-card>
-    <v-card-title class="text-primary text-capitalize mb-3"
-      >Profile Settings</v-card-title
-    >
+    <v-card-title class="text-primary text-capitalize">Profile Settings</v-card-title>
     <v-card-text>
       <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
-        <Field
-          name="ecode"
-          v-slot="{ field }"
-          v-model="profileData.data.ecode"
-        >
+        <!-- <div style="width: 100%; max-width: 320px; border-radius: 12px" class="mb-6">
+          <v-img
+            :src="'./assets/images/placeholder-user.png'"
+            class="rounded-lg mb-2"
+          ></v-img>
+        </div> -->
+        <SingleUploader class="mb-6" :options="{ size: '320px' }" />
+
+        <Field name="ecode" v-slot="{ field }" v-model="profileData.data.ecode">
           <v-text-field
             v-model="profileData.data.ecode"
             v-bind="field"
             label="Employee ID"
             density="compact"
-            hide-details
             variant="outlined"
-            class="mb-2"
-          :disabled="true"
+            :disabled="true"
           />
         </Field>
         <Field
@@ -31,9 +31,7 @@
             v-bind="field"
             label="Full name"
             density="compact"
-            hide-details
             variant="outlined"
-            class="mb-2"
             :error-messages="errors"
           />
         </Field>
@@ -47,9 +45,7 @@
             v-bind="field"
             label="First name"
             density="compact"
-            hide-details
             variant="outlined"
-            class="mb-2"
             :error-messages="errors"
           />
         </Field>
@@ -64,27 +60,22 @@
             label="Last name"
             density="compact"
             variant="outlined"
-            hide-details
-            class="mb-2"
             :error-messages="errors"
           />
         </Field>
-         
-          <v-autocomplete
-            v-bind="field" 
-            label="Company"
-            :items="companies"
-            v-model="profileData.data.company_id"
-            item-value="id"
-            item-title="title"
-            variant="outlined"
-            density="compact"
-            class="mb-2"
-          /> 
-         
+        <v-autocomplete
+          v-bind="field"
+          label="Company"
+          :items="companies"
+          v-model="profileData.data.company_id"
+          item-value="id"
+          item-title="title"
+          variant="outlined"
+          density="compact"
+          class="mb-2"
+        />
         <v-btn
           color="primary"
-          size="small"
           :loading="profileData.loading"
           @click="saveProfile"
           :disabled="!meta.valid"
@@ -95,6 +86,8 @@
   </v-card>
 </template>
 <script setup>
+// import SingleUploader from "@/studio/SingleUploader.vue";
+import SingleUploader from "@/studio/SingleUploader.vue";
 import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
@@ -121,24 +114,31 @@ const profileData = ref({
     nationality: null,
   },
 });
-profileData.value.data = Object.assign({}, props.user); 
- 
+profileData.value.data = Object.assign({}, props.user);
+
 watch(
   () => props.user,
   (newVal) => {
-    profileData.value.data = Object.assign({}, newVal); 
+    profileData.value.data = Object.assign({}, newVal);
   }
 );
 
-const getProfile =  () => { 
-    profileData.value.data = props.user.profile;  
+const getProfile = () => {
+  profileData.value.data = props.user.profile;
 };
-if(props.user?.id){
-getProfile();
+if (props.user?.id) {
+  getProfile();
 }
 
 const companies = ref([]);
 
+<<<<<<< HEAD
+const fetchCompanies = async () => {
+  await axios.get("/api/fetch/companies").then((res) => {
+    companies.value = res.data;
+  });
+};
+=======
 const fetchCompanies = async () => { 
   await clientKey(authStore.token)
     .get("/api/fetch/companies")
@@ -149,6 +149,7 @@ const fetchCompanies = async () => {
     }); 
   
 }
+>>>>>>> 68c3c3e3d08476a257e8881b215774113303d953
 fetchCompanies();
 
 // save profile
@@ -156,7 +157,7 @@ let validation = yup.object({
   ecode: yup.string().required(),
   display_name: yup.string().required(),
   first_name: yup.string().required(),
-  last_name: yup.string().required(), 
+  last_name: yup.string().required(),
 });
 
 const saveProfile = async () => {
@@ -164,7 +165,7 @@ const saveProfile = async () => {
   profileData.value.data = {
     ...profileData.value.data,
     ...{
-      id: props.user?.profile?.id? props.user.profile.id : props.user.id,
+      id: props.user?.profile?.id ? props.user.profile.id : props.user.id,
     },
   };
   await clientKey(authStore.token)
@@ -175,7 +176,6 @@ const saveProfile = async () => {
     })
     .catch((err) => {
       profileData.value.loading = false;
-     
     });
 };
 </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use App\Models\Incident;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -13,91 +14,92 @@ use Intervention\Image\Facades\Image as Img;
 
 class FileController extends Controller
 {
-    //
-    public function storeData(Request $request){
-       
-        if(request()->file('filename')){
-            // upload image
-            $fileArray = array();
-            $uploadDate = Carbon::now()->format('YmdHis');
-            $file = Collection::wrap(request()->file('filename'));
-            
-            $userStorage = '/public/uploads';
-            if (!Storage::exists($userStorage)) {
-                Storage::makeDirectory($userStorage, 0755, true);
-            } 
-            
-                $userStorageDir = storage_path() . '/app' . $userStorage;
-                $fileName = $file[0]->getClientOriginalName();
-                if (strlen($fileName) > 20){ 
-                    $fileName = Str::random(15);
-                }
+    function upload(Request $request){
+        $fileArray = array();
+        $uploadKey = Carbon::now()->format('YmdHis');
 
-                $title = pathinfo($fileName, PATHINFO_FILENAME);
-                $extn = strtolower($file[0]->getClientOriginalExtension());
-                $slugTitle = Str::slug($title, '-');
-                $path = $slugTitle."-".$uploadDate.".".$extn;
-                $mime = $file[0]->getClientMimeType();
+        $files = Collection::wrap(request()->file('filepond'));
+        $allfiles = $request->allFiles();
 
-                if($extn == 'pdf' || $extn == 'PDF'){
-                    $file[0]->move($userStorageDir, $path);
-                }else{
-                    // File Optimization
-                    $img = Img::make($file[0]);
-                    $img->encode($extn, 50);
+        $userStorage = '/uploads';
+        if (!Storage::exists($userStorage)) {
+            Storage::makeDirectory($userStorage, 0755, true);
+        }
 
-                    // Save file to storage directory
-                    $img->save($userStorageDir . '/' . $path);
-                }
-              
-                // Setup data into array
-                array_push( $fileArray, array(
-                    'original_name' => $fileName,
+        $files->each(function ($file, $key) use (&$request, &$userStorage, &$fileArray, &$uploadKey) {
+
+            $userStorageDir = storage_path() . '/app' . $userStorage;
+            $fileName = $file->getClientOriginalName();
+            if (strlen($fileName) > 10){
+                // $fileName = substr($fileName, 0, 5).'-'.Str::random(5).'-';
+                $fileName = Str::random(5);
+            }
+            $title = pathinfo($fileName, PATHINFO_FILENAME);
+            $extn = strtolower($file->getClientOriginalExtension());
+            // $extn = 'jpg';
+            $slugTitle = Str::slug($title);
+            $path = $slugTitle."-".$uploadKey."-".$request['profile_id'].".".$extn;
+            $mime = $file->getClientMimeType();
+
+            // File Optimization
+            $img = Img::make($file);
+            $img->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $img->encode($extn, 50);
+            $file_type = 'image';
+
+            // // Save file to storage directory
+            $img->save($userStorageDir . '/' . $path);
+
+            // Setup data into array
+            array_push( $fileArray, array(
+                    // 'original_name' => $fileName,
                     'title' => $title,
                     'disk' => 'local',
-                    'path' => $path, 
-                    'type' => $request->type,
+                    'path' => $path,
+                    // 'file_type' => $file_type,
                     'mime' => $mime,
-                    'profile_id' => $request->profile_id,
+                    'profile_id' => $request['profile_id'],
                     'created_at' => Carbon::now(),
-                ));
-            
-            $data = null;
-            // Recursive create
-            $idsToSync = array();
-            $returnDataImage = array();
-            foreach ($fileArray as $k => $singleFile) {
-                $returnDataImage[$k] = $singleFile;
-                $imgId = DB::table('files')->insertGetId($singleFile);
-                $returnDataImage[$k]['id'] = $imgId;
-                array_push($idsToSync, $imgId);
-            } 
+            ));
+        });
 
-            if($request->type == 'incident'){
-                $data = Incident::where('id', '=', $request->ID)->first();  
-            }
+        // Insert into database at once
+        $uploadedFiles = File::insert($fileArray);
 
-            if($data && count($idsToSync) > 0){
-                $data->files()->attach($idsToSync);
-            } 
+        return response()->json([
+            'request' => $request,
+            'allfiles' => $allfiles,
+            'files' => $files,
+            'request_file' => request()->file(),
+            'request' => request()->file('filepond'),
+            'has_filrequest' => $request->hasFile('filepond'),
+            'message' => 'Upload Success',
+        ], 200);
 
-            return response()->json([ 
-               $returnDataImage, 
-            ], 200);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Upload Success',
+        ], 200);
     }
 
-    public function removeData(Request $request){
-       
-        $data = Incident::where('id', '=', $request->ID)->first();  
-        $data->files()->detach($request['data']['id']);
+    function showFile($path) {
+        $ext = explode(".", $path);
+        $ext = end($ext);
+        $ext = strtolower($ext);
 
-        $userStorage = '/public/uploads';
-        $image_path = public_path().'/storage/uploads/'.$request['data']['path'];
-        unlink($image_path); 
+        if($ext == 'pdf'){
+            $mime_type = 'application/pdf';
+        }else{
+            $mime_type = 'image/'.$ext;
+        }
 
-        return response()->json([ 
-            "msg" => 'Image has been deleted', 
-         ], 200);
+        if( isset($path) ){
+            $fileUrl = storage_path(). '/app/uploads/'.$path;
+            return response()->file($fileUrl, array('Content-Type' => $mime_type));
+        }else{
+            return abort('403');
+        }
     }
 }

@@ -1,4 +1,23 @@
-.cursor-pointer{ cursor: pointer;}
+.cursor-pointer {
+    cursor: pointer;
+}
+table td,
+table th,
+div,
+span,
+input,
+select,
+textarea,
+option,
+label.v-label {
+    font-size: 12px;
+}
+table tr:hover td {
+    background-color: #f5f5f5;
+}
+div.text-h6 {
+    font-size: 13px !important;
+}
 div,span, input, select,textarea, option, label.v-label { font-size: 12px;}
 table td, table th { font-size:11px;}
 table tr:hover td{ background-color: #f5f5f5;}
