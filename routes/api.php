@@ -138,3 +138,6 @@ Route::middleware('authkey')->group(function () {
     Route::post('/delete/uploaded-file', [FileController::class, 'removeData'])->name('admin.remove.data.file');
 });
     Route::post('/upload-files/docs-images', [FileController::class, 'storeData'])->name('admin.store.data.file');
+    
+require __DIR__.'/dev/api/jc.php';
+require __DIR__.'/dev/api/ri.php';

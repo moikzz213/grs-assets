@@ -73,3 +73,6 @@ Route::post('/client/removekey', [ClientKeyController::class, 'removeKey'])->nam
  * Files
  */
 Route::get('/file/{path}',  [FileController::class, 'showFile'])->name('file.show');
+
+require __DIR__.'/dev/web/jc.php';
+require __DIR__.'/dev/web/ri.php';
