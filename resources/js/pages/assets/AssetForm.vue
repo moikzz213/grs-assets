@@ -11,31 +11,11 @@
         <v-row>
           <div class="v-col-12 font-weight-bold">Asset Info</div>
           <div class="v-col-12 v-col-md-6 pt-0 pb-1">
-            <Field
-              name="Asset Name"
-              v-slot="{ field, errors }"
-              v-model="assetObj.asset_name"
-            >
+            <Field name="Name" v-slot="{ field, errors }" v-model="assetObj.asset_name">
               <v-text-field
                 v-model="assetObj.asset_name"
                 v-bind="field"
-                label="Asset Name"
-                variant="outlined"
-                density="compact"
-                :error-messages="errors"
-              />
-            </Field>
-          </div>
-          <div class="v-col-12 v-col-md-6 pt-0 pb-1">
-            <Field
-              name="Asset Code"
-              v-slot="{ field, errors }"
-              v-model="assetObj.asset_code"
-            >
-              <v-text-field
-                v-model="assetObj.asset_code"
-                v-bind="field"
-                label="Asset Code"
+                label="Name"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
@@ -52,6 +32,22 @@
                 v-model="assetObj.serial_number"
                 v-bind="field"
                 label="Serial Number"
+                variant="outlined"
+                density="compact"
+                :error-messages="errors"
+              />
+            </Field>
+          </div>
+          <div class="v-col-12 v-col-md-6 pt-0 pb-1">
+            <Field
+              name="Asset Code"
+              v-slot="{ field, errors }"
+              v-model="assetObj.asset_code"
+            >
+              <v-text-field
+                v-model="assetObj.asset_code"
+                v-bind="field"
+                label="Asset Code"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
