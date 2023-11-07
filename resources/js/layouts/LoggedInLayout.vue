@@ -128,6 +128,7 @@ import { ref, onMounted, watch } from "vue";
 import { useDisplay } from "vuetify";
 import NavItem from "./NavItem.vue";
 import {
+  mdiTools,
   mdiChevronLeft,
   mdiChevronRight,
   mdiHomeOutline,
