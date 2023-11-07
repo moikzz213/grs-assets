@@ -140,9 +140,13 @@ getProfile();
 const companies = ref([]);
 
 const fetchCompanies = async () => { 
-  await axios.get('/api/fetch/companies').then((res) => {
-    companies.value= res.data;
-  })
+  await clientKey(authStore.token)
+    .get("/api/fetch/companies")
+    .then((res) => {
+      companies.value= res.data;
+    })
+    .catch((err) => { 
+    }); 
   
 }
 fetchCompanies();

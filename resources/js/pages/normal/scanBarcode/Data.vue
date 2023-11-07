@@ -1,9 +1,10 @@
 <template>
     <v-container> 
         <v-row class="mb-3 justify-center">
-            <div class="v-col-12 v-col-md-4 pb-0">
-                <small>Recommended mobile used only</small>
+            <div class="v-col-12 v-col-md-5 pb-0">
+                <small >Recommended mobile / tablet used only</small>
                 <v-card
+                v-if="!isEnable"
                     @click="scanBarcodeFn"
                     color="primary"
                     height="50"
@@ -11,7 +12,7 @@
                     class="d-flex align-center justify-center rounded-lg"
                 >
                     <div class="text-h6 text-capitalize text-center">
-                        CLICK TO START SCAN BARCODE
+                        CLICK TO START SCANNING
                         <v-icon
                             class="ml-2"
                             size="large"
@@ -120,7 +121,6 @@
 <script setup>
 import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
-import AppPageHeader from "@/components/AppPageHeader.vue";
 import { mdiBarcodeScan } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
 import { useAuthStore } from "@/stores/auth";
@@ -129,6 +129,7 @@ const dataObj = ref({});
 const warrantyData = ref({ warranty_start_date: "", warranty_end_date: "" });
 const isEnable = ref(false);
 const scanBarcodeFn = () => {
+    dataObj.value = {};
     isEnable.value = true;
 };
 const onDecode = async (result) => {

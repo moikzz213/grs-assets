@@ -3,7 +3,7 @@
         <AppSnackBar :options="sbOptions" />
         <data-form v-if="isLoaded"
             :objectdata="objectData" 
-            :headertitle="'Update Approval Matrix'"
+            :headertitle="'Update Incident Detail'"
             @saved="savedResponse"
         ></data-form>
     </div>
@@ -31,7 +31,7 @@ const getData = async () => {
     };
     await clientKey(authStore.token)
         .get(
-            "/api/fetch/approval-setups/single-data/" +
+            "/api/fetch/incident/single-data/" +
             route.params.id
         )
         .then((response) => {

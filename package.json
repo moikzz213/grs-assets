@@ -16,10 +16,12 @@
         "@mdi/js": "^7.2.96",
         "@vueuse/core": "^10.3.0",
         "crypto-js": "^4.1.1",
+        "filepond": "^4.30.4",
         "pinia": "^2.1.6",
         "vee-validate": "^4.11.1",
         "vite-plugin-vuetify": "^1.0.2",
         "vue-barcode-reader": "^1.0.3",
+        "vue-filepond": "^7.0.4",
         "vue-router": "^4.2.4",
         "vuetify": "^3.3.14",
         "yup": "^1.2.0"

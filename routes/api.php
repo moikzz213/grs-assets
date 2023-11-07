@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SpecModelController;
 use App\Http\Controllers\NotificationController;
@@ -97,6 +99,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch/approval-setups/non-paginated/data/{type}', [ApprovalSetupController::class, 'nonPaginatedData'])->name('admin.fetch.non.approvals');
     Route::get('/fetch/approval-setups/single-data/{id}', [ApprovalSetupController::class, 'fetchDataByID'])->name('admin.fetch.by.id');
     
+    Route::get('/fetch/profile-facility/team', [ProfileController::class, 'fetchFacilityTeam'])->name('fetch.facility.team');
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
     Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');
     Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
@@ -105,11 +108,22 @@ Route::middleware('authkey')->group(function () {
     
     Route::post('/store-update/setup-status', [StatusController::class, 'storeUpdate'])->name('admin.status.store.update');
     Route::get('/fetch-global/setup-status', [StatusController::class, 'fetchData'])->name('admin.fetch.status.data');
-
+    Route::get('/fetch-global/incident-status/active', [StatusController::class, 'fetchIncidentStatus'])->name('admin.fetch.incident.status'); // incident status - dropdown
+    Route::get('/fetch-global/incident-types/active', [StatusController::class, 'fetchIncidentTypes'])->name('admin.fetch.incident.types'); // incident types - dropdown
+    
     Route::post('/store-update/notification', [NotificationController::class, 'storeUpdate'])->name('admin.notification.store.update');
     Route::get('/fetch/notification-setup', [NotificationController::class, 'fetchData'])->name('admin.notification.fetch');
 
+    // Incident receivers upon new submit
+    Route::get('/fetch/incident-receivers', [NotificationController::class, 'fetchIncidentReceivers'])->name('admin.notification.receivers.incident');
+    
     Route::get('/fetch/asset-info/by/asset-code/{code}', [AssetController::class, 'fetchAssetCode'])->name('admin.asset.fetch.code');
+    
+    Route::get('/fetch/companies', [CompanyController::class, 'fetchData'])->name('admin.fetch.companies');
+    
+    Route::post('/store-update/incident', [IncidentController::class, 'storeUpdate'])->name('admin.storeUpdate.incident');
+    Route::get('/fetch/incidents-by/users', [IncidentController::class, 'fetchData'])->name('admin.incident.fetch');
+    Route::get('/fetch/incident/single-data/{id}', [IncidentController::class, 'fetchDataByID'])->name('admin.fetch.incident.by.id');
+    Route::post('/delete/uploaded-file', [FileController::class, 'removeData'])->name('admin.remove.data.file');
 });
-
-Route::get('/fetch/companies', [CompanyController::class, 'fetchData'])->name('admin.fetch.companies');
+    Route::post('/upload-files/docs-images', [FileController::class, 'storeData'])->name('admin.store.data.file');

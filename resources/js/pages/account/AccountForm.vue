@@ -142,7 +142,7 @@ const selectStatus = (selected) => {
 const roleList = ref([
     { title: "Administrator", value: "admin" },
     { title: "Asset Supervisor-Project", value: "asset-supervisor" },
-    { title: "Commercial Manager-Project", value: "commercial-manager" }, 
+    //{ title: "Commercial Manager-Project", value: "commercial-manager" }, 
     { title: "Facility Team", value: "facility" },
     { title: "Normal", value: "normal" },
     { title: "Technical Operation", value: "technical-operation" },

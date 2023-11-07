@@ -62,7 +62,7 @@ const returnAccess = (slug, type = null) => {
     let hasAccess = false;
     if (authStore.authRole == "superadmin") {
         hasAccess = true;
-    } else if (slug == "dashboard") {
+    } else if (slug == "dashboard" || slug == "scan" || slug =='report-incident' || slug == 'request-asset' || slug == 'transfer-asset') {
         hasAccess = true;
     }
    if(!hasAccess){

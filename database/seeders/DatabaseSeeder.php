@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             Companies::class,
             UsersTableSeeder::class,
             PageTableSeeder::class,
+            StatusSeeder::class,
         ]);
     }
 }

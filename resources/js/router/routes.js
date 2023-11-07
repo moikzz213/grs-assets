@@ -55,7 +55,7 @@ export const routes = [
     {
         path: "/report-incident/page/:page",
         component: () => import("../pages/normal/incidents/List.vue"),
-        name: "PaginatedIncident",
+        name: "PaginatedIncidents",
         meta: {
             requiresAuth: true,
             title: "report-incident",
