@@ -36,6 +36,7 @@
                                     :disabled="loggedRole == 'facility'"
                                 >
                                 </v-autocomplete>
+                               
                                 <v-autocomplete
                                     :items="facilities"
                                     v-model="objData.handled_by"
@@ -115,8 +116,14 @@ const fetchFacilityTeam = async () => {
         .catch((err) => {});
 };
 
-const submitForm = () => {
-    console.log("objData",objData.value);
+const submitForm = () => {  
+    objData.value.profile_id = authStore.user.profile.id;
+    clientKey(authStore.token)
+        .post("/api/incident/update-facility-team", objData.value)
+        .then((res) => {
+            emit("saved", res.data.message);
+        })
+        .catch((err) => {});
 }
 
 const statusList = ref([]);
@@ -137,5 +144,6 @@ onMounted(() => {
     fetchFacilityTeam();
     fetchStatus();
     objData.value = props.objectdata;
+    objData.value.priority = parseInt(props.objectdata.priority);
 });
 </script>
