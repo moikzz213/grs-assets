@@ -148,8 +148,9 @@ import {
   mdiAnimation,
   mdiWeatherNight,
   mdiBarcodeScan,
-  mdiCubeOutline,
+  mdiTruckDelivery,
   mdiArchiveSettingsOutline,
+  mdiApplicationExport,
   mdiArchivePlusOutline,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
@@ -190,17 +191,30 @@ const commonNav = ref([
     slug: "report-incident",
   },
   {
-    title: "Asset List",
-    icon: mdiMapMarkerRadius,
-    path: "/asset-list",
-    slug: "asset-list",
-  },
-  {
     title: "Add Asset",
     icon: mdiArchivePlusOutline,
     path: "/asset-list/add",
     slug: "asset-add",
   },
+  {
+    title: "Request Asset",
+    icon: mdiApplicationExport,
+    path: "/request-asset",
+    slug: "request-asset",
+  },
+  {
+    title: "Transfer Asset",
+    icon: mdiTruckDelivery,
+    path: "/transfer-asset",
+    slug: "transfer-asset",
+  },
+  {
+    title: "Asset List",
+    icon: mdiMapMarkerRadius,
+    path: "/asset-list",
+    slug: "asset-list",
+  },
+  
 ]);
 const moderatorNav = ref([
   {

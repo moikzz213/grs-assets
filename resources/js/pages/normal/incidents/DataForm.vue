@@ -227,7 +227,7 @@
                                         @click="saveData"
                                         :disabled="!meta.valid"
                                         :loading="loadingBtn"
-                                        v-if="props.objectdata.profile_id == loggedID"
+                                        v-if="!isEdit || (isEdit && props.objectdata.profile_id == loggedID)"
                                         >Submit</v-btn>
                                         
                                 </div>
