@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Asset extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
     public function brand()
@@ -50,5 +51,14 @@ class Asset extends Model
     public function maintenance()
     {
         return $this->hasMany(Maintenance::class);
+    }
+    public function created_by()
+    {
+        return $this->belongsTo(Profile::class);
+    }
+
+    public function last_updated_by()
+    {
+        return $this->belongsTo(Profile::class);
     }
 }

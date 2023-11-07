@@ -9,7 +9,7 @@ export const routes = [
 
     /**
      * Auth Login
-     */ 
+     */
     {
         path: "/login",
         component: () => import("../auth/SanctumLogin.vue"),
@@ -29,7 +29,7 @@ export const routes = [
         component: () => import("../pages/admin/Dashboard.vue"),
         name: "Dashboard",
         meta: {
-            requiresAuth: true, 
+            requiresAuth: true,
             title: "dashboard",
         },
     },
@@ -51,6 +51,17 @@ export const routes = [
             title: "pages",
         },
     },
+    // {
+    //     path: "/asset-list",
+    //     component: () => import("../pages/admin/users/Users.vue"),
+    //     name: "asset-list",
+    //     meta: {
+    //         requiresAuth: true,
+    //         title: "asset-list",
+    //     },
+    // },
+
+    // assets
     {
         path: "/notifications",
         component: () => import("../pages/admin/notifications/Notifications.vue"),
@@ -71,13 +82,23 @@ export const routes = [
     },
     {
         path: "/asset-list",
-        component: () => import("../pages/admin/users/Users.vue"),
+        component: () => import("../pages/assets/Assets.vue"),
         name: "asset-list",
         meta: {
             requiresAuth: true,
-            title: "asset-list",
+            title: "assets",
         },
     },
+    {
+        path: "/asset-list/add",
+        component: () => import("../pages/assets/AddAsset.vue"),
+        name: "add-asset",
+        meta: {
+            requiresAuth: true,
+            title: "asset",
+        },
+    },
+
     // users
     {
         path: "/users",
@@ -105,7 +126,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "users",
-            type: "edit"
+            type: "edit",
         },
     },
     // brands
@@ -248,7 +269,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "approval-setup",
-            type: "new"
+            type: "new",
         },
     },
     {
@@ -258,7 +279,7 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "approval-setup",
-            type: "edit"
+            type: "edit",
         },
     },
 

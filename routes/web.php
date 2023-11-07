@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -24,7 +25,7 @@ use App\Http\Controllers\PublicPageController;
 // Auth::routes();
 Auth::routes([
     'register' => false
-]);  
+]);
 
 /**
  * Admin routes
@@ -44,14 +45,29 @@ Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name(
 
 
 /**
+ *
+ */
+Route::prefix('asset-list')->group(function () {
+    Route::get('/', [PageController::class, 'home'])->name('');
+    Route::get('/add', [PageController::class, 'home'])->name('add');
+});
+
+
+/**
  * Accout routes
  */
 Route::prefix('account')->group(function () {
     Route::get('/', [PageController::class, 'home'])->name('account');
 });
- 
+
 
 /**
  * Save Client Access
  */
 Route::post('/client/removekey', [ClientKeyController::class, 'removeKey'])->name('client.access.remove');
+
+
+/**
+ * Files
+ */
+Route::get('/file/{path}',  [FileController::class, 'showFile'])->name('file.show');

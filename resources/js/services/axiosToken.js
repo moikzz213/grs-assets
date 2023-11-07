@@ -18,7 +18,7 @@ const axiosToken = (bearer) => {
         },
     });
 };
- 
+
 const clientKey = (bearer) => {
     return axios.create({
         baseURL: appURL,

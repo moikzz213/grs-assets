@@ -2,13 +2,11 @@
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as directives from "vuetify/directives";
-
-// components
+import * as components from "vuetify/components"; // import all
 // import components from "./components"; // manual imports
-import * as components from "vuetify/components";
 
-// icon library - https://pictogrammers.com/library/mdi/
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
+// icon library - https://pictogrammers.com/library/mdi/
 
 const vuetify = createVuetify({
     components,
