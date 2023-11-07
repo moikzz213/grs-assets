@@ -128,27 +128,6 @@ import { ref, onMounted, watch } from "vue";
 import { useDisplay } from "vuetify";
 import NavItem from "./NavItem.vue";
 import {
-<<<<<<< HEAD
-    mdiChevronLeft,
-    mdiChevronRight,
-    mdiHomeOutline,
-    mdiBellOutline,
-    mdiAccount,
-    mdiCog,
-    mdiAccountGroup,
-    mdiWhiteBalanceSunny,
-    mdiOfficeBuildingCogOutline,
-    mdiMapMarkerRadius,
-    mdiShapePlus,
-    mdiBookshelf,
-    mdiStoreSettings,
-    mdiWatermark,
-    mdiGlobeModel,
-    mdiBellRing,
-    mdiAnimation,
-    mdiWeatherNight,
-    mdiBarcodeScan,
-=======
   mdiChevronLeft,
   mdiChevronRight,
   mdiHomeOutline,
@@ -164,11 +143,13 @@ import {
   mdiStoreSettings,
   mdiWatermark,
   mdiGlobeModel,
+  mdiBellRing,
+  mdiAnimation,
   mdiWeatherNight,
+  mdiBarcodeScan,
   mdiCubeOutline,
+  mdiArchiveSettingsOutline,
   mdiArchivePlusOutline,
-  mdiArchiveSettingsOutline
->>>>>>> model-crud
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -189,23 +170,6 @@ const authStore = useAuthStore();
 
 const router = useRouter();
 const commonNav = ref([
-<<<<<<< HEAD
-    {
-        title: "Dashboard",
-        icon: mdiHomeOutline,
-        path: "/dashboard",
-        slug: "dashboard",
-    },
-    {
-        title: "Scan Barcode",
-        icon: mdiBarcodeScan,
-        path: "/scan",
-        slug: "scan",
-    },
-    {
-        title: "Asset List",
-        icon: mdiMapMarkerRadius,
-=======
   {
     title: "Dashboard",
     icon: mdiHomeOutline,
@@ -213,19 +177,29 @@ const commonNav = ref([
     slug: "dashboard",
   },
   {
+    title: "Scan Barcode",
+    icon: mdiBarcodeScan,
+    path: "/scan",
+    slug: "scan",
+  },
+  {
+    title: "Asset List",
+    icon: mdiMapMarkerRadius,
+  },
+
+  {
     title: "Assets",
     icon: mdiCubeOutline,
     subs: [
-        {
+      {
         title: "Assets",
         icon: mdiArchiveSettingsOutline,
->>>>>>> model-crud
         path: "/asset-list",
         slug: "asset-list",
       },
       {
         title: "Add Asset",
-        icon: mdiArchivePlusOutline ,
+        icon: mdiArchivePlusOutline,
         path: "/asset-list/add",
         slug: "asset-add",
       },
@@ -233,80 +207,6 @@ const commonNav = ref([
   },
 ]);
 const moderatorNav = ref([
-<<<<<<< HEAD
-    {
-        title: "Administrator",
-        icon: mdiCog,
-        subs: [
-            {
-                title: "Companies",
-                icon: mdiOfficeBuildingCogOutline,
-                path: "/companies",
-                slug: "companies",
-            },
-            {
-                title: "Locations",
-                icon: mdiMapMarkerRadius,
-                path: "/locations",
-                slug: "locations",
-            },
-            {
-                title: "Categories",
-                icon: mdiShapePlus,
-                path: "/categories",
-                slug: "categories",
-            },
-            {
-                title: "Brands",
-                icon: mdiWatermark,
-                path: "/brands",
-                slug: "brands",
-            },
-            {
-                title: "Models",
-                icon: mdiGlobeModel,
-                path: "/models",
-                slug: "models",
-            },
-            {
-                title: "Vendors",
-                icon: mdiStoreSettings,
-                path: "/vendors",
-                slug: "vendors",
-            },
-            {
-                title: "Approval Setup",
-                icon: mdiCog,
-                path: "/approval-setup/request-asset",
-                slug: "approval-setup",
-            },
-            {
-                title: "Pages",
-                icon: mdiBookshelf,
-                path: "/pages",
-                slug: "pages",
-            },
-            {
-                title: "Notifications",
-                icon: mdiBellRing,
-                path: "/notifications",
-                slug: "notifications",
-            },
-            {
-                title: "Others",
-                icon: mdiAnimation,
-                path: "/others",
-                slug: "others",
-            },
-            {
-                title: "Users",
-                icon: mdiAccountGroup,
-                path: "/users",
-                slug: "users",
-            },
-        ],
-    },
-=======
   {
     title: "Administrator",
     icon: mdiCog,
@@ -349,7 +249,7 @@ const moderatorNav = ref([
       },
       {
         title: "Approval Setup",
-        icon: mdiStoreSettings,
+        icon: mdiCog,
         path: "/approval-setup/request-asset",
         slug: "approval-setup",
       },
@@ -360,6 +260,18 @@ const moderatorNav = ref([
         slug: "pages",
       },
       {
+        title: "Notifications",
+        icon: mdiBellRing,
+        path: "/notifications",
+        slug: "notifications",
+      },
+      {
+        title: "Others",
+        icon: mdiAnimation,
+        path: "/others",
+        slug: "others",
+      },
+      {
         title: "Users",
         icon: mdiAccountGroup,
         path: "/users",
@@ -367,7 +279,6 @@ const moderatorNav = ref([
       },
     ],
   },
->>>>>>> model-crud
 ]);
 const openPage = (openPath) => {
   menu.value = false;
