@@ -12,7 +12,7 @@ class IncidentController extends Controller
     public function fetchData(Request $request){
         $paginate = $request->show;
         $search = $request->search;
-        $ID = $request->id;
+        $ID = $request->userid;
         $role = $request->role;
 
         $sort = "";
@@ -21,6 +21,7 @@ class IncidentController extends Controller
         $filterSearch = json_decode($filter);
        
         $dataObj = new Incident;
+        
         if($role != 'admin' && $role != 'superadmin' && $role != 'technical-operation'){
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
@@ -42,19 +43,18 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('title', 'ASC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
         }
     
         if($search){
-            $dataObj->where(function($q) use($search){
+            $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
                 $checking = explode("ISR-", $capSearch);
                 
                 if(count($checking) > 1){
-                    $searchID = (int)end($checking); 
+                    $searchID = (int)end($checking);
                     $q->where('id', '=', $searchID);
-                }else{
-                    
+                }else{                    
                     $q->where('title', 'like', '%'.$search.'%')
                     ->orWhereHas('asset', function ($qq) use($search) { 
                         $qq->where('asset_name', 'like', '%'.$search.'%')
@@ -64,6 +64,7 @@ class IncidentController extends Controller
             });
 
             $dataObj = $dataObj->get();
+          
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);

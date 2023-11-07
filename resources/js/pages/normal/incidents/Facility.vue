@@ -76,7 +76,7 @@
                     </div>
                     <v-divider class="mt-3"></v-divider>
                     <div class="v-col-12">
-                        <v-btn class="" size="small" @click="submitForm" color="primary">Submit</v-btn>
+                        <v-btn class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Submit</v-btn>
                     </div>
                 </v-row>
             </v-card-text>
@@ -144,6 +144,6 @@ onMounted(() => {
     fetchFacilityTeam();
     fetchStatus();
     objData.value = props.objectdata;
-    objData.value.priority = parseInt(props.objectdata.priority);
+    objData.value.priority = props.objectdata.priority ? parseInt(props.objectdata.priority) : null;
 });
 </script>
