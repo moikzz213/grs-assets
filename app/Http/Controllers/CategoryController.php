@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
 
-    public function nonPaginatedData(){ 
+    public function nonPaginatedData(){
         $dataArray = Category::where('status','active')->orderBy('title', 'ASC')->get();
         return response()->json($dataArray, 200);
-    } 
-    
+    }
+
     public function fetchData(Request $request){
         $paginate = $request->show;
         $search = $request->search;
@@ -22,7 +22,7 @@ class CategoryController extends Controller
         $orderBy = $request['sort'];
 
         $dataObj = new Category;
-        
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -31,24 +31,24 @@ class CategoryController extends Controller
         }else{
             $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile');
         }
-    
+
         if($search){
             $dataObj->where(function($q) use($search){
                 $q->where('title', 'like', '%'.$search.'%')
                 ->orWhere('code', 'like', '%'.$search.'%');
-            }); 
+            });
 
             $dataObj = $dataObj->get();
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
-    } 
+    }
 
     public function storeUpdate(Request $request){
-     
+
         if($request->id){
             $query = Category::where('id', $request->id)->first();
             $query->update(array('title' => $request->title, 'code' => $request->code,'profile_id' => $request->profile_id, 'category_id' => $request->category_id));
@@ -69,14 +69,14 @@ class CategoryController extends Controller
     public function statusChangeData(Request $request){
 
         $query = Category::where('id', $request->id)->first();
-        if($request->status == 'disabled'){ 
+        if($request->status == 'disabled'){
             $status = 'disabled';
-            
+
         }else{
             $status = 'active';
         }
         $log_type = 'change-status';
-        
+
         $message = 'Data has been '.$status;
         $query->update(array('status' => $status,'profile_id' => $request->profile_id));
 
@@ -84,5 +84,10 @@ class CategoryController extends Controller
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
 
         return response()->json(array('message' => $message), 200);
+    }
+
+    public function getCategoryList() {
+        $data = Category::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
     }
 }

@@ -22,7 +22,7 @@ class BrandController extends Controller
         $orderBy = $request['sort'];
 
         $dataObj = new Brand;
-        
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -31,7 +31,7 @@ class BrandController extends Controller
         }else{
             $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile');
         }
-    
+
         if($search){
             $dataObj->where(function($q) use($search){
                 $q->where('title', 'like', '%'.$search.'%');
@@ -42,12 +42,12 @@ class BrandController extends Controller
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function storeUpdate(Request $request){
-     
+
         if($request->id){
             $query = Brand::where('id', $request->id)->first();
             $query->update(array('title' => $request->title,'profile_id' => $request->profile_id));
@@ -68,14 +68,14 @@ class BrandController extends Controller
     public function statusChangeData(Request $request){
 
         $query = Brand::where('id', $request->id)->first();
-        if($request->status == 'disabled'){ 
+        if($request->status == 'disabled'){
             $status = 'disabled';
-            
+
         }else{
             $status = 'active';
         }
         $log_type = 'change-status';
-        
+
         $message = 'Data has been '.$status;
         $query->update(array('status' => $status,'profile_id' => $request->profile_id));
 
@@ -83,5 +83,10 @@ class BrandController extends Controller
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
 
         return response()->json(array('message' => $message), 200);
+    }
+
+    public function getBrandList() {
+        $data = Brand::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
     }
 }
