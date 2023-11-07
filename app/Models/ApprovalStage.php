@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\ApprovalSignature;
+use App\Models\Log;
+use App\Models\ApprovalSetup;
+use App\Models\Profile;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ApprovalStages extends Model
+class ApprovalStage extends Model
 {
     use HasFactory;
     protected $guarded = [];
@@ -18,6 +20,11 @@ class ApprovalStages extends Model
 
     public function signatures()
     {
-        return $this->hasMany(ApprovalSignature::class);
+        return $this->belongsToMany(Profile::class);
+    }
+
+    public function logs()
+    {
+        return $this->morphToMany(Log::class, 'loggable');
     }
 }

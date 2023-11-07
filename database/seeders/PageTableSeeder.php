@@ -22,6 +22,8 @@ class PageTableSeeder extends Seeder
             array('title' => 'Models', 'slug' => 'models'),
             array('title' => 'Brands', 'slug' => 'brands'),
             array('title' => 'Assets', 'slug' => 'asset-list'),
+            array('title' => 'Notifications', 'slug' => 'notifications'),
+            array('title' => 'Others', 'slug' => 'others'),
         );
 
         foreach($dataArr AS $k => $v){ 
@@ -30,8 +32,6 @@ class PageTableSeeder extends Seeder
                 'slug'  => $v['slug'],
             ]);
             $query->save();
-        }
-
-        
+        } 
     }
 }

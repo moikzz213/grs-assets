@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title', 150)->nullable();
             $table->date('warranty_start_date')->nullable();
             $table->date('warranty_end_date')->nullable();
-            $table->string('amc_vendor', 150)->nullable();
+            $table->unsignedBigInteger('vendor_id')->nullable();
             $table->date('amc_start_date')->nullable();
             $table->date('amc_end_date')->nullable();
             $table->unsignedBigInteger('status_id')->nullable();

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Warranty;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Vendor extends Model
 {
@@ -13,6 +14,11 @@ class Vendor extends Model
     public function profile()
     {
         return $this->belongsTo(Profile::class);
+    }
+
+    public function warranty()
+    {
+        return $this->hasMany(Warranty::class);
     }
 
     public function logs()

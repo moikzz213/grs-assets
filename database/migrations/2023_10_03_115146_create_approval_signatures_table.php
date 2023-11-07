@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('approval_signatures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('approval_setup_id');
+            $table->unsignedBigInteger('approval_stage_id');
             $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });

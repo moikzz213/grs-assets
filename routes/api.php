@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SpecModelController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ApprovalSetupController;
 
 /*
@@ -52,6 +55,7 @@ Route::middleware('authkey')->group(function () {
      */
     Route::prefix('user')->group(function () {
         Route::get('/all', [UserController::class, 'getUsers'])->name('admin.get.all.users');
+        Route::get('/fetch/signatories', [ProfileController::class, 'fetchSignatories'])->name('fetch.signatories');
     });
 
     // fetch data
@@ -88,6 +92,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch/vendors/non-paginated/data', [VendorController::class, 'nonPaginatedData'])->name('admin.fetch.non.vendors');
 
     Route::post('/approval-setups/store-update/data', [ApprovalSetupController::class, 'storeUpdate'])->name('admin.store.update.approvals');
+    Route::post('/approval-setups/store-signatory/update-data', [ApprovalSetupController::class, 'storeSignatoriesUpdate'])->name('admin.store.update.signatories');
     Route::post('/approval-setups/status-change/data', [ApprovalSetupController::class, 'statusChangeData'])->name('admin.status.change.approvals');
     Route::get('/fetch/approval-setups/non-paginated/data/{type}', [ApprovalSetupController::class, 'nonPaginatedData'])->name('admin.fetch.non.approvals');
     Route::get('/fetch/approval-setups/single-data/{id}', [ApprovalSetupController::class, 'fetchDataByID'])->name('admin.fetch.by.id');
@@ -97,6 +102,14 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
     Route::post('/store-page/settings', [PageController::class, 'storeUpdate'])->name('admin.storeUpdate');
     Route::post('/store-page/settings-capabilities/profile', [ProfileController::class, 'storePageCapabilities'])->name('profile.page.capabilities');
+    
+    Route::post('/store-update/setup-status', [StatusController::class, 'storeUpdate'])->name('admin.status.store.update');
+    Route::get('/fetch-global/setup-status', [StatusController::class, 'fetchData'])->name('admin.fetch.status.data');
+
+    Route::post('/store-update/notification', [NotificationController::class, 'storeUpdate'])->name('admin.notification.store.update');
+    Route::get('/fetch/notification-setup', [NotificationController::class, 'fetchData'])->name('admin.notification.fetch');
+
+    Route::get('/fetch/asset-info/by/asset-code/{code}', [AssetController::class, 'fetchAssetCode'])->name('admin.asset.fetch.code');
 });
 
 Route::get('/fetch/companies', [CompanyController::class, 'fetchData'])->name('admin.fetch.companies');

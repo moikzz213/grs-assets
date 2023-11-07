@@ -82,6 +82,11 @@ class ProfileController extends Controller
         return response()->json($profile, 200);
     }
 
+    public function fetchSignatories(){ 
+        $query = Profile::whereNot('role','superadmin')->whereIn('status', ['active', 'Active'])->orderBy('display_name', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
+
     public function fetchProfile($ecode, $token){ 
         $data = json_decode($ecode);
         

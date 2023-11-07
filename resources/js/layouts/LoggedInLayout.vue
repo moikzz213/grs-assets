@@ -164,7 +164,10 @@ import {
     mdiStoreSettings,
     mdiWatermark,
     mdiGlobeModel,
+    mdiBellRing,
+    mdiAnimation,
     mdiWeatherNight,
+    mdiBarcodeScan,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -192,6 +195,12 @@ const commonNav = ref([
         icon: mdiHomeOutline,
         path: "/dashboard",
         slug: "dashboard",
+    },
+    {
+        title: "Scan Barcode",
+        icon: mdiBarcodeScan,
+        path: "/scan",
+        slug: "scan",
     },
     {
         title: "Asset List",
@@ -243,7 +252,7 @@ const moderatorNav = ref([
             },
             {
                 title: "Approval Setup",
-                icon: mdiStoreSettings,
+                icon: mdiCog,
                 path: "/approval-setup/request-asset",
                 slug: "approval-setup",
             },
@@ -252,6 +261,18 @@ const moderatorNav = ref([
                 icon: mdiBookshelf,
                 path: "/pages",
                 slug: "pages",
+            },
+            {
+                title: "Notifications",
+                icon: mdiBellRing,
+                path: "/notifications",
+                slug: "notifications",
+            },
+            {
+                title: "Others",
+                icon: mdiAnimation,
+                path: "/others",
+                slug: "others",
             },
             {
                 title: "Users",

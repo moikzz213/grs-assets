@@ -1,6 +1,3 @@
-// import Dashboard from "../pages/admin/Dashboard.vue";
-// import Users from "../admin//Users.vue";
-// import Large from "../admin//Large.vue";
 export const routes = [
     /**
      * Auth
@@ -37,12 +34,39 @@ export const routes = [
         },
     },
     {
+        path: "/scan",
+        component: () => import("../pages/admin/scanBarcode/Data.vue"),
+        name: "Scan",
+        meta: {
+            requiresAuth: true, 
+            title: "scan",
+        },
+    },
+    {
         path: "/pages",
         component: () => import("../pages/admin/slugs/Slugs.vue"),
         name: "Pages",
         meta: {
             requiresAuth: true,
             title: "pages",
+        },
+    },
+    {
+        path: "/notifications",
+        component: () => import("../pages/admin/notifications/Notifications.vue"),
+        name: "Notifications",
+        meta: {
+            requiresAuth: true,
+            title: "notifications",
+        },
+    },
+    {
+        path: "/others",
+        component: () => import("../pages/admin/others/Others.vue"),
+        name: "Others",
+        meta: {
+            requiresAuth: true,
+            title: "others",
         },
     },
     {

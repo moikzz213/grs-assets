@@ -18,12 +18,12 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('brand_id');
-            $table->unsignedBigInteger('model_id');
-            $table->unsignedBigInteger('vendor_id');
+            $table->unsignedBigInteger('model_id')->nullable();
+            $table->unsignedBigInteger('vendor_id')->nullable();
             $table->unsignedBigInteger('author_id');
-            $table->unsignedBigInteger('last_author_id');
+            $table->unsignedBigInteger('last_author_id')->nullable();
             $table->string('asset_name', 150);
-            $table->string('asset_code*', 50)->unique();
+            $table->string('asset_code', 50)->unique();
             $table->string('serial_number', 80)->nullable();
             $table->string('section_code', 30)->nullable();
             $table->string('specification', 120)->nullable();
