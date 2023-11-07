@@ -101,4 +101,9 @@ class ProfileController extends Controller
 
         return response()->json($profile, 200);
     }
+
+    public function fetchFacilityTeam(){ 
+        $query = Profile::where('role','facility')->whereIn('status', ['active', 'Active'])->orderBy('display_name', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
 }

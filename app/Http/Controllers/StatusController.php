@@ -13,6 +13,16 @@ class StatusController extends Controller
         return response()->json($query, 200);
     }
 
+    public function fetchIncidentStatus(){
+        $query = Status::where('type', '=', 'incident')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
+
+    public function fetchIncidentTypes(){
+        $query = Status::where('type', '=', 'incident-type')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
+
     public function storeUpdate(Request $request){ 
         $msg = 'Invalid Access';
         $code = 500;

@@ -37,6 +37,8 @@ Route::get('/{slug}', [PageController::class, 'home'])->name('admin.slug');
 Route::get('/users/{id}', [PageController::class, 'home'])->name('admin.single.user');
 Route::get('/{slug}/page/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 Route::get('/approval-setup/{slug}', [PageController::class, 'home'])->name('admin.paginated.users');
+Route::get('/{slug}/update/id/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
+Route::get('/{slug}/new', [PageController::class, 'home'])->name('admin.add.new');
 Route::get('/approval-setup/{slug}/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 Route::get('/approval-setup/{type}/{slug}/id/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 // users axios
