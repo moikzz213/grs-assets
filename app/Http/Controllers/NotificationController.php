@@ -18,4 +18,9 @@ class NotificationController extends Controller
 
         return response()->json(array('message' => 'Data has been saved successfully!'), 200);
     }
+
+    public function fetchIncidentReceivers(){
+        $query = Notification::where('meta_type','=', 'incident-receiver')->whereNotNull('meta_value')->rderBy('id', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
 }

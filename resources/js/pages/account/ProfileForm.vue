@@ -132,11 +132,24 @@ if (props.user?.id) {
 
 const companies = ref([]);
 
+<<<<<<< HEAD
 const fetchCompanies = async () => {
   await axios.get("/api/fetch/companies").then((res) => {
     companies.value = res.data;
   });
 };
+=======
+const fetchCompanies = async () => { 
+  await clientKey(authStore.token)
+    .get("/api/fetch/companies")
+    .then((res) => {
+      companies.value= res.data;
+    })
+    .catch((err) => { 
+    }); 
+  
+}
+>>>>>>> 68c3c3e3d08476a257e8881b215774113303d953
 fetchCompanies();
 
 // save profile

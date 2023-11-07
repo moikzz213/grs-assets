@@ -183,27 +183,22 @@ const commonNav = ref([
     slug: "scan",
   },
   {
+    title: "Report Incident",
+    icon: mdiTools,
+    path: "/report-incident",
+    slug: "report-incident",
+  },
+  {
     title: "Asset List",
     icon: mdiMapMarkerRadius,
+    path: "/asset-list",
+    slug: "asset-list",
   },
-
   {
-    title: "Assets",
-    icon: mdiCubeOutline,
-    subs: [
-      {
-        title: "Assets",
-        icon: mdiArchiveSettingsOutline,
-        path: "/asset-list",
-        slug: "asset-list",
-      },
-      {
-        title: "Add Asset",
-        icon: mdiArchivePlusOutline,
-        path: "/asset-list/add",
-        slug: "asset-add",
-      },
-    ],
+    title: "Add Asset",
+    icon: mdiArchivePlusOutline,
+    path: "/asset-list/add",
+    slug: "asset-add",
   },
 ]);
 const moderatorNav = ref([

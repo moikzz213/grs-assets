@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Incident;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as Img;
 
