@@ -138,8 +138,10 @@ const fetchCompanies = async () => {
     .then((res) => {
       companies.value = res.data;
     })
-    .catch((err) => {});
-};
+    .catch((err) => {
+    });
+
+}
 fetchCompanies();
 
 // save profile

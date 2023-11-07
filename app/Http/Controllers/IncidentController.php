@@ -174,6 +174,27 @@ class IncidentController extends Controller
         return response()->json(array('message' => $message, 'id' => $ID), 200);
     }
 
+    public function updateIncidentFacilityTeam(Request $request){
+        if($request->id){
+             
+            $query = Incident::where('id', $request->id)->first();
+           
+            $query->update(array(
+                'priority' => $request->priority,
+                'handled_by' => $request->handled_by,
+                'status_id' => $request->status_id,
+                'remarks'   => $request->remarks
+            ));
+
+            $helper = new GlobalHelper;
+            $helper->createLogs($query, $request->profile_id, 'incident-facility', $query);
+
+            return response()->json(array('message' => 'Incident has been updated.'), 200);
+        }
+
+        return false;
+    }
+
     public function fetchDataByID($id){
         $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files')->first(); 
         return response()->json($query, 200);

@@ -248,8 +248,9 @@
                     </Form>
                 </v-card>
                
-                <Attachment v-else-if="isEdit && isActive == 'attachment'" :incident-id="route.params.id" :files="objData.files" @deleted="DeleteImage" :objectdata="props.objectdata"/>
-                <Facility v-else-if="(loggedRole == 'superadmin' || loggedRole == 'admin'  || loggedRole == 'technical-operation') && isEdit && isActive == 'facility'" :objectdata="props.objectdata"/>   
+                <Attachment v-else-if="isEdit && isActive == 'attachment'" :incident-id="route.params.id" :files="objData.files" @deleted="DataUpdateEmit" :objectdata="props.objectdata"/>
+                <Facility v-else-if="(loggedRole == 'superadmin' || loggedRole == 'admin'  || loggedRole == 'technical-operation' || loggedRole == 'facility') && 
+                isEdit && isActive == 'facility'" :objectdata="props.objectdata" @saved="DataUpdateEmit"/>   
                 
             </v-col>
         </v-row>
@@ -303,7 +304,7 @@ const props = defineProps({
 const objData = ref({});
 const sbOptions = ref({}); 
 
-const DeleteImage = (v) => {
+const DataUpdateEmit = (v) => {
     sbOptions.value = {
         status: true,
         type: "success",
