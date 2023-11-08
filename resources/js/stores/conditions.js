@@ -10,7 +10,7 @@ export const useConditionStore = defineStore("conditions", {
     actions: {
         async getConditions(token) {
             await clientKey(token)
-                .get("/api/model/state/condition-list")
+                .get("/api/condition/state/condition-list")
                 .then((res) => {
                     this.conditions = Object.assign([], res.data);
                 })

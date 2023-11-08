@@ -86,6 +86,9 @@ class CategoryController extends Controller
         return response()->json(array('message' => $message), 200);
     }
 
+    /**
+     * List for pinia state
+     */
     public function getCategoryList() {
         $data = Category::where('status', 'active')->orderBy('title', 'ASC')->get();
         return response()->json($data, 200);

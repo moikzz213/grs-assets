@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Warranty;
 use App\Models\SpecModel;
 use App\Models\Maintenance;
+use App\Models\AllottedInformation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -60,5 +61,10 @@ class Asset extends Model
     public function last_updated_by()
     {
         return $this->belongsTo(Profile::class);
+    }
+
+    public function allotted_informations()
+    {
+        return $this->hasMany(AllottedInformation::class);
     }
 }
