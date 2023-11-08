@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\DB;
 
 class AssetController extends Controller
 {
+
+    function getAssetById($id) {
+        $asset = Asset::where('id', $id)
+        ->with(
+            'warranty.vendor',
+            'maintenance',
+            'brand',
+            'model',
+            'category',
+            'company',
+            'location'
+        )->first();
+        return response()->json($asset, 200);
+    }
+
     public function save(Request $request) {
 
         $msg = "";

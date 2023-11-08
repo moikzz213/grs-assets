@@ -25,4 +25,5 @@ Route::middleware('authkey')->group(function () {
 
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');
+    Route::get('/asset/{id}', [AssetController::class, 'getAssetById'])->name('admin.asset.single');
 });

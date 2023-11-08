@@ -618,7 +618,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
@@ -628,6 +628,10 @@ const props = defineProps({
   page: {
     type: String,
     default: "add",
+  },
+  asset: {
+    type: Object,
+    default: null,
   },
 });
 
@@ -737,6 +741,17 @@ const fillAsset = () => {
 // save asset
 const loadingAsset = ref(false);
 const assetObj = ref({});
+
+// set assetObj
+assetObj.value = Object.assign({}, props.asset);
+watch(
+  () => props.asset,
+  (newVal) => {
+    assetObj.value = Object.assign({}, newVal);
+  }
+);
+console.log("assetObj.value", assetObj.value);
+
 const saveAsset = async () => {
   loadingAsset.value = true;
   await clientKey(authStore.token)
