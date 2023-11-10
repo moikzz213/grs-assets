@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pb-10">
     <AppPageHeader title="Add Asset" />
     <v-row>
       <div class="v-col-12">

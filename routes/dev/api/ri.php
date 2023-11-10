@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\StatusController;
@@ -26,4 +27,8 @@ Route::middleware('authkey')->group(function () {
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');
     Route::get('/asset/{id}', [AssetController::class, 'getAssetById'])->name('admin.asset.single');
+
+    // files
+    Route::get('/system/file/all', [FileController::class, 'getPaginatedFiles'])->name('admin.files.paginated');
+    Route::post('/system/file/upload', [FileController::class, 'upload'])->name('admin.file.upload');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Asset;
 use App\Models\Incident;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class File extends Model
 {
     use HasFactory;
-    protected $guarded = []; 
+    protected $guarded = [];
 
     public function incidents()
     {
-        
         return $this->morphedByMany(
             Incident::class,
             'fileable',
@@ -21,6 +21,18 @@ class File extends Model
             'file_id',
             'fileable_id',
             'id',
+            'id',
+        );
+    }
+
+    public function files()
+    {
+        return $this->morphedByMany(
+            Asset::class,
+            'fileable',
+            'fileables',
+            'file_id',
+            'fileable_id',
             'id',
         );
     }

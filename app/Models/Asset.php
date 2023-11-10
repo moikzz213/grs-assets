@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\File;
 use App\Models\Brand;
 use App\Models\Company;
 use App\Models\Category;
@@ -66,5 +67,18 @@ class Asset extends Model
     public function allotted_informations()
     {
         return $this->hasMany(AllottedInformation::class);
+    }
+
+    public function attachments()
+    {
+        return $this->morphToMany(
+            File::class,
+            'fileable',
+            'fileables',
+            'fileable_id',
+            'file_id',
+            '',
+            'id'
+        );
     }
 }

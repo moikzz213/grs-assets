@@ -18,7 +18,8 @@ class AssetController extends Controller
             'model',
             'category',
             'company',
-            'location'
+            'location',
+            'attachments'
         )->first();
         return response()->json($asset, 200);
     }
@@ -28,6 +29,7 @@ class AssetController extends Controller
         $msg = "";
         $statusCode = 200;
         $assetArray = array();
+        $asset = null;
 
         DB::beginTransaction();
         try {
@@ -55,6 +57,10 @@ class AssetController extends Controller
 
             }else{
                 $asset = Asset::create($assetArray);
+
+                if($asset && $request['file_ids']){
+                    $asset->attachments()->sync($request['file_ids']);
+                }
             }
 
             DB::commit();

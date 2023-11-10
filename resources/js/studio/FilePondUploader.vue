@@ -1,54 +1,100 @@
 <template>
-  <div id="component">
+  <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <file-pond
       name="filepond"
       ref="pond"
       instantUpload="false"
-      allow-multiple="true"
-      accepted-file-types="image/jpeg, image/png, application/pdf"
+      :credits="''"
+      :allow-multiple="uploadOptions.allow_multiple"
+      :maxFiles="uploadOptions.max_files"
+      :maxFileSize="uploadOptions.max_file_size"
+      :accepted-file-types="uploadOptions.accepted_file_types"
       v-bind:server="serverSetup"
       v-bind:files="selectedFiles"
       v-on:init="handleFilePondInit"
-      :credits="{}"
+      v-on:error="handleFilePondError"
+      allowProcess="false"
     />
+    <div class="mt-auto d-flex justify-end">
+      <v-btn color="primary" @click="handleUpload">Upload</v-btn>
+    </div>
   </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
-const authStore = useAuthStore();
-
 // Import Vue FilePond
 import vueFilePond from "vue-filepond";
-
-// Import FilePond styles
 import "filepond/dist/filepond.min.css";
-
 // Import FilePond plugins
-// Please note that you need to install these plugins separately
-// `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation filepond-plugin-file-validate-type --save`
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImageCrop from "filepond-plugin-image-crop";
+import FilePondPluginImageResize from "filepond-plugin-image-resize";
+import FilePondPluginImageTransform from "filepond-plugin-image-transform";
+import FilePondPluginPdfPreview from "filepond-plugin-pdf-preview";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import FilePondPluginImageEdit from "filepond-plugin-image-edit";
+import "filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css";
 
-// Create component
-const FilePond = vueFilePond(
-  FilePondPluginFileValidateType,
-  FilePondPluginImageExifOrientation,
-  FilePondPluginImagePreview
+const authStore = useAuthStore();
+const pond = ref(null);
+
+// emits
+const emit = defineEmits(["uploaded"]);
+
+// props
+const props = defineProps({
+  options: {
+    type: Object,
+    default: null,
+  },
+});
+const uploadOptions = ref({
+  max_files: props.options.max_files ? props.options.max_files : 4,
+  allow_multiple: props.options.allow_multiple ? props.options.allow_multiple : true,
+  height: props.options.height ? props.options.height : "150px",
+  width: props.options.width ? props.options.width : "100%",
+  max_file_size: props.options.max_file_size ? props.options.max_file_size : "20MB",
+  //   image_crop_aspect_ratio: props.options.image_crop_aspect_ratio
+  //     ? props.options.image_crop_aspect_ratio
+  //     : "1:1",
+  accepted_file_types: props.options.accepted_file_types
+    ? props.options.accepted_file_types
+    : "image/jpeg, image/png", // image/jpeg, image/png, application/pdf
+});
+watch(
+  () => props.options,
+  (newVal) => {
+    uploadOptions.value = { ...uploadOptions.value, ...newVal };
+    console.log("uploadOptions.value", uploadOptions.value);
+  }
 );
 
-const selectedFiles = ref([
-  {
-    source: "photo.jpeg",
-    options: {
-      type: "local",
-    },
-  },
-]);
+console.log("uploadOptions", uploadOptions.value);
+
+// FilePond
+const selectedFiles = ref([]);
+const FilePond = vueFilePond(
+  //   FilePondPluginFileValidateType,
+  //   FilePondPluginImagePreview,
+  //   FilePondPluginImageExifOrientation,
+  //   FilePondPluginFileValidateSize,
+  //   FilePondPluginImageEdit
+
+  FilePondPluginFileValidateSize,
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginFileValidateType,
+  //   FilePondPluginImageCrop,
+  FilePondPluginImageResize,
+  FilePondPluginImageTransform,
+  FilePondPluginImageEdit
+);
 
 // fake server to simulate loading a 'local' server file and processing a file
 const serverSetup = {
@@ -56,137 +102,64 @@ const serverSetup = {
   process: (
     fieldName,
     file,
-    metadata,
     load,
-    error,
     progress,
+    metadata,
+    error,
     abort,
     transfer,
     options
   ) => {
+    console.log("process file", file);
+
     // fieldName is the name of the input field
     // file is the actual file object to send
     const formData = new FormData();
     formData.append(fieldName, file, file.name);
-    formData.append('profile_id',authStore.user.profile.id);
+    formData.append("profile_id", authStore.user.profile.id);
+    formData.append("file_id", file.id);
 
-    console.log("fieldName", fieldName);
-    console.log("file", file);
-    console.log("metadata", metadata);
-    console.log("load", load);
+    // set XMLHttpRequest
+    const request = new XMLHttpRequest();
+    request.open("POST", "/api/system/file/upload");
 
-    axios({
-      method: "post",
-      url: "api/file/upload",
-      data: formData,
-      headers: {
-        "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-        Authorization: `Bearer ${authStore.token}`,
-        "Content-Type":
-          "multipart/form-data; charset=utf-8; boundary=" +
-          Math.random().toString().substring(2),
-        withCredentials: false,
-      },
-      onUploadProgress: (e) => {
-        // updating progress indicator
-        progress(e.lengthComputable, e.loaded, e.total);
-      },
-    })
-      .then((response) => {
-        // passing the file id to FilePond
-        load(response.data.data.id);
-      })
-      .catch((thrown) => {
-        if (axios.isCancel(thrown)) {
-          console.log("Request canceled", thrown.message);
-        } else {
-          // handle error
-        }
-      });
-  },
-  //   process: {
-  //     url: "./api/file/upload",
-  //     method: "POST",
-  //     headers: {
-  //       "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-  //       Authorization: `Bearer ${authStore.token}`,
-  //       "Content-Type":
-  //         "multipart/form-data; charset=utf-8; boundary=" +
-  //         Math.random().toString().substring(2),
-  //       withCredentials: false,
-  //     },
-  //     // withCredentials: false,
-  //     onload: (response) => response.key,
-  //     onerror: (response) => response.data,
-  //     ondata: (formData) => {
-  //       formData.append("Hello", "World");
-  //       console.log("formData", formData);
-  //       return formData;
-  //     },
-  //   },
-  // revert: "./revert",
-  // restore: "./restore/",
-  // load: "./load/",
-  // fetch: "./fetch/",
-  //   process: (fieldName, file, metadata, load) => {
-  //     console.log("fieldName", fieldName);
-  //     console.log("file", file);
-  //     console.log("metadata", metadata);
-  //     console.log("load", load);
-  //     upload();
-  //     // simulates uploading a file
-  //     //   setTimeout(() => {
-  //     //     load(Date.now());
-  //     //   }, 1500);
-  //   },
-  // load: (source, load) => {
-  //   // simulates loading a file from the server
-  //   fetch(source)
-  //     .then((res) => res.blob())
-  //     .then(load);
-  // },
-};
-const upload = async () => {
-  axios.post("/api/file/upload", {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${bearer}`,
-    },
-  });
+    // set headers
+    request.setRequestHeader(
+      "X-CSRF-TOKEN",
+      document.getElementsByTagName("meta")["csrf-token"].content
+    );
+    request.setRequestHeader("Authorization", `Bearer ${authStore.token}`);
 
-  await axios({
-    method: "post",
-    url: "v1/upload",
-    data: formData,
-    cancelToken: source.token,
-    onUploadProgress: (e) => {
-      // updating progress indicator
+    // set upload
+    request.upload.onprogress = (e) => {
       progress(e.lengthComputable, e.loaded, e.total);
-    },
-  })
-    .then((response) => {
-      // passing the file id to FilePond
-      load(response.data.data.id);
-    })
-    .catch((thrown) => {
-      if (axios.isCancel(thrown)) {
-        console.log("Request canceled", thrown.message);
-      } else {
-        // handle error
-      }
-    });
+    };
 
-  //     url: "./api/file/upload",
-  //     method: "POST",
-  //     headers: {
-  //       "X-CSRF-TOKEN": document.getElementsByTagName("meta")["csrf-token"].content,
-  //       Authorization: `Bearer ${authStore.token}`,
-  //       "Content-Type":
-  //         "multipart/form-data; charset=utf-8; boundary=" +
-  //         Math.random().toString().substring(2),
-  //       withCredentials: false,
-  //     },
+    // set on load
+    request.onload = function () {
+      if (request.status >= 200 && request.status < 300) {
+        emit("uploaded");
+        console.log("request.responseText", request.responseText);
+        // load(request.responseText);
+        console.log("selectedFiles", selectedFiles.value);
+      } else {
+        error("Process Error");
+      }
+    };
+
+    request.send(formData);
+
+    return {
+      abort: () => {
+        request.abort();
+        abort();
+      },
+    };
+  },
+  revert: null,
+  restore: null,
+  load: null,
+  fetch: null,
 };
 
 const handleFilePondInit = () => {
@@ -195,22 +168,42 @@ const handleFilePondInit = () => {
   /* eslint-disable */
   console.log("FilePond has initialized");
 };
+const handleFilePondError = (file, status) => {
+  console.log("file", file);
+  console.log(" status", status);
+};
+
+const handleUpload = (files) => {
+  pond.value.processFiles();
+  console.log("files", files);
+};
+
+console.log("uploadOptions.height", uploadOptions.value.height);
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+<style>
+.filepond--root,
+.filepond--root .filepond--drop-label {
+  min-height: v-bind("uploadOptions.height");
+  width: v-bind("uploadOptions.width");
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.filepond--root .filepond--list-scroller {
+  margin-top: 10px !important;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.filepond--item {
+  width: calc(50% - 0.5em) !important;
+  margin-bottom: 0.25em !important;
 }
-a {
-  color: #42b983;
+@media (min-width: 30em) {
+  .filepond--item {
+    width: calc(50% - 0.5em);
+  }
+}
+
+@media (min-width: 50em) {
+  .filepond--item {
+    width: calc(33.33% - 0.5em);
+  }
 }
 </style>
