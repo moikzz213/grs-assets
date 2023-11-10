@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class AssetController extends Controller
 {
-
     function getAssetById($id) {
         $asset = Asset::where('id', $id)
         ->with(
@@ -54,7 +53,8 @@ class AssetController extends Controller
             );
 
             if(isset($request['id']) && $request['id'] !== null){
-
+                $asset = Asset::find($request['id']);
+                $asset->attachments()->sync($request['file_ids']);
             }else{
                 $asset = Asset::create($assetArray);
 

@@ -81,16 +81,28 @@
               v-slot="{ field, errors }"
               v-model="assetObj.category_id"
             >
-              <v-select
+              <!-- item-title="title"
+            item-value="id" -->
+              <v-autocomplete
                 v-model="assetObj.category_id"
                 v-bind="field"
-                :items="categoryStore.list"
+                :items="categoryStore.list.map((cs) => cs.title)"
                 label="Category"
                 density="compact"
                 variant="outlined"
                 :error-messages="errors"
               />
             </Field>
+            <!-- <v-autocomplete
+              v-model="assetObj.category_id"
+              :items="categoryStore.list"
+              item-title="title"
+              item-value="id"
+              label="Category"
+              density="compact"
+              variant="outlined"
+              :rules="[(v) => !!v || 'Category is required']"
+            /> -->
           </div>
           <div class="v-col-12 v-col-md-4 pt-0 pb-2">
             <Field
@@ -802,17 +814,21 @@ const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 
 // set assetObj
 assetObj.value = Object.assign({}, props.asset);
-selectedFiles.value = Object.assign([], props.asset.attachments);
+selectedFiles.value =
+  props.asset && props.asset.attachments
+    ? Object.assign([], props.asset.attachments)
+    : [];
 watch(
   () => props.asset,
   (newVal) => {
     assetObj.value = Object.assign({}, newVal);
-    selectedFiles.value = assetObj.value.attachments;
+    selectedFiles.value = newVal.attachments ? assetObj.value.attachments : [];
   }
 );
 
 const saveAsset = async () => {
   assetObj.value.file_ids = selectedFilesIds.value;
+  //   assetObj.value.category_id = categoryStore.list.filter()
   loadingAsset.value = true;
   await clientKey(authStore.token)
     .post("/api/asset/save", assetObj.value)
