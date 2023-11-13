@@ -687,6 +687,7 @@ import { ref, computed, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
+import { useAutocompleteID } from "@/composables/autocompleteId";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
 import { mdiClose } from "@mdi/js";
