@@ -137,15 +137,15 @@ if (props.user?.id) {
 
 const companies = ref([]);
 
-const fetchCompanies = async () => { 
+const fetchCompanies = async () => {
   await clientKey(authStore.token)
     .get("/api/fetch/companies")
     .then((res) => {
-      companies.value= res.data;
+      companies.value = res.data;
     })
-    .catch((err) => { 
-    }); 
-  
+    .catch((err) => {
+    });
+
 }
 fetchCompanies();
 

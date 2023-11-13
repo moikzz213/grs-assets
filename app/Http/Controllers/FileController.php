@@ -28,55 +28,57 @@ class FileController extends Controller
 
         $files->each(function ($file, $key) use (&$request, &$userStorage, &$fileArray, &$uploadKey) {
 
+            // storage directory
             $userStorageDir = storage_path() . '/app' . $userStorage;
-            $fileName = $file->getClientOriginalName();
-            if (strlen($fileName) > 10){
-                // $fileName = substr($fileName, 0, 5).'-'.Str::random(5).'-';
-                $fileName = Str::random(5);
+
+            // title
+            $originalName = $file->getClientOriginalName();
+            $theTitle = '';
+            if (strlen($originalName) > 50){
+                $theTitle = substr($originalName, 0, 50);
             }
-            $title = pathinfo($fileName, PATHINFO_FILENAME);
+            $theTitle = pathinfo($theTitle, PATHINFO_FILENAME);
+
+            // extension
             $extn = strtolower($file->getClientOriginalExtension());
-            // $extn = 'jpg';
-            $slugTitle = Str::slug($title);
-            $path = $slugTitle."-".$uploadKey."-".$request['profile_id'].".".$extn;
+
+            // path
+            $ramdomChars = Str::random(10);
+            $slug = Str::slug($ramdomChars);
+            $path = $slug."-".$uploadKey."-".$request['profile_id'].".".$extn;
+
+            // mime
             $mime = $file->getClientMimeType();
 
-            // File Optimization
-            $img = Img::make($file);
-            $img->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $img->encode($extn, 50);
-            $file_type = 'image';
-
-            // // Save file to storage directory
-            $img->save($userStorageDir . '/' . $path);
+           // check if pdf file
+           if($mime == 'application/pdf'){ // if the file is pdf
+                // move file to storage directory
+                $request->file('filepond')->move($userStorageDir, $path);
+            }else{ // if the file is image
+                // set image
+                $img = Img::make($file);
+                // optimization image
+                $img->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+                $img->encode($extn, 75); // ext, size
+                // // Save file to storage directory
+                $img->save($userStorageDir . '/' . $path);
+            }
 
             // Setup data into array
             array_push( $fileArray, array(
-                    // 'original_name' => $fileName,
-                    'title' => $title,
-                    'disk' => 'local',
-                    'path' => $path,
-                    // 'file_type' => $file_type,
-                    'mime' => $mime,
-                    'profile_id' => $request['profile_id'],
-                    'created_at' => Carbon::now(),
+                'title' => $theTitle,
+                'disk' => 'local',
+                'path' => $path,
+                'mime' => $mime,
+                'profile_id' => $request['profile_id'],
+                'created_at' => Carbon::now(),
             ));
         });
 
         // Insert into database at once
         $uploadedFiles = File::insert($fileArray);
-
-        return response()->json([
-            'request' => $request,
-            'allfiles' => $allfiles,
-            'files' => $files,
-            'request_file' => request()->file(),
-            'request' => request()->file('filepond'),
-            'has_filrequest' => $request->hasFile('filepond'),
-            'message' => 'Upload Success',
-        ], 200);
 
         return response()->json([
             'success' => true,
@@ -101,5 +103,10 @@ class FileController extends Controller
         }else{
             return abort('403');
         }
+    }
+
+    function getPaginatedFiles() {
+        $files = File::orderBy('id', 'DESC')->paginate(20);
+        return response()->json($files, 200);
     }
 }

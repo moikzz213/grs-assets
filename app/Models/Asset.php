@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\File;
 use App\Models\Brand;
 use App\Models\Company;
 use App\Models\Category;
@@ -9,6 +10,7 @@ use App\Models\Location;
 use App\Models\Warranty;
 use App\Models\SpecModel;
 use App\Models\Maintenance;
+use App\Models\AllottedInformation;
 use App\Models\RequestAssetDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -63,9 +65,26 @@ class Asset extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function allotted_informations()
+    {
+        return $this->hasMany(AllottedInformation::class);
+    }
+
+    public function attachments()
+    {
+        return $this->morphToMany(
+            File::class,
+            'fileable',
+            'fileables',
+            'fileable_id',
+            'file_id',
+            '',
+            'id'
+        );
+    }
     public function items()
     {
         return $this->belongsToMany(RequestAssetDetail::class);
-    } 
-    
+    }
+
 }

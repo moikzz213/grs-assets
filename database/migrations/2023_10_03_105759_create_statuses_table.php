@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100);
-            $table->string('type', 30);
-            $table->string('status', 15)->default('active'); 
+            $table->string('type', 30); // asset, condition-type, incident-type, incident, maintenance
+            $table->string('status', 15)->default('active');
             $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });

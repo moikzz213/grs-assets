@@ -38,7 +38,7 @@ export const routes = [
         component: () => import("../pages/normal/scanBarcode/Data.vue"),
         name: "Scan",
         meta: {
-            requiresAuth: true, 
+            requiresAuth: true,
             title: "scan",
         },
     },
@@ -127,6 +127,15 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "assets",
+        },
+    },
+    {
+        path: "/asset-list/edit/:id",
+        component: () => import("../pages/assets/EditAsset.vue"),
+        name: "edit-asset",
+        meta: {
+            requiresAuth: true,
+            title: "asset",
         },
     },
     {

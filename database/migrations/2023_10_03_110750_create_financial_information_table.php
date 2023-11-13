@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('asset_id');
             $table->decimal('capitalization_price', 10,2)->nullable();
-            $table->string('end_of_life', 50)->nullable();
+            $table->date('end_of_life')->nullable();
             $table->date('capitalization_date')->nullable();
             $table->string('depreciation_percentage', 20)->nullable();
             $table->decimal('scrap_value', 10,2)->nullable();

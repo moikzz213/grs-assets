@@ -9,21 +9,21 @@ use Illuminate\Http\Request;
 class StatusController extends Controller
 {
     public function fetchData(){
-        $query = Status::orderBy('status', 'ASC')->orderBy('type', 'ASC')->orderBy('title', 'ASC')->get(); 
+        $query = Status::orderBy('status', 'ASC')->orderBy('type', 'ASC')->orderBy('title', 'ASC')->get();
         return response()->json($query, 200);
     }
 
     public function fetchIncidentStatus(){
-        $query = Status::where('type', '=', 'incident')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get(); 
+        $query = Status::where('type', '=', 'incident')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get();
         return response()->json($query, 200);
     }
 
     public function fetchIncidentTypes(){
-        $query = Status::where('type', '=', 'incident-type')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get(); 
+        $query = Status::where('type', '=', 'incident-type')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get();
         return response()->json($query, 200);
     }
 
-    public function storeUpdate(Request $request){ 
+    public function storeUpdate(Request $request){
         $msg = 'Invalid Access';
         $code = 500;
 
@@ -51,14 +51,24 @@ class StatusController extends Controller
                 $msg = 'Data has been saved.';
             }
             if(count($request->new) > 0 ){
-                Status::insert($request->new); 
+                Status::insert($request->new);
                 $msg = 'Data has been saved.';
-            }  
+            }
         }
         if(@$query){
             $helper = new GlobalHelper;
             $helper->createLogs($query, $request->profile_id, $log_type, $query);
         }
         return response()->json(array('message' => $msg), $code);
+    }
+
+    public function getConditionList() {
+        $data = Status::where('status', 'active')->where('type', 'condition-type')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
+    }
+
+    public function getStatusList() {
+        $data = Status::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
     }
 }
