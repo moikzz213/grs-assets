@@ -15,13 +15,15 @@ class StatusSeeder extends Seeder
 
         $dataArr = array(
             array('title'=> 'Good', 'type' => 'condition-type', 'status' => 'active' ),
-            array('title'=> 'Broken', 'type' => 'incident-type', 'status' => 'active' ),
+            array('title'=> 'Maintenance', 'type' => 'incident-type', 'status' => 'active' ),
             array('title'=> 'Damage', 'type' => 'incident-type', 'status' => 'active' ),
             array('title'=> 'In-Used', 'type' => 'asset', 'status' => 'active' ),
             array('title'=> 'In-Stock', 'type' => 'asset', 'status' => 'active' ),
             array('title'=> 'Perfect', 'type' => 'condition-type', 'status' => 'active' ),
             array('title'=> 'Pending', 'type' => 'incident', 'status' => 'active' ),
             array('title'=> 'Completed', 'type' => 'incident', 'status' => 'active' ),
+            array('title'=> 'onProcess', 'type' => 'incident', 'status' => 'active' ),
+            array('title'=> 'Vendor', 'type' => 'incident', 'status' => 'active' ),
         );
 
         foreach($dataArr AS $k => $v){ 

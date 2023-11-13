@@ -1,17 +1,13 @@
 <template>
     <v-container>
-        <AppPageHeader title="Incident list page" />
+        <AppPageHeader title="Asset request page" />
         <v-row class="mb-3">
             <v-col class="v-col-12 mt-1 col-sm-12 py-0">
                 <v-btn
                     size="small"
-                    color="primary"
-                    v-if="
-                        authStore.user.role == 'superadmin' ||
-                        authStore.capabilities?.includes('add')
-                    "
+                    color="primary" 
                     @click="addNew"
-                    >Report New Incident</v-btn
+                    >Request new asset</v-btn
                 >
                 <v-card class="px-5 mb-1">
                     <v-card-text>
@@ -45,24 +41,11 @@
                                 item-title="title"
                             ></v-autocomplete>
                             </div>
-                            <div class="v-col-md-2 py-1">
-                                <v-autocomplete
-                                :items="typeList"
-                                v-model="objFIlter.type_id"
-                                @update:modelValue="filterSearch"
-                                variant="outlined"
-                                density="compact"
-                                hide-details
-                                item-value="id"
-                                item-title="title"
-                                clearable
-                                label="Type"
-                            ></v-autocomplete>
-                            </div>
+                            
                             <div class="v-col-md-2 py-1">
                                 <v-autocomplete
                                 :items="statusList"
-                                v-model="objFIlter.status_id"
+                                v-model="objFIlter.status"
                                 @update:modelValue="filterSearch"
                                 variant="outlined"
                                 density="compact"
@@ -101,7 +84,7 @@
                                 variant="outlined"
                                 density="compact"
                                 clearable
-                                label="Search (ex. ISR-100035 )"
+                                label="Search (ex. SN-5000035 )"
                                 type="text"
                                 hide-details
                                 @click:append-outer="searchData"
@@ -113,17 +96,11 @@
                 </v-card>
             </v-col>
             <div class="v-col-12">
-                <v-card :loading="users.loading">
+                <v-card :loading="dataobj.loading">
                     <v-table>
                         <thead>
                             <tr>
-                                <th class="text-left text-capitalize">ISR No.</th>
-                                <th class="text-left text-capitalize">
-                                    Urgency
-                                </th>
-                                <th class="text-left text-capitalize">
-                                    Type
-                                </th>
+                                <th class="text-left text-capitalize">SN No.</th> 
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('company_id')"
@@ -132,31 +109,25 @@
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('location_id')"
+                                    @click="OrderByField('transferred_to')"
                                 >
                                     Location
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('asset_id')"
+                                    @click="OrderByField('subject')"
                                 >
-                                    Asset
-                                </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('asset_id')"
-                                >
-                                    AssetCode
+                                    Subject
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('profile_id')"
                                 >
-                                    ReportedBy
-                                </th>
+                                    Requestor
+                                </th> 
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('status_id')"
+                                    @click="OrderByField('status')"
                                 >
                                     Status
                                 </th>
@@ -164,51 +135,49 @@
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('created_at')"
                                 >
-                                    Date
+                                    D.Requested<br/>
+                                    <small>(DD/MM/YY)</small>
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('date_closed')"
+                                >
+                                    D.Closed<br/>
+                                    <small>(DD/MM/YY)</small>
                                 </th>
                                 <th class="text-right text-capitalize"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr
-                                v-for="item in users.data"
+                                v-for="item in dataobj.data"
                                 :key="item.id"
                             >
-                                <td>ISR-{{ pad(item.id)}}</td>
-                                <td>{{ item.urgency }}</td>
-                                <td>{{ item.type?.title }}</td>
+                                <td>SN-5{{ pad(item.id)}}</td> 
                                 <td>{{ item.company?.title }}</td>
-                                <td>{{ item.location?.title }}</td> 
-                                <td>{{ item.asset? item.asset.asset_name : item.title }}</td>
-                                <td>{{ item.asset?.asset_code }}</td>
-                                
+                                <td>{{ item.transfer_to?.title }}</td> 
+                                <td>{{ item.subject }}</td> 
                                 <td>{{ item.profile?.display_name }}</td>
                                 <td>  
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
                                         :color="`${
-                                            item.status?.title.toLowerCase() == 'completed'
+                                            item.status.toLowerCase() == 'complete'
                                                 ? 'success'
                                                 : 'error'
                                         }`"
-                                        >{{ item.status?.title }}</v-chip
+                                        >{{ statusTitle(item.status) }}</v-chip
                                     >
                                 </td>
                                 <td>{{ useFormatDate(item.created_at) }}</td>
+                                <td>{{ item.date_closed && item.date_closed != '0000-00-00' ? useFormatDate(item.date_closed) : '' }}</td>
                                 <td>
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
                                         <v-icon
-                                            size="small"
-                                            v-if="
-                                                authStore.user.role ==
-                                                    'superadmin' ||
-                                                authStore.capabilities?.includes(
-                                                    'edit'
-                                                )
-                                            "
+                                            size="small" 
                                             @click="() => editUser(item.id)"
                                             :icon="mdiPencil"
                                             class="mx-1"
@@ -232,7 +201,7 @@
                         </tbody>
                     </v-table>
                     <v-sheet
-                        v-if="users.data.length == 0"
+                        v-if="dataobj.data.length == 0"
                         class="pa-3 text-center w-100"
                         >No records found</v-sheet
                     >
@@ -246,7 +215,7 @@
                     variant="elevated"
                     active-color="primary"
                     density="comfortable"
-                    :disabled="users.loading"
+                    :disabled="dataobj.loading"
                 ></v-pagination>
             </div>
         </v-row>
@@ -275,7 +244,7 @@ const sbOptions = ref({
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const users = ref({
+const dataobj = ref({
     loading: false,
     data: [],
 });
@@ -291,6 +260,7 @@ const filterRows = () => {
 };
 
 const filterSearch = () => {
+    sortBy.value = "";
     if(currentPage.value == 1){
         getAllData();
     }else{
@@ -299,13 +269,13 @@ const filterSearch = () => {
 };
 
 const searchData = () => {
-    localStorage.setItem("incident-search", encryptData(search.value));
+    localStorage.setItem("request-asset-search", encryptData(search.value));
     getAllData();
 };
 
 const clearSearch = () => {
     search.value = "";
-    localStorage.setItem("incident-search", "");
+    localStorage.setItem("request-asset-search", "");
     getAllData();
 };
 
@@ -317,7 +287,7 @@ const orderBy = ref([]);
 const sortBy = ref("");
 const orderByCount = ref(0);
 const OrderByField = (v) => {
-    users.value.loading = true;
+    dataobj.value.loading = true;
 
     orderBy.value[0] = v;
     if (orderByCount.value % 2) {
@@ -351,36 +321,31 @@ const fetchLocations = async () => {
     })
     .catch((err) => { 
     });  
-}
-
-const typeList = ref([]);
-const fetchTypes = async () => { 
-  await clientKey(authStore.token)
-    .get("/api/fetch-global/incident-types/active")
-    .then((res) => {
-        typeList.value= res.data;
-    })
-    .catch((err) => { 
-    });  
-}
-
-const statusList = ref([]);
-const fetchStatus = async () => { 
-  await clientKey(authStore.token)
-    .get("/api/fetch-global/incident-status/active")
-    .then((res) => {
-        statusList.value= res.data;
-    })
-    .catch((err) => { 
-    });  
 } 
+
+const statusList = ref([
+    { id: 'pending', 'title': 'Pending' },
+    { id: 'awaiting-approval', 'title': 'Awaiting Approval'},
+    { id: 'reject', 'title': 'Rejected' },
+    { id: 'cancelled', 'title': 'Cancelled' },
+    { id: 'complete', 'title': 'Completed' }
+]);
+
+const statusTitle = (v) => {
+    if(v == 'reject'){
+        return 'Rejected';
+    }else if(v == 'complete'){
+        return 'Completed';
+    }
+    return v;
+}
  
 const getAllData = async () => {
-    console.log("objFIlter",objFIlter.value);
-    users.value.loading = true;
+   
+    dataobj.value.loading = true;
     await clientKey(authStore.token)
         .get(
-            "/api/fetch/incidents-by/users?userid="+authStore.user.profile.id+
+            "/api/fetch/request-assets/by-requestor/request?userid="+authStore.user.profile.id+
                 "&role=" + authStore.user.profile.role+
                 "&page=" +
                 currentPage.value +
@@ -394,6 +359,7 @@ const getAllData = async () => {
                 JSON.stringify(objFIlter.value)
         )
         .then((res) => {
+            console.log("dataobj.value",dataobj.value);
             totalPageCount.value = res.data.last_page
                 ? res.data.last_page
                 : res.data.length;
@@ -403,11 +369,11 @@ const getAllData = async () => {
             totalResult.value = res.data.total
                 ? res.data.total
                 : res.data.length;
-            users.value.data = res.data.data ? res.data.data : res.data;
-            users.value.loading = false;
+            dataobj.value.data = res.data.data ? res.data.data : res.data;
+            dataobj.value.loading = false;
         })
         .catch((err) => {
-            users.value.loading = false;
+            dataobj.value.loading = false;
             console.log(err);
         });
 };
@@ -415,7 +381,7 @@ watch(currentPage, (newValue, oldValue) => {
     if (currentPage.value && newValue != oldValue) {
         router
             .push({
-                name: "PaginatedIncidents",
+                name: "PaginatedRequestAsset",
                 params: {
                     page: currentPage.value,
                 },
@@ -428,11 +394,10 @@ watch(currentPage, (newValue, oldValue) => {
 const editUser = (id) => {
     router
         .push({
-            name: "EditIncident",
+            name: "EditRequestAsset",
             params: {
                 id: id                 
-            },
-            query: { type: 'details' }
+            }, 
         })
         .catch((err) => {
             console.log(err);
@@ -446,8 +411,7 @@ const deleteUser = (item) => {
 const addNew = () => {
     router
         .push({
-            name: "NewIncident", 
-            query: { type: 'details' }
+            name: "NewRequestAsset"           
         })
         .catch((err) => {
             console.log(err);
@@ -456,20 +420,18 @@ const addNew = () => {
  
 const pad = (v, size = 6) =>{
       let s = "00000" + v;
-      return s.substr(s.length - size);
+      return s.substring(s.length - size);
 }; 
 
 onMounted(() => {
-    let vsearch = localStorage.getItem("incident-search");
+    let vsearch = localStorage.getItem("request-asset-search");
 
     if (vsearch) {
         search.value = decryptData(vsearch);
     }
     getAllData().then(() => {
-        fetchCompanies();
-        fetchLocations();
-        fetchTypes().then(() =>{
-            fetchStatus();
+        fetchCompanies().then(() =>{
+            fetchLocations(); 
         });
     });
 });

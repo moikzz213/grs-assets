@@ -3,7 +3,7 @@
         <AppSnackBar :options="sbOptions" />
         <data-form v-if="isLoaded"
             :objectdata="objectData" 
-            :headertitle="'Update Incident Detail'"
+            :headertitle="'Update Request'"
             @saved="savedResponse"
         ></data-form>
     </div>
@@ -31,7 +31,7 @@ const getData = async () => {
     };
     await clientKey(authStore.token)
         .get(
-            "/api/fetch/incident/single-data/" +
+            "/api/fetch/request-assets/by-requestor/data/" +
             route.params.id
         )
         .then((response) => {

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('profile_id');
             $table->string('title',120);
             $table->text('description')->nullable();
-            $table->text('remarks')->nullable();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('handled_by')->nullable();

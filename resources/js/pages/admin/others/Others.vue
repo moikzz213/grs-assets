@@ -8,7 +8,7 @@
                     <v-card-text>
                         <v-row class="mb-2">
                             <div
-                                class="v-col-12 text-uppercase font-weight-bold d-flex"
+                                class="v-col-12 text-uppercase font-weight-bold d-flex pb-0"
                             >
                                 <div class="mr-3 my-auto">STATUS LIST</div>
                                 <v-btn
@@ -34,6 +34,7 @@
                                     >Save</v-btn
                                 >
                             </div>
+                            <div class="v-col-12 py-0"><small>Default value cannot be edited</small></div>
                             <v-divider></v-divider>
                         </v-row>
                         <v-row
@@ -70,6 +71,7 @@
                                     item-title="value"
                                     item-value="id"
                                     density="compact"
+                                    :disabled="item.id < 10"
                                 ></v-autocomplete>
                             </div>
                             <div class="v-col-5 py-2">
@@ -79,9 +81,10 @@
                                     label="Status Title"
                                     variant="outlined"
                                     density="compact"
+                                    :disabled="item.id < 10"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-2 my-auto">
+                            <div class="v-col-2 my-auto" v-if="item.id > 9">
                                 <v-btn
                                     :title="`${
                                         item.id
@@ -236,7 +239,7 @@
                     <v-card-text>
                         <v-row class="mb-2">
                             <div
-                                class="v-col-12 text-uppercase font-weight-bold d-flex"
+                                class="v-col-12 text-uppercase pb-0 font-weight-bold d-flex"
                             >
                                 <div class="mr-3 my-auto">INCIDENT TYPE LIST</div>
                                 <v-btn
@@ -262,6 +265,7 @@
                                     >Save</v-btn
                                 >
                             </div>
+                            <div class="v-col-12 py-0"><small>Default value cannot be edited</small></div>
                             <v-divider></v-divider>
                         </v-row>
                         <v-row
@@ -298,6 +302,7 @@
                                     item-title="value"
                                     item-value="id"
                                     density="compact"
+                                    :disabled="item.id < 10"
                                 ></v-autocomplete>
                             </div>
                             <div class="v-col-5 py-2">
@@ -307,9 +312,10 @@
                                     label="Incident Title"
                                     variant="outlined"
                                     density="compact"
+                                    :disabled="item.id < 10"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-2 my-auto">
+                            <div class="v-col-2 my-auto" v-if="item.id > 9">
                                 <v-btn
                                     :title="`${
                                         item.id

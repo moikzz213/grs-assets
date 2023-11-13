@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Log;
+use App\Models\File;
 use App\Models\Asset;
 use App\Models\Status;
-use App\Models\Location;
 use App\Models\Company;
-use App\Models\File;
 use App\Models\Profile;
+use App\Models\Location;
+use App\Models\IncidentRemark;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -18,8 +19,7 @@ class Incident extends Model
     protected $guarded = [];
 
     public function files()
-    { 
-
+    {  
         return $this->morphToMany(
             File::class,
             'fileable',
@@ -35,6 +35,11 @@ class Incident extends Model
     public function logs()
     {
         return $this->morphToMany(Log::class, 'loggable');
+    }
+
+    public function remarks()
+    {
+        return $this->hasMany(IncidentRemark::class)->orderBy("id",'DESC');
     }
 
     public function asset()

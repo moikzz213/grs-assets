@@ -1,1 +1,0 @@
-import{j as t,k as s,C as a,b as o,l as e,D as _,f as c}from"./app-273ebe1e.js";import{_ as l}from"./ApppageHeader-6f30069f.js";const r=c("div",{class:"v-col-12"},"Asset list",-1),m={__name:"Assets",setup(n){return(i,f)=>(o(),t(a,null,{default:s(()=>[e(l,{title:"Assets"}),e(_,null,{default:s(()=>[r]),_:1})]),_:1}))}};export{m as default};

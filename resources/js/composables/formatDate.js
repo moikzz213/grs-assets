@@ -15,4 +15,5 @@ function useFormatDate(date) {
         month: "2-digit",
     });
 }
+
 export { useFormatDateTime, useFormatDate };

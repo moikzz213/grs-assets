@@ -1,1 +1,0 @@
-import{c as e,l as t,b as a}from"./app-273ebe1e.js";import{D as r}from"./DataForm-3d123aeb.js";import"./_plugin-vue_export-helper-c27b6911.js";const p={__name:"NewData",setup(o){return(s,c)=>(a(),e("div",null,[t(r,{headertitle:"Request Assets"})]))}};export{p as default};

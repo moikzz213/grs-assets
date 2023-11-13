@@ -16,8 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('request_asset_id');
             $table->unsignedBigInteger('profile_id');
             $table->string('approval_type',50);
-            $table->string('approval_section',50);
+            $table->string('status',20)->default('pending');
+            $table->date('date_approved')->nullable();
             $table->unsignedTinyInteger('orders')->default(0);
+            $table->text('reason_rejected')->nullable();
             $table->timestamps();
         });
     }
