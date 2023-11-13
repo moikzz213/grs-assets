@@ -19,10 +19,10 @@ Route::middleware('authkey')->group(function () {
     Route::get('/brand/state/brand-list', [BrandController::class, 'getBrandList'])->name('admin.brand.list');
     // models
     Route::get('/model/state/model-list', [SpecModelController::class, 'getModelList'])->name('admin.model.list');
-    // conditions
-    Route::get('/condition/state/condition-list', [StatusController::class, 'getConditionList'])->name('admin.condition.list');
-    // conditions
+    // vendor
     Route::get('/vendor/state/vendor-list', [VendorController::class, 'getVendorList'])->name('admin.vendor.list');
+    // statuses
+    Route::get('/vendor/state/status-list', [StatusController::class, 'getStatusList'])->name('admin.status.list');
 
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');

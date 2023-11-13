@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('condition_id');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('category_id');

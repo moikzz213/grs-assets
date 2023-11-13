@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Helper\GlobalHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class AssetController extends Controller
 {
-    function getAssetById($id) {
+    public function getAssetById($id) {
         $asset = Asset::where('id', $id)
         ->with(
             'warranty.vendor',
@@ -25,6 +27,7 @@ class AssetController extends Controller
 
     public function save(Request $request) {
 
+        $globalHelper = new GlobalHelper;
         $msg = "";
         $statusCode = 200;
         $assetArray = array();
@@ -33,31 +36,34 @@ class AssetController extends Controller
         DB::beginTransaction();
         try {
             $assetArray = array(
+                'asset_name' => $request['asset_name'],
+                'serial_number' => $request['serial_number'],
+                'asset_code' => $request['asset_code'],
+                'section_code' => $request['section_code'],
+                'category_id' => $request['category_id'],
                 'company_id' => $request['company_id'],
                 'location_id' => $request['location_id'],
-                'category_id' => $request['category_id'],
                 'status_id' => $request['status_id'],
-                'brand_id' => $request['brand_id'],
-                'model_id' => $request['model_id'],
-                'vendor_id' => $request['vendor_id'],
-                'author_id' => $request['author_id'],
-                'asset_name' => $request['asset_name'],
-                'asset_code' => $request['asset_code'],
-                'serial_number' => $request['serial_number'],
-                'section_code' => $request['section_code'],
                 'specification' => $request['specification'],
-                'price' => $request['price'],
-                'po_number' => $request['po_number'],
-                'purchased_date' => $request['purchased_date'],
-                'remarks' => $request['remarks']
+                'model_id' => $request['model_id'],
+                'brand_id' => $request['brand_id'],
+                'condition_id' => $request['condition_id'],
+                'author_id' => $globalHelper->client_auth()->id,
+
+                // edit fields
+                'last_author_id' => $globalHelper->client_auth()->id,
+                'vendor_id' => isset($request['vendor_id']) ? $request['vendor_id'] : null,
+                'price' => isset($request['price']) ? $request['price'] : null,
+                'po_number' => isset($request['po_number']) ? $request['po_number'] : null,
+                'purchased_date' => isset($request['purchased_date']) ? $request['purchased_date'] : null,
+                'remarks' => isset($request['remarks']) ? $request['remarks'] : null,
             );
 
-            if(isset($request['id']) && $request['id'] !== null){
+            if(isset($request['id']) && $request['id'] != null){
                 $asset = Asset::find($request['id']);
                 $asset->attachments()->sync($request['file_ids']);
             }else{
                 $asset = Asset::create($assetArray);
-
                 if($asset && $request['file_ids']){
                     $asset->attachments()->sync($request['file_ids']);
                 }
@@ -72,6 +78,7 @@ class AssetController extends Controller
         }
 
         return response()->json([
+            'asset' => $asset,
             'message' => $msg,
         ], $statusCode);
     }

@@ -45,6 +45,76 @@
           </div>
           <div class="v-col-12 v-col-md-6 pt-0 pb-2">
             <Field
+              name="Section code"
+              v-slot="{ field, errors }"
+              v-model="assetObj.section_code"
+            >
+              <v-text-field
+                v-model="assetObj.section_code"
+                v-bind="field"
+                label="Section code (optional)"
+                variant="outlined"
+                density="compact"
+                :error-messages="errors"
+              />
+            </Field>
+          </div>
+          <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+            <!-- item-title="title"
+            item-value="id" -->
+            <!-- <Field
+              name="Category"
+              v-slot="{ field, errors }"
+              v-model="assetObj.category_id"
+            >
+              <v-autocomplete
+                v-model="assetObj.category_id"
+                v-bind="field"
+                :items="categoryStore.list.map((cs) => cs.title)"
+                label="Category"
+                density="compact"
+                variant="outlined"
+                :error-messages="errors"
+              />
+            </Field> -->
+            <v-autocomplete
+              v-model="assetObj.category_id"
+              :items="categoryStore.list"
+              item-title="title"
+              item-value="id"
+              label="Category"
+              density="compact"
+              variant="outlined"
+              :rules="[(v) => !!v || 'Category is required']"
+            />
+          </div>
+          <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+            <v-autocomplete
+              v-model="assetObj.company_id"
+              :items="companyStore.list"
+              item-title="title"
+              item-value="id"
+              label="Company"
+              density="compact"
+              variant="outlined"
+              :rules="[(v) => !!v || 'Company is required']"
+            />
+            <!-- :error-messages="errors" -->
+          </div>
+          <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+            <v-autocomplete
+              v-model="assetObj.location_id"
+              :items="locationStore.list"
+              item-title="title"
+              item-value="id"
+              label="Location"
+              density="compact"
+              variant="outlined"
+              :rules="[(v) => !!v || 'Location is required']"
+            />
+          </div>
+          <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+            <Field
               name="Asset Code"
               v-slot="{ field, errors }"
               v-model="assetObj.asset_code"
@@ -60,84 +130,23 @@
             </Field>
           </div>
           <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-            <Field
-              name="Section code"
-              v-slot="{ field, errors }"
-              v-model="assetObj.section_code"
-            >
-              <v-text-field
-                v-model="assetObj.section_code"
-                v-bind="field"
-                label="Section code (optional)"
-                variant="outlined"
-                density="compact"
-                :error-messages="errors"
-              />
-            </Field>
-          </div>
-          <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-            <Field
-              name="Category"
-              v-slot="{ field, errors }"
-              v-model="assetObj.category_id"
-            >
-              <!-- item-title="title"
-            item-value="id" -->
-              <v-autocomplete
-                v-model="assetObj.category_id"
-                v-bind="field"
-                :items="categoryStore.list.map((cs) => cs.title)"
-                label="Category"
-                density="compact"
-                variant="outlined"
-                :error-messages="errors"
-              />
-            </Field>
-            <!-- <v-autocomplete
-              v-model="assetObj.category_id"
-              :items="categoryStore.list"
+            <v-autocomplete
+              v-model="assetObj.status_id"
+              :items="statusStore.assets"
               item-title="title"
               item-value="id"
-              label="Category"
+              label="Asset Status"
               density="compact"
               variant="outlined"
-              :rules="[(v) => !!v || 'Category is required']"
-            /> -->
-          </div>
-          <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-            <Field
-              name="Company"
-              v-slot="{ field, errors }"
-              v-model="assetObj.company_id"
-            >
-              <v-select
-                v-model="assetObj.company_id"
-                v-bind="field"
-                :items="companyStore.list"
-                label="Company"
-                density="compact"
-                variant="outlined"
-                :error-messages="errors"
-              />
-            </Field>
-          </div>
-          <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-            <Field name="Location" v-slot="{ field, errors }" v-model="assetObj.location">
-              <v-select
-                v-model="assetObj.location_id"
-                v-bind="field"
-                :items="locationStore.list"
-                label="Location"
-                density="compact"
-                variant="outlined"
-                :error-messages="errors"
-              />
-            </Field>
+              :rules="[(v) => !!v || 'Asset Status is required']"
+            />
           </div>
         </v-row>
         <v-row>
-          <div class="v-col-12 pt-0 font-weight-bold">Additional Info</div>
-          <div class="v-col-12 pt-0">
+          <div v-if="props.page == 'edit'" class="v-col-12 pt-0 font-weight-bold">
+            Additional Info
+          </div>
+          <div v-if="props.page == 'edit'" class="v-col-12 pt-0">
             <v-btn
               class="mr-2 mb-2"
               @click="() => changeTab('specification')"
@@ -198,55 +207,40 @@
                 </Field>
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <Field
-                  name="Model"
-                  v-slot="{ field, errors }"
+                <v-autocomplete
                   v-model="assetObj.model_id"
-                >
-                  <v-select
-                    v-model="assetObj.model_id"
-                    v-bind="field"
-                    :items="modelStore.list"
-                    label="Model"
-                    density="compact"
-                    variant="outlined"
-                    :error-messages="errors"
-                  />
-                </Field>
+                  :items="modelStore.list"
+                  item-title="title"
+                  item-value="id"
+                  label="Model"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[(v) => !!v || 'Model is required']"
+                />
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <Field
-                  name="Brand"
-                  v-slot="{ field, errors }"
+                <v-autocomplete
                   v-model="assetObj.brand_id"
-                >
-                  <v-select
-                    v-model="assetObj.brand_id"
-                    v-bind="field"
-                    :items="brandStore.list"
-                    label="Brand"
-                    density="compact"
-                    variant="outlined"
-                    :error-messages="errors"
-                  />
-                </Field>
+                  :items="brandStore.list"
+                  item-title="title"
+                  item-value="id"
+                  label="Brand"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[(v) => !!v || 'Brand is required']"
+                />
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <Field
-                  name="Condition"
-                  v-slot="{ field, errors }"
+                <v-autocomplete
                   v-model="assetObj.condition_id"
-                >
-                  <v-select
-                    v-model="assetObj.condition_id"
-                    v-bind="field"
-                    :items="conditionStore.list"
-                    label="Condition"
-                    density="compact"
-                    variant="outlined"
-                    :error-messages="errors"
-                  />
-                </Field>
+                  :items="statusStore.conditions"
+                  item-title="title"
+                  item-value="id"
+                  label="Condition"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[(v) => !!v || 'Condition is required']"
+                />
               </div>
             </v-row>
           </div>
@@ -256,6 +250,7 @@
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field name="Price" v-slot="{ field, errors }" v-model="assetObj.price">
                   <v-text-field
+                  type="number"
                     v-model="assetObj.price"
                     v-bind="field"
                     label="Price"
@@ -266,21 +261,16 @@
                 </Field>
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <Field
-                  name="Vendor"
-                  v-slot="{ field, errors }"
+                <v-autocomplete
                   v-model="assetObj.vendor_id"
-                >
-                  <v-select
-                    v-model="assetObj.vendor_id"
-                    v-bind="field"
-                    :items="vendorStore.list"
-                    label="Vendor"
-                    density="compact"
-                    variant="outlined"
-                    :error-messages="errors"
-                  />
-                </Field>
+                  :items="vendorStore.list"
+                  item-title="title"
+                  item-value="id"
+                  label="Vendor"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[(v) => !!v || 'Vendor is required']"
+                />
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
@@ -460,21 +450,16 @@
               </div>
               <div class="v-col-12 pt-0 pb-2">Vendor Warranty</div>
               <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Vendor Warranty"
-                  v-slot="{ field, errors }"
+                <v-autocomplete
                   v-model="assetObj.vendor_warranty"
-                >
-                  <v-select
-                    v-model="assetObj.vendor_warranty"
-                    v-bind="field"
-                    :items="vendorStore.list"
-                    label="Vendor Warranty"
-                    density="compact"
-                    variant="outlined"
-                    :error-messages="errors"
-                  />
-                </Field>
+                  :items="vendorStore.list"
+                  item-title="title"
+                  item-value="id"
+                  label="Vendor Warranty"
+                  density="compact"
+                  variant="outlined"
+                  :rules="[(v) => !!v || 'Vendor Warranty is required']"
+                />
               </div>
               <div class="v-col-12 v-col-md-4 pt-0 pb-2">
                 <Field
@@ -687,10 +672,11 @@ import { ref, computed, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
-import { useAutocompleteID } from "@/composables/autocompleteId";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
 import { mdiClose } from "@mdi/js";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const props = defineProps({
   page: {
@@ -745,11 +731,11 @@ if (modelStore.list.length == 0) {
   modelStore.getModels(authStore.token);
 }
 
-// conditions
-import { useConditionStore } from "@/stores/conditions";
-const conditionStore = useConditionStore();
-if (conditionStore.list.length == 0) {
-  conditionStore.getConditions(authStore.token);
+// status
+import { useStatusStore } from "@/stores/status";
+const statusStore = useStatusStore();
+if (statusStore.list.length == 0 || statusStore.conditions.length == 0) {
+  statusStore.getStatuses(authStore.token);
 }
 
 // vendor
@@ -772,13 +758,17 @@ const changeTab = (tab) => {
 // asset
 let validation = yup.object({
   Name: yup.string().required().max(150),
+  "Serial Number": yup.string().required().max(80),
   "Asset Code": yup.string().required().max(50),
+  "Section code": yup.string().max(30),
+  Category: yup.string().required(),
   Company: yup.string().required(),
   Location: yup.string().required(),
-  "Serial Number": yup.string().required().max(80),
+  "Asset Status": yup.string().required(),
   Specification: yup.string().max(120),
-  "Section code": yup.string().required().max(30),
   Brand: yup.string().required(),
+  Model: yup.string().required(),
+  Condition: yup.string().required(),
 });
 
 // fill asset form
@@ -787,22 +777,21 @@ const fillAsset = () => {
     ...assetObj.value,
     ...{
       company_id: 1,
+      condition_id: 1,
       location_id: 1,
       category_id: 1,
-      status_id: 1,
-      band_id: 1,
+      status_id: 4,
+      brand_id: 1,
       model_id: 1,
-      vendor_id: 1,
-      author_id: 1,
       asset_name: "Test Asset",
       asset_code: "testassetcode",
       serial_number: "testserialnumber",
       section_code: "testsectioncode",
       specification: "Sample Specs",
-      price: "550.00",
-      po_number: "0001",
-      purchased_date: "2023-11-11",
-      remarks: "static remarks",
+      //   price: "550.00",
+      //   po_number: "0001",
+      //   purchased_date: "2023-11-11",
+      //   remarks: "static remarks",
     },
   };
 };
@@ -840,6 +829,17 @@ const saveAsset = async () => {
         text: res.data.message,
       };
       loadingAsset.value = false;
+      // redirect to edit
+      router
+        .push({
+          name: "edit-asset",
+          params: {
+            id: res.data.asset.id,
+          },
+        })
+        .catch((err) => {
+          console.log("router.push", err);
+        });
     })
     .catch((err) => {
       console.log("saveAsset", err);

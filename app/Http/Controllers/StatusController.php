@@ -66,4 +66,9 @@ class StatusController extends Controller
         $data = Status::where('status', 'active')->where('type', 'condition-type')->orderBy('title', 'ASC')->get();
         return response()->json($data, 200);
     }
+
+    public function getStatusList() {
+        $data = Status::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
+    }
 }
