@@ -10,8 +10,9 @@ use App\Models\Location;
 use App\Models\Warranty;
 use App\Models\SpecModel;
 use App\Models\Maintenance;
-use App\Models\AllottedInformation;
 use App\Models\RequestAssetDetail;
+use App\Models\AllottedInformation;
+use App\Models\FinancialInformation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -55,6 +56,7 @@ class Asset extends Model
     {
         return $this->hasMany(Maintenance::class);
     }
+
     public function created_by()
     {
         return $this->belongsTo(Profile::class);
@@ -82,6 +84,13 @@ class Asset extends Model
             'id'
         );
     }
+
+    public function financial_information()
+    {
+        return $this->hasOne(FinancialInformation::class);
+    }
+
+
     public function items()
     {
         return $this->belongsToMany(RequestAssetDetail::class);

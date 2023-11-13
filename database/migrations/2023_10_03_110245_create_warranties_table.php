@@ -18,9 +18,9 @@ return new class extends Migration
             $table->date('warranty_start_date')->nullable();
             $table->date('warranty_end_date')->nullable();
 
-            $table->foreignId('vendor_id')->nullable()->constrained();
             $table->date('vendor_start_date')->nullable();
             $table->date('vendor_end_date')->nullable();
+            $table->foreignId('vendor_id')->nullable()->constrained();
 
             $table->foreignId('asset_id')->constrained();
             $table->timestamps();

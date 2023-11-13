@@ -120,9 +120,10 @@
               v-model="assetObj.asset_code"
             >
               <v-text-field
+                readonly
                 v-model="assetObj.asset_code"
                 v-bind="field"
-                label="Asset Code"
+                label="Asset Code (Auto Generated)"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
@@ -250,7 +251,6 @@
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field name="Price" v-slot="{ field, errors }" v-model="assetObj.price">
                   <v-text-field
-                  type="number"
                     v-model="assetObj.price"
                     v-bind="field"
                     label="Price"
@@ -310,7 +310,7 @@
           <!-- Financial Information -->
           <div class="v-col-12" v-show="selectedTab == 'financial'">
             <v-row>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Capitalization Price"
                   v-slot="{ field, errors }"
@@ -326,7 +326,7 @@
                   />
                 </Field>
               </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Depreciation Percentage"
                   v-slot="{ field, errors }"
@@ -342,7 +342,7 @@
                   />
                 </Field>
               </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Scrap Value"
                   v-slot="{ field, errors }"
@@ -360,13 +360,30 @@
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
-                  name="Capitalization Date"
+                  name="Scrap Date"
                   v-slot="{ field, errors }"
-                  v-model="assetObj.capitalization_price"
+                  v-model="assetObj.scrap_date"
                 >
                   <v-text-field
                     type="date"
-                    v-model="assetObj.capitalization_price"
+                    v-model="assetObj.scrap_date"
+                    v-bind="field"
+                    label="Scrap Date"
+                    variant="outlined"
+                    density="compact"
+                    :error-messages="errors"
+                  />
+                </Field>
+              </div>
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+                <Field
+                  name="Capitalization Date"
+                  v-slot="{ field, errors }"
+                  v-model="assetObj.capitalization_date"
+                >
+                  <v-text-field
+                    type="date"
+                    v-model="assetObj.capitalization_date"
                     v-bind="field"
                     label="Capitalization Date"
                     variant="outlined"
@@ -395,105 +412,157 @@
             </v-row>
           </div>
           <!-- Warranty Information -->
-          <div class="v-col-12" v-show="selectedTab == 'warranty'">
+          <div class="v-col-12 mb-6" v-show="selectedTab == 'warranty'">
             <v-row>
-              <div class="v-col-12">Warranty</div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.title"
-                >
-                  <v-text-field
-                    v-model="assetObj.title"
-                    v-bind="field"
-                    label="Warranty"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty Start Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_start_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_start_date"
-                    v-bind="field"
-                    label="Warranty Start Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty End Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_end_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_end_date"
-                    v-bind="field"
-                    label="Warranty End Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 pt-0 pb-2">Vendor Warranty</div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <v-autocomplete
-                  v-model="assetObj.vendor_warranty"
-                  :items="vendorStore.list"
-                  item-title="title"
-                  item-value="id"
-                  label="Vendor Warranty"
-                  density="compact"
-                  variant="outlined"
-                  :rules="[(v) => !!v || 'Vendor Warranty is required']"
-                />
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Vendor Start Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.vendor_start_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.vendor_start_date"
-                    v-bind="field"
-                    label="Vendor Start Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Vendor End Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_end_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_end_date"
-                    v-bind="field"
-                    label="Vendor End Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
+              <div class="v-col-12 pt-0 pb-2">
+                <v-btn @click="() => openWarrantyDialog()" class="mb-3" size="small">
+                  New Warranty <v-icon class="ml-2" :icon="mdiPlus"></v-icon>
+                </v-btn>
+                <v-dialog v-model="dialogWarranty.status" persistent width="1000">
+                  <v-card>
+                    <v-card-title
+                      class="text-capitalize mb-3 d-flex justify-space-between align-center"
+                    >
+                      {{ dialogWarranty.action + " Warranty" }}
+                      <v-btn
+                        :icon="mdiClose"
+                        variant="flat"
+                        size="small"
+                        @click="dialogWarranty.status = false"
+                      ></v-btn>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-row class="mb-0">
+                        <div class="v-col-12 pt-0 pb-2">Warranty</div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <Field
+                            name="Warranty"
+                            v-slot="{ field, errors }"
+                            v-model="dialogWarranty.data.warranty_title"
+                          >
+                            <v-text-field
+                              v-model="dialogWarranty.data.warranty_title"
+                              v-bind="field"
+                              label="Warranty"
+                              variant="outlined"
+                              density="compact"
+                              :error-messages="errors"
+                            />
+                          </Field>
+                        </div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <Field
+                            name="Warranty Start Date"
+                            v-slot="{ field, errors }"
+                            v-model="dialogWarranty.data.warranty_start_date"
+                          >
+                            <v-text-field
+                              type="date"
+                              v-model="dialogWarranty.data.warranty_start_date"
+                              v-bind="field"
+                              label="Warranty Start Date"
+                              variant="outlined"
+                              density="compact"
+                              :error-messages="errors"
+                            />
+                          </Field>
+                        </div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <Field
+                            name="Warranty End Date"
+                            v-slot="{ field, errors }"
+                            v-model="dialogWarranty.data.warranty_end_date"
+                          >
+                            <v-text-field
+                              type="date"
+                              v-model="dialogWarranty.data.warranty_end_date"
+                              v-bind="field"
+                              label="Warranty End Date"
+                              variant="outlined"
+                              density="compact"
+                              :error-messages="errors"
+                            />
+                          </Field>
+                        </div>
+                        <div class="v-col-12 pt-0 pb-2">Vendor Warranty</div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <v-autocomplete
+                            v-model="dialogWarranty.data.warranty_vendor_id"
+                            :items="vendorStore.list"
+                            item-title="title"
+                            item-value="id"
+                            label="Vendor Warranty"
+                            density="compact"
+                            variant="outlined"
+                            :rules="[(v) => !!v || 'Vendor Warranty is required']"
+                          />
+                        </div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <Field
+                            name="Vendor Start Date"
+                            v-slot="{ field, errors }"
+                            v-model="dialogWarranty.data.vendor_start_date"
+                          >
+                            <v-text-field
+                              type="date"
+                              v-model="dialogWarranty.data.vendor_start_date"
+                              v-bind="field"
+                              label="Vendor Start Date"
+                              variant="outlined"
+                              density="compact"
+                              :error-messages="errors"
+                            />
+                          </Field>
+                        </div>
+                        <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+                          <Field
+                            name="Vendor End Date"
+                            v-slot="{ field, errors }"
+                            v-model="dialogWarranty.data.vendor_end_date"
+                          >
+                            <v-text-field
+                              type="date"
+                              v-model="dialogWarranty.data.vendor_end_date"
+                              v-bind="field"
+                              label="Vendor End Date"
+                              variant="outlined"
+                              density="compact"
+                              :error-messages="errors"
+                            />
+                          </Field>
+                        </div>
+                        <div class="v-col-12 pt-0 pb-2 d-flex justify-end">
+                          <v-btn color="primary" @click="saveWarranty">Save</v-btn>
+                        </div>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
+                <v-card>
+                  <v-table density="compact">
+                    <thead>
+                      <tr>
+                        <th class="text-left text-primary">#</th>
+                        <th class="text-left text-primary">Title</th>
+                        <th class="text-left text-primary">Warranty Start</th>
+                        <th class="text-left text-primary">Warranty End</th>
+                        <th class="text-left text-primary">Vendor</th>
+                        <th class="text-left text-primary">Vendor Start</th>
+                        <th class="text-left text-primary">Vendor End</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in warranties" :key="item.id">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ item.warranty_start_date }}</td>
+                        <td>{{ item.warranty_end_date }}</td>
+                        <td>{{ item.vendor_id }}</td>
+                        <td>{{ item.vendor_start_date }}</td>
+                        <td>{{ item.vendor_end_date }}</td>
+                      </tr>
+                    </tbody>
+                  </v-table>
+                </v-card>
               </div>
             </v-row>
           </div>
@@ -540,6 +609,9 @@
           <div class="v-col-12 mb-6" v-show="selectedTab == 'maintenance'">
             <v-row>
               <div class="v-col-12 pt-0 pb-2">
+                <v-btn @click="openNewMaintenance" class="mb-3" size="small">
+                  New Maintenance <v-icon class="ml-2" :icon="mdiPlus"></v-icon>
+                </v-btn>
                 <v-card>
                   <v-table density="compact">
                     <thead>
@@ -674,8 +746,8 @@ import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
-import { mdiClose } from "@mdi/js";
 import { useRouter } from "vue-router";
+import { mdiPlus, mdiClose } from "@mdi/js";
 const router = useRouter();
 
 const props = defineProps({
@@ -757,18 +829,21 @@ const changeTab = (tab) => {
 
 // asset
 let validation = yup.object({
+  // add
   Name: yup.string().required().max(150),
-  "Serial Number": yup.string().required().max(80),
-  "Asset Code": yup.string().required().max(50),
-  "Section code": yup.string().max(30),
+  "Serial Number": yup.string().max(80).nullable(),
+  "Asset Code": yup.string().max(50).nullable(),
+  "Section code": yup.string().max(30).nullable(),
   Category: yup.string().required(),
   Company: yup.string().required(),
   Location: yup.string().required(),
   "Asset Status": yup.string().required(),
-  Specification: yup.string().max(120),
+  Specification: yup.string().max(120).nullable(),
   Brand: yup.string().required(),
   Model: yup.string().required(),
   Condition: yup.string().required(),
+
+  // edit
 });
 
 // fill asset form
@@ -784,7 +859,6 @@ const fillAsset = () => {
       brand_id: 1,
       model_id: 1,
       asset_name: "Test Asset",
-      asset_code: "testassetcode",
       serial_number: "testserialnumber",
       section_code: "testsectioncode",
       specification: "Sample Specs",
@@ -817,9 +891,14 @@ watch(
 );
 
 const saveAsset = async () => {
-  assetObj.value.file_ids = selectedFilesIds.value;
-  //   assetObj.value.category_id = categoryStore.list.filter()
   loadingAsset.value = true;
+  assetObj.value.file_ids = selectedFilesIds.value;
+  assetObj.value.company_code = companyStore.list.filter(
+    (comp) => comp.id == assetObj.value.company_id
+  )[0].code;
+  assetObj.value.category_code = categoryStore.list.filter(
+    (cat) => cat.id == assetObj.value.category_id
+  )[0].code;
   await clientKey(authStore.token)
     .post("/api/asset/save", assetObj.value)
     .then((res) => {
@@ -830,16 +909,20 @@ const saveAsset = async () => {
       };
       loadingAsset.value = false;
       // redirect to edit
-      router
-        .push({
-          name: "edit-asset",
-          params: {
-            id: res.data.asset.id,
-          },
-        })
-        .catch((err) => {
-          console.log("router.push", err);
-        });
+      if (props.page == "add") {
+        router
+          .push({
+            name: "edit-asset",
+            params: {
+              id: res.data.asset.id,
+            },
+          })
+          .catch((err) => {
+            console.log("router.push", err);
+          });
+      } else {
+        // emit
+      }
     })
     .catch((err) => {
       console.log("saveAsset", err);
@@ -872,4 +955,76 @@ const openAttachment = (index) => {
 const removeAttachment = (theId) => {
   selectedFiles.value = selectedFiles.value.filter((f) => f.id !== theId);
 };
+
+// maintenance
+const openNewMaintenance = () => {
+  //   router.push({
+  //     name: "NewMaintenance",
+  //     query: {
+  //       type: "details",
+  //       asset_code: "1231231",
+  //       asset_id: 1,
+  //       comp: 1,
+  //       loc: 1,
+  //       title: "test",
+  //     },
+  //   });
+};
+
+// warranty
+const dialogWarranty = ref({
+  status: false,
+  action: "add",
+  loading: false,
+  data: {},
+});
+const warranties = ref([]);
+const openWarrantyDialog = (warranty = null) => {
+  dialogWarranty.value.status = true;
+  if (warranty) {
+    dialogWarranty.value.action = "edit";
+    dialogWarranty.value.data = Object.assign({}, warranty);
+  } else {
+    dialogWarranty.value.action = "add";
+  }
+};
+const saveWarranty = async () => {
+  dialogWarranty.value.loading = true;
+  let data = {
+    id: dialogWarranty.value.data.id,
+    asset_id: assetObj.value.id,
+    warranty_title: dialogWarranty.value.data.warranty_title,
+    warranty_start_date: dialogWarranty.value.data.warranty_start_date,
+    warranty_end_date: dialogWarranty.value.data.warranty_end_date,
+    warranty_vendor_id: dialogWarranty.value.data.warranty_vendor_id,
+    vendor_start_date: dialogWarranty.value.data.vendor_start_date,
+    vendor_end_date: dialogWarranty.value.data.vendor_end_date,
+  };
+  await clientKey(authStore.token)
+    .post("/api/asset/save-warranty", data)
+    .then((res) => {
+      console.log("res", res.data);
+      dialogWarranty.value.loading = false;
+    })
+    .catch((err) => {
+      dialogWarranty.value.loading = false;
+      console.log("err", err);
+    });
+};
+const getWarranties = async () => {
+  await clientKey(authStore.token)
+    .get("/api/asset/warranty/" + assetObj.value.id)
+    .then((res) => {
+      warranties.value = res.data;
+      dialogWarranty.value.loading = false;
+    })
+    .catch((err) => {
+      dialogWarranty.value.loading = false;
+      console.log("err", err);
+    });
+};
+// watch
+if (selectedTab == "edit") {
+  getWarranties();
+}
 </script>
