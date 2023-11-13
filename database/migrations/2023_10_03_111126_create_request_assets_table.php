@@ -17,10 +17,13 @@ return new class extends Migration
             $table->string('types'); // transfer / request
             $table->unsignedBigInteger('transferred_from'); // location_id
             $table->unsignedBigInteger('transferred_to'); // location_id
-            $table->date('date_closed');
+            $table->date('date_closed')->nullable();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('profile_id');
             $table->string('subject',200);
+            $table->string('status',20)->default('pending');
+            $table->text('reason_rejected')->nullable();
+            $table->unsignedTinyInteger('is_available')->default(0)->nullable();
             $table->timestamps();
         });
     }

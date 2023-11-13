@@ -34,9 +34,11 @@ const authStore = useAuthStore();
  */
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./router/routes";
+import { ri } from "./router/dev/ri";
+import { jc } from "./router/dev/jc";
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [...routes, ...jc, ...ri],
 });
 
 function returnAccess(data) {
@@ -70,7 +72,12 @@ function validateAccess(data) {
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if ( data?.title?.toLowerCase() == 'report-incident' || data?.title?.toLowerCase() == 'scan' || data?.title?.toLowerCase() == 'dashboard' || data?.title?.toLowerCase() == 'account') {
+    } else if ( data?.title?.toLowerCase() == 'report-incident' || 
+    data?.title?.toLowerCase() == 'scan' || 
+    data?.title?.toLowerCase() == 'dashboard' || 
+    data?.title?.toLowerCase() == 'request-asset' || 
+    data?.title?.toLowerCase() == 'transfer-asset' || 
+    data?.title?.toLowerCase() == 'account') {
         hasAccess = true;
     } else if (
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
@@ -82,26 +89,29 @@ function validateAccess(data) {
 }
 
 router.beforeEach((to, from, next) => {
+   
     if (to.path == '/' && !to.meta.requiresAuth) {
         // public route
         if (authStore.authIsLoggedIn) {
             next({ name: 'Dashboard' });
         }
-
+        
         next({ name: 'Login' });
     } else {
-
+       
         // private route
-        if (authStore.authIsLoggedIn) {
+        if (authStore.authIsLoggedIn) { 
             if (to.meta.title?.toLowerCase() == 'unauthorized') {
 
             } else if (!validateAccess(to.meta)) {
                 next({ name: 'Unauthorized' });
             }
-        } else if (to.path != '/login') {
+        }   else if (to.path != '/login' && to.path != '/public/employee-signatory/request/approvals' && to.path != '/public/employee-signatory/transfer/approvals') {
+           
             next({ name: 'Login' });
         }
     }
+   
     next(); 
 });
 

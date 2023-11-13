@@ -12,7 +12,7 @@ class IncidentController extends Controller
     public function fetchData(Request $request){
         $paginate = $request->show;
         $search = $request->search;
-        $ID = $request->id;
+        $ID = $request->userid;
         $role = $request->role;
 
         $sort = "";
@@ -21,8 +21,9 @@ class IncidentController extends Controller
         $filterSearch = json_decode($filter);
        
         $dataObj = new Incident;
-        if($role != 'admin' && $role != 'superadmin' && $role != 'technical-operation'){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+        
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID); 
         }
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -42,19 +43,18 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('title', 'ASC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
         }
     
         if($search){
-            $dataObj->where(function($q) use($search){
+            $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
-                $checking = explode("ISR-", $capSearch);
+                $checking = explode("ISR-2", $capSearch);
                 
                 if(count($checking) > 1){
-                    $searchID = (int)end($checking); 
+                    $searchID = (int)end($checking);
                     $q->where('id', '=', $searchID);
-                }else{
-                    
+                }else{                    
                     $q->where('title', 'like', '%'.$search.'%')
                     ->orWhereHas('asset', function ($qq) use($search) { 
                         $qq->where('asset_name', 'like', '%'.$search.'%')
@@ -64,6 +64,7 @@ class IncidentController extends Controller
             });
 
             $dataObj = $dataObj->get();
+          
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
@@ -182,9 +183,12 @@ class IncidentController extends Controller
             $query->update(array(
                 'priority' => $request->priority,
                 'handled_by' => $request->handled_by,
-                'status_id' => $request->status_id,
-                'remarks'   => $request->remarks
+                'status_id' => $request->status_id                
             ));
+
+            if($request->remarks_data){
+                $query->remarks()->create(['remarks' => $request->remarks_data, 'profile_id' => $request->profile_id]);
+            }
 
             $helper = new GlobalHelper;
             $helper->createLogs($query, $request->profile_id, 'incident-facility', $query);
@@ -196,7 +200,7 @@ class IncidentController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files')->first(); 
+        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files','remarks.profile')->first(); 
         return response()->json($query, 200);
         
     }

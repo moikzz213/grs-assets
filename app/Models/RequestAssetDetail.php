@@ -2,13 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use App\Models\RequestAsset;
+use App\Models\Asset;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RequestAssetDetail extends Model
 {
     use HasFactory;
     protected $guarded = [];
 
-    
+    public function request_asset()
+    {
+        return $this->belongsTo(RequestAsset::class);
+    }
+
+    public function assets()
+    {
+        return $this->belongsTo(Asset::class);
+    }
 }

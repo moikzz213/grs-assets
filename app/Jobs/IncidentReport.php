@@ -41,12 +41,22 @@ class IncidentReport implements ShouldQueue
 
         if($emails && count($emails) > 0){
             $toEmail = $emails; 
-            $message = 'Urgency: '.$data->urgency."<br/>";
+            $message = 'Urgency: '.$this->statusFn($data->urgency)."<br/>";
             $message .= 'Asset Name: '.$data->title."<br/>";
             $message .= 'Location: '.$location->title."<br/><br/>";
-            $message .= 'Description: '.'<pre>'.$data->description."</pre>";
+            $message .= 'Description: '.'<pre style="font-size:12px;">'.$data->description."</pre>";
             $incident = array("data" => $data, "message" => $message,  "date" => Carbon::now(), 'subject' => "Asset System: New Incident Reported");
             Mail::to($toEmail)->queue( new IncidentMail( $incident) ); 
+        }
+    }
+
+    private function statusFn($v){
+        if($v == 1){
+            return 'Normal';
+        }elseif($v == 2){
+            return 'Medium';
+        }else{
+            return 'High';
         }
     }
 }

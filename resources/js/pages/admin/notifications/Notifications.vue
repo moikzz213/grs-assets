@@ -122,7 +122,7 @@
                     <v-card-text>
                         <v-row class="pb-2">
                             <div class="v-col-12 font-weight-bold">
-                                NOTIFICATION INTERVAL
+                                NOTIFICATION INTERVAL - FOR MAINTENANCE
                             </div>
                             <v-divider></v-divider>
                             <div class="v-col-12">

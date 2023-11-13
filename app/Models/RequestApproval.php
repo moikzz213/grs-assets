@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RequestApproval extends Model
 {
@@ -13,5 +14,10 @@ class RequestApproval extends Model
     public function logs()
     {
         return $this->morphToMany(Log::class, 'loggable');
+    }
+
+    public function profile()
+    {
+        return $this->belongsTo(Profile::class, 'profile_id');
     }
 }

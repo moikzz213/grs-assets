@@ -63,6 +63,12 @@
             :error-messages="errors"
           />
         </Field>
+        <v-text-field
+            v-model="profileData.data.designation"
+            label="Designation"
+            density="compact"
+            variant="outlined"
+          />
         <v-autocomplete
           v-bind="field"
           label="Company"
@@ -95,7 +101,6 @@ import { useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
 import nationalities from "@/json/nationalities.json";
 import { useAuthStore } from "@/stores/auth";
-import axios from "axios";
 
 const authStore = useAuthStore();
 const route = useRoute();

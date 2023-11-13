@@ -6,8 +6,9 @@ use App\Models\Log;
 use App\Models\Asset;
 use App\Models\Access;
 use App\Models\Company;
-use App\Models\ApprovalStages;
 use App\Models\ClientKey;
+use App\Models\ApprovalStages;
+use App\Models\IncidentRemark;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -25,6 +26,11 @@ class Profile extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function remarks()
+    {
+        return $this->belongsTo(IncidentRemark::class);
     }
 
     public function access()

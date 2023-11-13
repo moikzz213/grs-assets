@@ -164,7 +164,8 @@
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('created_at')"
                                 >
-                                    Date
+                                    D.Created<br/>
+                                    <small>(DD/MM/YY)</small>
                                 </th>
                                 <th class="text-right text-capitalize"></th>
                             </tr>
@@ -174,7 +175,7 @@
                                 v-for="item in users.data"
                                 :key="item.id"
                             >
-                                <td>ISR-{{ pad(item.id)}}</td>
+                                <td>ISR-2{{ pad(item.id)}}</td>
                                 <td>{{ item.urgency }}</td>
                                 <td>{{ item.type?.title }}</td>
                                 <td>{{ item.company?.title }}</td>
@@ -456,7 +457,7 @@ const addNew = () => {
  
 const pad = (v, size = 6) =>{
       let s = "00000" + v;
-      return s.substr(s.length - size);
+      return s.substring(s.length - size);
 }; 
 
 onMounted(() => {

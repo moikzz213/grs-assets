@@ -12,7 +12,7 @@
                         >Details</v-btn
                     >
                     <v-btn
-                    v-if="isEdit"
+                        v-if="isEdit"
                         :class="`${
                             isActive == 'attachment' ? 'tab-active' : ''
                         }   v-col-12 v-col-md-2 mx-2`"
@@ -34,7 +34,7 @@
                         @click="changeType('facility')"
                         >Facility Team</v-btn
                     >
-                    </v-row>
+                </v-row>
                 <v-card v-if="isActive == 'details'">
                     <Form
                         as="v-form"
@@ -50,7 +50,7 @@
                                     class="v-col-12 v-col-md-6 d-flex justify-space-between"
                                 >
                                     <div class="font-weight-bold">
-                                        SN: ISR-{{ pad(objData.id) }}
+                                        SN: ISR-2{{ pad(objData.id) }}
                                     </div>
                                     <div class="reported-by">
                                         REPORTED BY:
@@ -227,9 +227,18 @@
                                         @click="saveData"
                                         :disabled="!meta.valid"
                                         :loading="loadingBtn"
-                                        v-if="props.objectdata.profile_id == loggedID"
-                                        >Submit</v-btn>
-                                        
+                                        v-if="
+                                            objData?.status_id != 8 &&
+                                            (!isEdit ||
+                                                (isEdit &&
+                                                    (props.objectdata
+                                                        .profile_id ==
+                                                        loggedID ||
+                                                        loggedRole ==
+                                                            'asset-supervisor')))
+                                        "
+                                        >Submit</v-btn
+                                    >
                                 </div>
                                 <div class="v-col-12 v-col-md-3">
                                     DATE REPORTED:
@@ -247,11 +256,26 @@
                         </v-card-text>
                     </Form>
                 </v-card>
-               
-                <Attachment v-else-if="isEdit && isActive == 'attachment'" :incident-id="route.params.id" :files="objData.files" @deleted="DataUpdateEmit" :objectdata="props.objectdata"/>
-                <Facility v-else-if="(loggedRole == 'superadmin' || loggedRole == 'admin'  || loggedRole == 'technical-operation' || loggedRole == 'facility') && 
-                isEdit && isActive == 'facility'" :objectdata="props.objectdata" @saved="DataUpdateEmit"/>   
-                
+
+                <Attachment
+                    v-else-if="isEdit && isActive == 'attachment'"
+                    :incident-id="route.params.id"
+                    :files="objData.files"
+                    @deleted="DataUpdateEmit"
+                    :objectdata="objData"
+                />
+                <Facility
+                    v-else-if="
+                        (loggedRole == 'superadmin' ||
+                            loggedRole == 'admin' ||
+                            loggedRole == 'technical-operation' ||
+                            loggedRole == 'facility') &&
+                        isEdit &&
+                        isActive == 'facility'
+                    "
+                    :objectdata="objData"
+                    @saved="DataUpdateEmit"
+                />
             </v-col>
         </v-row>
         <AppSnackBar :options="sbOptions" />
@@ -275,7 +299,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useAuthStore } from "@/stores/auth";
@@ -289,7 +313,8 @@ import { useFormatDate } from "@/composables/formatDate.js";
 
 import Attachment from "./Attachment.vue"
 import Facility from "./Facility.vue"
- 
+const emit = defineEmits(["saved"]);
+
 const authStore = useAuthStore();
 const props = defineProps({
     objectdata: {
@@ -301,8 +326,10 @@ const props = defineProps({
         default: null,
     },
 });
+
+
 const objData = ref({});
-const sbOptions = ref({}); 
+const sbOptions = ref({});
 
 const DataUpdateEmit = (v) => {
     sbOptions.value = {
@@ -310,6 +337,8 @@ const DataUpdateEmit = (v) => {
         type: "success",
         text: v,
     };
+
+    emit("saved");
 }
 
 const loggedID = ref(authStore.user.profile.id);
@@ -330,7 +359,7 @@ const urgencyList = ref([
     { id: 1, title: "1. Normal" },
     { id: 2, title: "2. Medium" },
     { id: 3, title: "3. High" },
-]); 
+]);
 
 let validation = yup.object({
     Type: yup.string().required(),
@@ -392,7 +421,7 @@ const saveData = async () => {
             };
             if (!route.params.id) {
                 setTimeout(() => {
-                   
+
                     router
                         .push({
                             name: "EditIncident",
@@ -407,12 +436,11 @@ const saveData = async () => {
             }else{
                 loadingBtn.value = false;
             }
-            
+
         })
         .catch((err) => {});
 };
 
-const btnLoading = ref(false);
 const isEdit = ref(false);
 
 const pushStateFn = (type, value) => {
@@ -447,7 +475,6 @@ const pad = (v, size = 6) => {
 
 onMounted(() => {
     
-
     if(route.params.id) {
         isEdit.value = true;
     }
@@ -460,11 +487,12 @@ onMounted(() => {
         fetchCompanies().then(() => {
             fetchLocations();
         });
-    }); 
-   
+    });
 
-    if (isEdit.value) { 
+
+    if (isEdit.value) {
         objData.value = props.objectdata;
+
         objData.value.asset_code = props.objectdata.asset?.asset_code;
         objData.value.title = props.objectdata.asset
             ? props.objectdata.asset.asset_name
@@ -475,9 +503,15 @@ onMounted(() => {
         objData.value.profile_id = props.objectdata.profile_id;
         objData.value.type_id = parseInt(props.objectdata.type_id);
         objData.value.urgency = parseInt(props.objectdata.urgency);
-        objData.value.description = props.objectdata.description; 
+        objData.value.description = props.objectdata.description;
     }
-});
+}); 
+
+ 
+watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {  
+    objData.value = props.objectdata;
+    
+    },  { deep: true });
 </script>
 
 <style lang="scss" scoped>
