@@ -68,8 +68,8 @@
                                 class="my-2"
                                     variant="outlined"
                                     density="compact"
-                                    label="Remarks"
-                                    v-model="objData.remarks"
+                                    label="Add some remarks"
+                                    v-model="objData.remarks_data"
                                 ></v-textarea>
                             </div>
                         </v-row>
@@ -79,18 +79,30 @@
                         <v-btn class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Submit</v-btn>
                     </div>
                 </v-row>
+                <v-row>
+                    <div class="v-col-12">
+                        Remarks
+                        <v-divider></v-divider>
+
+                    </div>
+                    <div class="v-col-12" style="max-height:400px; overflow: auto;">
+                        <v-row v-for="item in objData.remarks" :key="id">
+                            <div class="v-col-3">{{ item.profile?.display_name }} <br/> <small>{{ useFormatDateTime(item.created_at) }}</small></div>
+                            <div class="v-col-9">{{ item.remarks }}</div>
+                        </v-row>
+                    </div>
+                </v-row>
             </v-card-text>
         </v-card>
     </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
-
+import { ref, onMounted, watch } from "vue"; 
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
-import { useFormatDate } from "@/composables/formatDate.js";
+import { useFormatDate, useFormatDateTime } from "@/composables/formatDate.js";
 
-const emit = defineEmits(["deleted"]);
+const emit = defineEmits(["saved"]);
 const props = defineProps({
     objectdata: {
         type: Object,
@@ -121,6 +133,7 @@ const submitForm = () => {
     clientKey(authStore.token)
         .post("/api/incident/update-facility-team", objData.value)
         .then((res) => {
+            objData.value.remarks_data = '';
             emit("saved", res.data.message);
         })
         .catch((err) => {});
@@ -146,4 +159,7 @@ onMounted(() => {
     objData.value = props.objectdata;
     objData.value.priority = props.objectdata.priority ? parseInt(props.objectdata.priority) : null;
 });
+watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {  
+    objData.value.remarks = newValue;
+    },  { deep: true });
 </script>

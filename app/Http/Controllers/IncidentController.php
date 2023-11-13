@@ -22,8 +22,8 @@ class IncidentController extends Controller
        
         $dataObj = new Incident;
         
-        if($role != 'admin' && $role != 'superadmin' && $role != 'technical-operation'){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID); 
         }
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -49,7 +49,7 @@ class IncidentController extends Controller
         if($search){
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
-                $checking = explode("ISR-", $capSearch);
+                $checking = explode("ISR-2", $capSearch);
                 
                 if(count($checking) > 1){
                     $searchID = (int)end($checking);
@@ -183,9 +183,12 @@ class IncidentController extends Controller
             $query->update(array(
                 'priority' => $request->priority,
                 'handled_by' => $request->handled_by,
-                'status_id' => $request->status_id,
-                'remarks'   => $request->remarks
+                'status_id' => $request->status_id                
             ));
+
+            if($request->remarks_data){
+                $query->remarks()->create(['remarks' => $request->remarks_data, 'profile_id' => $request->profile_id]);
+            }
 
             $helper = new GlobalHelper;
             $helper->createLogs($query, $request->profile_id, 'incident-facility', $query);
@@ -197,7 +200,7 @@ class IncidentController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files')->first(); 
+        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files','remarks.profile')->first(); 
         return response()->json($query, 200);
         
     }

@@ -19,12 +19,13 @@ class ProfileController extends Controller
             'contact' => $request['contact'],
             'status' => $request['status'],
             'role' => $request['role'], 
+            'designation' => $request['designation'], 
         );
         if(@$request['company_id']){
             $company = array('company_id' => $request['company_id']);
             $profileArray = array_merge($profileArray, $company);
         }
-      
+       
         $profile = Profile::updateOrCreate([
             'id' => $request['id'], 
         ], $profileArray);

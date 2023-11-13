@@ -35,7 +35,7 @@ const getData = async () => {
             route.params.id
         )
         .then((response) => {
-            objectData.value = Object.assign({}, response.data); 
+            objectData.value = Object.assign({}, response.data);  
             isLoaded.value = true;
             sbOptions.value = {
                 status: false,                
@@ -44,7 +44,7 @@ const getData = async () => {
         .catch((err) => {});
 };
 const savedResponse = () => {
-    getData();
+    getData(); 
 };
 onMounted(() => { 
 getData();

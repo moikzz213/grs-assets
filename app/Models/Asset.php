@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Warranty;
 use App\Models\SpecModel;
 use App\Models\Maintenance;
+use App\Models\RequestAssetDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -61,4 +62,10 @@ class Asset extends Model
     {
         return $this->belongsTo(Profile::class);
     }
+
+    public function items()
+    {
+        return $this->belongsToMany(RequestAssetDetail::class);
+    } 
+    
 }

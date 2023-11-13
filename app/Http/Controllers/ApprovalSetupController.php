@@ -10,7 +10,7 @@ use App\Models\ApprovalStage;
 class ApprovalSetupController extends Controller
 {
     public function nonPaginatedData($type){
-        $query = ApprovalSetup::where('type', $type)->whereIn('status', ['active', 'Active'])->orderBy('title', 'ASC')->get();
+        $query = ApprovalSetup::where('type', '=',$type)->whereIn('status', ['active', 'Active'])->orderBy('title', 'ASC')->get();
 
         return response()->json($query, 200);
     }
@@ -26,6 +26,14 @@ class ApprovalSetupController extends Controller
             $q->with('signatures', function($qq){
                 $qq->select(['profile_id']);
             });
+        })->first(); 
+        return response()->json($query, 200);
+    }
+
+    public function fetchDataByIDRequestAsset($id){
+        $query = ApprovalSetup::where('id', $id)->with('stages', function($q) {
+            $q->orderBy('sort', 'ASC');
+            $q->with('signatures');
         })->first(); 
         return response()->json($query, 200);
     }
