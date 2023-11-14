@@ -1,6 +1,8 @@
 <?php 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
@@ -13,6 +15,13 @@ Route::middleware('authkey')->group(function () {
     Route::post('/request-asset/change-request/data', [RequestAssetController::class, 'changeRequest'])->name('change.request');
 
     Route::get('/fetch/request-asset/approval-setup-fetch/{id}', [ApprovalSetupController::class, 'fetchDataByIDRequestAsset'])->name('admin.request.asset.fetch.by.id');
+
+    Route::get('/fetch/maintenance-assets/data', [IncidentController::class, 'fetchMaintenanceData'])->name('admin.incident.fetch');
+    Route::get('/fetch/maintenance-asset/single-data/{id}', [IncidentController::class, 'fetchMaintenanceDataByID'])->name('admin.fetch.incident.by.id');
+
+    Route::get('/fetch/all-assets/data', [AssetController::class, 'fetchData'])->name('admin.fetch.data.assets');
+    Route::get('/fetch-global/status/active/{type}', [StatusController::class, 'fetchStatusByType'])->name('admin.status.type');
+    
 });
 
 Route::prefix('public')->group(function () {

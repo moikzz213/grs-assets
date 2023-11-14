@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isLoaded">
+    <div v-if="isLoaded" class="parent-main-div">
 
         <div v-if="authStore.authIsLoggedIn == true && route.name !== 'PublicApproval'" >
             <LoggedInLayout>

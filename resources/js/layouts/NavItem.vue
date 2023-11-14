@@ -73,6 +73,7 @@ const returnAccess = (slug, type = null) => {
     slug == "dashboard" ||
     slug == "scan" ||
     slug == "report-incident" ||
+    slug == "maintenance" ||
     slug == "request-asset" ||
     slug == "transfer-asset"
   ) {

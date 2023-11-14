@@ -87,4 +87,63 @@ class AssetController extends Controller
         $query = Asset::where('asset_code', '=',$code)->with('warranty.vendor', 'maintenance','brand','model','category','company','location')->first();
         return response()->json($query, 200);
     }
+
+    public function fetchData(Request $request){
+        $paginate = $request->show;
+        $search = $request->search; 
+
+        $sort = "";
+        $orderBy = $request->sort;
+        $filter = $request->filter;
+        $filterSearch = json_decode($filter);
+       
+        $dataObj = new Asset; 
+
+        if($orderBy){
+            $orderBy = json_decode($orderBy);   
+            $field = $orderBy[0];
+            $sort = $orderBy[1];
+            $dataObj = $dataObj->orderBy($field, $sort)->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
+        }else{
+            if(@$filterSearch->company_id){
+                $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
+            }
+            if(@$filterSearch->location_id){
+                $dataObj = $dataObj->where('location_id', $filterSearch->location_id);
+            }
+            if(@$filterSearch->brand_id){
+                $dataObj = $dataObj->where('brand_id', $filterSearch->brand_id);
+            }
+            if(@$filterSearch->status_id){
+                $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
+            }
+            if(@$filterSearch->category_id){
+                $dataObj = $dataObj->where('category_id', $filterSearch->category_id);
+            }
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
+        }
+    
+        if($search){
+            $dataObj = $dataObj->where(function($q) use($search){
+                $capSearch = strtoupper($search);
+                           
+                    $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhereHas('asset', function ($qq) use($search) { 
+                        $qq->where('asset_name', 'like', '%'.$search.'%')
+                        ->orWhere('asset_code',  'like', '%'.$search.'%')
+                        ->orWhere('serial_number',  'like', '%'.$search.'%')
+                        ->orWhere('po_number',  'like', '%'.$search.'%');
+                    });     
+               
+            });
+
+            $dataObj = $dataObj->get();
+          
+            $dataArray['data'] = $dataObj->toArray();
+        }else{
+            $dataArray = $dataObj->paginate($paginate);
+        }
+       
+        return response()->json($dataArray, 200);
+    }
 }

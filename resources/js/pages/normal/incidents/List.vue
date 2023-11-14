@@ -176,7 +176,7 @@
                                 :key="item.id"
                             >
                                 <td>ISR-2{{ pad(item.id)}}</td>
-                                <td>{{ item.urgency }}</td>
+                                <td>{{ staticStatus(item.urgency) }}</td>
                                 <td>{{ item.type?.title }}</td>
                                 <td>{{ item.company?.title }}</td>
                                 <td>{{ item.location?.title }}</td> 
@@ -375,6 +375,16 @@ const fetchStatus = async () => {
     .catch((err) => { 
     });  
 } 
+
+const staticStatus = (v) =>{
+    if(v == 1){
+        return 'Normal';
+    }else if(v == 2){
+        return 'Medium';
+    }else{
+        return 'High';
+    }
+}
  
 const getAllData = async () => {
     console.log("objFIlter",objFIlter.value);
@@ -455,8 +465,8 @@ const addNew = () => {
         });
 };
  
-const pad = (v, size = 6) =>{
-      let s = "00000" + v;
+const pad = (v, size = 5) =>{
+      let s = "0000" + v;
       return s.substring(s.length - size);
 }; 
 
