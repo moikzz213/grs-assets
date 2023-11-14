@@ -73,6 +73,7 @@ function validateAccess(data) {
     ) {
         hasAccess = true;
     } else if ( data?.title?.toLowerCase() == 'report-incident' || 
+    data?.title?.toLowerCase() == 'maintenance' || 
     data?.title?.toLowerCase() == 'scan' || 
     data?.title?.toLowerCase() == 'dashboard' || 
     data?.title?.toLowerCase() == 'request-asset' || 

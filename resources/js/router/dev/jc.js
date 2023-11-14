@@ -89,4 +89,45 @@ export const jc = [
             type: "edit"
         },
     },
+
+    /** Maintenance */
+    
+    {
+        path: "/maintenance",
+        component: () => import("../../pages/normal/maintenance/List.vue"),
+        name: "Maintenance",
+        meta: {
+            requiresAuth: true,
+            title: "maintenance",
+        },
+    },
+    {
+        path: "/maintenance/page/:page",
+        component: () => import("../../pages/normal/maintenance/List.vue"),
+        name: "PaginatedMaintenance",
+        meta: {
+            requiresAuth: true,
+            title: "maintenance",
+        },
+    },
+    {
+        path: "/maintenance/new",
+        component: () => import("../../pages/normal/maintenance/NewData.vue"),
+        name: "NewMaintenance",
+        meta: {
+            requiresAuth: true,
+            title: "maintenance",
+            type: "new"
+        },
+    },
+    {
+        path: "/maintenance/update/id/:id",
+        component: () => import("../../pages/normal/maintenance/EditData.vue"),
+        name: "EditMaintenance",
+        meta: {
+            requiresAuth: true,
+            title: "maintenance",
+            type: "edit"
+        },
+    },
 ];

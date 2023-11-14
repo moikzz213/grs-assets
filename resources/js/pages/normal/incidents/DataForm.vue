@@ -468,8 +468,8 @@ const fetchLocations = async () => {
         .catch((err) => {});
 };
 
-const pad = (v, size = 6) => {
-    let s = "00000" + v;
+const pad = (v, size = 5) => {
+    let s = "0000" + v;
     return s.substring(s.length - size);
 };
 
@@ -499,7 +499,7 @@ onMounted(() => {
             : props.objectdata.title;
         objData.value.company_id = props.objectdata.company_id;
         objData.value.location_id = props.objectdata.location_id;
-        objData.value.asset_id = props.objectdata.id;
+        objData.value.asset_id = props.objectdata.asset_id;
         objData.value.profile_id = props.objectdata.profile_id;
         objData.value.type_id = parseInt(props.objectdata.type_id);
         objData.value.urgency = parseInt(props.objectdata.urgency);

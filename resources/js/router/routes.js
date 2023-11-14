@@ -91,16 +91,7 @@ export const routes = [
             title: "pages",
         },
     },
-    // {
-    //     path: "/asset-list",
-    //     component: () => import("../pages/admin/users/Users.vue"),
-    //     name: "asset-list",
-    //     meta: {
-    //         requiresAuth: true,
-    //         title: "asset-list",
-    //     },
-    // },
-
+   
     // assets
     {
         path: "/notifications",
@@ -124,6 +115,15 @@ export const routes = [
         path: "/asset-list",
         component: () => import("../pages/assets/Assets.vue"),
         name: "asset-list",
+        meta: {
+            requiresAuth: true,
+            title: "assets",
+        },
+    },
+    {
+        path: "/asset-list/page/:page",
+        component: () => import("../pages/assets/Assets.vue"),
+        name: "paginated-asset-list",
         meta: {
             requiresAuth: true,
             title: "assets",

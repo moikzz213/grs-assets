@@ -19,7 +19,12 @@ class StatusController extends Controller
     }
 
     public function fetchIncidentTypes(){
-        $query = Status::where('type', '=', 'incident-type')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get();
+        $query = Status::where('type', '=', 'incident-type')->whereNot('id',"=",2)->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get();
+        return response()->json($query, 200);
+    }
+
+    public function fetchStatusByType($type){
+        $query = Status::where('type', '=', 'asset')->orderBy('status', 'ASC')->orderBy('title', 'ASC')->get();
         return response()->json($query, 200);
     }
 

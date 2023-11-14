@@ -4,7 +4,7 @@
       :rail="temporary == true ? false : rail"
       v-model="drawer"
       permanent
-      class="pt-4"
+      class="pt-4 no-print"
       color="black"
       :expand-on-hover="false"
     >
@@ -40,7 +40,7 @@
         </v-list>
       </div>
     </v-navigation-drawer>
-    <v-app-bar density="compact" color="white" elevation="0">
+    <v-app-bar class="no-print" density="compact" color="white" elevation="0">
       <template v-slot:prepend>
         <div class="d-flex align-center">
           <v-app-bar-nav-icon
@@ -149,7 +149,7 @@ import {
   mdiWeatherNight,
   mdiBarcodeScan,
   mdiTruckDelivery,
-  mdiArchiveSettingsOutline,
+  mdiWrenchClock,
   mdiApplicationExport,
   mdiArchivePlusOutline,
 } from "@mdi/js";
@@ -189,6 +189,12 @@ const commonNav = ref([
     icon: mdiTools,
     path: "/report-incident",
     slug: "report-incident",
+  },
+  {
+    title: "Maintenance",
+    icon: mdiWrenchClock,
+    path: "/maintenance",
+    slug: "maintenance",
   },
   {
     title: "Add Asset",
