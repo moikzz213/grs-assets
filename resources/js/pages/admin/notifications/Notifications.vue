@@ -28,7 +28,7 @@
                                 MAINTENANCE - ADDITIONAL RECEIVER
                             </div>
                             <v-divider></v-divider>
-                            <div class="v-col-12 py-1 pt-3">
+                            <div class="v-col-12 pt-3">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[0].meta_value"
@@ -37,7 +37,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[1].meta_value"
@@ -46,7 +46,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[2].meta_value"
@@ -55,7 +55,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[3].meta_value"
@@ -76,7 +76,7 @@
                                 INCIDENT - ADDITIONAL RECEIVER
                             </div>
                             <v-divider></v-divider>
-                            <div class="v-col-12 py-1 pt-3">
+                            <div class="v-col-12 pt-3">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[4].meta_value"
@@ -85,7 +85,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[5].meta_value"
@@ -94,7 +94,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[6].meta_value"
@@ -103,7 +103,7 @@
                                     density="compact"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 py-1">
+                            <div class="v-col-12">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="dataObj[7].meta_value"

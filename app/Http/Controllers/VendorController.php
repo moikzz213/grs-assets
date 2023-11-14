@@ -23,7 +23,7 @@ class VendorController extends Controller
         $orderBy = $request['sort'];
 
         $dataObj = new Vendor;
-        
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -32,30 +32,30 @@ class VendorController extends Controller
         }else{
             $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile');
         }
-    
+
         if($search){
             $dataObj->where(function($q) use($search){
                 $q->where('title', 'like', '%'.$search.'%')
                 ->orWhere('contact_name', 'like', '%'.$search.'%')
                 ->orWhere('contact_no', 'like', '%'.$search.'%');
-            }); 
+            });
 
             $dataObj = $dataObj->get();
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function storeUpdate(Request $request){
-     
+
         if($request->id){
             $query = Vendor::where('id', $request->id)->first();
             $query->update(
                 array(
-                    'title' => $request->title, 
+                    'title' => $request->title,
                     'contact_name' => $request->contact_name,
                     'profile_id' => $request->profile_id,
                     'address' => $request->address,
@@ -67,7 +67,7 @@ class VendorController extends Controller
             $log_type = 'update';
         }else{
             $query = Vendor::create(array(
-                'title' => $request->title, 
+                'title' => $request->title,
                 'contact_name' => $request->contact_name,
                 'profile_id' => $request->profile_id,
                 'address' => $request->address,
@@ -87,20 +87,28 @@ class VendorController extends Controller
     public function statusChangeData(Request $request){
 
         $query = Vendor::where('id', $request->id)->first();
-        if($request->status == 'disabled'){ 
+        if($request->status == 'disabled'){
             $status = 'disabled';
-            
+
         }else{
             $status = 'active';
         }
         $log_type = 'change-status';
-        
+
         $message = 'Data has been '.$status;
         $query->update(array('status' => $status,'profile_id' => $request->profile_id));
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
-        
+
         return response()->json(array('message' => $message), 200);
+    }
+
+    /**
+     * List for pinia state
+     */
+    public function getVendorList() {
+        $data = Vendor::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
     }
 }

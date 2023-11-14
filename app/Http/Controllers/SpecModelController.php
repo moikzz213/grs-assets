@@ -23,7 +23,7 @@ class SpecModelController extends Controller
         $orderBy = $request['sort'];
 
         $dataObj = new SpecModel;
-        
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -32,23 +32,23 @@ class SpecModelController extends Controller
         }else{
             $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile');
         }
-    
+
         if($search){
             $dataObj->where(function($q) use($search){
                 $q->where('title', 'like', '%'.$search.'%');
-            }); 
+            });
 
             $dataObj = $dataObj->get();
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function storeUpdate(Request $request){
-     
+
         if($request->id){
             $query = SpecModel::where('id', $request->id)->first();
             $query->update(array('title' => $request->title,'profile_id' => $request->profile_id));
@@ -69,14 +69,14 @@ class SpecModelController extends Controller
     public function statusChangeData(Request $request){
 
         $query = SpecModel::where('id', $request->id)->first();
-        if($request->status == 'disabled'){ 
+        if($request->status == 'disabled'){
             $status = 'disabled';
-            
+
         }else{
             $status = 'active';
         }
         $log_type = 'change-status';
-        
+
         $message = 'Data has been '.$status;
         $query->update(array('status' => $status,'profile_id' => $request->profile_id));
 
@@ -84,5 +84,10 @@ class SpecModelController extends Controller
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
 
         return response()->json(array('message' => $message), 200);
+    }
+
+    public function getModelList() {
+        $data = SpecModel::where('status', 'active')->orderBy('title', 'ASC')->get();
+        return response()->json($data, 200);
     }
 }

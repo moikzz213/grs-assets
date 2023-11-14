@@ -38,7 +38,7 @@ export const routes = [
         component: () => import("../pages/normal/scanBarcode/Data.vue"),
         name: "Scan",
         meta: {
-            requiresAuth: true, 
+            requiresAuth: true,
             title: "scan",
         },
     },
@@ -91,16 +91,7 @@ export const routes = [
             title: "pages",
         },
     },
-    // {
-    //     path: "/asset-list",
-    //     component: () => import("../pages/admin/users/Users.vue"),
-    //     name: "asset-list",
-    //     meta: {
-    //         requiresAuth: true,
-    //         title: "asset-list",
-    //     },
-    // },
-
+   
     // assets
     {
         path: "/notifications",
@@ -127,6 +118,24 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "assets",
+        },
+    },
+    {
+        path: "/asset-list/page/:page",
+        component: () => import("../pages/assets/Assets.vue"),
+        name: "paginated-asset-list",
+        meta: {
+            requiresAuth: true,
+            title: "assets",
+        },
+    },
+    {
+        path: "/asset-list/edit/:id",
+        component: () => import("../pages/assets/EditAsset.vue"),
+        name: "edit-asset",
+        meta: {
+            requiresAuth: true,
+            title: "asset",
         },
     },
     {

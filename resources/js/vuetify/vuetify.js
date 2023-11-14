@@ -17,7 +17,7 @@ const vuetify = createVuetify({
             light: {
                 colors: {
                     primary: "#000000",
-                    secondary: "#C6A92D",
+                    secondary: "#ffed00",
                     background: "#fafafa",
                     white: "#FFFFFF",
                 },
@@ -25,7 +25,7 @@ const vuetify = createVuetify({
             dark: {
                 colors: {
                     primary: "#FFFFFF",
-                    secondary: "#C6A92D",
+                    secondary: "#ffed00",
                     background: "#3c3c3c",
                     white: "#000000",
                 },

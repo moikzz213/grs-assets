@@ -42,7 +42,7 @@
                             :key="index"
                             class="parent-row-show"
                         >
-                            <div class="v-col-5 py-2 d-flex">
+                            <div class="v-col-5 d-flex">
                                 <v-icon
                                     :title="`${
                                         item.status == 'active'
@@ -74,7 +74,7 @@
                                     :disabled="item.id < 10"
                                 ></v-autocomplete>
                             </div>
-                            <div class="v-col-5 py-2">
+                            <div class="v-col-5">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="item.title"
@@ -84,7 +84,7 @@
                                     :disabled="item.id < 10"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-2 my-auto" v-if="item.id > 9">
+                            <div class="v-col-2 my-auto" v-if="item.id > 9 || !item.id">
                                 <v-btn
                                     :title="`${
                                         item.id
@@ -158,7 +158,7 @@
                             :key="index"
                             class="parent-row-show"
                         >
-                            <div class="v-col-5 py-2 d-flex">
+                            <div class="v-col-5  d-flex">
                                 <v-icon
                                     :title="`${
                                         item.status == 'active'
@@ -189,7 +189,7 @@
                                     density="compact"
                                 ></v-autocomplete>
                             </div>
-                            <div class="v-col-5 py-2">
+                            <div class="v-col-5 ">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="item.title"
@@ -250,8 +250,7 @@
                                     v-if="
                                         authStore.user.role == 'superadmin' ||
                                         authStore.capabilities?.includes('add')
-                                    "
-                                ></v-btn>
+                                    "                                ></v-btn>
                                 <v-btn
                                     :loading="btnLoading"
                                     @click="savePage('incident')"
@@ -273,7 +272,7 @@
                             :key="index"
                             class="parent-row-show"
                         >
-                            <div class="v-col-5 py-2 d-flex">
+                            <div class="v-col-5  d-flex">
                                 <v-icon
                                     :title="`${
                                         item.status == 'active'
@@ -305,7 +304,7 @@
                                     :disabled="item.id < 10"
                                 ></v-autocomplete>
                             </div>
-                            <div class="v-col-5 py-2">
+                            <div class="v-col-5 ">
                                 <v-text-field
                                     hide-details="auto"
                                     v-model="item.title"
@@ -315,7 +314,7 @@
                                     :disabled="item.id < 10"
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-2 my-auto" v-if="item.id > 9">
+                            <div class="v-col-2 my-auto" v-if="item.id > 9 || !item.id">
                                 <v-btn
                                     :title="`${
                                         item.id

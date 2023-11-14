@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('condition_id');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('category_id');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->string('section_code', 30)->nullable();
             $table->string('specification', 120)->nullable();
             $table->decimal('price', 10,2)->nullable();
+            $table->unsignedTinyInteger('print_count')->default(0)->nullable();
             $table->string('po_number', 50)->nullable();
             $table->date('purchased_date')->nullable();
             $table->text('remarks')->nullable();

@@ -20,10 +20,12 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('handled_by')->nullable();
-            $table->string('type_id',30); // complaint/ faults/ breakdown/ broken
             $table->string('priority',1)->nullable(); // 1 - High, 2 - Medium, 3 - Low
             $table->string('urgency',1); // 1 - High, 2 - Medium, 3 - Low
+            $table->unsignedBigInteger('type_id')->nullable(); // updated // complaint/ faults/ breakdown/ broken
             $table->unsignedBigInteger('status_id')->nullable()->default(7);
+            $table->date('date_start')->nullable(); // new
+            $table->decimal('cost', 10,2)->nullable(); // new
             $table->date('date_closed')->nullable();
             $table->timestamps();
         });
