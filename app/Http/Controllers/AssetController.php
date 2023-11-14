@@ -15,14 +15,15 @@ class AssetController extends Controller
     public function getAssetById($id) {
         $asset = Asset::where('id', $id)
         ->with(
-            'warranty.vendor',
-            'maintenance',
             'brand',
             'model',
             'category',
             'company',
             'location',
             'financial_information',
+            'warranty.vendor',
+            'allotted_informations',
+            'maintenance',
             'attachments'
         )->first();
         return response()->json($asset, 200);
@@ -76,7 +77,7 @@ class AssetController extends Controller
 
                 // save financial information
                 $asset->financial_information()->updateOrCreate(
-                    ['id' => $request['financial_information']['id']],
+                    ['id' => $request['financial_information_id']],
                     [
                         'capitalization_price' => isset($request['capitalization_price']) ? (float)$request['capitalization_price'] : null,
                         'depreciation_percentage' => isset($request['depreciation_percentage']) ? $request['depreciation_percentage'] : null,
@@ -158,7 +159,10 @@ class AssetController extends Controller
     }
 
     function getWarrantyByAssetId($assetId) {
-        $warranties = Warranty::where('asset_id', '=',$assetId)->with('vendor')->get();
+        $warranties = Warranty::where('asset_id', '=',$assetId)
+        ->with('vendor')
+        ->orderBy('id', 'DESC')
+        ->get();
         return response()->json($warranties, 200);
     }
 
