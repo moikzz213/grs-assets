@@ -3,11 +3,11 @@
     <Form as="v-form" :validation-schema="validation">
       <v-card-title class="pb-6 pt-3 d-flex align-center justify-space-between">
         <div class="text-primary text-capitalize">
-          {{ formTitle }}
+          {{ props.page + " Asset" }}
         </div>
         <div class="d-flex align-center">
-          <v-btn color="primary" class="mr-3" :loading="loadingAsset" @click="fillAsset"
-            >fill form</v-btn
+          <v-btn color="primary" class="mr-3" :loading="loadingAsset" @click="importAsset"
+            >Import Assets</v-btn
           >
           <v-btn color="primary" :loading="loadingAsset" @click="saveAsset">Save</v-btn>
         </div>
@@ -120,9 +120,10 @@
               v-model="assetObj.asset_code"
             >
               <v-text-field
+                readonly
                 v-model="assetObj.asset_code"
                 v-bind="field"
-                label="Asset Code"
+                label="Asset Code (Auto Generated)"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
@@ -250,7 +251,6 @@
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field name="Price" v-slot="{ field, errors }" v-model="assetObj.price">
                   <v-text-field
-                  type="number"
                     v-model="assetObj.price"
                     v-bind="field"
                     label="Price"
@@ -310,7 +310,7 @@
           <!-- Financial Information -->
           <div class="v-col-12" v-show="selectedTab == 'financial'">
             <v-row>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Capitalization Price"
                   v-slot="{ field, errors }"
@@ -326,7 +326,7 @@
                   />
                 </Field>
               </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Depreciation Percentage"
                   v-slot="{ field, errors }"
@@ -342,7 +342,7 @@
                   />
                 </Field>
               </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Scrap Value"
                   v-slot="{ field, errors }"
@@ -360,13 +360,30 @@
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
-                  name="Capitalization Date"
+                  name="Scrap Date"
                   v-slot="{ field, errors }"
-                  v-model="assetObj.capitalization_price"
+                  v-model="assetObj.scrap_date"
                 >
                   <v-text-field
                     type="date"
-                    v-model="assetObj.capitalization_price"
+                    v-model="assetObj.scrap_date"
+                    v-bind="field"
+                    label="Scrap Date"
+                    variant="outlined"
+                    density="compact"
+                    :error-messages="errors"
+                  />
+                </Field>
+              </div>
+              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+                <Field
+                  name="Capitalization Date"
+                  v-slot="{ field, errors }"
+                  v-model="assetObj.capitalization_date"
+                >
+                  <v-text-field
+                    type="date"
+                    v-model="assetObj.capitalization_date"
                     v-bind="field"
                     label="Capitalization Date"
                     variant="outlined"
@@ -395,209 +412,16 @@
             </v-row>
           </div>
           <!-- Warranty Information -->
-          <div class="v-col-12" v-show="selectedTab == 'warranty'">
-            <v-row>
-              <div class="v-col-12">Warranty</div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.title"
-                >
-                  <v-text-field
-                    v-model="assetObj.title"
-                    v-bind="field"
-                    label="Warranty"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty Start Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_start_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_start_date"
-                    v-bind="field"
-                    label="Warranty Start Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Warranty End Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_end_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_end_date"
-                    v-bind="field"
-                    label="Warranty End Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 pt-0 pb-2">Vendor Warranty</div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <v-autocomplete
-                  v-model="assetObj.vendor_warranty"
-                  :items="vendorStore.list"
-                  item-title="title"
-                  item-value="id"
-                  label="Vendor Warranty"
-                  density="compact"
-                  variant="outlined"
-                  :rules="[(v) => !!v || 'Vendor Warranty is required']"
-                />
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Vendor Start Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.vendor_start_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.vendor_start_date"
-                    v-bind="field"
-                    label="Vendor Start Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
-                <Field
-                  name="Vendor End Date"
-                  v-slot="{ field, errors }"
-                  v-model="assetObj.warranty_end_date"
-                >
-                  <v-text-field
-                    type="date"
-                    v-model="assetObj.warranty_end_date"
-                    v-bind="field"
-                    label="Vendor End Date"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="errors"
-                  />
-                </Field>
-              </div>
-            </v-row>
+          <div class="v-col-12 mb-6" v-show="selectedTab == 'warranty'">
+            <AssetWarranties :asset="assetObj" :page="props.page" />
           </div>
           <!-- Allotted Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'allotted'">
-            <v-row>
-              <div class="v-col-12 pt-0 pb-2">
-                <v-card>
-                  <v-table density="compact">
-                    <thead>
-                      <tr>
-                        <th class="text-left text-primary">#</th>
-                        <th class="text-left text-primary">Alloted to</th>
-                        <th class="text-left text-primary">Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in [
-                          {
-                            id: 1,
-                            title: 'Grandiose Barsha',
-                            remarks: 'Static Remarks',
-                          },
-                          {
-                            id: 2,
-                            title: 'GAG HO',
-                            remarks: 'Static Remarks',
-                          },
-                        ]"
-                        :key="item.id"
-                      >
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ item.title }}</td>
-                        <td>{{ item.remarks }}</td>
-                      </tr>
-                    </tbody>
-                  </v-table>
-                </v-card>
-              </div>
-            </v-row>
+            <AssetAllotedLocations :asset="assetObj" />
           </div>
           <!-- Maintenance Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'maintenance'">
-            <v-row>
-              <div class="v-col-12 pt-0 pb-2">
-                <v-card>
-                  <v-table density="compact">
-                    <thead>
-                      <tr>
-                        <th class="text-left text-primary">INC ID</th>
-                        <th class="text-left text-primary">Location</th>
-                        <th class="text-left text-primary">Handled by</th>
-                        <th class="text-left text-primary">Service Type</th>
-                        <th class="text-left text-primary">Date Start</th>
-                        <th class="text-left text-primary">Date End</th>
-                        <th class="text-left text-primary">Cost</th>
-                        <th class="text-left text-primary">Status</th>
-                        <th class="text-left text-primary">Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        v-for="(item, index) in [
-                          {
-                            id: 1,
-                            location: 'Grandiose Barsha',
-                            handle_by: 'Romel Indemne',
-                            service_type: 'complaint',
-                            date_start: '2023-11-11',
-                            date_closed: '2023-11-11',
-                            cost: '550',
-                            status: 'halo-halo',
-                            remarks: 'Static remarks',
-                          },
-                          {
-                            id: 2,
-                            location: 'GAG HO',
-                            handle_by: 'Romel Indemne',
-                            service_type: 'complaint',
-                            date_start: '2023-11-11',
-                            date_closed: '2023-11-11',
-                            cost: '550',
-                            status: 'halo-halo',
-                            remarks: 'Static remarks',
-                          },
-                        ]"
-                        :key="item.id"
-                      >
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.location }}</td>
-                        <td>{{ item.handle_by }}</td>
-                        <td>{{ item.service_type }}</td>
-                        <td>{{ item.date_start }}</td>
-                        <td>{{ item.date_closed }}</td>
-                        <td>{{ item.cost }}</td>
-                        <td>{{ item.status }}</td>
-                        <td>{{ item.remarks }}</td>
-                      </tr>
-                    </tbody>
-                  </v-table>
-                </v-card>
-              </div>
-            </v-row>
+            <AssetMaintenances :asset="assetObj" />
           </div>
 
           <div class="v-col-12 pt-0 font-weight-bold">Attachment</div>
@@ -674,8 +498,13 @@ import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
-import { mdiClose } from "@mdi/js";
 import { useRouter } from "vue-router";
+import { mdiPlus, mdiClose } from "@mdi/js";
+import dayjs from "dayjs";
+import AssetWarranties from "./additional-info/AssetWarranties.vue";
+import AssetMaintenances from "./additional-info/AssetMaintenances.vue";
+import AssetAllotedLocations from "./additional-info/AssetAllotedLocations.vue";
+
 const router = useRouter();
 
 const props = defineProps({
@@ -745,8 +574,7 @@ if (vendorStore.list.length == 0) {
   vendorStore.getVendors(authStore.token);
 }
 
-// ui
-const formTitle = ref("Add Asset");
+// base URL
 const baseURL = ref(window.location.origin);
 
 // tabs
@@ -757,43 +585,26 @@ const changeTab = (tab) => {
 
 // asset
 let validation = yup.object({
+  // add
   Name: yup.string().required().max(150),
-  "Serial Number": yup.string().required().max(80),
-  "Asset Code": yup.string().required().max(50),
-  "Section code": yup.string().max(30),
+  "Serial Number": yup.string().max(80).nullable(),
+  "Asset Code": yup.string().max(50).nullable(),
+  "Section code": yup.string().max(30).nullable(),
   Category: yup.string().required(),
   Company: yup.string().required(),
   Location: yup.string().required(),
   "Asset Status": yup.string().required(),
-  Specification: yup.string().max(120),
+  Specification: yup.string().max(120).nullable(),
   Brand: yup.string().required(),
   Model: yup.string().required(),
   Condition: yup.string().required(),
+
+  // edit
 });
 
 // fill asset form
-const fillAsset = () => {
-  assetObj.value = {
-    ...assetObj.value,
-    ...{
-      company_id: 1,
-      condition_id: 1,
-      location_id: 1,
-      category_id: 1,
-      status_id: 4,
-      brand_id: 1,
-      model_id: 1,
-      asset_name: "Test Asset",
-      asset_code: "testassetcode",
-      serial_number: "testserialnumber",
-      section_code: "testsectioncode",
-      specification: "Sample Specs",
-      //   price: "550.00",
-      //   po_number: "0001",
-      //   purchased_date: "2023-11-11",
-      //   remarks: "static remarks",
-    },
-  };
+const importAsset = () => {
+  console.log("import");
 };
 
 // save asset
@@ -802,24 +613,45 @@ const assetObj = ref({});
 const selectedFiles = ref([]);
 const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 
-// set assetObj
-assetObj.value = Object.assign({}, props.asset);
-selectedFiles.value =
-  props.asset && props.asset.attachments
-    ? Object.assign([], props.asset.attachments)
-    : [];
+const setAssetData = (assetData) => {
+  // set assetObj
+  assetObj.value = Object.assign({}, assetData);
+  // set files
+  selectedFiles.value =
+    assetData && assetData.attachments ? Object.assign([], assetData.attachments) : [];
+  // set financial info
+  if (assetData && assetData.financial_information) {
+    assetObj.value.capitalization_price =
+      assetData.financial_information.capitalization_price;
+    assetObj.value.depreciation_percentage =
+      assetData.financial_information.depreciation_percentage;
+    assetObj.value.scrap_value = assetData.financial_information.scrap_value;
+    assetObj.value.scrap_date = assetData.financial_information.scrap_date;
+    assetObj.value.capitalization_date =
+      assetData.financial_information.capitalization_date;
+    assetObj.value.end_of_life = assetData.financial_information.end_of_life;
+  }
+};
+setAssetData(props.asset);
 watch(
   () => props.asset,
   (newVal) => {
-    assetObj.value = Object.assign({}, newVal);
-    selectedFiles.value = newVal.attachments ? assetObj.value.attachments : [];
+    setAssetData(newVal);
   }
 );
 
 const saveAsset = async () => {
-  assetObj.value.file_ids = selectedFilesIds.value;
-  //   assetObj.value.category_id = categoryStore.list.filter()
   loadingAsset.value = true;
+  assetObj.value.file_ids = selectedFilesIds.value;
+  assetObj.value.company_code = companyStore.list.filter(
+    (comp) => comp.id == assetObj.value.company_id
+  )[0].code;
+  assetObj.value.category_code = categoryStore.list.filter(
+    (cat) => cat.id == assetObj.value.category_id
+  )[0].code;
+  assetObj.value.financial_information_id = assetObj.value.financial_information
+    ? assetObj.value.financial_information.id
+    : null;
   await clientKey(authStore.token)
     .post("/api/asset/save", assetObj.value)
     .then((res) => {
@@ -830,16 +662,20 @@ const saveAsset = async () => {
       };
       loadingAsset.value = false;
       // redirect to edit
-      router
-        .push({
-          name: "edit-asset",
-          params: {
-            id: res.data.asset.id,
-          },
-        })
-        .catch((err) => {
-          console.log("router.push", err);
-        });
+      if (props.page == "add") {
+        router
+          .push({
+            name: "edit-asset",
+            params: {
+              id: res.data.asset.id,
+            },
+          })
+          .catch((err) => {
+            console.log("router.push", err);
+          });
+      } else {
+        // emit
+      }
     })
     .catch((err) => {
       console.log("saveAsset", err);

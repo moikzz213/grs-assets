@@ -16,6 +16,7 @@
         "@mdi/js": "^7.3.67",
         "@vueuse/core": "^10.5.0",
         "crypto-js": "^4.1.1",
+        "dayjs": "^1.11.10",
         "filepond": "^4.30.4",
         "filepond-plugin-file-validate-size": "^2.2.8",
         "filepond-plugin-file-validate-type": "^1.2.8",

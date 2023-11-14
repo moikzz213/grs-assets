@@ -9,7 +9,7 @@ import { axiosToken } from "@/services/axiosToken";
 // the first argument is a unique id of the store across your application
 
 const dk = "mel182";
- 
+
 // decrypt data
 const decryptData = (data) => {
     return data
@@ -49,16 +49,16 @@ export const useAuthStore = defineStore("authUser", {
                 ? decryptData(state.auth.data).is_logged_in
                 : null;
         },
-        access: (state) => { 
-           
+        access: (state) => {
+
             return state.auth_access ? state.auth_access : ( state.auth && state.auth.data ? decryptData(state.auth.data).q : null );
         },
         capabilities: (state) => {
             return state.auth_capabilities;
         }
     },
-    actions: { 
-        async setCredentials(res) { 
+    actions: {
+        async setCredentials(res) {
             // save to localstorage
             useStorage(
                 "authUser",
@@ -86,7 +86,6 @@ export const useAuthStore = defineStore("authUser", {
         },
 
         async checkUser() {
-            console.log("checkuser 111");
             this.auth_access = null;
             if (this.token) {
                 await axiosToken(this.token)
@@ -101,23 +100,23 @@ export const useAuthStore = defineStore("authUser", {
                             axios
                                 .get("/api/fetch/log-profile/" + user + "/" + token)
                                 .then((q) => {
-                                
+
                                     if (q.data && q.data.id) {
-                                       
+
                                         this.auth_access = q.data.access;
-                                        console.log("checkuser");
+                                        // console.log("checkuser");
 
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;
                                         res.data.access = q.data.access;
                                         this.setCredentials(res.data);
                                         this.setCapabilities(localStorage.getItem('current-pg'));
-                                    }else{  
+                                    }else{
                                         this.logout();
                                         window.location = "/login";
                                     }
                                 })
-                                .catch((err) => { 
+                                .catch((err) => {
                                     this.logout();
                                     window.location = "/login";
                                 });
@@ -130,7 +129,7 @@ export const useAuthStore = defineStore("authUser", {
                     });
             }
         },
-        
+
         async logout() {
             localStorage.removeItem('current-pg')
             this.auth = {};

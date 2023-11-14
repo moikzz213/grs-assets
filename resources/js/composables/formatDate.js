@@ -1,3 +1,12 @@
+// November 11, 2023
+function useFormatDateFull(date) {
+    return new Date(date).toLocaleString("en-US", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+    });
+}
+// 13/11/2023, 4:00 am
 function useFormatDateTime(date) {
     return new Date(date).toLocaleString("en-GB", {
         day: "2-digit",
@@ -8,6 +17,7 @@ function useFormatDateTime(date) {
         minute: "numeric",
     });
 }
+// 13/11/2023
 function useFormatDate(date) {
     return new Date(date).toLocaleString("en-GB", {
         day: "2-digit",
@@ -16,4 +26,4 @@ function useFormatDate(date) {
     });
 }
 
-export { useFormatDateTime, useFormatDate };
+export { useFormatDateTime, useFormatDate, useFormatDateFull };

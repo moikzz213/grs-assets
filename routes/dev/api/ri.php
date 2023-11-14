@@ -26,6 +26,8 @@ Route::middleware('authkey')->group(function () {
 
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');
+    Route::post('/asset/save-warranty', [AssetController::class, 'saveAssetWarranty'])->name('admin.asset.warranty.save');
+    Route::get('/asset/warranty/{assetId}', [AssetController::class, 'getWarrantyByAssetId'])->name('admin.asset.warranty.save');
     Route::get('/asset/{id}', [AssetController::class, 'getAssetById'])->name('admin.asset.single');
 
     // files
