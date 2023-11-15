@@ -41,7 +41,7 @@ class Locations extends Seeder
         foreach($dataArr AS $k => $v){ 
             $query = new \App\Models\Location([
                 'title' => $v['title'],
-                'code'  => $v['type']                
+                'code'  => $v['code']                
             ]);
             $query->save();
         } 
