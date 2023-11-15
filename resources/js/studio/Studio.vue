@@ -96,7 +96,6 @@ watch(
     () => props.options,
     (newVal) => {
         studioSettings.value = { ...studioSettings.value, ...newVal };
-        console.log("watch studio settings", studioSettings.value);
     }
 );
 

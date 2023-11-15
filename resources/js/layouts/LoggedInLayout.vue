@@ -152,6 +152,9 @@ import {
   mdiWrenchClock,
   mdiApplicationExport,
   mdiArchivePlusOutline,
+  mdiArchiveArrowUpOutline,
+  mdiArchiveStarOutline,
+  mdiArchiveOutline
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -210,11 +213,11 @@ const commonNav = ref([
   },
   {
     title: "Assets",
-    icon: mdiArchivePlusOutline,
+    icon: mdiArchiveOutline,
     subs: [
       {
         title: "Asset List",
-        icon: mdiArchivePlusOutline,
+        icon: mdiArchiveStarOutline,
         path: "/asset-list",
         slug: "asset-list",
       },
@@ -223,6 +226,12 @@ const commonNav = ref([
         icon: mdiArchivePlusOutline,
         path: "/asset-list/add",
         slug: "asset-add",
+      },
+      {
+        title: "Import Asset",
+        icon: mdiArchiveArrowUpOutline,
+        path: "/asset-list/import",
+        slug: "asset-import",
       },
     ],
   },

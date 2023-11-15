@@ -27,6 +27,7 @@
         "filepond-plugin-image-resize": "^2.0.10",
         "filepond-plugin-image-transform": "^3.8.7",
         "filepond-plugin-pdf-preview": "^1.0.4",
+        "papaparse": "^5.4.1",
         "pinia": "^2.1.6",
         "vee-validate": "^4.11.8",
         "vite-plugin-vuetify": "^1.0.2",
