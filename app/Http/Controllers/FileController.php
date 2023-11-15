@@ -32,8 +32,9 @@ class FileController extends Controller
             $userStorageDir = storage_path() . '/app' . $userStorage;
 
             // title
-            $originalName = $file->getClientOriginalName();
-            $theTitle = '';
+            $originalName = $file->getClientOriginalName(); 
+           
+            $theTitle = $originalName;
             if (strlen($originalName) > 50){
                 $theTitle = substr($originalName, 0, 50);
             }
@@ -72,6 +73,7 @@ class FileController extends Controller
                 'disk' => 'local',
                 'path' => $path,
                 'mime' => $mime,
+                'type' => @$request['type'],
                 'profile_id' => $request['profile_id'],
                 'created_at' => Carbon::now(),
             ));
@@ -106,7 +108,7 @@ class FileController extends Controller
     }
 
     function getPaginatedFiles() {
-        $files = File::orderBy('id', 'DESC')->paginate(20);
+        $files = File::where('type', 'asset')->orderBy('id', 'DESC')->paginate(20);
         return response()->json($files, 200);
     }
 }

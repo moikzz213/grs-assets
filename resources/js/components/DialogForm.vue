@@ -69,22 +69,24 @@
                         </v-row>
                     </v-card-text>
                     <v-divider class="mt-2"></v-divider>
-                    <v-card-actions>
+                    <div class="d-flex pa-3">
                         <v-spacer></v-spacer>
                         <v-btn
                             size="small"
                             text="cancel"
                             @click="cancelAddNew"
+                            class="mx-1"
                         ></v-btn>
 
                         <v-btn
+                        
                             size="small"
-                            color="secondary"
+                            color="primary"
                             @click="saveData"
                             :disabled="!meta.valid"
                             >Confirm</v-btn
                         >
-                    </v-card-actions>
+                    </div>
                 </Form>
             </v-card>
         </v-dialog>

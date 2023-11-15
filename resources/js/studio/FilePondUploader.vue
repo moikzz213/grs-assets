@@ -54,6 +54,7 @@ const props = defineProps({
     default: null,
   },
 });
+ 
 const uploadOptions = ref({
   max_files: props.options.max_files ? props.options.max_files : 4,
   allow_multiple: props.options.allow_multiple ? props.options.allow_multiple : true,
@@ -66,6 +67,7 @@ const uploadOptions = ref({
   accepted_file_types: props.options.accepted_file_types
     ? props.options.accepted_file_types
     : "image/jpeg, image/png", // image/jpeg, image/png, application/pdf
+  type: props.options.type ? props.options.type : 'asset',
 });
 watch(
   () => props.options,
@@ -118,7 +120,7 @@ const serverSetup = {
     formData.append(fieldName, file, file.name);
     formData.append("profile_id", authStore.user.profile.id);
     formData.append("file_id", file.id);
-
+    formData.append("type", uploadOptions.value.type);
     // set XMLHttpRequest
     const request = new XMLHttpRequest();
     request.open("POST", "/api/system/file/upload");
