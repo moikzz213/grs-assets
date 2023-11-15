@@ -197,12 +197,6 @@ const commonNav = ref([
     slug: "maintenance",
   },
   {
-    title: "Add Asset",
-    icon: mdiArchivePlusOutline,
-    path: "/asset-list/add",
-    slug: "asset-add",
-  },
-  {
     title: "Request Asset",
     icon: mdiApplicationExport,
     path: "/request-asset",
@@ -215,12 +209,23 @@ const commonNav = ref([
     slug: "transfer-asset",
   },
   {
-    title: "Asset List",
-    icon: mdiMapMarkerRadius,
-    path: "/asset-list",
-    slug: "asset-list",
+    title: "Assets",
+    icon: mdiArchivePlusOutline,
+    subs: [
+      {
+        title: "Asset List",
+        icon: mdiArchivePlusOutline,
+        path: "/asset-list",
+        slug: "asset-list",
+      },
+      {
+        title: "Add Asset",
+        icon: mdiArchivePlusOutline,
+        path: "/asset-list/add",
+        slug: "asset-add",
+      },
+    ],
   },
-  
 ]);
 const moderatorNav = ref([
   {
