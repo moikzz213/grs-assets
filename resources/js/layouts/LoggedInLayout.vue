@@ -191,12 +191,6 @@ const commonNav = ref([
     slug: "report-incident",
   },
   {
-    title: "Maintenance",
-    icon: mdiWrenchClock,
-    path: "/maintenance",
-    slug: "maintenance",
-  },
-  {
     title: "Request Asset",
     icon: mdiApplicationExport,
     path: "/request-asset",
@@ -207,6 +201,12 @@ const commonNav = ref([
     icon: mdiTruckDelivery,
     path: "/transfer-asset",
     slug: "transfer-asset",
+  },
+  {
+    title: "Maintenance",
+    icon: mdiWrenchClock,
+    path: "/maintenance",
+    slug: "maintenance",
   },
   {
     title: "Assets",
