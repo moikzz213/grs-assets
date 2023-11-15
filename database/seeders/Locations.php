@@ -11,7 +11,7 @@ class Locations extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    { 
+    {
 
         $dataArr = array(
             array('title'=> 'GRS - Dubai Sports City - Victory Heights', 'code' => 'DBVHS'),
@@ -38,13 +38,13 @@ class Locations extends Seeder
             array('title'=> 'GRS - C11 Mall', 'code' => 'ADC11'),
         );
 
-        foreach($dataArr AS $k => $v){ 
+        foreach($dataArr AS $k => $v){
             $query = new \App\Models\Location([
                 'title' => $v['title'],
-                'code'  => $v['type']                
+                'code'  => $v['code']
             ]);
             $query->save();
-        } 
-       
+        }
+
     }
 }

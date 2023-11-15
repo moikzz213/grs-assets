@@ -72,6 +72,7 @@ class FileController extends Controller
                 'disk' => 'local',
                 'path' => $path,
                 'mime' => $mime,
+                'type' => isset($request['type']) ? $request['type'] : 'asset',
                 'profile_id' => $request['profile_id'],
                 'created_at' => Carbon::now(),
             ));
