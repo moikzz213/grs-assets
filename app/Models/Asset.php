@@ -11,7 +11,7 @@ use App\Models\Location;
 use App\Models\Status;
 use App\Models\Warranty;
 use App\Models\SpecModel;
-use App\Models\Maintenance;
+ 
 use App\Models\RequestAssetDetail;
 use App\Models\AllottedInformation;
 use App\Models\FinancialInformation;
@@ -71,7 +71,12 @@ class Asset extends Model
 
     public function maintenance()
     {
-        return $this->hasMany(Incident::class)->where('type_id',2);
+        return $this->hasMany(Incident::class)->orderBy('id', 'DESC')->where('type_id',2);
+    }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class)->orderBy('id', 'DESC');
     }
 
     public function created_by()

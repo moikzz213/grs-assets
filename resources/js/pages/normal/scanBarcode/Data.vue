@@ -23,7 +23,7 @@
                 <v-card
                     v-if="isEnable"
                     color="primary"
-                    height="120"
+                    height="100%"
                     width="100%"
                     class="d-flex align-center justify-center rounded-lg"
                 >
@@ -87,32 +87,41 @@
                 {{ warrantyData.warranty_start_date }}
             </div>
             <v-divider></v-divider>
-            <div class="v-col-12 py-1 font-weight-bold">MAINTENANCE</div>
+            <div class="v-col-12 py-1 font-weight-bold">MAINTENANCE & INCIDENTS</div>
             <div
                 class="v-col-12 py-4"
                 style="background-color: #e0e0e0"
-                v-if="dataObj.maintenance.length > 0"
+                v-if="dataObj.incidents.length > 0"
             >
                 <v-row
-                    v-for="(item, index) in dataObj.maintenance"
+                    v-for="(item, index) in dataObj.incidents"
                     :key="item.id"
                 >
                     <div class="v-col-4 py-1">STATUS:</div>
                     <div class="v-col-8 py-1 text-uppercase">
-                        {{ item.status }}
+                        {{ item.status?.title }}
                     </div>
                     <div class="v-col-4 py-1">SERVICE TYPE:</div>
-                    <div class="v-col-8 py-1">{{ item.service_type }}</div>
+                    <div class="v-col-8 py-1">{{ item.type?.title }}</div>
                     <div class="v-col-4 py-1">DATE RECEIVED:</div>
-                    <div class="v-col-8 py-1">{{ item.date_received }}</div>
-                    <div class="v-col-4 py-1">DATE STARTED:</div>
-                    <div class="v-col-8 py-1">{{ item.date_start }}</div>
-                    <div class="v-col-4 py-1">COST:</div>
-                    <div class="v-col-8 py-1">{{ item.cost }}</div>
+                    <div class="v-col-8 py-1">{{ useFormatDate(item.created_at) }}</div>
+                    <div class="v-col-4 py-1">DATE CLOSED:</div>
+                    <div class="v-col-8 py-1">{{ item.date_closed ? useFormatDate(item.date_closed) : '' }}</div> 
                     <div class="v-col-4 py-1">REMARKS:</div>
-                    <div class="v-col-8 py-1">{{ item.remarks }}</div>
+                    <div class="v-col-8 py-1 pb-4">
+                        <v-row>
+                            <div class="v-col-12 py-1" v-for="rem in item.remarks" :key="rem.id">
+                                - {{ rem.remarks }}
+                            </div>
+                        </v-row>
+                    </div>
                     <v-divider></v-divider>
                 </v-row>
+            </div>
+        </v-row>
+        <v-row v-if="scanValue">
+            <div class="v-col-12 text-center">
+                Asset Code: {{ scanValue }} not in the system.
             </div>
         </v-row>
     </v-container>
@@ -124,6 +133,7 @@ import { clientKey } from "@/services/axiosToken";
 import { mdiBarcodeScan } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
 import { useAuthStore } from "@/stores/auth";
+import { useFormatDate } from "@/composables/formatDate.js";
 const authStore = useAuthStore();
 const dataObj = ref({});
 const warrantyData = ref({ warranty_start_date: "", warranty_end_date: "" });
@@ -132,18 +142,30 @@ const scanBarcodeFn = () => {
     dataObj.value = {};
     isEnable.value = true;
 };
+
+const scanValue = ref('');
 const onDecode = async (result) => {
+    scanValue.value = result;
     await clientKey(authStore.token)
         .get("/api/fetch/asset-info/by/asset-code/" + result)
         .then((res) => {
             dataObj.value = res.data;
+            if(dataObj.value.asset_code){
+                console.log("res.data",res.data);
+                scanValue.value = '';
+            }
             if (res.data.warranty.length > 0) {
                 warrantyData.value =
                     res.data.warranty[res.data.warranty.length - 1];
             } 
             isEnable.value = false;
         })
-        .catch((err) => {});
+        .catch((err) => {
+            if(err.response.status == 401){
+                alert("Error: Something went wrong. page will be refresh.");
+                window.location.href = window.location.href;
+            }
+        });
 };
 
 const onLoaded = () => {
