@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('asset_id')->constrained();
             $table->foreignId('location_id')->constrained();
+            $table->string('type', 50)->nullable(); // allotted, transferred
             $table->string('remarks', 250)->nullable();
             $table->timestamps();
         });

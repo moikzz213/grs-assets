@@ -8,7 +8,16 @@
           class="mx-auto elevation-0"
           :loading="importSettings.loading"
         >
-          <v-card-title class="pb-6">Import Asset</v-card-title>
+          <v-card-title class="pb-6 d-flex align-center justify-space-between"
+            >Import Asset
+            <v-btn
+              class="bg-grey-lighten-4"
+              variant="text"
+              :href="baseURL + '/assets/csv/asset-import-template.csv'"
+              download
+              >Download Template <v-icon class="ml-2" :icon="mdiDownload"></v-icon
+            ></v-btn>
+          </v-card-title>
           <v-card-text>
             <v-row>
               <div class="v-col-12">
@@ -22,13 +31,16 @@
                   :append-inner-icon="mdiPaperclip"
                   label="Upload .csv file"
                 ></v-file-input>
+                <v-btn :loading="loadingImport" color="primary" @click="importCSV">
+                  {{ "Import" }}
+                  <v-icon :icon="mdiTrayArrowUp" class="ml-3"></v-icon>
+                </v-btn>
+                <div class="text-caption text-primary mt-3">
+                  Note: This import function will ignore the data that already exist.
+                </div>
               </div>
             </v-row>
           </v-card-text>
-          <div class="px-3 py-1 text-caption text-primary">
-            Note: This import function will ignore the data that already exist.
-          </div>
-          <v-divider></v-divider>
         </v-card>
       </div>
     </v-row>
@@ -37,10 +49,12 @@
 
 <script setup>
 import { ref } from "vue";
-import { mdiPaperclip, mdiTrayArrowUp, mdiDownload } from "@mdi/js";
+import { mdiPaperclip, mdiDownload, mdiTrayArrowUp } from "@mdi/js";
 import AppPageHeader from "@/components/ApppageHeader.vue";
-import ImportData from "@/components/import/ImportData.vue";
-import { clientKey } from "@/services/axiosToken";
+import * as papa from "papaparse";
+
+// emits
+const emit = defineEmits(["imported"]);
 
 // route
 import { useRoute } from "vue-router";
@@ -49,6 +63,11 @@ const route = useRoute();
 // authStore
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
+
+const baseURL = ref(window.location.origin);
+const loadingImport = ref(false);
+
+const importData = ref(null);
 
 const inputFile = ref(null);
 const rules = ref([
@@ -77,4 +96,77 @@ const importSettings = ref({
 const conditionData = ref({
   industry_id: null,
 });
+
+const importCSV = () => {
+  loadingImport.value = true;
+  papa.parse(inputFile.value[0], {
+    header: true,
+    transformHeader: function (text) {
+      return text.replace(/\s+/g, "_").toLowerCase().trim();
+    },
+    complete: parseComplete,
+  });
+};
+
+const parseComplete = async (results, file) => {
+  console.log("results", results);
+  // Remove 1st row header
+  // delete results.data[0];
+
+  // Filter Empty Rows
+  let resultsArray = results.data.filter(function (el) {
+    let firstKey = Object.keys(el)[0].toString(); // get the first property and check
+    return el != null && el[firstKey] != "";
+  });
+
+  let validation = new Set(
+    resultsArray.map((obj) => {
+      return obj.title;
+    })
+  );
+
+  //   if (validation.size < resultsArray.length) {
+  //     emit("imported", {
+  //       status: false,
+  //       message: "Kindly remove the duplicate data from the file.",
+  //     });
+
+  //     setTimeout(() => {
+  //       loadingImport.value = false;
+  //     }, 1500);
+  //     return false;
+  //   }
+
+  // set data
+  let data = {
+    import_data: JSON.stringify(resultsArray),
+  };
+
+  // check import data
+  // console.log("import data", data);
+
+  // save result to database
+  await clientKey(authStore.authToken)
+    .post('/api/asset/import', data)
+    .then((res) => {
+      emit("imported", {
+        status: true,
+        message: res.data.message,
+      });
+    })
+    .catch((err) => {
+      console.log("import error", err);
+      let errorMsg = "";
+      if (err.response.status == 500) {
+        errorMsg = "Import error kindly double check the csv file";
+      } else {
+        errorMsg = "Error while importing data";
+      }
+      loadingImport.value = false;
+      emit("imported", {
+        status: false,
+        message: errorMsg,
+      });
+    });
+};
 </script>
