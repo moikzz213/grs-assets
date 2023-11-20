@@ -53,6 +53,7 @@
                             <MediaFiles
                                 v-if="selectedTab == 'studio'"
                                 :multi-select="studioSettings.multiSelect"
+                                :type="filepondOptions.type"
                                 @selected="selectedResponse"
                             />
                             <FilePondUploader
@@ -96,6 +97,7 @@ watch(
     () => props.options,
     (newVal) => {
         studioSettings.value = { ...studioSettings.value, ...newVal };
+      //  console.log("watch studio settings", studioSettings.value);
     }
 );
 

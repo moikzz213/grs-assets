@@ -61,7 +61,7 @@ class Asset extends Model
 
     public function status()
     {
-        return $this->belongsTo(Status::class)->where('type','=', 'asset');
+        return $this->belongsTo(Status::class);
     }
 
     public function condition()

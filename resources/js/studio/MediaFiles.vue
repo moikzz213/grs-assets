@@ -46,6 +46,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  type: {
+    type: String,
+    default: 'asset'
+  }
 });
 
 const authStore = useAuthStore();
@@ -58,11 +62,10 @@ const loadingFiles = ref(false);
 const getFiles = async () => {
   loadingFiles.value = true;
   await clientKey(authStore.token)
-    .get("/api/system/file/all")
+    .get("/api/system/file/all/"+props.type)
     .then((res) => {
       loadingFiles.value = false;
-      files.value = res.data.data;
-      console.log("files.value", files.value);
+      files.value = res.data.data; 
     })
     .catch((err) => {
       console.log("getFiles", err);

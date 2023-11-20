@@ -11,6 +11,13 @@
                                     color="primary"
                                     class="mx-2"
                                     @click="addNew('add-asset')"
+                                    v-if="
+                                            authStore.user.role ==
+                                                'superadmin' ||
+                                            authStore.capabilities?.includes(
+                                                'add'
+                                            )
+                                        "
                                     >Add new asset</v-btn
                                 >
                                 <v-btn
@@ -252,14 +259,6 @@
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
-                                        color="info"
-                                        >{{ item.status?.title }}</v-chip
-                                    >
-                                </td>
-                                <td>
-                                    <v-chip
-                                        class="text-uppercase"
-                                        size="small"
                                         :color="`${
                                             item.condition?.title.toLowerCase() ==
                                             'completed'
@@ -267,6 +266,15 @@
                                                 : 'error'
                                         }`"
                                         >{{ item.condition?.title }}</v-chip
+                                    >
+                                </td>
+                                <td>
+                                   
+                                    <v-chip
+                                        class="text-uppercase"
+                                        size="small"
+                                        color="info"
+                                        >{{ item.status?.title }}</v-chip
                                     >
                                 </td>
                                 <td>

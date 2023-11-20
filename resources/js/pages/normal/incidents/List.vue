@@ -5,11 +5,7 @@
             <v-col class="v-col-12 mt-1 col-sm-12 py-0">
                 <v-btn
                     size="small"
-                    color="primary"
-                    v-if="
-                        authStore.user.role == 'superadmin' ||
-                        authStore.capabilities?.includes('add')
-                    "
+                    color="primary" 
                     @click="addNew"
                     >Report New Incident</v-btn
                 >
@@ -203,13 +199,7 @@
                                     >
                                         <v-icon
                                             size="small"
-                                            v-if="
-                                                authStore.user.role ==
-                                                    'superadmin' ||
-                                                authStore.capabilities?.includes(
-                                                    'edit'
-                                                )
-                                            "
+                                             
                                             @click="() => editUser(item.id)"
                                             :icon="mdiPencil"
                                             class="mx-1"

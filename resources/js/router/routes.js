@@ -26,7 +26,7 @@ export const routes = [
 
     {
         path: "/dashboard",
-        component: () => import("../pages/admin/Dashboard.vue"),
+        component: () => import("../pages/Dashboard.vue"),
         name: "Dashboard",
         meta: {
             requiresAuth: true,
@@ -117,7 +117,7 @@ export const routes = [
         name: "asset-list",
         meta: {
             requiresAuth: true,
-            title: "assets",
+            title: "asset-list",
         },
     },
     {
@@ -126,7 +126,7 @@ export const routes = [
         name: "paginated-asset-list",
         meta: {
             requiresAuth: true,
-            title: "assets",
+            title: "asset-list",
         },
     },
     {
@@ -135,7 +135,7 @@ export const routes = [
         name: "edit-asset",
         meta: {
             requiresAuth: true,
-            title: "asset",
+            title: "asset-list",
         },
     },
     {
@@ -144,7 +144,7 @@ export const routes = [
         name: "add-asset",
         meta: {
             requiresAuth: true,
-            title: "asset",
+            title: "asset-list",
         },
     },
     {

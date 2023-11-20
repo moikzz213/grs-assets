@@ -32,6 +32,6 @@ Route::middleware('authkey')->group(function () {
     Route::get('/asset/{id}', [AssetController::class, 'getAssetById'])->name('admin.asset.single');
 
     // files
-    Route::get('/system/file/all', [FileController::class, 'getPaginatedFiles'])->name('admin.files.paginated');
+    Route::get('/system/file/all/{type?}', [FileController::class, 'getPaginatedFiles'])->name('admin.files.paginated');
     Route::post('/system/file/upload', [FileController::class, 'upload'])->name('admin.file.upload');
 });

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('request_asset_details', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('file_id')->nullable(); 
             $table->unsignedBigInteger('request_asset_id'); 
             $table->unsignedTinyInteger('qty')->default(1)->nullable();
             $table->string('item_description');

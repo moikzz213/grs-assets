@@ -440,6 +440,7 @@ const saveData = async () => {
         ecode: profileObject.value.profile.ecode,
         username: profileObject.value.profile.ecode,
         designation: profileObject.value.profile.position,
+        profile_id: authStore.user.profile.id
     };
 
     await clientKey(authStore.token)

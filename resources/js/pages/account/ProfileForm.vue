@@ -2,14 +2,7 @@
   <v-card>
     <v-card-title class="text-primary text-capitalize">Profile Settings</v-card-title>
     <v-card-text>
-      <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
-        <!-- <div style="width: 100%; max-width: 320px; border-radius: 12px" class="mb-6">
-          <v-img
-            :src="'./assets/images/placeholder-user.png'"
-            class="rounded-lg mb-2"
-          ></v-img>
-        </div> -->
-        <SingleUploader class="mb-6" :options="{ size: '320px' }" />
+      <Form as="v-form" :validation-schema="validation" v-slot="{ meta }"> 
 
         <Field name="ecode" v-slot="{ field }" v-model="profileData.data.ecode">
           <v-text-field
@@ -92,8 +85,7 @@
   </v-card>
 </template>
 <script setup>
-// import SingleUploader from "@/studio/SingleUploader.vue";
-import SingleUploader from "@/studio/SingleUploader.vue";
+ 
 import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
@@ -163,8 +155,10 @@ const saveProfile = async () => {
     ...profileData.value.data,
     ...{
       id: props.user?.profile?.id ? props.user.profile.id : props.user.id,
+      profile_id: authStore.user.profile.id
     },
   };
+
   await clientKey(authStore.token)
     .post("/api/account/profile/save", profileData.value.data)
     .then((response) => {

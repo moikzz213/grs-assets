@@ -78,7 +78,7 @@ class RequestAssetController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = RequestAsset::where('id', $id)->with('items.assets','request_approvals', 'profile', 'company',  'transfer_to')->first(); 
+        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals', 'profile', 'company',  'transfer_to')->first(); 
         return response()->json($query, 200);
     }
 
@@ -122,10 +122,6 @@ class RequestAssetController extends Controller
             $query->update($dataArr);
             $query->items()->delete();
             
-            // if(@$request->data['requestor_id'] == $request->profile_id){
-            //     $query->request_approvals()->delete();
-            //     $query->request_approvals()->createMany($assetApprovals);
-            // }
             $message = 'Request has been updated.';
             $log_type = 'update';
         }else{
@@ -135,12 +131,12 @@ class RequestAssetController extends Controller
             $message = 'Request has been submitted.';
             $log_type = 'new';
             $query->request_approvals()->createMany($assetApprovals);
+
+            $jobData = array_merge($jobData, array('id' => $ID, 'order' => 0));
+            RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default'); 
         }
 
-        $query->items()->createMany($request->assets); 
-
-        $jobData = array_merge($jobData, array('id' => $ID, 'order' => 0));
-        RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default'); 
+        $query->items()->createMany($request->assets);  
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
@@ -238,7 +234,7 @@ class RequestAssetController extends Controller
             }
 
             //if($query->status == 'awaiting-approval' || $query->status == 'reject'){ 
-                $query = RequestAsset::where('id', $request->id)->with('items.assets','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from')->first(); 
+                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from')->first(); 
                
                 return response()->json(array('access' => true, 'data' => $query), 200);
            // } 

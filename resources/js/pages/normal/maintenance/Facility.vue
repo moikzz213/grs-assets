@@ -76,7 +76,7 @@
                     </div>
                     <v-divider class="mt-3"></v-divider>
                     <div class="v-col-12">
-                        <v-btn class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Submit</v-btn>
+                        <v-btn v-if="!viewOnly" class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Submit</v-btn>
                     </div>
                 </v-row>
                 <v-row>
@@ -101,7 +101,8 @@ import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
 import { useFormatDate, useFormatDateTime } from "@/composables/formatDate.js";
-
+import { useRoute } from "vue-router";
+const route = useRoute();
 const emit = defineEmits(["saved"]);
 const props = defineProps({
     objectdata: {
@@ -117,7 +118,7 @@ const priorityList = ref([
     { id: 2, title: "2. Medium" },
     { id: 3, title: "3. High" },
 ]);
-
+const viewOnly = ref(route.query.v);
 const facilities = ref([]);
 const fetchFacilityTeam = async () => {
     await clientKey(authStore.token)
