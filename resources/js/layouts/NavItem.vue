@@ -22,7 +22,7 @@
             style="padding-left: 12px !important"
             link
             :to="sub.path"
-            v-if="returnAccess(sub.slug, 'group')"
+            v-if="returnAccess(sub, 'group')"
           >
             <template v-slot:title>
               <div style="font-size: 12px">
@@ -38,7 +38,7 @@
     </v-list-group>
     <div v-else>
       <v-list-item
-        v-if="returnAccess(item.slug)"
+        v-if="returnAccess(item)"
         link
         :to="item.path"
         :title="item.title"
@@ -65,20 +65,36 @@ const props = defineProps({
 
 const item = props.nav;
 let groupNull = true;
-const returnAccess = (slug, type = null) => {
+
+function validateAccess(data) {
+    let hasAccess = false;
+    authStore.access.map((o) => { 
+        if (data.slug == o.slug) {
+            hasAccess = true; 
+        }
+    });
+
+    return hasAccess;
+}
+ 
+const returnAccess = (item, type = null) => {
+   
   let hasAccess = false;
   if (authStore.authRole == "superadmin") {
     hasAccess = true;
   } else if (
-    slug == "dashboard" ||
-    slug == "scan" ||
-    slug == "report-incident" ||
-    slug == "maintenance" ||
-    slug == "request-asset" ||
-    slug == "transfer-asset"
+    item.slug == "dashboard" ||
+    item.slug == "scan" ||
+    item.slug == "report-incident" || 
+    item.slug == "request-asset" ||
+    item.slug == "transfer-asset"
   ) {
     hasAccess = true;
-    if (type == "group") {
+    
+  } else if(validateAccess(item)){ 
+    hasAccess = true;
+
+    if (validateAccess(item) && type == "group") {
       groupNull = false;
     }
   }

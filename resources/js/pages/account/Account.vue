@@ -41,7 +41,7 @@
           :user="user.data"
           @saved="savedResponse"
         />
-        <ChangePassword v-show="currentForm == 'change_password'" :user-id="1" />
+        <ChangePassword  @saved="savedResponse" v-show="currentForm == 'change_password'" :user="authStore.user?.profile" />
       </div>
     </v-row>
     <AppSnackBar :options="sbOptions" />

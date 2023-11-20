@@ -107,8 +107,8 @@ class FileController extends Controller
         }
     }
 
-    function getPaginatedFiles() {
-        $files = File::where('type', 'asset')->orderBy('id', 'DESC')->paginate(20);
+    function getPaginatedFiles($type='asset') {
+        $files = File::where('type', $type)->orderBy('id', 'DESC')->paginate(20);
         return response()->json($files, 200);
     }
 }

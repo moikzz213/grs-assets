@@ -43,13 +43,14 @@ const router = createRouter({
 
 function returnAccess(data) {
     let hasAccess = false;
+    console.log("data",data);
     authStore.access.map((o) => {
         if (data.title == o.slug) {
             hasAccess = true;
-
+            console.log("hasAccess 11",hasAccess);
             if (data.type && (data.type == 'edit' || data.type == 'new')) {
                 hasAccess = false;
-
+              
                 if (o.capabilities.includes('edit')) {
                     hasAccess = true;
                 } else if (o.capabilities.includes('new')) {
@@ -57,11 +58,11 @@ function returnAccess(data) {
                 } else {
                     hasAccess = false;
                 }
-
+                console.log("hasAccess 22",hasAccess);
             }
         }
     });
-
+  
     return hasAccess;
 }
 
@@ -72,8 +73,7 @@ function validateAccess(data) {
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if ( data?.title?.toLowerCase() == 'report-incident' || 
-    data?.title?.toLowerCase() == 'maintenance' || 
+    } else if ( data?.title?.toLowerCase() == 'report-incident' ||  
     data?.title?.toLowerCase() == 'scan' || 
     data?.title?.toLowerCase() == 'dashboard' || 
     data?.title?.toLowerCase() == 'request-asset' || 

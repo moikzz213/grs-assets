@@ -53,7 +53,7 @@
                         />
                         <ChangePassword
                             v-show="currentForm == 'change_password'"
-                            :user-id="1"
+                            :user="user.data"
                         />
                     </div>
                 </v-row>
@@ -283,7 +283,7 @@ const capabilitySave = (data) => {
         }
     });
 };
-
+const profile_id = ref(authStore?.user?.profile?.id);
 const SaveAccessCapabilities = () => {
     loadingBtn.value = true;
     if (capabilities.value.length > 0) {
@@ -298,7 +298,7 @@ const SaveAccessCapabilities = () => {
 
     let dataFiltered = pageSlug.value.filter((o) => o.isSelected);
 
-    let formData = { profileID: route.params.id, data: dataFiltered };
+    let formData = { profileID: route.params.id, data: dataFiltered, profile_id: authStore.user.profile.id };
     clientKey(authStore.token)
         .post("/api/store-page/settings-capabilities/profile", formData)
         .then((res) => {

@@ -92,7 +92,7 @@ class IncidentController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -106,7 +106,7 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by');
         }
     
         if($search){
@@ -142,7 +142,9 @@ class IncidentController extends Controller
 
         if(!$assetID && $request->asset_code){
             $fetchAsset = Asset::where('asset_code', '=', $request->asset_code)->first();
+            if($fetchAsset){
             $assetID = $fetchAsset->id;
+            }
         }
 
         if($request->id){
@@ -156,6 +158,7 @@ class IncidentController extends Controller
                 'location_id' => $request->location_id, 
                 'type_id' => $request->type_id,  
                 'urgency' => $request->urgency,   
+                'asset_code' => @$request->asset_code,   
             );
 
             $query->update($dataForm);
@@ -168,14 +171,15 @@ class IncidentController extends Controller
             $ID = $request->id;
         }else{
             $dataForm = array(
-                'asset_id' => $assetID, 
+                'asset_id' => $assetID,
                 'profile_id' => $request->profile_id,
                 'title' => $request->title,
-                'description' => $request->description, 
-                'company_id' => $request->company_id,  
-                'location_id' => $request->location_id, 
-                'type_id' => $request->type_id,  
-                'urgency' => $request->urgency,  
+                'description' => $request->description,
+                'company_id' => $request->company_id,
+                'location_id' => $request->location_id,
+                'type_id' => $request->type_id,
+                'urgency' => $request->urgency,
+                'asset_code' => @$request->asset_code,
                 'status_id' => 7
             );
             $query = Incident::create( $dataForm );
@@ -183,68 +187,14 @@ class IncidentController extends Controller
             IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default'); 
             if($request->type_id == 2){ 
                 $message = 'Asset Maintenance has been created';
+                
+                Asset::where(['id' => $assetID])->update(['status_id' => 2]);
             }else{
                 $message = 'Incident has been reported';
             }
             $log_type = 'new';
             $ID = $query->id;
-        }
-
-        if(request()->file('filename')){
-            // upload image
-            $fileArray = array();
-            $uploadDate = Carbon::now()->format('YmdHis');
-            $files = Collection::wrap(request()->file('file'));
-            
-            $userStorage = '/uploads';
-            if (!Storage::exists($userStorage)) {
-                Storage::makeDirectory($userStorage, 0755, true);
-            }
-
-            $files->each(function ($file, $key) use (&$userStorage, &$fileArray, &$uploadDate) {
-                $userStorageDir = storage_path() . '/app' . $userStorage;
-                $fileName = $file->getClientOriginalName();
-                $title = pathinfo($fileName, PATHINFO_FILENAME);
-                $extn = strtolower($file->getClientOriginalExtension());
-                $slugTitle = Str::slug($title, '-');
-                $path = $slugTitle."-".$uploadDate.".".$extn;
-                $mime = $file->getClientMimeType();
-
-                if($extn == 'pdf' || $extn == 'PDF'){
-                    $file->move($userStorageDir, $path);
-                }else{
-                // File Optimization
-                $img = Img::make($file);
-                $img->encode($extn, 50);
-
-                // Save file to storage directory
-                $img->save($userStorageDir . '/' . $path);
-                }
-              
-                // Setup data into array
-                array_push( $fileArray, array(
-                    'original_name' => $fileName,
-                    'title' => $title,
-                    'disk' => 'local',
-                    'path' => $path, 
-                    'types' => 'request',
-                    'mime' => $mime,
-                    'user_id' => auth()->id(),
-                    'created_at' => Carbon::now(),
-                ));
-            }); 
-
-            // Recursive create
-            $idsToSync = array();
-            foreach ($fileArray as $singleFile) {
-                $imgId = DB::table('images')->insertGetId($singleFile);
-                array_push($idsToSync, $imgId);
-            }
-
-            if(count($idsToSync) > 0){
-                $data->images()->attach($idsToSync);
-            } 
-        }
+        } 
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
@@ -277,8 +227,21 @@ class IncidentController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','files','remarks.profile')->first(); 
+        $query = Incident::where('id', $id)->with('asset', 'profile', 'company', 'location', 'type', 'status','attachment','remarks.profile')->first(); 
         return response()->json($query, 200);
         
+    }
+
+    public function syncImages(Request $request) {
+        $query = Incident::where('id', $request->id)->with('attachment')->first();
+        $query->attachment()->sync($request['file_ids']);
+        $log_type = 'delete';
+        if(count($request['file_ids']) > 0){
+            $log_type = 'add-update'; 
+        }
+
+        $helper = new GlobalHelper;
+        $helper->createLogs($query, $request->profile_id, $log_type, $query);
+        return response()->json($query, 200);
     }
 }

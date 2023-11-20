@@ -26,7 +26,14 @@
                     <v-divider></v-divider>
                     <v-card-text>
                         <v-row>
-                            <div :class="`${formObjData.status == 'complete' ? 'v-col-12' : 'v-col-4'}`" v-if="isEdit">
+                            <div
+                                :class="`${
+                                    formObjData.status == 'complete'
+                                        ? 'v-col-12'
+                                        : 'v-col-4'
+                                }`"
+                                v-if="isEdit"
+                            >
                                 REQUEST NO: SN-5{{ pad(formObjData.id) }}
                             </div>
                             <div
@@ -124,14 +131,15 @@
                                     color="primary"
                                     @click="AddAsset"
                                     v-if="
-                                    formObjData.status != 'complete' && (
-                                        !route.params.id ||
-                                        props.objectdata?.status == 'pending' ||
-                                        authStore.user.profile.role ==
-                                            'superadmin' ||
-                                        authStore.user.profile.role ==
-                                            'administrator'
-                                    )"
+                                        formObjData.status != 'complete' &&
+                                        (!route.params.id ||
+                                            props.objectdata?.status ==
+                                                'pending' ||
+                                            authStore.user.profile.role ==
+                                                'superadmin' ||
+                                            authStore.user.profile.role ==
+                                                'administrator')
+                                    "
                                     >Add</v-btn
                                 >
                             </div>
@@ -140,7 +148,94 @@
                             v-for="(item, index) in assetDataObj"
                             :key="index"
                         >
-                            <div class="v-col-12 v-col-md-1"></div>
+                      
+                            <div class="v-col-12 v-col-md-1 px-1">
+                                <v-row
+                                    v-if="item.attachment?.id"
+                                    class="px-1"
+                                >
+                                    <div 
+                                        class="v-col-12 v-col-md-12 pa-2"
+                                        style="position: relative"
+                                    >
+                                     
+                                    <v-text-field style="display:none;" type="hidden" class="hidden" v-model="item.attachment.id"></v-text-field>
+                                        <v-btn
+                                            style="
+                                                position: absolute;
+                                                top: 0;
+                                                right: 0;
+                                                z-index: 1;
+                                            "
+                                            :icon="mdiClose"
+                                            size="16px"
+                                            color="error"
+                                            @click="
+                                                () => removeAttachment(index, item.attachment.id)
+                                            "
+                                        >
+                                        </v-btn>
+                                        <v-card
+                                            @click="() => openAttachment(index)"
+                                            maxHeight="40"
+                                            style="background-image:url('/assets/images/fav.png');background-size: cover;height:100px; width:100px;"
+                                        >  
+                                        </v-card>
+                                    </div>
+
+                                    <v-dialog
+                                        v-model="dialogAttachment"
+                                        width="95%"
+                                        max-width="900"
+                                    >
+                                        <v-card class="bg-black">
+                                            <v-carousel
+                                                hide-delimiter-background
+                                                show-arrows="hover"
+                                                height="680px"
+                                                v-model="currentSlider"
+                                            >
+                                                <v-carousel-item 
+                                                    reverse-transition="fade"
+                                                    transition="fade"
+                                                >
+                                                    <div
+                                                        style="
+                                                            height: 680px;
+                                                            width: 100%;
+                                                        "
+                                                        class="d-flex align-center justify-center"
+                                                    >
+                                                        <v-img
+                                                            :src="
+                                                                baseURL +
+                                                                '/file/' +
+                                                                item.attachment.path
+                                                            "
+                                                        ></v-img>
+                                                    </div>
+                                                </v-carousel-item>
+                                            </v-carousel>
+                                        </v-card>
+                                    </v-dialog>
+                                </v-row>
+                                <v-row v-else class="mt-0">
+                                    <div class="v-col-12 pt-0 pb-0">
+                                        <v-sheet
+                                            color="grey-lighten-4"
+                                            class="text-center"
+                                        >
+                                            <Studio
+                                                :options="{
+                                                    multiSelect: false,
+                                                    type: 'request-asset',
+                                                }"
+                                                @select="(e) => studioSelectResponse(index, e)"
+                                            />
+                                        </v-sheet>
+                                    </div>
+                                </v-row>
+                            </div>
                             <div class="v-col-12 v-col-md-3">
                                 <v-text-field
                                     v-model="item.item_description"
@@ -149,6 +244,7 @@
                                     hide-details
                                     clearable
                                     label="ITEM DESC*"
+                                    @update:modelValue="requiredData"
                                 ></v-text-field>
                             </div>
                             <div class="v-col-12 v-col-md-2">
@@ -363,18 +459,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
+
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
-
+import Studio from "@/studio/Studio.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { clientKey } from "@/services/axiosToken";
+ 
 import {
     mdiTrashCan,
     mdiAccountCheck,
     mdiAccountClockOutline,
     mdiAccountDetails,
+    mdiClose,
     mdiAccountCancel,
 } from "@mdi/js";
 import { useFormatDate } from "@/composables/formatDate.js";
@@ -396,9 +495,23 @@ const route = useRoute();
 const router = useRouter();
 const objData = ref({});
 const isEdit = ref(false);
-const assetDataObj = ref([{ qty: 1 }]);
+const assetDataObj = ref([{ qty: 1, attachment: {} }]);
 const currentDate = ref(new Date());
 
+const baseURL = ref(window.location.origin);
+const studioSelectResponse = (index,v) => {
+    assetDataObj.value[index].attachment = v[0];
+};
+const dialogAttachment = ref(false);
+const currentSlider = ref(1);
+const openAttachment = (index) => {
+    currentSlider.value = index;
+    dialogAttachment.value = true;
+};
+const removeAttachment = (index) => { 
+    assetDataObj.value[index].attachment = ''
+};
+ 
 const statusTitle = (v) => {
     if (v == "approve") {
         return "Approval By";
@@ -442,7 +555,7 @@ const fetchLocations = async () => {
 };
 
 const AddAsset = () => {
-    assetDataObj.value.push({ qty: 1 });
+    assetDataObj.value.push({ qty: 1, attachment: {}});
     requiredData();
 };
 
@@ -459,10 +572,15 @@ const submitRequest = () => {
     };
 
     let newAssetDataObj = assetDataObj.value.map((o, i) => {
+        o.file_id = '';
+        if(o.attachment){
+            o.file_id = o.attachment.id;
+        }
         delete o.assets;
         delete o.updated_at;
         delete o.created_at;
         delete o.id;
+        delete o.attachment;
         return o;
     });
 
@@ -473,7 +591,7 @@ const submitRequest = () => {
         profile_id: authStore.user.profile.id,
         type: "request",
     };
-
+    
     clientKey(authStore.token)
         .post("/api/request-asset/store-update/data", formData)
         .then((res) => {
@@ -566,8 +684,8 @@ const requiredData = () => {
         if (!o.profile_id) {
             checkSignatories = false;
         }
-    });
-
+    }); 
+   
     if (checkSignatories && checkAsset && checkObj) {
         isValidate.value = true;
     }

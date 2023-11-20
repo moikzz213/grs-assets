@@ -9,6 +9,8 @@ use App\Http\Controllers\ApprovalSetupController;
 
 Route::middleware('authkey')->group(function () {
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
+    Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
+
     Route::get('/fetch/request-assets/by-requestor/{page}', [RequestAssetController::class, 'fetchData'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/data/{id}', [RequestAssetController::class, 'fetchDataByID'])->name('fetch.requestor.assets.id');
     Route::post('/request-asset/store-update/data', [RequestAssetController::class, 'storeUpdate'])->name('request.asset-store.update');
@@ -21,6 +23,8 @@ Route::middleware('authkey')->group(function () {
 
     Route::get('/fetch/all-assets/data', [AssetController::class, 'fetchData'])->name('admin.fetch.data.assets');
     Route::get('/fetch-global/status/active/{type}', [StatusController::class, 'fetchStatusByType'])->name('admin.status.type');
+
+    Route::get('/dashboard/fetch-query/data', [AssetController::class, 'dashboardData'])->name('admin.dashboard.data');
     
 });
 

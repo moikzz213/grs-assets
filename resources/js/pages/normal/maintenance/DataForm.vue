@@ -202,7 +202,7 @@
                                         :disabled="!meta.valid"
                                         :loading="loadingBtn"
                                         v-if="
-                                            objData?.status_id != 8 &&
+                                            !viewOnly && objData?.status_id != 8 &&
                                             (!isEdit ||
                                                 (isEdit &&
                                                     (props.objectdata
@@ -215,8 +215,8 @@
                                     >
                                 </div>
                                 <div class="v-col-12 v-col-md-3">
-                                    DATE REPORTED:
-                                    {{ useFormatDate(objData.created_at) }}
+                                    DATE CREATED:
+                                    {{ objData.created_at ? useFormatDate(objData.created_at) : '' }}
                                 </div>
                                 <div class="v-col-12 v-col-md-3">
                                     DATE CLOSED:
@@ -234,8 +234,8 @@
                 <Attachment
                     v-else-if="isEdit && isActive == 'attachment'"
                     :incident-id="route.params.id"
-                    :files="objData.files"
-                    @deleted="DataUpdateEmit"
+                    :attachment="objData.attachment"
+                    @save="DataUpdateEmit"
                     :objectdata="objData"
                 />
                 <Facility
@@ -304,6 +304,7 @@ const loggedID = ref(authStore.user.profile.id);
 const route = useRoute();
 const router = useRouter();
 const isActive = ref(route.query.type);
+const viewOnly = ref(route.query.v);
 const urgencyList = ref([
     { id: 1, title: "1. Normal" },
     { id: 2, title: "2. Medium" },
@@ -450,6 +451,10 @@ watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {
     objData.value = props.objectdata;
     
     },  { deep: true });
+watch(  () => props.objectdata.attachment,  (newValue, oldValue) => {  
+    objData.value = props.objectdata;  
+    objData.value.attachment = newValue; 
+},  { deep: true });
 </script>
 
 <style lang="scss" scoped>

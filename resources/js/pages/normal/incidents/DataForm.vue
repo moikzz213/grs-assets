@@ -242,7 +242,7 @@
                                 </div>
                                 <div class="v-col-12 v-col-md-3">
                                     DATE REPORTED:
-                                    {{ useFormatDate(objData.created_at) }}
+                                    {{ objData.created_at ? useFormatDate(objData.created_at) : '' }}
                                 </div>
                                 <div class="v-col-12 v-col-md-3">
                                     DATE CLOSED:
@@ -260,8 +260,8 @@
                 <Attachment
                     v-else-if="isEdit && isActive == 'attachment'"
                     :incident-id="route.params.id"
-                    :files="objData.files"
-                    @deleted="DataUpdateEmit"
+                    :attachment="objData.attachment"
+                    @save="DataUpdateEmit"
                     :objectdata="objData"
                 />
                 <Facility
@@ -295,6 +295,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        
     </v-container>
 </template>
 
@@ -337,7 +338,7 @@ const DataUpdateEmit = (v) => {
         type: "success",
         text: v,
     };
-
+    
     emit("saved");
 }
 
@@ -376,10 +377,11 @@ const enableBarcodeFn = () => {
 };
 
 const onDecode = async (result) => {
+    objData.value.asset_code = result;
     await clientKey(authStore.token)
         .get("/api/fetch/asset-info/by/asset-code/" + result)
         .then((res) => {
-            objData.value.asset_code = res.data.asset_code;
+         
             objData.value.title = res.data.asset_name;
             objData.value.company_id = res.data.company_id;
             objData.value.location_id = res.data.location_id;
@@ -493,7 +495,7 @@ onMounted(() => {
     if (isEdit.value) {
         objData.value = props.objectdata;
 
-        objData.value.asset_code = props.objectdata.asset?.asset_code;
+        objData.value.asset_code = props.objectdata.asset ? props.objectdata.asset.asset_code : props.objectdata.asset_code;
         objData.value.title = props.objectdata.asset
             ? props.objectdata.asset.asset_name
             : props.objectdata.title;
@@ -509,9 +511,13 @@ onMounted(() => {
 
  
 watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {  
-    objData.value = props.objectdata;
-    
+    objData.value = props.objectdata;  
     },  { deep: true });
+
+watch(  () => props.objectdata.attachment,  (newValue, oldValue) => {  
+    objData.value = props.objectdata;  
+    objData.value.attachment = newValue; 
+},  { deep: true });
 </script>
 
 <style lang="scss" scoped>
