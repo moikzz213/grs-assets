@@ -1,12 +1,12 @@
-Business Unit,Asset Name,Asset Code,Category,Location,Status,Condition,Brand,Model,Specification,Serial Number,Vendor,PO number,Purchase Date,Price,Capitalization Price,End of Life,Capitalization Date,Depreciation Percentage,Scrap Value,Alloted to,Remarks,Warranty Title,Warranty Start Date,Warranty End Date,AMC Vendor,AMC Start Date,AMC End Date
-Grandiose Supermarket,"CABINET WITH HINGED DOOR, GREEN CUTTING BOARD, WITH GARBAGE HOLE AND BACKSPLASH",GRSU-SHAF-SSTA-1230,TABLES-SS,AL SHAFAR,,,,,220x70x95,,Marino Kitchen,,,,,,,,,,,,,,,,
-Grandiose Supermarket,SERVE OVER COUNTER,GRSU-KIZA-REFR-2781,REFRIGERATION,KIZAD,In Stock,GOOD,"COSTAN, ITALY",,"PLUG IN SYSTEM 
-128H x 110D x 375L CM",,SPECTRO LLC,,,,,,,,,SPORTS VILLAGE,,,,,,,
-Grandiose Supermarket,Fit out Works for coffee shop,GRSU-MARI-SHOP-4044,SHOP FITTINGS,Marina Promenade,,,,,Coffee Counter,,,,," AED 12,000.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,Internal Signage,GRSU-MARI-SIGN-4045,Signage,Marina Promenade,,,,,,,Al Tanbali Advertising,,," AED 22,644.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,Internal Signage,GRSU-MARI-SIGN-4046,Signage,Marina Promenade,,,,,,,Al Tanbali Advertising,,," AED 12,484.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,Firout Works,GRSU-MARI-CIVI-4047,CIVIL & CARPENTRY,Marina Promenade,,,,,,,Munawel Interiors LLC,,," AED 37,940.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,Track Lights - 23 + 3PHASE - 10,GRSU-MARI-LIGH-4048,LIGHTING SYSTEM,Marina Promenade,,,Lival,,,,Zeta Lumen,,," AED 6,476.19 ",,,,,,,,,,,,,
-Grandiose Supermarket,Insect Killler,GRSU-MARI-INSE-4049,INSECT KILLER,Marina Promenade,,,"CRI, Italy",,,,Marino Kitchen,,," AED 2,625.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,powder coating of Gondola Arms,GRSU-MARI-SHOP-4050,SHOP FITTINGS,Marina Promenade,,,,,,,Al Mazaya Kitchen Equipments,,," AED 13,500.00 ",,,,,,,,,,,,,
-Grandiose Supermarket,Electric Bike,GRSU-MARI-VEHI-4051,VEHICLES,Marina Promenade,,,Kangle,,,,Kangle,,," AED 1,150.00 ",,,,,,,,,,,,,
+Business Unit,Asset Name,Asset Code,Category,Location,Status,Condition,Brand,Model,Specification,Serial Number,Vendor,PO number,Purchased Date,Price,Remarks,Capitalization Price,End of Life,Capitalization Date,Depreciation Percentage,Scrap Value,Alloted to,Remarks,Warranty Title,Warranty Start Date,Warranty End Date,AMC Vendor,AMC Start Date,AMC End Date
+1,"CABINET WITH HINGED DOOR, GREEN CUTTING BOARD, WITH GARBAGE HOLE AND BACKSPLASH",GRSU-SHAF-SSTA-1230,1,1,1,4,"COSTAN, ITALY",Test model,220x70x95,,1,,,,,,,,,,,,,,,,,
+1,SERVE OVER COUNTER,GRSU-KIZA-REFR-2781,1,1,1,4,"COSTAN, ITALY",,"PLUG IN SYSTEM 
+128H x 110D x 375L CM",,1,,,,,,,,,,SPORTS VILLAGE,,,,,,,
+1,Fit out Works for coffee shop,GRSU-MARI-SHOP-4044,1,1,1,4,,,Coffee Counter,,1,,,"12,000.00",,,,,,,,,,,,,,
+1,Internal Signage,GRSU-MARI-SIGN-4045,1,1,1,4,,,,,1,,,"22,644.00",,,,,,,,,,,,,,
+1,Internal Signage,GRSU-MARI-SIGN-4046,1,1,1,4,,,,,1,,,"12,484.00",,,,,,,,,,,,,,
+1,Firout Works,GRSU-MARI-CIVI-4047,1,1,1,4,,,,,1,,,"37,940.00",,,,,,,,,,,,,,
+1,Track Lights - 23 + 3PHASE - 10,GRSU-MARI-LIGH-4048,1,1,1,4,Lival,,,,1,,,"6,476.19",,,,,,,,,,,,,,
+1,Insect Killler,GRSU-MARI-INSE-4049,1,1,1,4,"CRI, Italy",,,,1,,,"2,625.00",,,,,,,,,,,,,,
+1,powder coating of Gondola Arms,GRSU-MARI-SHOP-4050,1,1,1,4,,,,,1,,,"13,500.00",,,,,,,,,,,,,,
+1,Electric Bike,GRSU-MARI-VEHI-4051,1,1,1,4,Kangle,,,,1,,,"1,150.00",,,,,,,,,,,,,,

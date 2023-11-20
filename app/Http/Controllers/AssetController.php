@@ -15,40 +15,123 @@ use Illuminate\Support\Facades\DB;
 class AssetController extends Controller
 {
 
-    public function importAsset() {
+    public function import(Request $request) {
         $resMsg = "";
         $resCode = 200;
-        $dataArray = array();
+        $assetArray = array();
+        $warrantyArray = array();
         $itemsToImport = json_decode($request['import_data']);
         $importCount = 0;
 
         DB::beginTransaction();
         try {
-            $import = new Asset;
+            $importAsset = new Asset;
+            $importWarranty = new Warranty;
+
+            // chunk data to 1000
             foreach (array_chunk($itemsToImport, 1000) as $itemsToImport_chunked){
+
+                // loop each asset from chunked data (1000)
                 foreach ($itemsToImport_chunked as $item) {
-                    $check = Asset::where('asset_code', $item->title)->first();
+
+                    // check if the asset exist
+                    $check = Asset::where('asset_code', $item->asset_code)->first();
+
                     if(!$check){
-                        array_push($dataArray, array(
-                            'title' => $item->title,
+                        // dd($item->model);
+                        // push fields into assetArray
+                        array_push($assetArray, array(
+                            // asset
+                            'asset_name' => $item->asset_name,  // asset_name
+                            'asset_code' => $item->asset_code, // asset_code
+                            'brand' => $item->brand, // brand
+                            'model' => $item->model, // model
+                            'specification' => $item->specification, // specification
+                            'serial_number' => $item->serial_number, // serial_number
+                            // 'location_id' => (int)$item->alloted_to, // alloted_to should be id
+                            // 'company_id' => (int)$item->business_unit, // business_unit should be id
+                            // 'category_id' => (int)$item->category, // category should be id
+                            // 'location_id' => (int)$item->location, // location should be id
+                            // 'status_id' => (int)$item->status, // status
+                            // 'condition_id' => (int)$item->condition, // condition should be id
+
+                            // // purchase info
+                            // 'vendor_id', (int)$item->vendor, // amc_vendor
+                            // 'po_number', $item->po_number, // po_number
+                            // 'purchased_date', $item->purchased_date, // purchased_date
+                            // 'price',  (float)$item->price, // price
+                            // 'remarks', $item->remarks, // remarks
                         ));
+
                         $importCount++;
+
+                        // $assetLastInsertedId = $importAsset->insertGetId($assetArray);
+                        $assetLastInsertedId = $importAsset->insertGetId([
+                            'asset_name' => $item->asset_name,  // asset_name
+                            'asset_code' => $item->asset_code, // asset_code
+                            'brand' => $item->brand, // brand
+                            'model' => $item->model, // model
+                            'specification' => $item->specification, // specification
+                            'serial_number' => $item->serial_number, // se
+                        ]);
+
+                        if($assetLastInsertedId){
+                            // // push fields into warrantyArray
+                            // array_push($warrantyArray, array(
+                            //     'warranty_title', $item->warranty_title, // amc_end_date
+                            //     'warranty_start_date', $item->warranty_start_date, // amc_end_date
+                            //     'warranty_end_date', $item->warranty_end_date, // amc_end_date
+                            //     'amc_end_date', $item->amc_end_date, // amc_end_date
+                            //     'amc_start_date', $item->amc_start_date, // amc_start_date
+                            //     'vendor_id', $item->amc_vendor, // amc_vendor should be id
+                            // ));
+
+                            // // push fields into financialArray
+                            // array_push($financialArray, array(
+                            //     'capitalization_price', $item->capitalization_price, // capitalization_price
+                            //     'end_of_life', $item->end_of_life, // end_of_life
+                            //     'capitalization_date', $item->capitalization_date, // capitalization_date
+                            //     'depreciation_percentage', $item->depreciation_percentage, // depreciation_percentage
+                            //     'scrap_value', $item->scrap_value, // scrap_value
+                            //     'scrap_date', $item->scrap_date, // scrap_date
+                            // ));
+
+                            // $createWarranty = Warranty::create([
+                            //     'warranty_title', $item->warranty_title, // amc_end_date
+                            //     'warranty_start_date', $item->warranty_start_date, // amc_end_date
+                            //     'warranty_end_date', $item->warranty_end_date, // amc_end_date
+                            //     'amc_end_date', $item->amc_end_date, // amc_end_date
+                            //     'amc_start_date', $item->amc_start_date, // amc_start_date
+                            //     'vendor_id',  (float)$item->amc_vendor, // amc_vendor should be id
+                            //     'asset_id',  (float)$assetLastInsertedId,
+                            // ]);
+
+                            // $createFinancialInfo = FinancialInformation::create([
+                            //     'capitalization_price',  (float)$item->capitalization_price, // capitalization_price
+                            //     'end_of_life', $item->end_of_life, // end_of_life
+                            //     'capitalization_date', $item->capitalization_date, // capitalization_date
+                            //     'depreciation_percentage', $item->depreciation_percentage, // depreciation_percentage
+                            //     'scrap_value', $item->scrap_value, // scrap_value
+                            //     'scrap_date', $item->scrap_date, // scrap_date
+                            //     'asset_id', $assetLastInsertedId,
+                            // ]);
+                        }
                     }
                 }
-                $import = $import->insert($dataArray);
+                // $insertAsset = $importAsset->insert($assetArray);
+                // $insertWarranty = $importWarranty->insert($warrantyArray);
             }
             $resMsg = 'Asset imported successfully ('.$importCount.')';
-            $resCode = $import ? 200 : 422;
+            $resCode = 200;
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             $resCode = 500;
-            $resMsg = "Import failed";
+            $resMsg = "Import failed ". $e;
         }
-
         return response()->json([
             'message' => $resMsg
-        ], 200);
+        ], $resCode);
     }
 
     public function getAssetById($id) {
@@ -63,7 +146,7 @@ class AssetController extends Controller
             'warranties.vendor',
             'allotted_informations',
             'maintenance.profile',
-            'maintenance.status', 
+            'maintenance.status',
             'maintenance.handled_by',
             'attachments'
         )->first();
@@ -281,13 +364,13 @@ class AssetController extends Controller
         $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete')->count();
         $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete')->count();
 
-        
+
         $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10)->get();
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10)->get();
         $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10)->get();
 
         $newArray = array();
-        
+
 
         if(count($query_all_asset) > 0){
             foreach ($query_all_asset as $k => $v) {
@@ -337,17 +420,17 @@ class AssetController extends Controller
         }
 
         $merge_data = array_merge($newArray, $newArray2, $newArray3);
-        
+
         usort($merge_data, function ($a, $b) {
             return strtotime($b['date']) -strtotime($a['date']);
         });
-        
+
         $merge_data = array_slice($merge_data, 0, 10);
-       
+
         $response = array('count' => array('incident' => $incidents, 'maintenance' => $maintenance, 'request' => $req, 'transfer' => $transfer),
                           'table' => $merge_data
                     );
-    
+
         return response()->json($response, 200);
     }
 }

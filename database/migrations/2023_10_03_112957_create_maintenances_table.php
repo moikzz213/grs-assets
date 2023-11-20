@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('asset_id');
-            $table->string('service_type',50); 
+            $table->string('service_type',50);
             $table->string('status',50);
-            $table->unsignedBigInteger('assignee')->nullable(); 
-            $table->string('date_start',50)->nullable(); 
-            $table->string('date_received',50)->nullable(); 
-            $table->text('remarks')->nullable(); 
-            $table->decimal('cost',10,2)->nullable(); 
+            $table->unsignedBigInteger('assignee')->nullable();
+            $table->string('date_start',50)->nullable();
+            $table->string('date_received',50)->nullable();
+            $table->text('remarks')->nullable();
+            $table->decimal('cost',10,2)->nullable();
             $table->timestamps();
         });
     }

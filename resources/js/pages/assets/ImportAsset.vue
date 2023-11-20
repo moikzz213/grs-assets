@@ -52,6 +52,7 @@ import { ref } from "vue";
 import { mdiPaperclip, mdiDownload, mdiTrayArrowUp } from "@mdi/js";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import * as papa from "papaparse";
+import { clientKey } from "@/services/axiosToken";
 
 // emits
 const emit = defineEmits(["imported"]);
@@ -146,7 +147,7 @@ const parseComplete = async (results, file) => {
   // console.log("import data", data);
 
   // save result to database
-  await clientKey(authStore.authToken)
+  await clientKey(authStore.token)
     .post('/api/asset/import', data)
     .then((res) => {
       emit("imported", {
