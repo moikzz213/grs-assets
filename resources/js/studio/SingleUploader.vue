@@ -86,7 +86,6 @@ watch(
   () => props.options,
   (newVal) => {
     uploadOptions.value = { ...uploadOptions.value, ...newVal };
-    console.log("uploadOptions.value", uploadOptions.value);
   }
 );
 

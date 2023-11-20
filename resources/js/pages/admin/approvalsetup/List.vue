@@ -397,7 +397,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .tab-active {
-    background-color: #c6a92d;
-    color: #ffffff;
+    background-color: rgb(var(--v-theme-secondary)); 
 }
 </style>

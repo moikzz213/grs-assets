@@ -34,5 +34,23 @@ class StatusSeeder extends Seeder
             ]);
             $query->save();
         } 
+
+        $dataArr2 = array(
+            array('title'=> 'Asset Request (as per approved new/renovation layout)', 'type' => 'request', 'status' => 'active' ),
+            array('title'=> 'Asset Request (to replaced damaged asset)', 'type' => 'request', 'status' => 'active' ),
+            array('title'=> 'Asset Request (additional asset not reflected in the approved layout)', 'type' => 'request', 'status' => 'active' ),
+            array('title'=> 'Asset Transfer (Removal of equipment not reflected in the approved layout)', 'type' => 'transfer', 'status' => 'active' ),
+            array('title'=> 'Asset Transfer (Removal of equipment as per approved renovation layout)', 'type' => 'asset', 'status' => 'active' ), 
+        );
+
+        foreach($dataArr2 AS $k => $v){ 
+            $query = new \App\Models\ApprovalSetup([
+                'title' => $v['title'],
+                'type'  => $v['type'],
+                'status'  => $v['status'],
+            ]);
+            $query->save();
+        }  
+        
     }
 }

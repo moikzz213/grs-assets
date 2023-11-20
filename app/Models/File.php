@@ -36,4 +36,9 @@ class File extends Model
             'id',
         );
     }
+
+    public function request_details()
+    {
+        return $this->belongsToMany(RequestAssetDetail::class);
+    }
 }

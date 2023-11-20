@@ -208,10 +208,7 @@ const authStore = useAuthStore();
 
 // vendor
 import { useVendorStore } from "@/stores/vendors";
-const vendorStore = useVendorStore();
-if (vendorStore.list.length == 0) {
-  vendorStore.getVendors(authStore.token);
-}
+const vendorStore = useVendorStore(); 
 
 // snackbar
 const sbOptions = ref({});

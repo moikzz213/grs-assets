@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Asset;
 use App\Models\Brand;
+use App\Models\Access;
 use App\Models\Vendor;
 use App\Models\Company;
 use App\Models\Profile;
@@ -23,6 +24,11 @@ class Log extends Model
     public function profile()
     {
         return $this->morphedByMany(Profile::class, 'loggable');
+    }
+
+    public function access()
+    {
+        return $this->morphedByMany(Access::class, 'loggable');
     }
 
     public function company()

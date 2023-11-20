@@ -19,10 +19,11 @@
                 <br />
                 <strong>{{ dataObj.data?.setup?.title }}</strong>
             </div>
-            
+
             <div class="v-col-3 mt-auto font-weight-bold text-right">
-                SN-{{ dataObj?.data?.types == 'request' ? '5': '3'}}{{  pad(1) }}<br/>
-               {{ useFormatDate(dataObj.data?.created_at) }}
+                SN-{{ dataObj?.data?.types == "request" ? "5" : "3" }}{{ pad(1)
+                }}<br />
+                {{ useFormatDate(dataObj.data?.created_at) }}
             </div>
         </v-row>
         <v-divider class="my-5"></v-divider>
@@ -50,9 +51,64 @@
                 ></v-checkbox>
             </div>
         </v-row>
-        <v-row class="mt-1" v-for="item in assetsOnly" :key="item.id">
-            <div class="v-col-12 v-col-md-1 py-1"></div>
-            <div class="v-col-12 v-col-md-2 py-1">
+        <v-row class="mt-1" v-for="(item, index) in assetsOnly" :key="item.id">
+             
+            <div class="v-col-12 v-col-md-3 py-1 d-flex">
+                 
+                    <div 
+                        v-if="item.attachment?.id"
+                    >
+                        <v-card
+                            @click="() => openAttachment(index)"
+                            maxHeight="40"
+                            variant="text"
+                            class="ma-2"
+                        >
+                        <v-icon size="large" :icon="mdiImage" color="success"></v-icon> 
+                        </v-card>
+                        <v-dialog
+                        v-model="dialogAttachment"
+                        width="95%"
+                        max-width="900"
+                    >
+                        <v-card class="bg-black">
+                            <v-carousel
+                                hide-delimiter-background
+                                show-arrows="hover"
+                                height="680px"
+                                v-model="currentSlider"
+                            >
+                                <v-carousel-item
+                                    reverse-transition="fade"
+                                    transition="fade"
+                                >
+                                    <div
+                                        style="height: 680px; width: 100%"
+                                        class="d-flex align-center justify-center"
+                                    >
+                                        <v-img
+                                            :src="
+                                                baseURL +
+                                                '/file/' +
+                                                item.attachment.path
+                                            "
+                                        ></v-img>
+                                    </div>
+                                </v-carousel-item>
+                            </v-carousel>
+                        </v-card>
+                    </v-dialog>
+                    </div> 
+                    <v-card
+                           v-else
+                            maxHeight="40"
+                            variant="text"
+                            class="ma-2"
+                        >
+                        <v-icon size="large" :icon="mdiImageOffOutline"></v-icon> 
+                        </v-card>
+                   
+                
                 <v-text-field
                     :value="item.item_description"
                     variant="underlined"
@@ -191,7 +247,9 @@
                 <div v-if="dataObj?.data?.status == 'complete'">
                     <v-icon
                         class="mt-3"
-                        :icon="item.is_received ? mdiTruckDelivery : mdiTruckRemove"
+                        :icon="
+                            item.is_received ? mdiTruckDelivery : mdiTruckRemove
+                        "
                         :color="`${item.is_received ? 'success' : 'error'}`"
                     ></v-icon>
                 </div>
@@ -206,8 +264,9 @@
         </v-row>
         <v-row v-if="dataObj?.data?.is_available" class="mt-6 mb-2">
             <v-card
-                :loading="noticeLoader" variant="text"
-                class="v-col-12 text-center pt-2 font-weight-bold pb-0 d-flex justify-center" 
+                :loading="noticeLoader"
+                variant="text"
+                class="v-col-12 text-center pt-2 font-weight-bold pb-0 d-flex justify-center"
             >
                 <div>
                     <v-icon :icon="mdiCheckBold" color="success"></v-icon>
@@ -219,12 +278,12 @@
                     ></v-icon>
                     NOT AVAILABLE
                 </div>
-                <div v-if="is_receiver" class="ml-5 d-flex"> 
+                <div v-if="is_receiver" class="ml-5 d-flex">
                     <div class="px-2 mr-5">|</div>
                     <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
                     RECEIVED ASSETS
                 </div>
-                <div class="ml-6" v-if="dataObj.data?.status =='complete'">
+                <div class="ml-6" v-if="dataObj.data?.status == 'complete'">
                     <v-icon :icon="mdiTruckDelivery" color="success"></v-icon>
                     RECEIVED
                     <v-icon
@@ -439,7 +498,15 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useFormatDate } from "@/composables/formatDate.js";
 import AppSnackBar from "@/components/AppSnackBar.vue";
-import { mdiCheckBold, mdiCloseThick, mdiCheckboxBlankOutline,mdiTruckDelivery,mdiTruckRemove  } from "@mdi/js";
+import {
+    mdiCheckBold,
+    mdiCloseThick,
+    mdiCheckboxBlankOutline,
+    mdiTruckDelivery,
+    mdiTruckRemove,
+    mdiImage,
+    mdiImageOffOutline 
+} from "@mdi/js";
 
 const route = useRoute();
 const isValid = ref(true);
@@ -499,16 +566,24 @@ const queryData = async () => {
                         o.approval_type == "receiver"
                 )[0];
 
-                if(is_receiver.value || is_asset_supervisor.value){
+                if (is_receiver.value || is_asset_supervisor.value) {
                     noticeLoader.value = true;
                 }
             }
-            assetsOnly.value = dataObj.value?.data?.items; 
-            console.log("dataObj.value",dataObj.value);
+            assetsOnly.value = dataObj.value?.data?.items;
+            console.log("dataObj.value", dataObj.value);
         })
         .catch((err) => {
             console.log(err.response.data);
         });
+};
+
+const baseURL = ref(window.location.origin);
+const dialogAttachment = ref(false);
+const currentSlider = ref(1);
+const openAttachment = (index) => {
+    currentSlider.value = index;
+    dialogAttachment.value = true;
 };
 
 const rejectItem = ref({});

@@ -95,9 +95,8 @@
                         <thead>
                             <tr>
                                 <th class="text-left text-capitalize">ISR No.</th>
-                                <th class="text-left text-capitalize">
-                                    Urgency
-                                </th>
+                                <th class="text-left text-capitalize"> Urgency </th>
+                                <th class="text-left text-capitalize"> Priority </th>
                                 
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
@@ -131,6 +130,12 @@
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('handled_by')"
+                                >
+                                    HandledBy
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('status_id')"
                                 >
                                     Status
@@ -152,12 +157,14 @@
                             >
                                 <td>ISR-2{{ pad(item.id)}}</td>
                                 <td>{{ staticStatus(item.urgency) }}</td> 
+                                <td>{{ staticStatus(item.priority) }}</td> 
                                 <td>{{ item.company?.title }}</td>
                                 <td>{{ item.location?.title }}</td> 
                                 <td>{{ item.asset? item.asset.asset_name : item.title }}</td>
                                 <td>{{ item.asset?.asset_code }}</td>
                                 
                                 <td>{{ item.profile?.display_name }}</td>
+                                <td>{{ item.handled_by?.display_name }}</td>
                                 <td>  
                                     <v-chip
                                         class="text-uppercase"
@@ -184,8 +191,15 @@
                                                     'edit'
                                                 )
                                             "
-                                            @click="() => editUser(item.id)"
+                                            @click="() => editUser(item.id,'edit')"
                                             :icon="mdiPencil"
+                                            class="mx-1"
+                                        />
+                                        <v-icon
+                                            size="small"
+                                            v-else
+                                            @click="() => editUser(item.id,'view')"
+                                            :icon="mdiEyeOutline"
                                             class="mx-1"
                                         />
                                         <v-icon
@@ -233,7 +247,7 @@
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { onMounted, ref, watch } from "vue";
-import { mdiPencil, mdiTrashCan } from "@mdi/js";
+import { mdiPencil, mdiTrashCan,mdiEyeOutline } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
@@ -289,13 +303,16 @@ const currentPage = ref(
 );
 
 const staticStatus = (v) =>{
-    if(v == 1){
-        return 'Normal';
-    }else if(v == 2){
-        return 'Medium';
-    }else{
-        return 'High';
+    if(v){
+        if(v == 1){
+            return 'Normal';
+        }else if(v == 2){
+            return 'Medium';
+        }else{
+            return 'High';
+        }
     }
+    return '';
 }
 
 const orderBy = ref([]);
@@ -397,14 +414,19 @@ watch(currentPage, (newValue, oldValue) => {
     }
 });
 
-const editUser = (id) => {
+const editUser = (id, type) => {
+    let queryParam =  { type: 'details' };
+    if(type == 'view'){
+        
+        queryParam = { type: "details", pd:'ox2rKaIYFhBOQW31j6kkiMrJ4KfnYpLmwJhMzBFwPBlVjgGR4g', v:1, vv: 'xK2sX1sDL1BBAvmuoPpWoNRgc4wzbdZ9F2OXAKrS3N2g65xNgy' };
+    }
     router
         .push({
             name: "EditMaintenance",
             params: {
                 id: id                 
             },
-            query: { type: 'details' }
+            query: queryParam
         })
         .catch((err) => {
             console.log(err);
@@ -413,21 +435,10 @@ const editUser = (id) => {
 
 const deleteUser = (item) => {
     console.log("delete", item);
-};
-
-const addNew = () => {
-    router
-        .push({
-            name: "NewMaintenance", 
-            query: { type: 'details' }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
+}; 
  
 const pad = (v, size = 5) =>{
-      let s = "50000" + v;
+      let s = "0000" + v;
       return s.substring(s.length - size);
 }; 
 

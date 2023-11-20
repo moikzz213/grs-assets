@@ -18,7 +18,7 @@ class Incident extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function files()
+    public function attachment()
     {  
         return $this->morphToMany(
             File::class,
@@ -50,6 +50,11 @@ class Incident extends Model
     public function profile()
     {
         return $this->belongsTo(Profile::class);
+    }
+
+    public function handled_by()
+    {
+        return $this->belongsTo(Profile::class, 'handled_by');
     }
 
     public function company()

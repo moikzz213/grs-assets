@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\Incident;
 use App\Models\Warranty;
 use App\Helper\GlobalHelper;
+use App\Models\RequestAsset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +25,9 @@ class AssetController extends Controller
             'financial_information',
             'warranty.vendor',
             'allotted_informations',
-            'maintenance',
+            'maintenance.profile',
+            'maintenance.status', 
+            'maintenance.handled_by',
             'attachments'
         )->first();
         return response()->json($asset, 200);
@@ -228,5 +232,85 @@ class AssetController extends Controller
         }
        
         return response()->json($dataArray, 200);
+    }
+
+
+    /**
+     * Below is for Dashboard
+     */
+    public function dashboardData(Request $request){
+        $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8)->count();
+        $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8)->count();
+        $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete')->count();
+        $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete')->count();
+
+        
+        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10)->get();
+        $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10)->get();
+        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10)->get();
+
+        $newArray = array();
+        
+
+        if(count($query_all_asset) > 0){
+            foreach ($query_all_asset as $k => $v) {
+                $newArray[] = array(
+                    'company' => $v->company ? $v->company['title'] : '',
+                    'location' => $v->location ? $v->location['title'] : '',
+                    'category' => $v->category ? $v->category['title'] : '',
+                    'asset_name' => $v->asset_name,
+                    'asset_code' => $v->asset_code,
+                    'type' => $v->status ? "asset(".$v->status['title'].')' : '',
+                    'author' => $v->created_by ? $v->created_by['display_name'] : '',
+                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                );
+            }
+        }
+
+        $newArray2 = array();
+        if(count($query_all_incident) > 0){
+            foreach ($query_all_incident as $k => $v) {
+                $newArray2[] = array(
+                    'company' => $v->company ? $v->company['title'] : '',
+                    'location' => $v->location ? $v->location['title'] : '',
+                    'category' => $v->asset ? $v->asset['category']['title'] : '',
+                    'asset_name' => $v->asset ? $v->asset['asset_name'] : $v->title,
+                    'asset_code' => $v->asset ? $v->asset['asset_code'] : $v->asset_code,
+                    'type' => $v->status ? "incident(".$v->status['title'].')' : '',
+                    'author' => $v->profile ? $v->profile['display_name'] : '',
+                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                );
+            }
+        }
+
+        $newArray3 = array();
+        if(count($query_all_request) > 0){
+            foreach ($query_all_request as $k => $v) {
+                $newArray3[] = array(
+                    'company' => $v->company ? $v->company['title'] : '',
+                    'location' => $v->transfer_to ? $v->transfer_to['title'] : '',
+                    'category' => '',
+                    'asset_name' => '',
+                    'asset_code' => '',
+                    'type' => $v->types."(".$v->status.')',
+                    'author' => $v->profile ? $v->profile['display_name'] : '',
+                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                );
+            }
+        }
+
+        $merge_data = array_merge($newArray, $newArray2, $newArray3);
+        
+        usort($merge_data, function ($a, $b) {
+            return strtotime($b['date']) -strtotime($a['date']);
+        });
+        
+        $merge_data = array_slice($merge_data, 0, 10);
+       
+        $response = array('count' => array('incident' => $incidents, 'maintenance' => $maintenance, 'request' => $req, 'transfer' => $transfer),
+                          'table' => $merge_data
+                    );
+    
+        return response()->json($response, 200);
     }
 }

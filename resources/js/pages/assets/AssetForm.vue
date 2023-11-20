@@ -20,7 +20,7 @@
               <v-text-field
                 v-model="assetObj.asset_name"
                 v-bind="field"
-                label="Name"
+                label="Name*"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
@@ -36,7 +36,7 @@
               <v-text-field
                 v-model="assetObj.serial_number"
                 v-bind="field"
-                label="Serial Number"
+                label="Serial Number(Optional)"
                 variant="outlined"
                 density="compact"
                 :error-messages="errors"
@@ -82,7 +82,7 @@
               :items="categoryStore.list"
               item-title="title"
               item-value="id"
-              label="Category"
+              label="Category*"
               density="compact"
               variant="outlined"
               :rules="[(v) => !!v || 'Category is required']"
@@ -94,7 +94,7 @@
               :items="companyStore.list"
               item-title="title"
               item-value="id"
-              label="Company"
+              label="Company*"
               density="compact"
               variant="outlined"
               :rules="[(v) => !!v || 'Company is required']"
@@ -107,7 +107,7 @@
               :items="locationStore.list"
               item-title="title"
               item-value="id"
-              label="Location"
+              label="Location*"
               density="compact"
               variant="outlined"
               :rules="[(v) => !!v || 'Location is required']"
@@ -136,7 +136,7 @@
               :items="statusStore.assets"
               item-title="title"
               item-value="id"
-              label="Asset Status"
+              label="Asset Status*"
               density="compact"
               variant="outlined"
               :rules="[(v) => !!v || 'Asset Status is required']"
@@ -200,7 +200,7 @@
                   <v-text-field
                     v-model="assetObj.specification"
                     v-bind="field"
-                    label="Specification"
+                    label="Specification*"
                     variant="outlined"
                     density="compact"
                     :error-messages="errors"
@@ -213,7 +213,7 @@
                   :items="modelStore.list"
                   item-title="title"
                   item-value="id"
-                  label="Model"
+                  label="Model*"
                   density="compact"
                   variant="outlined"
                   :rules="[(v) => !!v || 'Model is required']"
@@ -225,7 +225,7 @@
                   :items="brandStore.list"
                   item-title="title"
                   item-value="id"
-                  label="Brand"
+                  label="Brand*"
                   density="compact"
                   variant="outlined"
                   :rules="[(v) => !!v || 'Brand is required']"
@@ -237,7 +237,7 @@
                   :items="statusStore.conditions"
                   item-title="title"
                   item-value="id"
-                  label="Condition"
+                  label="Condition*"
                   density="compact"
                   variant="outlined"
                   :rules="[(v) => !!v || 'Condition is required']"
@@ -413,7 +413,7 @@
           </div>
           <!-- Warranty Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'warranty'">
-            <AssetWarranties :asset="assetObj" :page="props.page" />
+            <AssetWarranties :asset="assetObj" :page="props.page" v-if="props.page != 'add'"/>
           </div>
           <!-- Allotted Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'allotted'">
@@ -571,6 +571,7 @@ if (statusStore.list.length == 0 || statusStore.conditions.length == 0) {
 import { useVendorStore } from "@/stores/vendors";
 const vendorStore = useVendorStore();
 if (vendorStore.list.length == 0) {
+  console.log("fORM", vendorStore.list);
   vendorStore.getVendors(authStore.token);
 }
 
@@ -631,6 +632,7 @@ const setAssetData = (assetData) => {
       assetData.financial_information.capitalization_date;
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
   }
+  console.log("assetObj.value",assetObj.value);
 };
 setAssetData(props.asset);
 watch(

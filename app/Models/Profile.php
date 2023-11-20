@@ -6,6 +6,7 @@ use App\Models\Log;
 use App\Models\Asset;
 use App\Models\Access;
 use App\Models\Company;
+use App\Models\Incident;
 use App\Models\ClientKey;
 use App\Models\ApprovalStages;
 use App\Models\IncidentRemark;
@@ -36,6 +37,11 @@ class Profile extends Model
     public function access()
     {
         return $this->hasMany(Access::class);
+    }
+
+    public function incident()
+    {
+        return $this->hasMany(Incident::class);
     }
 
     public function logs()

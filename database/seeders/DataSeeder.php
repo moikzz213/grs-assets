@@ -13,7 +13,7 @@ class DataSeeder extends Seeder
     public function run(): void
     {
         // vendor
-        for ($i=0; $i <= 9 ; $i++) {
+        for ($i=0; $i <= 3 ; $i++) {
             $query = new \App\Models\Vendor([
                 'title' => 'Test Vendor '.$i,
                 'address' => 'Address '.$i,
@@ -25,7 +25,7 @@ class DataSeeder extends Seeder
         }
 
         // model
-        for ($i=0; $i <= 9 ; $i++) {
+        for ($i=0; $i <= 3 ; $i++) {
             $query = new \App\Models\SpecModel([
                 'title' => 'Test Model '.$i,
             ]);
@@ -33,7 +33,7 @@ class DataSeeder extends Seeder
         }
 
         // brand
-        for ($i=0; $i <= 9 ; $i++) {
+        for ($i=0; $i <= 3 ; $i++) {
             $query = new \App\Models\Brand([
                 'title' => 'Test Brand '.$i,
             ]);
@@ -41,7 +41,7 @@ class DataSeeder extends Seeder
         }
 
         // category
-        for ($i=0; $i <= 9 ; $i++) {
+        for ($i=0; $i <= 3 ; $i++) {
             $query = new \App\Models\Category([
                 'title' => 'Test Category '.$i,
                 'code' => 'cat'.$i,
