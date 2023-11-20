@@ -14,6 +14,43 @@ use Illuminate\Support\Facades\DB;
 
 class AssetController extends Controller
 {
+
+    public function importAsset() {
+        $resMsg = "";
+        $resCode = 200;
+        $dataArray = array();
+        $itemsToImport = json_decode($request['import_data']);
+        $importCount = 0;
+
+        DB::beginTransaction();
+        try {
+            $import = new Asset;
+            foreach (array_chunk($itemsToImport, 1000) as $itemsToImport_chunked){
+                foreach ($itemsToImport_chunked as $item) {
+                    $check = Asset::where('asset_code', $item->title)->first();
+                    if(!$check){
+                        array_push($dataArray, array(
+                            'title' => $item->title,
+                        ));
+                        $importCount++;
+                    }
+                }
+                $import = $import->insert($dataArray);
+            }
+            $resMsg = 'Asset imported successfully ('.$importCount.')';
+            $resCode = $import ? 200 : 422;
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            $resCode = 500;
+            $resMsg = "Import failed";
+        }
+
+        return response()->json([
+            'message' => $resMsg
+        ], 200);
+    }
+
     public function getAssetById($id) {
         $asset = Asset::where('id', $id)
         ->with(
@@ -23,7 +60,7 @@ class AssetController extends Controller
             'company',
             'location',
             'financial_information',
-            'warranty.vendor',
+            'warranties.vendor',
             'allotted_informations',
             'maintenance.profile',
             'maintenance.status', 
@@ -171,23 +208,23 @@ class AssetController extends Controller
     }
 
     public function fetchAssetCode($code){
-        $query = Asset::where('asset_code', '=',$code)->with('warranty.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','brand','model','category','company','location')->first();
+        $query = Asset::where('asset_code', '=',$code)->with('warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','brand','model','category','company','location')->first();
         return response()->json($query, 200);
     }
 
     public function fetchData(Request $request){
         $paginate = $request->show;
-        $search = $request->search; 
+        $search = $request->search;
 
         $sort = "";
         $orderBy = $request->sort;
         $filter = $request->filter;
         $filterSearch = json_decode($filter);
-       
-        $dataObj = new Asset; 
+
+        $dataObj = new Asset;
 
         if($orderBy){
-            $orderBy = json_decode($orderBy);   
+            $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
             $dataObj = $dataObj->orderBy($field, $sort)->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
@@ -209,28 +246,28 @@ class AssetController extends Controller
             }
             $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
         }
-    
+
         if($search){
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
-                           
+
                     $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhereHas('asset', function ($qq) use($search) { 
+                    ->orWhereHas('asset', function ($qq) use($search) {
                         $qq->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code',  'like', '%'.$search.'%')
                         ->orWhere('serial_number',  'like', '%'.$search.'%')
                         ->orWhere('po_number',  'like', '%'.$search.'%');
-                    });     
-               
+                    });
+
             });
 
             $dataObj = $dataObj->get();
-          
+
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 

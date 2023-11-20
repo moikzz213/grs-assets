@@ -6,9 +6,6 @@
           {{ props.page + " Asset" }}
         </div>
         <div class="d-flex align-center">
-          <v-btn color="primary" class="mr-3" :loading="loadingAsset" @click="importAsset"
-            >Import Assets</v-btn
-          >
           <v-btn color="primary" :loading="loadingAsset" @click="saveAsset">Save</v-btn>
         </div>
       </v-card-title>
@@ -602,11 +599,6 @@ let validation = yup.object({
 
   // edit
 });
-
-// fill asset form
-const importAsset = () => {
-  console.log("import");
-};
 
 // save asset
 const loadingAsset = ref(false);

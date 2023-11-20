@@ -8,6 +8,7 @@
       :allow-multiple="uploadOptions.allow_multiple"
       :maxFiles="uploadOptions.max_files"
       :maxFileSize="uploadOptions.max_file_size"
+      :maxParallelUploads="uploadOptions.max_parallel_uploads"
       :accepted-file-types="uploadOptions.accepted_file_types"
       v-bind:server="serverSetup"
       v-bind:files="selectedFiles"
@@ -54,7 +55,7 @@ const props = defineProps({
     default: null,
   },
 });
- 
+
 const uploadOptions = ref({
   max_files: props.options.max_files ? props.options.max_files : 4,
   allow_multiple: props.options.allow_multiple ? props.options.allow_multiple : true,
@@ -67,7 +68,10 @@ const uploadOptions = ref({
   accepted_file_types: props.options.accepted_file_types
     ? props.options.accepted_file_types
     : "image/jpeg, image/png", // image/jpeg, image/png, application/pdf
-  type: props.options.type ? props.options.type : 'asset',
+  type: props.options.type ? props.options.type : "asset",
+  max_parallel_uploads: props.options.max_parallel_uploads
+    ? props.options.max_parallel_uploads
+    : 4,
 });
 watch(
   () => props.options,
@@ -76,8 +80,6 @@ watch(
     console.log("uploadOptions.value", uploadOptions.value);
   }
 );
-
-console.log("uploadOptions", uploadOptions.value);
 
 // FilePond
 const selectedFiles = ref([]);
@@ -140,10 +142,10 @@ const serverSetup = {
     // set on load
     request.onload = function () {
       if (request.status >= 200 && request.status < 300) {
-        emit("uploaded");
-        console.log("request.responseText", request.responseText);
+        // emit("uploaded");
+        // console.log("onload", request.responseText);
         // load(request.responseText);
-        console.log("selectedFiles", selectedFiles.value);
+        // console.log("selectedFiles", selectedFiles.value);
       } else {
         error("Process Error");
       }
@@ -166,21 +168,19 @@ const serverSetup = {
 
 const handleFilePondInit = () => {
   // FilePond instance methods are available on `this.$refs.pond`
-
   /* eslint-disable */
-  console.log("FilePond has initialized");
+  //   console.log("FilePond has initialized");
 };
 const handleFilePondError = (file, status) => {
-  console.log("file", file);
-  console.log(" status", status);
+  console.log("upload error file", file);
+  console.log("upload error status", status);
 };
 
 const handleUpload = (files) => {
-  pond.value.processFiles();
-  console.log("files", files);
+  pond.value.processFiles().then(() => {
+    emit("uploaded");
+  });
 };
-
-console.log("uploadOptions.height", uploadOptions.value.height);
 </script>
 
 <style>

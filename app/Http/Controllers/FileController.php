@@ -32,8 +32,8 @@ class FileController extends Controller
             $userStorageDir = storage_path() . '/app' . $userStorage;
 
             // title
-            $originalName = $file->getClientOriginalName(); 
-           
+            $originalName = $file->getClientOriginalName();
+
             $theTitle = $originalName;
             if (strlen($originalName) > 50){
                 $theTitle = substr($originalName, 0, 50);
