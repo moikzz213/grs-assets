@@ -21,7 +21,7 @@
                     </div>
                 </v-card>
                 <v-card
-                    v-if="isEnable"
+                    v-else-if="isEnable"
                     color="primary"
                     height="100%"
                     width="100%"
@@ -149,19 +149,20 @@ const onDecode = async (result) => {
     await clientKey(authStore.token)
         .get("/api/fetch/asset-info/by/asset-code/" + result)
         .then((res) => {
-            dataObj.value = res.data;
+            dataObj.value = res.data; 
             if(dataObj.value.asset_code){
-                console.log("res.data",res.data);
+                isEnable.value = false;
                 scanValue.value = '';
             }
             if (res.data.warranty.length > 0) {
                 warrantyData.value =
                     res.data.warranty[res.data.warranty.length - 1];
             } 
-            isEnable.value = false;
+            
         })
         .catch((err) => {
-            if(err.response.status == 401){
+            
+            if(err?.response?.status == 401){
                 alert("Error: Something went wrong. page will be refresh.");
                 window.location.href = window.location.href;
             }

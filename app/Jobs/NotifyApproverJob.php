@@ -53,7 +53,7 @@ class NotifyApproverJob implements ShouldQueue
         
         $type = strtoupper($data->type); 
          
-        $data = array("types" => $type, "link" => '', "message" => $message, 'subject' => "ASSET SYSTEM: ".$type. " ASSET(s)");
+        $data = array("types" => $type, "link" => '', "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s)");
     
         Mail::to($toEmail)->queue( new RequestTransferMail( $data) ); 
     } 

@@ -427,7 +427,7 @@
                         </template>
                         <v-row v-else>
                             <div class="v-col-12 text-error">
-                                Administrator needs to setup signatories first.
+                                Error: Administrator needs to setup signatories first.
                             </div>
                         </v-row>
                         <v-row>

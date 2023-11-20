@@ -28,7 +28,7 @@
                     <v-col col="12">
                       <v-table
                             fixed-header
-                            height="500px"
+                            height="590px"
                           >
                             <thead>
                               <tr>
@@ -39,7 +39,7 @@
                                 <th class="text-left"> AssetCode</th>
                                 <th class="text-left"> Type</th>
                                 <th class="text-left"> Author</th>
-                                <th class="text-left">U.Date<br/>
+                                <th class="text-left">Update<br/>
                                     <small>DD/MM/YY</small></th> 
                               </tr>
                             </thead>

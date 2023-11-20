@@ -24,7 +24,8 @@ class PageTableSeeder extends Seeder
             array('title' => 'Assets', 'slug' => 'asset-list'),
             array('title' => 'Notifications', 'slug' => 'notifications'),
             array('title' => 'Others', 'slug' => 'others'),
-            array('title' => 'maintenance', 'slug' => 'maintenance'),
+            array('title' => 'Maintenance', 'slug' => 'maintenance'),
+            array('title' => 'Import Asset', 'slug' => 'asset-list/import'),
         );
 
         foreach($dataArr AS $k => $v){ 

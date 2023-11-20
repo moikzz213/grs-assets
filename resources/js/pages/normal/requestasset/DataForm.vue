@@ -8,6 +8,9 @@
                         class="my-0 ml-3 text-uppercase text-h6 d-flex justify-space-between font-weight-bold"
                     >
                         <div>{{ props.headertitle }}</div>
+                        <div v-if="!hasSignatories" class="text-error">
+                            {{ errorMsg }}
+                        </div>
                         <div
                             v-if="isEdit"
                             :class="
@@ -438,7 +441,7 @@
                         </template>
                         <v-row v-else>
                             <div class="v-col-12 text-error">
-                                Administrator needs to setup signatories first.
+                                {{ errorMsg }}
                             </div>
                         </v-row>
                         <v-row>
@@ -563,6 +566,8 @@ const deleteData = (id, index) => {
     assetDataObj.value.splice(index, 1);
     requiredData();
 };
+
+const errorMsg = ref('Error: Administrator needs to setup signatories first.');
 
 const submitRequest = () => {
     sbOptions.value = {
