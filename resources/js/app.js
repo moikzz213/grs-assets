@@ -43,11 +43,12 @@ const router = createRouter({
 
 function returnAccess(data) {
     let hasAccess = false;
-    console.log("data",data);
+    console.log("authStore.access",authStore.access);
     authStore.access.map((o) => {
+        console.log(data.title + " == "+ o.slug);
         if (data.title == o.slug) {
             hasAccess = true;
-            console.log("hasAccess 11",hasAccess);
+           
             if (data.type && (data.type == 'edit' || data.type == 'new')) {
                 hasAccess = false;
               
@@ -58,7 +59,6 @@ function returnAccess(data) {
                 } else {
                     hasAccess = false;
                 }
-                console.log("hasAccess 22",hasAccess);
             }
         }
     });
@@ -99,12 +99,13 @@ router.beforeEach((to, from, next) => {
         
         next({ name: 'Login' });
     } else {
-       
+        
         // private route
         if (authStore.authIsLoggedIn) { 
             if (to.meta.title?.toLowerCase() == 'unauthorized') {
-
+              
             } else if (!validateAccess(to.meta)) {
+               
                 next({ name: 'Unauthorized' });
             }
         }   else if (to.path != '/login' && to.path != '/public/employee-signatory/request/approvals' && to.path != '/public/employee-signatory/transfer/approvals') {

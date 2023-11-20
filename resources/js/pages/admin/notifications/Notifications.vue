@@ -25,7 +25,7 @@
                     <v-card-text>
                         <v-row class="pb-2">
                             <div class="v-col-12 font-weight-bold">
-                                MAINTENANCE - ADDITIONAL RECEIVER
+                                MAINTENANCE - RECEIVERS
                             </div>
                             <v-divider></v-divider>
                             <div class="v-col-12 pt-3">
@@ -73,7 +73,7 @@
                     <v-card-text>
                         <v-row class="pb-2">
                             <div class="v-col-12 font-weight-bold">
-                                INCIDENT - ADDITIONAL RECEIVER
+                                INCIDENT - RECEIVERS
                             </div>
                             <v-divider></v-divider>
                             <div class="v-col-12 pt-3">

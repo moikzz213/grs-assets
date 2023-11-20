@@ -131,6 +131,7 @@
             <v-autocomplete
               v-model="assetObj.status_id"
               :items="statusStore.assets"
+              :disabled="assetObj.status_id == 2"
               item-title="title"
               item-value="id"
               label="Asset Status*"
@@ -623,14 +624,17 @@ const setAssetData = (assetData) => {
     assetObj.value.capitalization_date =
       assetData.financial_information.capitalization_date;
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
-  }
-  console.log("assetObj.value",assetObj.value);
+  } 
+
 };
-setAssetData(props.asset);
+
+ 
+setAssetData(props.asset); 
+
 watch(
   () => props.asset,
   (newVal) => {
-    setAssetData(newVal);
+    setAssetData(newVal); 
   }
 );
 

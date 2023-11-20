@@ -138,7 +138,7 @@
                                 label="Entry"
                             ></v-autocomplete>
                         </v-col>
-
+                       
                         <v-spacer></v-spacer>
                         <v-col class="v-col-6 v-col-md-3 v-col-sm-6 my-2">
                             <v-text-field
@@ -325,7 +325,9 @@
                         >No records found</v-sheet
                     >
                 </v-card>
-                <v-pagination
+                 <div style="position:relative;" class="mb-5">
+                    <div style="position:absolute; left:10px; font-weight:bold; top:10px;">Total: {{totalResult}}</div>
+                    <v-pagination
                     v-if="totalPageCount > 1"
                     v-model="currentPage"
                     class="my-4"
@@ -336,6 +338,8 @@
                     density="comfortable"
                     :disabled="dataObj.loading"
                 ></v-pagination>
+            </div>
+                
             </div>
         </v-row>
         <AppSnackBar :options="sbOptions" />
@@ -563,8 +567,7 @@ const editUser = (id) => {
             name: "edit-asset",
             params: {
                 id: id,
-            },
-            query: { type: "details" },
+            }, 
         })
         .catch((err) => {
             console.log(err);
