@@ -11,7 +11,7 @@ use App\Models\Location;
 use App\Models\Status;
 use App\Models\Warranty;
 use App\Models\SpecModel;
- 
+
 use App\Models\RequestAssetDetail;
 use App\Models\AllottedInformation;
 use App\Models\FinancialInformation;
@@ -54,7 +54,7 @@ class Asset extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function warranty()
+    public function warranties()
     {
         return $this->hasMany(Warranty::class);
     }

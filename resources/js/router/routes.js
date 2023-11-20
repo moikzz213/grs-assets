@@ -91,7 +91,7 @@ export const routes = [
             title: "pages",
         },
     },
-   
+
     // assets
     {
         path: "/notifications",
@@ -145,6 +145,15 @@ export const routes = [
         meta: {
             requiresAuth: true,
             title: "asset-list",
+        },
+    },
+    {
+        path: "/asset-list/import",
+        component: () => import("../pages/assets/ImportAsset.vue"),
+        name: "import-asset",
+        meta: {
+            requiresAuth: true,
+            title: "Import Asset",
         },
     },
 

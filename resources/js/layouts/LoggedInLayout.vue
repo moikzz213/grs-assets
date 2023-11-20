@@ -152,6 +152,9 @@ import {
   mdiWrenchClock,
   mdiApplicationExport,
   mdiArchivePlusOutline,
+  mdiArchiveArrowUpOutline,
+  mdiArchiveStarOutline,
+  mdiArchiveOutline
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -191,18 +194,6 @@ const commonNav = ref([
     slug: "report-incident",
   },
   {
-    title: "Maintenance",
-    icon: mdiWrenchClock,
-    path: "/maintenance",
-    slug: "maintenance",
-  },
-  {
-    title: "Add Asset",
-    icon: mdiArchivePlusOutline,
-    path: "/asset-list/add",
-    slug: "asset-add",
-  },
-  {
     title: "Request Asset",
     icon: mdiApplicationExport,
     path: "/request-asset",
@@ -215,12 +206,35 @@ const commonNav = ref([
     slug: "transfer-asset",
   },
   {
-    title: "Asset List",
-    icon: mdiMapMarkerRadius,
-    path: "/asset-list",
-    slug: "asset-list",
+    title: "Maintenance",
+    icon: mdiWrenchClock,
+    path: "/maintenance",
+    slug: "maintenance",
   },
-  
+  {
+    title: "Assets",
+    icon: mdiArchiveOutline,
+    subs: [
+      {
+        title: "Asset List",
+        icon: mdiArchiveStarOutline,
+        path: "/asset-list",
+        slug: "asset-list",
+      },
+      {
+        title: "Add Asset",
+        icon: mdiArchivePlusOutline,
+        path: "/asset-list/add",
+        slug: "asset-add",
+      },
+      {
+        title: "Import Asset",
+        icon: mdiArchiveArrowUpOutline,
+        path: "/asset-list/import",
+        slug: "asset-import",
+      },
+    ],
+  },
 ]);
 const moderatorNav = ref([
   {

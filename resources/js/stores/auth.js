@@ -92,7 +92,7 @@ export const useAuthStore = defineStore("authUser", {
                     .get("/api/checkuser")
                     .then((res) => {
 
-                        localStorage.removeItem("authUser");
+                        // localStorage.removeItem("authUser");
                         if (res.data?.user) {
                             let user = JSON.stringify(res.data.user);
                             let token = res.data.token;
