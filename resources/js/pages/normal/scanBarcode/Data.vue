@@ -12,7 +12,7 @@
                     class="d-flex align-center justify-center rounded-lg"
                 >
                     <div class="text-h6 text-capitalize text-center">
-                        CLICK TO START SCANNING
+                        CLICK TO START SCAN
                         <v-icon
                             class="ml-2"
                             size="large"

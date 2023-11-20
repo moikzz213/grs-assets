@@ -1,6 +1,18 @@
 <template>
     <v-container>
         <v-row class="mb-3">
+            <div class="v-col-12 v-col-md-3 pb-0 scan-barcode">
+                <v-card 
+                    width="100%" 
+                    class="rounded-lg text-center my-auto py-4"
+                    color="primary"
+                    @click="goTo('Scan')"
+                > 
+                <v-card-text>
+                     SCAN BARCODE
+                    </v-card-text>
+                </v-card>
+            </div>
             <div
                 class="v-col-12 v-col-md-3 pb-0"
                 v-for="item in cards"
@@ -69,8 +81,9 @@
 import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 const authStore = useAuthStore();
-
+const router = useRouter();
 const cards = ref([
     {
         id: 1,
@@ -124,4 +137,20 @@ const fetchQuery = async () => {
         });
 };
 fetchQuery();
+
+const goTo = (v) => {
+    router
+        .push({  name: v,  })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 </script>
+<style scoped>
+.scan-barcode{ display: none;}
+@media only screen and (max-width: 600px) {
+    .scan-barcode {
+    display: block;
+  }
+}
+</style>

@@ -1,1 +1,0 @@
-import{c as e,l as t,b as r}from"./app-6087960b.js";import{_ as a}from"./DataForm-10f16ba1.js";import"./ApppageHeader-b8742092.js";import"./Studio-3d497f38.js";import"./AppSnackBar-481bfd3d.js";import"./formatDate-e2fbee14.js";const u={__name:"NewData",setup(o){return(s,m)=>(r(),e("div",null,[t(a,{headertitle:"Request Assets"})]))}};export{u as default};
