@@ -3,6 +3,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
@@ -31,5 +32,6 @@ Route::middleware('authkey')->group(function () {
 Route::prefix('public')->group(function () {
     Route::post('/fetch/request-assets/data', [RequestAssetController::class, 'publicFetchRequest'])->name('public.fetch.request.id');
     Route::post('/store/request-asset/approve-data', [RequestAssetController::class, 'publicApproveSignatory'])->name('public.approve.request');
+    Route::get('/run/cron-jobs', [CronJobController::class, 'asset_notification'])->name('public.cron.job');
 });
 ?>

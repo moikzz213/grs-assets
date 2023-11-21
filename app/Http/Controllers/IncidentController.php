@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Helper\GlobalHelper;
 use App\Jobs\IncidentReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class IncidentController extends Controller
 {
@@ -180,6 +181,7 @@ class IncidentController extends Controller
                 'type_id' => $request->type_id,
                 'urgency' => $request->urgency,
                 'asset_code' => @$request->asset_code,
+                'reminder_date' => Carbon::now(),
                 'status_id' => 7
             );
             $query = Incident::create( $dataForm );
