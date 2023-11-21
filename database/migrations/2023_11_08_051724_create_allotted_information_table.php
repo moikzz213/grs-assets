@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('allotted_information', function (Blueprint $table) {
             $table->id();
+            // $table->foreign('asset_id')->references('id')->on('assets');
+            // $table->foreign('location_id')->references('id')->on('locations');
             $table->foreignId('asset_id')->constrained();
             $table->foreignId('location_id')->constrained();
             $table->string('type', 50)->nullable(); // allotted, transferred

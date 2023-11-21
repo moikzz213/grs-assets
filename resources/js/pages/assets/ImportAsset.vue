@@ -126,17 +126,17 @@ const parseComplete = async (results, file) => {
     })
   );
 
-  //   if (validation.size < resultsArray.length) {
-  //     emit("imported", {
-  //       status: false,
-  //       message: "Kindly remove the duplicate data from the file.",
-  //     });
+  if (validation.size < resultsArray.length) {
+    emit("imported", {
+      status: false,
+      message: "Kindly remove the duplicate data from the file.",
+    });
 
-  //     setTimeout(() => {
-  //       loadingImport.value = false;
-  //     }, 1500);
-  //     return false;
-  //   }
+    setTimeout(() => {
+      loadingImport.value = false;
+    }, 1500);
+    return false;
+  }
 
   // set data
   let data = {
@@ -148,8 +148,9 @@ const parseComplete = async (results, file) => {
 
   // save result to database
   await clientKey(authStore.token)
-    .post('/api/asset/import', data)
+    .post("/api/asset/import", data)
     .then((res) => {
+      loadingImport.value = false;
       emit("imported", {
         status: true,
         message: res.data.message,
@@ -157,6 +158,7 @@ const parseComplete = async (results, file) => {
     })
     .catch((err) => {
       console.log("import error", err);
+      loadingImport.value = false;
       let errorMsg = "";
       if (err.response.status == 500) {
         errorMsg = "Import error kindly double check the csv file";

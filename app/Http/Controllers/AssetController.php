@@ -10,6 +10,8 @@ use App\Models\RequestAsset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\AllottedInformation;
+use App\Models\FinancialInformation;
 
 
 class AssetController extends Controller
@@ -38,88 +40,103 @@ class AssetController extends Controller
                     $check = Asset::where('asset_code', $item->asset_code)->first();
 
                     if(!$check){
-                        // dd($item->model);
+                        // insert multiple assets
                         // push fields into assetArray
-                        array_push($assetArray, array(
-                            // asset
-                            'asset_name' => $item->asset_name,  // asset_name
-                            'asset_code' => $item->asset_code, // asset_code
-                            'brand' => $item->brand, // brand
-                            'model' => $item->model, // model
-                            'specification' => $item->specification, // specification
-                            'serial_number' => $item->serial_number, // serial_number
-                            // 'location_id' => (int)$item->alloted_to, // alloted_to should be id
-                            // 'company_id' => (int)$item->business_unit, // business_unit should be id
-                            // 'category_id' => (int)$item->category, // category should be id
-                            // 'location_id' => (int)$item->location, // location should be id
-                            // 'status_id' => (int)$item->status, // status
-                            // 'condition_id' => (int)$item->condition, // condition should be id
+                        // array_push($assetArray, array(
+                        //     // asset
+                        //     'asset_name' => $item->asset_name,  // asset_name
+                        //     'asset_code' => $item->asset_code, // asset_code
+                        //     'brand' => $item->brand, // brand
+                        //     'model' => $item->model, // model
+                        //     'specification' => $item->specification, // specification
+                        //     'serial_number' => $item->serial_number, // serial_number
+                        //     'company_id' => (int)$item->business_unit, // business_unit should be id
+                        //     'category_id' => (int)$item->category, // category should be id
+                        //     'location_id' => (int)$item->location, // location should be id
+                        //     'status_id' => (int)$item->status, // status
+                        //     'condition_id' => (int)$item->condition, // condition should be id
 
-                            // // purchase info
-                            // 'vendor_id', (int)$item->vendor, // amc_vendor
-                            // 'po_number', $item->po_number, // po_number
-                            // 'purchased_date', $item->purchased_date, // purchased_date
-                            // 'price',  (float)$item->price, // price
-                            // 'remarks', $item->remarks, // remarks
-                        ));
-
-                        $importCount++;
-
+                        //     // purchase info
+                        //     'vendor_id' => (int)$item->vendor, // amc_vendor
+                        //     'po_number' => $item->po_number, // po_number
+                        //     'purchased_date' => $item->purchased_date, // purchased_date
+                        //     'price' => (float)$item->price, // price
+                        //     'remarks' => $item->remarks, // remarks
+                        // ));
                         // $assetLastInsertedId = $importAsset->insertGetId($assetArray);
-                        $assetLastInsertedId = $importAsset->insertGetId([
-                            'asset_name' => $item->asset_name,  // asset_name
-                            'asset_code' => $item->asset_code, // asset_code
-                            'brand' => $item->brand, // brand
-                            'model' => $item->model, // model
-                            'specification' => $item->specification, // specification
-                            'serial_number' => $item->serial_number, // se
+
+                        // insert asset and get the id
+                        $assetLastInsertedId = Asset::insertGetId([
+                           // asset
+                           'asset_name' => $item->asset_name,  // asset_name
+                           'asset_code' => $item->asset_code, // asset_code
+                           'brand' => $item->brand, // brand
+                           'model' => $item->model, // model
+                           'specification' => $item->specification, // specification
+                           'serial_number' => $item->serial_number, // serial_number
+                           'company_id' => (int)$item->business_unit, // business_unit should be id
+                           'category_id' => (int)$item->category, // category should be id
+                           'location_id' => (int)$item->location, // location should be id
+                           'status_id' => (int)$item->status, // status
+                           'condition_id' => (int)$item->condition, // condition should be id
+
+                           // purchase info
+                           'vendor_id' => (int)$item->vendor, // amc_vendor
+                           'po_number' => $item->po_number, // po_number
+                           'purchased_date' => $item->purchased_date, // purchased_date
+                           'price' => (float)$item->price, // price
+                           'remarks' => $item->remarks, // remarks
                         ]);
 
                         if($assetLastInsertedId){
-                            // // push fields into warrantyArray
-                            // array_push($warrantyArray, array(
-                            //     'warranty_title', $item->warranty_title, // amc_end_date
-                            //     'warranty_start_date', $item->warranty_start_date, // amc_end_date
-                            //     'warranty_end_date', $item->warranty_end_date, // amc_end_date
-                            //     'amc_end_date', $item->amc_end_date, // amc_end_date
-                            //     'amc_start_date', $item->amc_start_date, // amc_start_date
-                            //     'vendor_id', $item->amc_vendor, // amc_vendor should be id
-                            // ));
+                            // create warranty if amc_vendor
+                            if($item->amc_vendor){
+                                $createWarranty = Warranty::create([
+                                    'warranty_title' => $item->warranty_title, // amc_end_date
+                                    'warranty_start_date' => $item->warranty_start_date, // amc_end_date
+                                    'warranty_end_date' => $item->warranty_end_date, // amc_end_date
+                                    'amc_end_date' => $item->amc_end_date, // amc_end_date
+                                    'amc_start_date' => $item->amc_start_date, // amc_start_date
+                                    'vendor_id' => $item->amc_vendor, // amc_vendor should be id
+                                    'asset_id' => $assetLastInsertedId,
+                                ]);
+                            }
 
-                            // // push fields into financialArray
-                            // array_push($financialArray, array(
-                            //     'capitalization_price', $item->capitalization_price, // capitalization_price
-                            //     'end_of_life', $item->end_of_life, // end_of_life
-                            //     'capitalization_date', $item->capitalization_date, // capitalization_date
-                            //     'depreciation_percentage', $item->depreciation_percentage, // depreciation_percentage
-                            //     'scrap_value', $item->scrap_value, // scrap_value
-                            //     'scrap_date', $item->scrap_date, // scrap_date
-                            // ));
+                            // create financial information if any of the fields are not empty
+                            if(
+                                $item->capitalization_price ||
+                                $item->end_of_life ||
+                                $item->capitalization_date ||
+                                $item->depreciation_percentage ||
+                                $item->scrap_value ||
+                                $item->scrap_date
+                            ){
+                                $createFinancialInfo = FinancialInformation::create([
+                                    'capitalization_price' => (float)$item->capitalization_price, // capitalization_price
+                                    'end_of_life' => $item->end_of_life, // end_of_life
+                                    'capitalization_date' => $item->capitalization_date, // capitalization_date
+                                    'depreciation_percentage' => $item->depreciation_percentage, // depreciation_percentage
+                                    'scrap_value' => $item->scrap_value, // scrap_value
+                                    'scrap_date' => $item->scrap_date, // scrap_date
+                                    'asset_id' => $assetLastInsertedId,
+                                ]);
+                            }
 
-                            // $createWarranty = Warranty::create([
-                            //     'warranty_title', $item->warranty_title, // amc_end_date
-                            //     'warranty_start_date', $item->warranty_start_date, // amc_end_date
-                            //     'warranty_end_date', $item->warranty_end_date, // amc_end_date
-                            //     'amc_end_date', $item->amc_end_date, // amc_end_date
-                            //     'amc_start_date', $item->amc_start_date, // amc_start_date
-                            //     'vendor_id',  (float)$item->amc_vendor, // amc_vendor should be id
-                            //     'asset_id',  (float)$assetLastInsertedId,
-                            // ]);
+                            // create allotted information if allotted_to is not empty
+                            if(@$item->alloted_to){
+                                $allotedInformation = AllottedInformation::create([
+                                    'asset_id' => $assetLastInsertedId, // asset id
+                                    'location_id' => (int)$item->alloted_to, // allotted location id
+                                    'type' => 'allotted', // allotted type
+                                    'remarks' => '', // allotted info remarks
+                                ]);
+                            }
 
-                            // $createFinancialInfo = FinancialInformation::create([
-                            //     'capitalization_price',  (float)$item->capitalization_price, // capitalization_price
-                            //     'end_of_life', $item->end_of_life, // end_of_life
-                            //     'capitalization_date', $item->capitalization_date, // capitalization_date
-                            //     'depreciation_percentage', $item->depreciation_percentage, // depreciation_percentage
-                            //     'scrap_value', $item->scrap_value, // scrap_value
-                            //     'scrap_date', $item->scrap_date, // scrap_date
-                            //     'asset_id', $assetLastInsertedId,
-                            // ]);
+                            $importCount++;
+
                         }
                     }
                 }
-                // $insertAsset = $importAsset->insert($assetArray);
-                // $insertWarranty = $importWarranty->insert($warrantyArray);
             }
             $resMsg = 'Asset imported successfully ('.$importCount.')';
             $resCode = 200;

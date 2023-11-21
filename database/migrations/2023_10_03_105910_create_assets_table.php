@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained();
             $table->foreignId('category_id')->nullable()->constrained();
             $table->foreignId('location_id')->nullable()->constrained();
-            $table->unsignedBigInteger('status_id'); //
+            $table->unsignedBigInteger('status_id');
 
             // additional info
             $table->unsignedBigInteger('condition_id');
