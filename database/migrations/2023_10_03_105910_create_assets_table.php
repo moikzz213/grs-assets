@@ -20,12 +20,12 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable()->constrained();
             $table->foreignId('category_id')->nullable()->constrained();
             $table->foreignId('location_id')->nullable()->constrained();
-            $table->unsignedBigInteger('status_id'); //
+            $table->unsignedBigInteger('status_id');
 
             // additional info
             $table->unsignedBigInteger('condition_id');
-            $table->foreignId('brand_id')->nullable()->constrained();
-            $table->string('model_id', 120);
+            $table->string('brand', 120)->nullable();
+            $table->string('model', 120)->nullable();
             $table->string('specification', 120)->nullable();
             $table->string('serial_number', 80)->nullable();
 
