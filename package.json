@@ -34,6 +34,8 @@
         "vue-barcode-reader": "^1.0.3",
         "vue-barcodes-generator": "^0.1.8",
         "vue-filepond": "^7.0.4",
+        "vue-json-excel": "^0.3.0",
+        "vue-json-excel3": "^1.0.19",
         "vue-router": "^4.2.5",
         "vue3-barcode": "^1.0.1",
         "vuetify": "^v3.3.21",

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('type_id')->nullable(); // updated // complaint/ faults/ breakdown/ broken
             $table->unsignedBigInteger('status_id')->nullable()->default(7); 
             $table->date('date_closed')->nullable();
+            $table->date('reminder_date')->nullable();
             $table->timestamps();
         });
     }

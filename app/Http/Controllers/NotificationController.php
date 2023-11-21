@@ -24,7 +24,7 @@ class NotificationController extends Controller
     }
 
     public function fetchIncidentReceivers(){
-        $query = Notification::where('meta_type','=', 'incident-receiver')->whereNotNull('meta_value')->rderBy('id', 'ASC')->get(); 
+        $query = Notification::where('meta_type','=', 'incident-receiver')->whereNotNull('meta_value')->orderBy('id', 'ASC')->get(); 
         return response()->json($query, 200);
     }
 }
