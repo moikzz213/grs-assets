@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Models\File;
- 
+
 use App\Models\Vendor;
 use App\Models\Company;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\Status;
-use App\Models\Warranty; 
+use App\Models\Warranty;
 use App\Models\RequestAssetDetail;
 use App\Models\AllottedInformation;
 use App\Models\FinancialInformation;
@@ -20,7 +20,7 @@ class Asset extends Model
 {
     use HasFactory;
 
-    protected $guarded = []; 
+    protected $guarded = [];
 
     public function company()
     {
@@ -45,6 +45,11 @@ class Asset extends Model
     public function warranties()
     {
         return $this->hasMany(Warranty::class);
+    }
+
+    public function warranty_latest()
+    {
+        return $this->hasMany(Warranty::class)->latest()->limit(1);
     }
 
     public function status()
@@ -80,6 +85,11 @@ class Asset extends Model
     public function allotted_informations()
     {
         return $this->hasMany(AllottedInformation::class);
+    }
+
+    public function allotted_information_latest()
+    {
+        return $this->hasMany(AllottedInformation::class)->latest()->limit(1);
     }
 
     public function attachments()

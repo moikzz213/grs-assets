@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('allotted_information', function (Blueprint $table) {
             $table->id();
-            // $table->foreign('asset_id')->references('id')->on('assets');
-            // $table->foreign('location_id')->references('id')->on('locations');
+            // $table->foreign('allotted_to_id')->nullable()->references('id')->on('locations');
+            // $table->foreign('transferred_to_id')->nullable()->references('id')->on('locations');
+            $table->unsignedBigInteger('allotted_to_id')->nullable();
+            $table->unsignedBigInteger('transferred_to_id')->nullable();
+            // $table->foreignId('transferred_to')->constrained();
+            // $table->foreignId('allotted_to')->constrained();
             $table->foreignId('asset_id')->constrained();
-            $table->foreignId('location_id')->constrained();
             $table->string('type', 50)->nullable(); // allotted, transferred
             $table->string('remarks', 250)->nullable();
             $table->timestamps();

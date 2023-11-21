@@ -153,7 +153,7 @@ class AssetController extends Controller
 
     public function getAssetById($id) {
         $asset = Asset::where('id', $id)
-        ->with( 
+        ->with(
             'category',
             'company',
             'location',
@@ -448,4 +448,23 @@ class AssetController extends Controller
 
         return response()->json($response, 200);
     }
+
+    public function downloadAsset(){
+        $query = Asset::with(
+            'warranty_latest',
+            'warranties.vendor',
+            'allotted_informations.location',
+            'allotted_information_latest',
+            'financial_information',
+            'maintenance',
+            'category',
+            'company',
+            'location',
+            'vendor',
+            'condition',
+            'status'
+        )->get();
+        return response()->json($query, 200);
+    }
+
 }

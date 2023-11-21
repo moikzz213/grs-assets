@@ -44,6 +44,7 @@
         </v-card>
       </div>
     </v-row>
+    <AppSnackBar :options="sbOptions" />
   </v-container>
 </template>
 
@@ -53,9 +54,10 @@ import { mdiPaperclip, mdiDownload, mdiTrayArrowUp } from "@mdi/js";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import * as papa from "papaparse";
 import { clientKey } from "@/services/axiosToken";
+import AppSnackBar from "@/components/AppSnackBar.vue";
 
-// emits
-const emit = defineEmits(["imported"]);
+// snackbar
+const sbOptions = ref({});
 
 // route
 import { useRoute } from "vue-router";
@@ -120,23 +122,18 @@ const parseComplete = async (results, file) => {
     return el != null && el[firstKey] != "";
   });
 
-  let validation = new Set(
-    resultsArray.map((obj) => {
-      return obj.title;
-    })
-  );
+  //   let validation = new Set(
+  //     resultsArray.map((obj) => {
+  //       return obj.title;
+  //     })
+  //   );
 
-  if (validation.size < resultsArray.length) {
-    emit("imported", {
-      status: false,
-      message: "Kindly remove the duplicate data from the file.",
-    });
-
-    setTimeout(() => {
-      loadingImport.value = false;
-    }, 1500);
-    return false;
-  }
+  //   if (validation.size < resultsArray.length) {
+  //     setTimeout(() => {
+  //       loadingImport.value = false;
+  //     }, 1500);
+  //     return false;
+  //   }
 
   // set data
   let data = {
@@ -150,11 +147,13 @@ const parseComplete = async (results, file) => {
   await clientKey(authStore.token)
     .post("/api/asset/import", data)
     .then((res) => {
+      console.log("import success");
       loadingImport.value = false;
-      emit("imported", {
+      sbOptions.value = {
         status: true,
-        message: res.data.message,
-      });
+        type: "success",
+        text: res.data.message,
+      };
     })
     .catch((err) => {
       console.log("import error", err);
@@ -165,11 +164,12 @@ const parseComplete = async (results, file) => {
       } else {
         errorMsg = "Error while importing data";
       }
+      sbOptions.value = {
+        status: true,
+        type: "error",
+        text: errorMsg,
+      };
       loadingImport.value = false;
-      emit("imported", {
-        status: false,
-        message: errorMsg,
-      });
     });
 };
 </script>

@@ -206,27 +206,19 @@
                 </Field>
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <v-autocomplete
+                <v-text-field
                   v-model="assetObj.model"
-                  :items="modelStore.list"
-                  item-title="title"
-                  item-value="id"
                   label="Model*"
-                  density="compact"
                   variant="outlined"
-                  :rules="[(v) => !!v || 'Model is required']"
+                  density="compact"
                 />
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
-                <v-autocomplete
+                <v-text-field
                   v-model="assetObj.brand"
-                  :items="brandStore.list"
-                  item-title="title"
-                  item-value="id"
                   label="Brand*"
-                  density="compact"
                   variant="outlined"
-                  :rules="[(v) => !!v || 'Brand is required']"
+                  density="compact"
                 />
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
@@ -411,7 +403,11 @@
           </div>
           <!-- Warranty Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'warranty'">
-            <AssetWarranties :asset="assetObj" :page="props.page" v-if="props.page != 'add'"/>
+            <AssetWarranties
+              :asset="assetObj"
+              :page="props.page"
+              v-if="props.page != 'add'"
+            />
           </div>
           <!-- Allotted Information -->
           <div class="v-col-12 mb-6" v-show="selectedTab == 'allotted'">
@@ -544,20 +540,6 @@ if (locationStore.list.length == 0) {
   locationStore.getLocations(authStore.token);
 }
 
-// brands
-import { useBrandStore } from "@/stores/brands";
-const brandStore = useBrandStore();
-if (brandStore.list.length == 0) {
-  brandStore.getBrands(authStore.token);
-}
-
-// models
-import { useModelStore } from "@/stores/models";
-const modelStore = useModelStore();
-if (modelStore.list.length == 0) {
-  modelStore.getModels(authStore.token);
-}
-
 // status
 import { useStatusStore } from "@/stores/status";
 const statusStore = useStatusStore();
@@ -624,17 +606,15 @@ const setAssetData = (assetData) => {
     assetObj.value.capitalization_date =
       assetData.financial_information.capitalization_date;
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
-  } 
-
+  }
 };
 
- 
-setAssetData(props.asset); 
+setAssetData(props.asset);
 
 watch(
   () => props.asset,
   (newVal) => {
-    setAssetData(newVal); 
+    setAssetData(newVal);
   }
 );
 

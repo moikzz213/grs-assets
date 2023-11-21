@@ -22,4 +22,15 @@ class AllottedInformation extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+    public function allotted_to()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function transferred_to()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
 }
