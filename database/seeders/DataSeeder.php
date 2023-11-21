@@ -25,20 +25,20 @@ class DataSeeder extends Seeder
         }
 
         // model
-        for ($i=0; $i <= 3 ; $i++) {
-            $query = new \App\Models\SpecModel([
-                'title' => 'Test Model '.$i,
-            ]);
-            $query->save();
-        }
+        // for ($i=0; $i <= 3 ; $i++) {
+        //     $query = new \App\Models\SpecModel([
+        //         'title' => 'Test Model '.$i,
+        //     ]);
+        //     $query->save();
+        // }
 
         // brand
-        for ($i=0; $i <= 3 ; $i++) {
-            $query = new \App\Models\Brand([
-                'title' => 'Test Brand '.$i,
-            ]);
-            $query->save();
-        }
+        // for ($i=0; $i <= 3 ; $i++) {
+        //     $query = new \App\Models\Brand([
+        //         'title' => 'Test Brand '.$i,
+        //     ]);
+        //     $query->save();
+        // }
 
         // category
         for ($i=0; $i <= 3 ; $i++) {
