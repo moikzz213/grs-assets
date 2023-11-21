@@ -207,7 +207,7 @@
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <v-autocomplete
-                  v-model="assetObj.model_id"
+                  v-model="assetObj.model"
                   :items="modelStore.list"
                   item-title="title"
                   item-value="id"
@@ -219,7 +219,7 @@
               </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <v-autocomplete
-                  v-model="assetObj.brand_id"
+                  v-model="assetObj.brand"
                   :items="brandStore.list"
                   item-title="title"
                   item-value="id"

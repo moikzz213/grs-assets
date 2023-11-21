@@ -94,7 +94,7 @@ export const useAuthStore = defineStore("authUser", {
 
                         // localStorage.removeItem("authUser");
                         if (res.data?.user) {
-                            let user = JSON.stringify(res.data.user);
+                            let user = res.data.user.username;
                             let token = res.data.token;
 
                             axios

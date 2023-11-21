@@ -3,15 +3,13 @@
 namespace App\Models;
 
 use App\Models\File;
-use App\Models\Brand;
+ 
 use App\Models\Vendor;
 use App\Models\Company;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\Status;
-use App\Models\Warranty;
-use App\Models\SpecModel;
-
+use App\Models\Warranty; 
 use App\Models\RequestAssetDetail;
 use App\Models\AllottedInformation;
 use App\Models\FinancialInformation;
@@ -22,17 +20,7 @@ class Asset extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
-
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
-
-    public function model()
-    {
-        return $this->belongsTo(SpecModel::class);
-    }
+    protected $guarded = []; 
 
     public function company()
     {

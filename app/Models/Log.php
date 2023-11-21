@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Asset;
-use App\Models\Brand;
+ 
 use App\Models\Access;
 use App\Models\Vendor;
 use App\Models\Company;
@@ -11,7 +11,7 @@ use App\Models\Profile;
 use App\Models\Category;
 use App\Models\Incident;
 use App\Models\Location;
-use App\Models\SpecModel;
+ 
 use App\Models\ApprovalStages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,17 +39,7 @@ class Log extends Model
     public function location()
     {
         return $this->morphedByMany(Location::class, 'loggable');
-    }
-
-    public function brand()
-    {
-        return $this->morphedByMany(Brand::class, 'loggable');
-    }
-
-    public function model()
-    {
-        return $this->morphedByMany(SpecModel::class, 'loggable');
-    }
+    } 
 
     public function category()
     {

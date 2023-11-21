@@ -26,6 +26,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch-global/status/active/{type}', [StatusController::class, 'fetchStatusByType'])->name('admin.status.type');
 
     Route::get('/dashboard/fetch-query/data', [AssetController::class, 'dashboardData'])->name('admin.dashboard.data');
+    Route::get('/fetch-assets/download', [AssetController::class, 'downloadAsset'])->name('admin.download.data');
     
 });
 
