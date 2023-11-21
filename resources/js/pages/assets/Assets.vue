@@ -99,7 +99,7 @@
                             </div>
                             <div class="v-col-md-2 py-1">
                                 <v-autocomplete
-                                    :items="locationList"
+                                    :items="categoryStore.list"
                                     v-model="objFIlter.location_id"
                                     @update:modelValue="filterSearch"
                                     variant="outlined"
@@ -111,20 +111,7 @@
                                     item-title="title"
                                 ></v-autocomplete>
                             </div>
-                            <div class="v-col-md-2 py-1">
-                                <v-autocomplete
-                                    :items="locationList"
-                                    v-model="objFIlter.location_id"
-                                    @update:modelValue="filterSearch"
-                                    variant="outlined"
-                                    density="compact"
-                                    hide-details
-                                    label="Brand"
-                                    item-value="id"
-                                    clearable
-                                    item-title="title"
-                                ></v-autocomplete>
-                            </div>
+                            
                             <div class="v-col-md-2 py-1">
                                 <v-autocomplete
                                     :items="statusList"
@@ -212,7 +199,7 @@
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('brand_id')"
+                                    @click="OrderByField('brand')"
                                 >
                                     Brand
                                 </th>
@@ -354,7 +341,7 @@
                     >
                 </v-card>
                  <div style="position:relative;" class="mb-5">
-                    <div style="position:absolute; left:10px; font-weight:bold; top:10px;">Total: {{totalResult}}</div>
+                    <div style="position:absolute; left:10px; font-weight:bold; top:10px;">Total: {{totalResult && totalResult > 0 ? totalResult : 0}}</div>
                     <v-pagination
                     v-if="totalPageCount > 1"
                     v-model="currentPage"
@@ -587,7 +574,15 @@ const fetchLocations = async () => {
             locationList.value = res.data;
         })
         .catch((err) => {});
-};
+}; 
+ 
+ // categories
+import { useCategoryStore } from "@/stores/categories";
+const categoryStore = useCategoryStore();
+if (categoryStore.list.length == 0) {
+  categoryStore.getCategories(authStore.token);
+}
+
 
 const statusList = ref([]);
 const fetchStatus = async () => {
@@ -699,6 +694,7 @@ onMounted(() => {
         fetchCompanies();
         fetchLocations();
         fetchStatus();
+        fetchCategories();
     });
 });
 </script>
