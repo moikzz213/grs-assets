@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { clientKey } from "../services/axiosToken.js";
 export const useStatusStore = defineStore("status", {
     state: () => ({
-        status: [],
+        status: [], 
     }),
     getters: {
         list: (state) => state.status,
@@ -15,10 +15,11 @@ export const useStatusStore = defineStore("status", {
                 .get("/api/vendor/state/status-list")
                 .then((res) => {
                     this.status = Object.assign([], res.data);
+                    console.log("this.stats 11", this.status);
                 })
                 .catch((err) => {
                     console.log("getstatus error: ", err);
                 });
-        },
+        }, 
     },
 });

@@ -153,7 +153,7 @@ export const routes = [
         name: "import-asset",
         meta: {
             requiresAuth: true,
-            title: "Import Asset",
+            title: "asset-list",
         },
     },
 

@@ -98,7 +98,7 @@ const returnAccess = (item, type = null) => {
       groupNull = false;
     }
   }
-
+ 
   return hasAccess;
 };
 </script>

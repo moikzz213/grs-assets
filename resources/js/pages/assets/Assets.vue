@@ -41,9 +41,29 @@
                                     @click="printBarcodesFn"
                                     >print barcodes({{ draftPrints.length }})</v-btn
                                 >
-                                <v-btn color="primary" class="mx-2"
-                                    >Download</v-btn
+                                <DownloadExcel
+                                    v-if="dataObj.data?.length > 0"
+                                    :fetch="donwloadLeads"
+                                    :fields="json_field"
+                                    worksheet="Report"
+                                    name="Assets.csv"
+                                    type="csv"
+                                    disabled
+                                    class="mr-3"
                                 >
+                                    <v-btn 
+                                        color="success"
+                                        :disabled="
+                                            Object.keys(dataObj.data).length == 0
+                                                ? true
+                                                : false
+                                        "
+                                        :loading="btnLoading"
+                                        dark
+                                    >
+                                        Download
+                                    </v-btn>
+                                </DownloadExcel>
                             </div>
                             <v-divider class="mb-2"></v-divider>
                         </v-row>
@@ -138,7 +158,7 @@
                                 label="Entry"
                             ></v-autocomplete>
                         </v-col>
-
+                       
                         <v-spacer></v-spacer>
                         <v-col class="v-col-6 v-col-md-3 v-col-sm-6 my-2">
                             <v-text-field
@@ -261,7 +281,8 @@
                                         size="small"
                                         :color="`${
                                             item.condition?.title.toLowerCase() ==
-                                            'completed'
+                                            'good' || item.condition?.title.toLowerCase() ==
+                                            'perfect'
                                                 ? 'success'
                                                 : 'error'
                                         }`"
@@ -273,7 +294,14 @@
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
-                                        color="info"
+                                        :color="`${
+                                            item.status?.title.toLowerCase() ==
+                                            'maintenance' || item.status?.title.toLowerCase() ==
+                                            'broken' || item.status?.title.toLowerCase() ==
+                                            'damage'
+                                                ? 'error'
+                                                : 'info'
+                                        }`"
                                         >{{ item.status?.title }}</v-chip
                                     >
                                 </td>
@@ -325,7 +353,9 @@
                         >No records found</v-sheet
                     >
                 </v-card>
-                <v-pagination
+                 <div style="position:relative;" class="mb-5">
+                    <div style="position:absolute; left:10px; font-weight:bold; top:10px;">Total: {{totalResult}}</div>
+                    <v-pagination
                     v-if="totalPageCount > 1"
                     v-model="currentPage"
                     class="my-4"
@@ -336,6 +366,8 @@
                     density="comfortable"
                     :disabled="dataObj.loading"
                 ></v-pagination>
+            </div>
+                
             </div>
         </v-row>
         <AppSnackBar :options="sbOptions" />
@@ -372,6 +404,7 @@ import { encryptData, decryptData } from "@/composables/encrypt";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useFormatDate } from "@/composables/formatDate.js";
 import BarcodeGenerator from "@/components/BarcodeGenerator.vue";
+import DownloadExcel from "vue-json-excel3";
 
 const sbOptions = ref({
     status: false,
@@ -392,6 +425,62 @@ const search = ref("");
 const showRows = ref([10, 20, 50, 100]);
 const showPerPage = ref(10);
 const objFIlter = ref({});
+const btnLoading = ref(false);
+const donwloadLeads = async () => { 
+    btnLoading.value = true;
+
+    await clientKey(authStore.token)
+        .get("/api/fetch-assets/download")
+        .then((res) => {
+            return res.data;
+        })
+        .catch((err) => {});
+    
+};
+
+const json_field = ref({
+    Company: "stateReview",
+    Location: "statusReview",
+    Category: "ecode",
+    AssetName: "display_name",
+    AssetCode: "designation",
+    CodeNumber: "designation",
+    Status: "designation",
+    Condition: "designation",
+    Brand: "designation",
+    Model: "designation",
+    Specification: "designation",
+    SerialNumber: "designation",
+    Vendor: "designation",
+    "PO Number": "designation",
+    "Purchased Date": "designation",
+    "Purchased Price": "designation",
+    "Capitalization Price": "designation",
+    "End of Life": "designation",
+    "Capitalization Date": "designation",
+    "Depreciation %": "designation",
+    "Scrap Value": "designation",
+    "Transferred To": "designation",
+    "Alotted To": "designation",
+    "Warranty": "designation",
+    "Warranty Start Date": "designation",
+    "Warranty End Date": "designation",
+    "AMC Vendor": "designation",
+    "AMC Start Date": "designation",
+    "AMC End Date": "designation",
+    "Maintenance": "designation",
+    "Maintenance": "designation",
+    "Maintenance": "designation",
+    "Maintenance": "designation",
+    
+    Manager: {
+        field: "managed_by.display_name",
+        callback: (value) => {
+            return `${value}`;
+        },
+    }, 
+    
+});
 
 const filterRows = () => {
     getAllData();
@@ -563,8 +652,7 @@ const editUser = (id) => {
             name: "edit-asset",
             params: {
                 id: id,
-            },
-            query: { type: "details" },
+            }, 
         })
         .catch((err) => {
             console.log(err);

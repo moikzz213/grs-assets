@@ -59,7 +59,7 @@ class RejectMailJob implements ShouldQueue
         $type = strtoupper($data->type);
         $link = env('VITE_APP_URL').'/request-asset/update/id/'.$data->id;
          
-        $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "ASSET SYSTEM: ".$type. " ASSET(s)");
+        $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s)");
     
         Mail::to($toEmail)->queue( new RequestTransferMail( $data) ); 
     }

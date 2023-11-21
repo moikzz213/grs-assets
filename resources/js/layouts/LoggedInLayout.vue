@@ -220,13 +220,7 @@ const commonNav = ref([
         icon: mdiArchiveStarOutline,
         path: "/asset-list",
         slug: "asset-list",
-      },
-      {
-        title: "Add Asset",
-        icon: mdiArchivePlusOutline,
-        path: "/asset-list/add",
-        slug: "asset-add",
-      },
+      }, 
       {
         title: "Import Asset",
         icon: mdiArchiveArrowUpOutline,

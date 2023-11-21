@@ -40,7 +40,7 @@ class StatusSeeder extends Seeder
             array('title'=> 'Asset Request (to replaced damaged asset)', 'type' => 'request', 'status' => 'active' ),
             array('title'=> 'Asset Request (additional asset not reflected in the approved layout)', 'type' => 'request', 'status' => 'active' ),
             array('title'=> 'Asset Transfer (Removal of equipment not reflected in the approved layout)', 'type' => 'transfer', 'status' => 'active' ),
-            array('title'=> 'Asset Transfer (Removal of equipment as per approved renovation layout)', 'type' => 'asset', 'status' => 'active' ), 
+            array('title'=> 'Asset Transfer (Removal of equipment as per approved renovation layout)', 'type' => 'transfer', 'status' => 'active' ), 
         );
 
         foreach($dataArr2 AS $k => $v){ 
