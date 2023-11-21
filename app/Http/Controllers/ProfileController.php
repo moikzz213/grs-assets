@@ -99,16 +99,16 @@ class ProfileController extends Controller
         return response()->json($query, 200);
     }
 
-    public function fetchProfile($ecode, $token){ 
-        $data = json_decode($ecode);
+    public function fetchProfile($ecode, $token){  
         
-        $profile = Profile::whereIn('status', ['active', 'Active'])->where('ecode', $data->username)->with('access')->first(); 
+        $profile = Profile::whereIn('status', ['active', 'Active'])->where('ecode', $ecode)->with('access')->first(); 
+       
         if(!$profile){ 
             return response()->json('Your account has not been created for this application. Contact Administrator', 200);
         }
         $clientKey = ClientKey::firstOrCreate([
             'key' => $token,
-            'username' => $data->username,
+            'username' => $ecode,
         ]); 
 
         return response()->json($profile, 200);

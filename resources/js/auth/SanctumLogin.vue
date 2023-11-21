@@ -90,7 +90,7 @@ const login = async () => {
       }
 
       let redirectPath = "/dashboard";
-      let user = JSON.stringify(res.data.user);
+      let user = res.data.user.username;
       let token = res.data.token;
 
       axios

@@ -153,9 +153,7 @@ class AssetController extends Controller
 
     public function getAssetById($id) {
         $asset = Asset::where('id', $id)
-        ->with(
-            'brand',
-            'model',
+        ->with( 
             'category',
             'company',
             'location',
@@ -193,8 +191,8 @@ class AssetController extends Controller
 
                 // specs
                 'specification' => $request['specification'],
-                'model_id' => $request['model_id'],
-                'brand_id' => $request['brand_id'],
+                'model' => $request['model'],
+                'brand' => $request['brand'],
                 'condition_id' => $request['condition_id'],
 
                 // purchase
@@ -308,7 +306,7 @@ class AssetController extends Controller
     }
 
     public function fetchAssetCode($code){
-        $query = Asset::where('asset_code', '=',$code)->with('warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','brand','model','category','company','location')->first();
+        $query = Asset::where('asset_code', '=',$code)->with('warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','category','company','location')->first();
         return response()->json($query, 200);
     }
 
@@ -327,7 +325,7 @@ class AssetController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
+            $dataObj = $dataObj->orderBy($field, $sort)->with( 'created_by', 'company', 'location', 'category', 'status', 'condition');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -344,7 +342,7 @@ class AssetController extends Controller
             if(@$filterSearch->category_id){
                 $dataObj = $dataObj->where('category_id', $filterSearch->category_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location', 'brand', 'model','category', 'status', 'condition');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location','category', 'status', 'condition');
         }
 
         if($search){
