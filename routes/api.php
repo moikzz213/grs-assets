@@ -6,7 +6,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
-use App\Http\Controllers\BrandController;
+//use App\Http\Controllers\BrandController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\CompanyController;
@@ -15,7 +15,7 @@ use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\SpecModelController;
+//use App\Http\Controllers\SpecModelController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ApprovalSetupController;
 
@@ -63,8 +63,8 @@ Route::middleware('authkey')->group(function () {
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
 
     // fetch data
-    Route::get('/brands/all', [BrandController::class, 'fetchData'])->name('admin.get.all.brands');
-    Route::get('/models/all', [SpecModelController::class, 'fetchData'])->name('admin.get.all.models');
+    //Route::get('/brands/all', [BrandController::class, 'fetchData'])->name('admin.get.all.brands');
+    //Route::get('/models/all', [SpecModelController::class, 'fetchData'])->name('admin.get.all.models');
     Route::get('/categories/all', [CategoryController::class, 'fetchData'])->name('admin.get.all.categories');
     Route::get('/locations/all', [LocationController::class, 'fetchData'])->name('admin.get.all.locations');
     Route::get('/vendors/all', [VendorController::class, 'fetchData'])->name('admin.get.all.vendors');
@@ -82,17 +82,17 @@ Route::middleware('authkey')->group(function () {
     Route::post('/locations/status-change/data', [LocationController::class, 'statusChangeData'])->name('admin.status.change.locations');
     Route::get('/fetch/locations/non-paginated/data', [LocationController::class, 'nonPaginatedData'])->name('admin.fetch.non.locations');
 
-    Route::post('/brands/store-update/data', [BrandController::class, 'storeUpdate'])->name('admin.store.update.brands');
-    Route::post('/brands/status-change/data', [BrandController::class, 'statusChangeData'])->name('admin.status.change.brands');
-    Route::get('/fetch/brands/non-paginated/data', [BrandController::class, 'nonPaginatedData'])->name('admin.fetch.non.brands');
+    // Route::post('/brands/store-update/data', [BrandController::class, 'storeUpdate'])->name('admin.store.update.brands');
+    // Route::post('/brands/status-change/data', [BrandController::class, 'statusChangeData'])->name('admin.status.change.brands');
+    // Route::get('/fetch/brands/non-paginated/data', [BrandController::class, 'nonPaginatedData'])->name('admin.fetch.non.brands');
 
     Route::post('/categories/store-update/data', [CategoryController::class, 'storeUpdate'])->name('admin.store.update.categories');
     Route::post('/categories/status-change/data', [CategoryController::class, 'statusChangeData'])->name('admin.status.change.categories');
     Route::get('/fetch/categories/non-paginated/data', [CategoryController::class, 'nonPaginatedData'])->name('admin.fetch.non.paginate');
 
-    Route::post('/models/store-update/data', [SpecModelController::class, 'storeUpdate'])->name('admin.store.update.models');
-    Route::post('/models/status-change/data', [SpecModelController::class, 'statusChangeData'])->name('admin.status.change.models');
-    Route::get('/fetch/models/non-paginated/data', [SpecModelController::class, 'nonPaginatedData'])->name('admin.fetch.non.models');
+    // Route::post('/models/store-update/data', [SpecModelController::class, 'storeUpdate'])->name('admin.store.update.models');
+    // Route::post('/models/status-change/data', [SpecModelController::class, 'statusChangeData'])->name('admin.status.change.models');
+    // Route::get('/fetch/models/non-paginated/data', [SpecModelController::class, 'nonPaginatedData'])->name('admin.fetch.non.models');
 
     Route::post('/vendors/store-update/data', [VendorController::class, 'storeUpdate'])->name('admin.store.update.vendors');
     Route::post('/vendors/status-change/data', [VendorController::class, 'statusChangeData'])->name('admin.status.change.vendors');

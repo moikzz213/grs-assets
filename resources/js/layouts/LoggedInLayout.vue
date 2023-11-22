@@ -253,18 +253,18 @@ const moderatorNav = ref([
         path: "/categories",
         slug: "categories",
       },
-      {
-        title: "Brands",
-        icon: mdiWatermark,
-        path: "/brands",
-        slug: "brands",
-      },
-      {
-        title: "Models",
-        icon: mdiGlobeModel,
-        path: "/models",
-        slug: "models",
-      },
+      // {
+      //   title: "Brands",
+      //   icon: mdiWatermark,
+      //   path: "/brands",
+      //   slug: "brands",
+      // },
+      // {
+      //   title: "Models",
+      //   icon: mdiGlobeModel,
+      //   path: "/models",
+      //   slug: "models",
+      // },
       {
         title: "Vendors",
         icon: mdiStoreSettings,
