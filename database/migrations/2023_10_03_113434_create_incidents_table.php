@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('asset_id')->nullable();
-            $table->unsignedBigInteger('profile_id');
+            $table->foreignId('profile_id')->constrained();
             $table->string('title',120);
             $table->string('asset_code',120)->nullable();
             $table->text('description')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('priority',1)->nullable(); // 1 - High, 2 - Medium, 3 - Low
             $table->string('urgency',1); // 1 - High, 2 - Medium, 3 - Low
             $table->unsignedBigInteger('type_id')->nullable(); // updated // complaint/ faults/ breakdown/ broken
-            $table->unsignedBigInteger('status_id')->nullable()->default(7); 
+            $table->unsignedBigInteger('status_id')->nullable()->default(7);
             $table->date('date_closed')->nullable();
             $table->date('reminder_date')->nullable();
             $table->timestamps();

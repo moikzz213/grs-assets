@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <AppPageHeader title="Others - Status Setup" />
-
     <v-row class="mb-3">
+      <Urgencies />
       <v-col class="v-col-12 v-col-md-6 mt-1 col-sm-12">
         <v-card :loading="page.loading">
           <v-card-title>
@@ -46,6 +46,15 @@
               class="parent-row-show"
             >
               <div class="v-col-5 d-flex">
+                <v-icon
+                  :title="`${item.status == 'active' ? 'Active' : 'Disabled'}`"
+                  v-if="item.id"
+                  :icon="`${
+                    item.status == 'active' ? mdiEyeCheckOutline : mdiEyeRemoveOutline
+                  }`"
+                  :color="`${item.status == 'active' ? 'success' : 'error'}`"
+                  class="my-auto mr-2"
+                ></v-icon>
                 <v-autocomplete
                   hide-details="auto"
                   label="Type"
@@ -68,15 +77,7 @@
                   :disabled="item.id < 10"
                 ></v-text-field>
               </div>
-              <v-icon
-                  :title="`${item.status == 'active' ? 'Active' : 'Disabled'}`"
-                  v-if="item.id"
-                  :icon="`${
-                    item.status == 'active' ? mdiEyeCheckOutline : mdiEyeRemoveOutline
-                  }`"
-                  :color="`${item.status == 'active' ? 'success' : 'error'}`"
-                  class="my-auto mr-2"
-                ></v-icon>
+
               <div class="v-col-2 my-auto" v-if="item.id > 9 || !item.id">
                 <v-btn
                   :title="`${
@@ -327,6 +328,7 @@ import {
   mdiEyeRemoveOutline,
   mdiEyeRefresh,
 } from "@mdi/js";
+import Urgencies from "./types/Urgencies.vue";
 
 const statusData = ref([]);
 const conditionData = ref([]);

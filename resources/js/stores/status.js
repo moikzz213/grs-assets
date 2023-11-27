@@ -2,17 +2,23 @@ import { defineStore } from "pinia";
 import { clientKey } from "../services/axiosToken.js";
 export const useStatusStore = defineStore("status", {
     state: () => ({
-        status: [], 
+        status: [],
     }),
     getters: {
         list: (state) => state.status,
-        conditions: (state) => state.status.filter(s => s.type == 'condition-type'),
-        assets: (state) => state.status.filter(s => s.type == 'asset'),
+        conditions: (state) =>
+            state.status.filter((s) => s.type == "condition-type"),
+        assets: (state) => state.status.filter((s) => s.type == "asset"),
+        urgencies: (state) => state.status.filter((s) => s.type == "urgency"),
+        urgencies_active: (state) =>
+            state.status.filter(
+                (s) => s.type == "urgency" && s.status == "active"
+            ),
     },
     actions: {
         async getStatuses(token) {
             await clientKey(token)
-                .get("/api/vendor/state/status-list")
+                .get("/api/status/state/status-list")
                 .then((res) => {
                     this.status = Object.assign([], res.data);
                     console.log("this.stats 11", this.status);
@@ -20,6 +26,17 @@ export const useStatusStore = defineStore("status", {
                 .catch((err) => {
                     console.log("getstatus error: ", err);
                 });
-        }, 
+        },
+        async updateStatus(storeData) {
+            console.log("updateStatus", storeData);
+            let data = {};
+            return;
+            await clientKey(authStore.token)
+                .post("/api/status/state/status-update", data)
+                .then((res) => {})
+                .catch((err) => {
+                    console.log("updateStatus error: ", err);
+                });
+        },
     },
 });
