@@ -87,9 +87,37 @@ class StatusController extends Controller
             'profile_id' => $helper->client_auth()->id
         ]);
         return response()->json([
-            'request' => $request['status'],
-            'status' => $updateStatus,
             'message' => 'Status has been updated'
+        ], 200);
+    }
+
+    public function saveStatusList(Request $request) {
+
+        // global helper
+        $helper = new GlobalHelper;
+
+        // loop through list
+        $statusArray = array();
+        foreach($request['list'] as $item){
+            array_push($statusArray, [
+                'id' => isset($item['id']) ? $item['id'] : null,
+                'title' => $item['title'],
+                'status' => $item['status'],
+                'type' => $item['type'],
+                'notification_interval' => $item['notification_interval'],
+                'profile_id' => $helper->client_auth()->id
+            ]);
+        }
+
+        // insert
+        $updateStatusList = Status::upsert(
+            $statusArray,
+            ['id', 'title', 'type'],
+        );
+
+        // to add logs
+        return response()->json([
+            'message' => 'Status list has been updated'
         ], 200);
     }
 }

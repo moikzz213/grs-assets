@@ -17,27 +17,47 @@ export const useStatusStore = defineStore("status", {
     },
     actions: {
         async getStatuses(token) {
+            let response = null;
             await clientKey(token)
                 .get("/api/status/state/status-list")
                 .then((res) => {
                     this.status = Object.assign([], res.data);
-                    console.log("this.stats 11", this.status);
+                    response = res;
                 })
                 .catch((err) => {
                     console.log("getstatus error: ", err);
                 });
+            return response;
         },
         async updateStatus(statusData, token) {
-            return await clientKey(token)
+            let response = null;
+            await clientKey(token)
                 .post("/api/status/state/status-update", statusData)
                 .then((res) => {
                     this.getStatuses(token).then(() => {
-                        return res;
+                        response = res;
+                    });
+                })
+                .catch((err) => {
+                    // console.log("updateStatus error: ", err);
+                });
+
+            return response;
+        },
+        async saveStatusList(statusData, token) {
+            let response = null;
+            await clientKey(token)
+                .post("/api/status/state/save-list", statusData)
+                .then((res) => {
+                    this.getStatuses(token).then(() => {
+                        response = res;
                     });
                 })
                 .catch((err) => {
                     console.log("updateStatus error: ", err);
                 });
+
+            return response;
         },
     },
 });

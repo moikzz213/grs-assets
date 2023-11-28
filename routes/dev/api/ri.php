@@ -24,6 +24,7 @@ Route::middleware('authkey')->group(function () {
     // statuses
     Route::get('/status/state/status-list', [StatusController::class, 'getStatusList'])->name('admin.status.list');
     Route::post('/status/state/status-update', [StatusController::class, 'updateStatusState'])->name('admin.status.update');
+    Route::post('/status/state/save-list', [StatusController::class, 'saveStatusList'])->name('admin.status.update');
 
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');

@@ -5,7 +5,7 @@
         <div class="d-flex align-center">
           <v-btn
             :icon="mdiPlus"
-            @click="AddNewStatus()"
+            @click="addNewUrgency"
             size="x-small"
             color="white"
             class="mr-3"
@@ -17,7 +17,7 @@
           <div>Urgency List</div>
           <v-btn
             :loading="loadingSave"
-            @click="savePage('status')"
+            @click="save"
             color="primary"
             class="ml-auto"
             v-if="
@@ -31,7 +31,7 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <v-row v-for="(item, index) in statusStore.urgencies" :key="item.id">
+        <v-row v-for="(item, index) in urgencyList" :key="index">
           <div class="v-col">
             <v-text-field
               hide-details="auto"
@@ -45,20 +45,25 @@
           <div class="v-col">
             <v-text-field
               hide-details="auto"
-              v-model="item.interval"
+              v-model="item.notification_interval"
               label="Notification Interval (in days)"
               variant="outlined"
               density="compact"
               :disabled="item.id < 10"
             ></v-text-field>
           </div>
-          <div class="v-col-2 d-flex align-center justify-center">
+          <div
+            class="px-3 d-flex align-center justify-center"
+            style="width: 100%; max-width: 150px"
+          >
             <AppStatusDropDown
+              v-if="item.id"
               @update="appStatusDropDownRes"
               :list="statusList"
               :current-state="item"
               :loading="loadingAppStatusDropDown.includes(item.id) == true ? true : false"
             />
+            <v-btn v-else color="error" @click="() => removeIndex(index)"> remove </v-btn>
           </div>
         </v-row>
       </v-card-text>
@@ -84,9 +89,33 @@ const sbOptions = ref({});
 import { useStatusStore } from "@/stores/status";
 const statusStore = useStatusStore();
 if (statusStore.urgencies.length < 1) {
-  statusStore.getStatuses(authStore.token);
+  statusStore.getStatuses(authStore.token).then(() => {
+    urgencyList.value = statusStore.urgencies;
+  });
 }
 
+// urgency list
+const urgencyList = ref(statusStore.urgencies);
+
+// add list
+const addNewUrgency = () => {
+  urgencyList.value.push({
+    title: null,
+    type: null,
+    status: "active",
+    type: "urgency",
+    notification_interval: 1,
+  });
+};
+
+// remove item from list
+const removeIndex = (i) => {
+  urgencyList.value = urgencyList.value.filter(function (item, index) {
+    return index !== i;
+  });
+};
+
+// dropdown
 const loadingSave = ref(false);
 const loadingAppStatusDropDown = ref([]);
 const statusList = ref([
@@ -117,7 +146,7 @@ const appStatusDropDownRes = (v) => {
       sbOptions.value = {
         status: true,
         type: "success",
-        text: res.data.message,
+        text: "Status has been saved",
       };
     })
     .catch((err) => {
@@ -125,8 +154,37 @@ const appStatusDropDownRes = (v) => {
       loadingAppStatusDropDown.value = [];
       sbOptions.value = {
         status: true,
-        type: "success",
+        type: "error",
         text: "Error while updating status",
+      };
+    });
+};
+
+const save = () => {
+  loadingSave.value = true;
+  let data = {
+    list: urgencyList.value,
+  };
+  statusStore
+    .saveStatusList(data, authStore.token)
+    .then(() => {
+      urgencyList.value = [];
+      urgencyList.value = statusStore.urgencies;
+    })
+    .finally(() => {
+      loadingSave.value = false;
+      sbOptions.value = {
+        status: true,
+        type: "success",
+        text: "Status list has been saved",
+      };
+    })
+    .catch((err) => {
+      loadingSave.value = false;
+      sbOptions.value = {
+        status: true,
+        type: "error",
+        text: "Error while saving status list",
       };
     });
 };
