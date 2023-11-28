@@ -42,6 +42,7 @@ const props = defineProps({
 const dropDownList = ref([]);
 const currentState = ref("");
 
+// list
 dropDownList.value = props.list;
 watch(
   () => props.list,
@@ -49,6 +50,8 @@ watch(
     dropDownList.value = [...dropDownList.value, ...newVal.list];
   }
 );
+
+// current state
 currentState.value = props.currentState.status;
 watch(
   () => props.currentState,
@@ -57,6 +60,8 @@ watch(
     console.log("props.currentState", currentState.value);
   }
 );
+
+// loading
 const loadingBtn = ref(false);
 watch(
   () => props.loading,
@@ -64,10 +69,15 @@ watch(
     loadingBtn.value = newVal;
   }
 );
+
+// selected option
 const selectedObject = computed(() => {
   return dropDownList.value.filter((d) => d.title == currentState.value)[0];
 });
+
+// select and emit
 const updateSelected = (item) => {
+  currentState.value = item.title;
   emit("update", {
     state: selectedObject.value.title,
     model_id: props.currentState.id,
