@@ -1,5 +1,5 @@
 <template>
-  <div class="v-col-12 v-col-md-12">
+  <div class="v-col-12 v-col-md-6">
     <v-card>
       <v-card-title>
         <div class="d-flex align-center">
@@ -16,6 +16,7 @@
           ></v-btn>
           <div>Urgency List</div>
           <v-btn
+            :disabled="!isValid"
             :loading="loadingSave"
             @click="save"
             color="primary"
@@ -76,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { mdiPlus } from "@mdi/js";
 import AppStatusDropDown from "@/components/AppStatusDropDown.vue";
 import AppSnackbar from "@/components/AppSnackbar.vue";
@@ -165,19 +166,18 @@ const appStatusDropDownRes = (v) => {
     });
 };
 
-const save = () => {
+const isValid = computed(() => {
   // check if all fields have title
+  let status = true;
   urgencyList.value.map((ul) => {
-    if (ul.title.length > 0) {
-      sbOptions.value = {
-        status: true,
-        type: "error",
-        text: "Urgency title is required",
-      };
-      return;
+    if (ul.title.length == 0) {
+      status = false;
     }
   });
+  return status;
+});
 
+const save = () => {
   loadingSave.value = true;
   let data = {
     list: urgencyList.value,
