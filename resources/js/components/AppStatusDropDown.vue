@@ -56,8 +56,7 @@ currentState.value = props.currentState.status;
 watch(
   () => props.currentState,
   (newVal) => {
-    currentState.value = newVal;
-    console.log("props.currentState", currentState.value);
+    currentState.value = newVal.status;
   }
 );
 

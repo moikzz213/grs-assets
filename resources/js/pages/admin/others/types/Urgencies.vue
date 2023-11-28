@@ -86,8 +86,9 @@ const statusStore = useStatusStore();
 if (statusStore.urgencies.length < 1) {
   statusStore.getStatuses(authStore.token);
 }
-const loadingAppStatusDropDown = ref([]);
+
 const loadingSave = ref(false);
+const loadingAppStatusDropDown = ref([]);
 const statusList = ref([
   {
     title: "active",
