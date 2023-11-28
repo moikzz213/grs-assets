@@ -60,38 +60,25 @@
               :loading="loadingAppStatusDropDown.includes(item.id) == true ? true : false"
             />
           </div>
-          <!-- <div class="v-col">
-            <v-icon
-              :title="`${item.status == 'active' ? 'Active' : 'Disabled'}`"
-              v-if="item.id"
-              :icon="`${
-                item.status == 'active' ? mdiEyeCheckOutline : mdiEyeRemoveOutline
-              }`"
-              :color="`${item.status == 'active' ? 'success' : 'error'}`"
-              class="my-auto mr-2"
-            ></v-icon>
-          </div> -->
         </v-row>
       </v-card-text>
     </v-card>
+    <AppSnackbar :options="sbOptions" />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import {
-  mdiTrashCan,
-  mdiPlus,
-  mdiEyeOff,
-  mdiEyeCheckOutline,
-  mdiEyeRemoveOutline,
-  mdiEyeRefresh,
-} from "@mdi/js";
+import { mdiPlus } from "@mdi/js";
 import AppStatusDropDown from "@/components/AppStatusDropDown.vue";
+import AppSnackbar from "@/components/AppSnackbar.vue";
 
 // auth
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
+
+// ui
+const sbOptions = ref({});
 
 // status
 import { useStatusStore } from "@/stores/status";
@@ -121,18 +108,25 @@ const appStatusDropDownRes = (v) => {
     type: "urgency",
     status: v.state,
   };
-  console.log("appStatusDropDownRes data", data);
   statusStore
     .updateStatus(data, authStore.token)
     .then((res) => {
       // deactivate loading
       loadingAppStatusDropDown.value = [];
-      console.log("statusStore.updateStatus", res);
+      sbOptions.value = {
+        status: true,
+        type: "success",
+        text: res.data.message,
+      };
     })
     .catch((err) => {
       // deactivate loading
       loadingAppStatusDropDown.value = [];
-      console.log("statusStore.updateStatus err: ", err);
+      sbOptions.value = {
+        status: true,
+        type: "success",
+        text: "Error while updating status",
+      };
     });
 };
 </script>
