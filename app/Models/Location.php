@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\AllottedInformation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Location extends Model
 {
@@ -18,5 +19,16 @@ class Location extends Model
     public function logs()
     {
         return $this->morphToMany(Log::class, 'loggable');
+    }
+
+
+    public function allotted_to()
+    {
+        return $this->hasMany(AllottedInformation::class);
+    }
+
+    public function transferred_to()
+    {
+        return $this->hasMany(AllottedInformation::class);
     }
 }

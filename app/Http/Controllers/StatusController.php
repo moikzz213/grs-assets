@@ -73,7 +73,23 @@ class StatusController extends Controller
     }
 
     public function getStatusList() {
-        $data = Status::where('status', 'active')->orderBy('title', 'ASC')->get();
+        $data = Status::orderBy('title', 'ASC')->get();
         return response()->json($data, 200);
+    }
+
+    public function updateStatusState(Request $request) {
+        $helper = new GlobalHelper;
+        // to add logs
+        $updateStatus = Status::where('id', $request['id'])
+        ->where('type', $request['type'])
+        ->update([
+            'status' => $request['status'],
+            'profile_id' => $helper->client_auth()->id
+        ]);
+        return response()->json([
+            'request' => $request['status'],
+            'status' => $updateStatus,
+            'message' => 'Status has been updated'
+        ], 200);
     }
 }

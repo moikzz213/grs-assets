@@ -22,7 +22,8 @@ Route::middleware('authkey')->group(function () {
     // vendor
     Route::get('/vendor/state/vendor-list', [VendorController::class, 'getVendorList'])->name('admin.vendor.list');
     // statuses
-    Route::get('/vendor/state/status-list', [StatusController::class, 'getStatusList'])->name('admin.status.list');
+    Route::get('/status/state/status-list', [StatusController::class, 'getStatusList'])->name('admin.status.list');
+    Route::post('/status/state/status-update', [StatusController::class, 'updateStatusState'])->name('admin.status.update');
 
     // assets
     Route::post('/asset/save', [AssetController::class, 'save'])->name('admin.asset.save');
