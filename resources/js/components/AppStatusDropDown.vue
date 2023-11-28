@@ -76,6 +76,7 @@ const selectedObject = computed(() => {
 
 // select and emit
 const updateSelected = (item) => {
+  if (currentState.value == item.title) return;
   currentState.value = item.title;
   emit("update", {
     state: selectedObject.value.title,

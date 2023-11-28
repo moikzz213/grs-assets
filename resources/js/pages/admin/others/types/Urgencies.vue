@@ -44,6 +44,7 @@
           </div>
           <div class="v-col">
             <v-text-field
+              type="number"
               hide-details="auto"
               v-model="item.notification_interval"
               label="Notification Interval (in days)"
@@ -63,7 +64,9 @@
               :current-state="item"
               :loading="loadingAppStatusDropDown.includes(item.id) == true ? true : false"
             />
-            <v-btn v-else color="error" @click="() => removeIndex(index)"> remove </v-btn>
+            <v-btn v-else block color="error" @click="() => removeIndex(index)">
+              remove
+            </v-btn>
           </div>
         </v-row>
       </v-card-text>
@@ -88,14 +91,13 @@ const sbOptions = ref({});
 // status
 import { useStatusStore } from "@/stores/status";
 const statusStore = useStatusStore();
+// urgency list
+const urgencyList = ref(statusStore.urgencies);
 if (statusStore.urgencies.length < 1) {
   statusStore.getStatuses(authStore.token).then(() => {
     urgencyList.value = statusStore.urgencies;
   });
 }
-
-// urgency list
-const urgencyList = ref(statusStore.urgencies);
 
 // add list
 const addNewUrgency = () => {
@@ -141,13 +143,16 @@ const appStatusDropDownRes = (v) => {
   statusStore
     .updateStatus(data, authStore.token)
     .then((res) => {
-      // deactivate loading
-      loadingAppStatusDropDown.value = [];
-      sbOptions.value = {
-        status: true,
-        type: "success",
-        text: "Status has been saved",
-      };
+      statusStore.getStatuses(authStore.token).then(() => {
+        urgencyList.value = Object.assign([], statusStore.urgencies);
+        // deactivate loading
+        loadingAppStatusDropDown.value = [];
+        sbOptions.value = {
+          status: true,
+          type: "success",
+          text: "Status has been saved",
+        };
+      });
     })
     .catch((err) => {
       // deactivate loading
@@ -161,6 +166,18 @@ const appStatusDropDownRes = (v) => {
 };
 
 const save = () => {
+  // check if all fields have title
+  urgencyList.value.map((ul) => {
+    if (ul.title.length > 0) {
+      sbOptions.value = {
+        status: true,
+        type: "error",
+        text: "Urgency title is required",
+      };
+      return;
+    }
+  });
+
   loadingSave.value = true;
   let data = {
     list: urgencyList.value,
@@ -168,8 +185,9 @@ const save = () => {
   statusStore
     .saveStatusList(data, authStore.token)
     .then(() => {
-      urgencyList.value = [];
-      urgencyList.value = statusStore.urgencies;
+      statusStore.getStatuses(authStore.token).then((getStatusesRes) => {
+        urgencyList.value = Object.assign([], statusStore.urgencies);
+      });
     })
     .finally(() => {
       loadingSave.value = false;
