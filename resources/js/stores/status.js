@@ -27,13 +27,13 @@ export const useStatusStore = defineStore("status", {
                     console.log("getstatus error: ", err);
                 });
         },
-        async updateStatus(storeData) {
-            console.log("updateStatus", storeData);
-            let data = {};
-            return;
-            await clientKey(authStore.token)
-                .post("/api/status/state/status-update", data)
-                .then((res) => {})
+        async updateStatus(statusData, token) {
+            console.log('pinia updateStatus', statusData);
+            return await clientKey(token)
+                .post("/api/status/state/status-update", statusData)
+                .then((res) => {
+                    return res;
+                })
                 .catch((err) => {
                     console.log("updateStatus error: ", err);
                 });

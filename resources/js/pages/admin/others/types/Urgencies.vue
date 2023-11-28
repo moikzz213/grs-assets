@@ -112,12 +112,27 @@ const statusList = ref([
   },
 ]);
 const appStatusDropDownRes = (v) => {
-  // update status on DB
-  console.log("currentState", v);
-  console.log("appStatusDropDownRes", loadingAppStatusDropDown.value.push(v.model_id));
+  // activate loading
+  loadingAppStatusDropDown.value.push(v.model_id);
+
   // call status update from status store
-  setTimeout(() => {
-    loadingAppStatusDropDown.value = [];
-  }, 3000);
+  let data = {
+    id: v.model_id,
+    type: "urgency",
+    status: v.state,
+  };
+  console.log("appStatusDropDownRes data", data);
+  statusStore
+    .updateStatus(data, authStore.token)
+    .then((res) => {
+      // deactivate loading
+      loadingAppStatusDropDown.value = [];
+      console.log("statusStore.updateStatus", res);
+    })
+    .catch((err) => {
+      // deactivate loading
+      loadingAppStatusDropDown.value = [];
+      console.log("statusStore.updateStatus err: ", err);
+    });
 };
 </script>
