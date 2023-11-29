@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <AppPageHeader title="Incident detail page" />
-        <v-row class="mb-3">
+        <v-row class="mt-5">
             <v-col class="v-col-12 mt-1 col-sm-12 py-0">
                 <v-row class="mb-3">
                     <v-btn
@@ -278,7 +278,7 @@
                         </v-card-text>
                     </v-card>
                         <v-row v-if="objData.asset?.warranty_latest?.length > 0">
-                            <div class="v-col-12 v-col-md-12 "> 
+                            <div class="v-col-12 v-col-md-12 ">
 
                                     <v-card class="my-3 px-5" v-for="item in objData.asset.warranty_latest" :key="item.id">
                                         <v-card-text>
@@ -303,7 +303,7 @@
                             <h5 class="headline mb-0 text-center">NO WARRANTY FOUND. <br/>HAVING THE CORRECT ASSET CODE IN DETAILS SECTION WILL SHOW IT'S CORRESPONDING WARRANTY </h5>
                         </v-card-text>
                     </v-card>
-                   
+
             </div>
                 <Attachment
                     v-else-if="isEdit && isActive == 'attachment'"
@@ -343,7 +343,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        
+
     </v-container>
 </template>
 
@@ -359,7 +359,7 @@ import { clientKey } from "@/services/axiosToken";
 import { mdiBarcodeScan } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
 import { useFormatDate } from "@/composables/formatDate.js";
-
+import { useStatusStore } from "@/stores/status";
 import Attachment from "./Attachment.vue"
 import Facility from "./Facility.vue"
 const emit = defineEmits(["saved"]);
@@ -386,7 +386,7 @@ const DataUpdateEmit = (v) => {
         type: "success",
         text: v,
     };
-    
+
     emit("saved");
 }
 
@@ -404,11 +404,15 @@ const fetchTypes = async () => {
 const route = useRoute();
 const router = useRouter();
 const isActive = ref(route.query.type);
-const urgencyList = ref([
-    { id: 1, title: "1. Normal" },
-    { id: 2, title: "2. Medium" },
-    { id: 3, title: "3. High" },
-]);
+
+// status list
+const statusStore = useStatusStore();
+const urgencyList = ref(statusStore.urgencies_active_list);
+if (statusStore.list.length == 0) {
+  statusStore.getStatuses(authStore.token).then(() => {
+    urgencyList.value = statusStore.urgencies_active_list;
+  });
+}
 
 let validation = yup.object({
     Type: yup.string().required(),
@@ -429,7 +433,7 @@ const onDecode = async (result) => {
     await clientKey(authStore.token)
         .get("/api/fetch/asset-info/by/asset-code/" + result)
         .then((res) => {
-         
+
             objData.value.title = res.data.asset_name;
             objData.value.company_id = res.data.company_id;
             objData.value.location_id = res.data.location_id;
@@ -524,7 +528,7 @@ const pad = (v, size = 5) => {
 };
 
 onMounted(() => {
-    
+
     if(route.params.id) {
         isEdit.value = true;
     }
@@ -555,16 +559,16 @@ onMounted(() => {
         objData.value.urgency = parseInt(props.objectdata.urgency);
         objData.value.description = props.objectdata.description;
     }
-}); 
+});
 
- 
-watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {  
-    objData.value = props.objectdata;  
+
+watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {
+    objData.value = props.objectdata;
     },  { deep: true });
 
-watch(  () => props.objectdata.attachment,  (newValue, oldValue) => {  
-    objData.value = props.objectdata;  
-    objData.value.attachment = newValue; 
+watch(  () => props.objectdata.attachment,  (newValue, oldValue) => {
+    objData.value = props.objectdata;
+    objData.value.attachment = newValue;
 },  { deep: true });
 </script>
 

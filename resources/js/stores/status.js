@@ -11,10 +11,10 @@ export const useStatusStore = defineStore("status", {
             state.status.filter((s) => s.type == "condition-type"),
         assets: (state) => state.status.filter((s) => s.type == "asset"),
         urgencies: (state) => state.status.filter((s) => s.type == "urgency"),
-        // urgencies_active: (state) =>
-        //     state.status.filter(
-        //         (s) => s.type == "urgency" && s.status == "active"
-        //     ),
+        urgencies_active_list: (state) =>
+            state.status.filter(
+                (s) => s.type == "urgency" && s.status == "active"
+            ),
     },
     actions: {
         async filterStatusByType(type) {
