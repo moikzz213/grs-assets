@@ -1,9 +1,9 @@
 @component('mail::message')
-# ASSET SYSTEM - APPROVAL REQUESTED 
+# GRANDIOSE ASSET SYSTEM
  
 {!! $data['message']; !!}
 @if ($data['link'])
-Click <a href="{{$data['link']}}">here</a>
+For more details click <a href="{{$data['link']}}">here</a>
 @endif
 <br/><br/>
 <div>This email is intended to you only. Please do not share.</div>
@@ -11,7 +11,7 @@ Click <a href="{{$data['link']}}">here</a>
  
 <div>Regards,</div> 
 
-<div>Asset System</div> 
+<div>Grandiose - Asset System</div> 
 <div>Ghassan Aboud Group</div>
 <div>https://assets.grandiose.ae</div>
 @endcomponent 

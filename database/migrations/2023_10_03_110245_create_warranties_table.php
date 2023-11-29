@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('amc_end_date')->nullable();
 
             // asset
-            $table->foreignId('asset_id')->constrained();
+            $table->unsignedTinyInteger('asset_id')->nullable();
             $table->timestamps();
         });
     }

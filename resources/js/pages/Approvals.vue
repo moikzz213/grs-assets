@@ -482,7 +482,7 @@
                     <v-btn
                         color="success"
                         :disabled="!reasonOfReject"
-                        @click="approvalFn(rejectItem)"
+                        @click="approvalFn(rejectItem, 'reject')"
                         >Confirm</v-btn
                     >
                     <v-spacer></v-spacer>
@@ -614,6 +614,7 @@ const approvalFn = (item, isReject = null) => {
                 delete o.created_at;
                 delete o.assets;
                 delete o.updated_at;
+                delete o.attachment;
                 return o;
             });
         }
@@ -633,8 +634,8 @@ const approvalFn = (item, isReject = null) => {
             assets: fixeAsset,
             is_reject: is_reject,
             requestor_id: dataObj.value.data.profile_id,
-        };
-
+        }; 
+        
         axios
             .post("/api/public/store/request-asset/approve-data", formData)
             .then((res) => {
