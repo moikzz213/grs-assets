@@ -141,18 +141,22 @@ import {
   mdiMapMarkerRadius,
   mdiShapePlus,
   mdiBookshelf,
-  mdiStoreSettings, 
+  mdiStoreSettings,
   mdiBellRing,
   mdiAnimation,
   mdiWeatherNight,
   mdiBarcodeScan,
   mdiTruckDelivery,
   mdiTimetable,
-  mdiApplicationExport, 
+  mdiApplicationExport,
   mdiWrenchClock,
+  mdiArchivePlus,
+  mdiArchivePlusOutline,
   mdiArchiveArrowUpOutline,
   mdiArchiveStarOutline,
-  mdiArchiveOutline
+  mdiArchiveOutline,
+  mdiListStatus,
+  mdiFormatListBulleted,
 } from "@mdi/js";
 import { useAuthStore } from "@/stores/auth";
 import { printInitials } from "@/composables/printInitials";
@@ -188,19 +192,19 @@ const commonNav = ref([
   {
     title: "Report Incident",
     icon: mdiTools,
-    path: "/report-incident",
+    path: "/report-incident/new",
     slug: "report-incident",
   },
   {
     title: "Request Asset",
-    icon: mdiApplicationExport,
-    path: "/request-asset",
+    icon: mdiArchivePlus,
+    path: "/request-asset/new",
     slug: "request-asset",
   },
   {
     title: "Transfer Asset",
     icon: mdiTruckDelivery,
-    path: "/transfer-asset",
+    path: "/transfer-asset/new",
     slug: "transfer-asset",
   },
   {
@@ -216,6 +220,30 @@ const commonNav = ref([
     slug: "maintenance",
   },
   {
+    title: "Asset Reports",
+    icon: mdiListStatus,
+    subs: [
+      {
+        title: "Incidents",
+        icon: mdiFormatListBulleted,
+        path: "/report-incident",
+        slug: "report-incident",
+      },
+      {
+        title: "Requests",
+        icon: mdiFormatListBulleted,
+        path: "/request-asset",
+        slug: "request-asset",
+      },
+      {
+        title: "Transfers",
+        icon: mdiFormatListBulleted,
+        path: "/transfer-asset",
+        slug: "transfer-asset",
+      },
+    ],
+  },
+  {
     title: "Assets",
     icon: mdiArchiveOutline,
     subs: [
@@ -224,7 +252,7 @@ const commonNav = ref([
         icon: mdiArchiveStarOutline,
         path: "/asset-list",
         slug: "asset-list",
-      }, 
+      },
       {
         title: "Import Asset",
         icon: mdiArchiveArrowUpOutline,
