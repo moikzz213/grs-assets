@@ -3,6 +3,7 @@ import { clientKey } from "../services/axiosToken.js";
 export const useStatusStore = defineStore("status", {
     state: () => ({
         status: [],
+        statusListByType: [], // used in Others.vue
     }),
     getters: {
         list: (state) => state.status,
@@ -10,12 +11,20 @@ export const useStatusStore = defineStore("status", {
             state.status.filter((s) => s.type == "condition-type"),
         assets: (state) => state.status.filter((s) => s.type == "asset"),
         urgencies: (state) => state.status.filter((s) => s.type == "urgency"),
-        urgencies_active: (state) =>
-            state.status.filter(
-                (s) => s.type == "urgency" && s.status == "active"
-            ),
+        // urgencies_active: (state) =>
+        //     state.status.filter(
+        //         (s) => s.type == "urgency" && s.status == "active"
+        //     ),
     },
     actions: {
+        async filterStatusByType(type) {
+            this.statusListByType = this.status
+                .filter((s) => s.type == type)
+                .sort((a, b) =>
+                    a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                );
+            return this.statusListByType;
+        },
         async getStatuses(token) {
             return await clientKey(token)
                 .get("/api/status/state/status-list")
