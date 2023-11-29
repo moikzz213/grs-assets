@@ -1,11 +1,14 @@
 @component('mail::message')
-# ASSET SYSTEM - NEW INCIDENT
- 
+# GRANDIOSE ASSET SYSTEM - NEW INCIDENT
+
 {!! $data['message']; !!}
+<br/> 
+Incident details click <a href="{{$data['link']}}">here</a>
 <br/>
- 
+
 Regards,
 
-<div>Asset System</div> 
+<div>Grandiose - Asset System</div> 
 <div>Ghassan Aboud Group</div>
+<div>https://assets.grandiose.ae</div>
 @endcomponent

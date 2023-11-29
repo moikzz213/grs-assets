@@ -21,11 +21,13 @@ class RequestTransferMail extends Mailable
   
      public $subject;
      public $message; 
+      
     public function __construct($data)
     {
         $this->data = $data;  
         $this->subject = $this->data['subject'];
         $this->message = $this->data['message'];  
+       
     }
 
     /**

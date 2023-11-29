@@ -48,8 +48,7 @@ class RequestTransferJob implements ShouldQueue
         $toEmail = $query->email;
         $message = 'Dear '. $query->display_name. ",<br/><br/>";
         $message .= 'Your approval is requested<br/>';
-        $message .= 'SN No. : '. $snNo."<br/><br/>";
-        $message .= 'Kindly click the link below. <br/>'; 
+        $message .= 'SN No. : '. $snNo."<br/><br/>"; 
 
         $randomString = Str::random(50);
         $randomString2 = Str::random(50);

@@ -90,6 +90,25 @@ export const jc = [
         },
     },
 
+    {
+        path: "/warranties",
+        component: () => import("../../pages/admin/warranties/List.vue"),
+        name: "Warranties",
+        meta: {
+            requiresAuth: true,
+            title: "warranties",
+        },
+    },
+    {
+        path: "/warranties/page/:page",
+        component: () => import("../../pages/admin/warranties/List.vue"),
+        name: "PaginatedWarranties",
+        meta: {
+            requiresAuth: true,
+            title: "warranties",
+        },
+    },
+
     /** Maintenance */
     
     {

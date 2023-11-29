@@ -20,12 +20,14 @@ class IncidentMail extends Mailable
      public $data;
   
      public $subject;
+     public $link;
      public $message;
     public function __construct($data)
     {
         $this->data = $data;  
         $this->subject = $this->data['subject'];
         $this->message = $this->data['message']; 
+        $this->link = $this->data['link']; 
     }
 
     /**

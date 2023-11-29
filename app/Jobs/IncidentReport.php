@@ -46,12 +46,16 @@ class IncidentReport implements ShouldQueue
         $emails = $query->pluck('meta_value');
 
         if($emails && count($emails) > 0){
-            $toEmail = $emails; 
-            $message = 'Urgency: '.$this->statusFn($data->urgency)."<br/>";
-            $message .= 'Asset Name: '.$data->title."<br/>";
-            $message .= 'Location: '.$location->title."<br/><br/>";
-            $message .= 'Description: '.'<pre style="font-size:12px;">'.$data->description."</pre>";
-            $incident = array("data" => $data, "message" => $message,  "date" => Carbon::now(), 'subject' => $subject);
+            $toEmail = $emails;  
+
+            $message = '<table width="600"><tr><td width="150">Urgency:</td><td>'.$this->statusFn($data->urgency).'</td></tr>';
+            $message .= '<tr><td>Asset Name:</td><td>'.$data->title.'</td></tr>';
+            $message .= '<tr><td>Location:</td><td>'.$location->title.'</td></tr>';
+            $message .= '<tr><td>Description</td><td>'.$data->description.'</td></tr></table>';
+
+            $link = env('VITE_APP_URL').'/report-incident/update/id/'. $data->id;
+
+            $incident = array("data" => $data, "link" => $link, "message" => $message,  "date" => Carbon::now(), 'subject' => $subject);
             Mail::to($toEmail)->queue( new IncidentMail( $incident) ); 
         }
     }
