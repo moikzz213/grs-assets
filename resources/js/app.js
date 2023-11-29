@@ -90,8 +90,10 @@ function validateAccess(data) {
 }
 
 router.beforeEach((to, from, next) => {
-   
-    if (to.path == '/' && !to.meta.requiresAuth) {
+   console.log("to.path",to.name);
+    if (to.name == 'PublicApproval' ) { 
+        next();
+    }else if (to.path == '/' && !to.meta.requiresAuth) {
         // public route
         if (authStore.authIsLoggedIn) {
             next({ name: 'Dashboard' });

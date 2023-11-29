@@ -158,7 +158,7 @@ class AssetController extends Controller
             'company',
             'location',
             'financial_information',
-            'warranties.vendor',
+            'pivot_warranties.vendor',
             'allotted_informations',
             'maintenance.profile',
             'maintenance.status',
@@ -263,26 +263,16 @@ class AssetController extends Controller
 
         DB::beginTransaction();
         try {
-            $assetWarrantyArray = array(
-                'title' => $request['warranty_title'],
-                'warranty_start_date' => $request['warranty_start_date'],
-                'warranty_end_date' => $request['warranty_end_date'],
-                'vendor_start_date' => $request['vendor_start_date'],
-                'vendor_end_date' => $request['vendor_end_date'],
-                'asset_id' => $request['asset_id'],
-                'vendor_id' => $request['warranty_vendor_id'],
-            );
-
-            if(isset($request['id'])){
-                // get the warranty
-                $warranty = Warranty::find($request['id']);
-                // update
-                $warranty->update($assetWarrantyArray);
-
+           
+            $warranty = Asset::find($request['asset_id']);  
+            if($request['id']){
+                $warranty->pivot_warranties()->detach($request['old_warranty_id']); 
+                $warranty->pivot_warranties()->detach($request['warranty_id']); 
             }else{
-                $asset = Warranty::create($assetWarrantyArray);
+                $warranty->pivot_warranties()->detach($request['warranty_id']); 
             }
 
+            $warranty->pivot_warranties()->attach($request['warranty_id']);
             DB::commit();
             $msg = "Warranty has been saved ";
         } catch (Exception $e) {
@@ -297,11 +287,24 @@ class AssetController extends Controller
         ], $statusCode);
     }
 
+    function searchAssets($search){
+        $query = Asset::where('asset_name', 'LIKE', '%'.$search.'%')->orWhere('asset_code', 'LIKE', '%'.$search.'%') 
+        ->orderBy('asset_name', 'ASC')
+        ->get();
+
+        return response()->json($query, 200);
+    }
+
     function getWarrantyByAssetId($assetId) {
-        $warranties = Warranty::where('asset_id', '=',$assetId)
-        ->with('vendor')
+        $warranties = Asset::where('id', '=',$assetId)
+        ->with( 'pivot_warranties.vendor')
         ->orderBy('id', 'DESC')
         ->get();
+
+        
+        if($warranties && count($warranties) > 0){
+            $warranties = $warranties[0]->pivot_warranties;
+        }
         return response()->json($warranties, 200);
     }
 

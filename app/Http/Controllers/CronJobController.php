@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 class CronJobController extends Controller
 {
-    public function asset_notification()
+    public function asset_notification(Request $request)
     {
         $query = Notification::whereNotNull('meta_value')->get();
 

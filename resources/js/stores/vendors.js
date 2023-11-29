@@ -13,6 +13,7 @@ export const useVendorStore = defineStore("vendors", {
                 .get("/api/vendor/state/vendor-list")
                 .then((res) => {
                     this.vendors = Object.assign([], res.data);
+                    console.log("getVendors", this.vendors);
                 })
                 .catch((err) => {
                     console.log("getvendors error: ", err);

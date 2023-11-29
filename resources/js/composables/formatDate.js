@@ -19,11 +19,13 @@ function useFormatDateTime(date) {
 }
 // 13/11/2023
 function useFormatDate(date) {
-    return new Date(date).toLocaleString("en-GB", {
-        day: "2-digit",
-        year: "numeric",
-        month: "2-digit",
-    });
+    if(date){
+        return new Date(date).toLocaleString("en-GB", {
+            day: "2-digit",
+            year: "numeric",
+            month: "2-digit",
+        });
+    }
 }
 
 export { useFormatDateTime, useFormatDate, useFormatDateFull };

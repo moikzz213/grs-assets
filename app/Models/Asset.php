@@ -44,12 +44,16 @@ class Asset extends Model
 
     public function warranties()
     {
-        return $this->hasMany(Warranty::class);
+        return $this->hasMany(Warranty::class)->orderBy('id','DESC');
+    }
+
+    public function pivot_warranties(){
+        return $this->belongsToMany(Warranty::class)->orderBy('id','DESC');
     }
 
     public function warranty_latest()
     {
-        return $this->hasMany(Warranty::class)->latest()->limit(1);
+        return $this->hasMany(Warranty::class)->orderBy('id','DESC')->limit(2);
     }
 
     public function status()
@@ -89,7 +93,7 @@ class Asset extends Model
 
     public function allotted_information_latest()
     {
-        return $this->hasMany(AllottedInformation::class)->latest()->limit(1);
+        return $this->hasMany(AllottedInformation::class)->orderBy('id','DESC')->limit(1);
     }
 
     public function attachments()

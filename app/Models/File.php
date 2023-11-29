@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Asset;
 use App\Models\Incident;
+use App\Models\Warranty;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -33,6 +34,19 @@ class File extends Model
             'fileables',
             'file_id',
             'fileable_id',
+            'id',
+        );
+    }
+
+    public function warranty()
+    {
+        return $this->morphedByMany(
+            Warranty::class,
+            'fileable',
+            'fileables',
+            'file_id',
+            'fileable_id',
+            'id',
             'id',
         );
     }

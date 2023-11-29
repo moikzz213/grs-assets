@@ -164,7 +164,7 @@ class RequestAssetController extends Controller
         $types = $request->type;
         $is_reject = $request->is_reject;
         $requestorID = $request->requestor_id; 
-        
+     
         $query2 = RequestApproval::where(['request_asset_id' => $ID, 'profile_id' => $profile, 'orders' => $order])
         ->where(function($q) {
             $q->where('status','=', 'awaiting-approval')

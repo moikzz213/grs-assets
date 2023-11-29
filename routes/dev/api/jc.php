@@ -5,12 +5,14 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
 
 Route::middleware('authkey')->group(function () {
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
     Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
+    
 
     Route::get('/fetch/request-assets/by-requestor/{page}', [RequestAssetController::class, 'fetchData'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/data/{id}', [RequestAssetController::class, 'fetchDataByID'])->name('fetch.requestor.assets.id');
@@ -27,6 +29,15 @@ Route::middleware('authkey')->group(function () {
 
     Route::get('/dashboard/fetch-query/data', [AssetController::class, 'dashboardData'])->name('admin.dashboard.data');
     Route::get('/fetch-assets/download', [AssetController::class, 'downloadAsset'])->name('admin.download.data');
+    Route::get('/search-assets/warranty/{search}', [AssetController::class, 'searchAssets'])->name('admin.search.assets.warranty');
+
+    Route::get('/fetch-warranties/non-paginated', [WarrantyController::class, 'nonPaginatedData'])->name('admin.warranties');
+
+    Route::get('/warranties/all', [WarrantyController::class, 'fetchData'])->name('admin.get.all.warranties');
+    Route::post('/warranties/store-update/data', [WarrantyController::class, 'storeUpdate'])->name('admin.store.update.warranties');
+    Route::post('/warranties/status-change/data', [WarrantyController::class, 'statusChangeData'])->name('admin.status.change.warranties');
+    Route::post('/fetch/warranty/by/id/{id}', [WarrantyController::class, 'fetchWarrantyById'])->name('admin.warranty.by.id');
+    Route::post('/warranty/sync-images/store-update', [WarrantyController::class, 'syncImages'])->name('change.warranty.request');
     
 });
 
