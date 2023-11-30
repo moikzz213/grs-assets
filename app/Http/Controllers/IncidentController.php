@@ -158,7 +158,7 @@ class IncidentController extends Controller
                 'company_id' => $request->company_id,
                 'location_id' => $request->location_id,
                 'type_id' => $request->type_id,
-                'urgency_id' => $request->urgency,
+                'urgency_id' => $request->urgency_id,
                 'asset_code' => @$request->asset_code,
             );
 
@@ -179,7 +179,7 @@ class IncidentController extends Controller
                 'company_id' => $request->company_id,
                 'location_id' => $request->location_id,
                 'type_id' => $request->type_id,
-                'urgency_id' => $request->urgency,
+                'urgency_id' => $request->urgency_id,
                 'asset_code' => @$request->asset_code,
                 'reminder_date' => Carbon::now(),
                 'status_id' => 7
