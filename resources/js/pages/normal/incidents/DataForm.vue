@@ -52,7 +52,7 @@
               {{ props.headertitle }}</v-card-title
             >
             <v-card-text>
-              <v-row v-if="isEdit" class="bg-grey-lighten-5 ma-0 rounded">
+              <v-row v-if="isEdit" class="bg-background-darken-1 ma-0 rounded">
                 <div class="v-col-12 v-col-md-4">
                   <div class="font-weight-bold">SN:</div>
                   <div>ISR-2{{ pad(objData.id) }}</div>
