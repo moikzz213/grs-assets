@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('location_id');
             $table->unsignedBigInteger('handled_by')->nullable();
             $table->string('priority',1)->nullable(); // 1 - High, 2 - Medium, 3 - Low
-            $table->string('urgency',1); // 1 - High, 2 - Medium, 3 - Low
+            $table->unsignedBigInteger('urgency_id')->nullable(); // urgency_id is status_id
             $table->unsignedBigInteger('type_id')->nullable(); // updated // complaint/ faults/ breakdown/ broken
             $table->unsignedBigInteger('status_id')->nullable()->default(7);
             $table->date('date_closed')->nullable();

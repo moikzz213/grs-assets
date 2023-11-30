@@ -22,7 +22,7 @@
 <script setup>
 import { ref } from "vue";
 import AppPageHeader from "@/components/ApppageHeader.vue";
-import StatusType from "./types/StatusType.vue";
+import StatusType from "./status-types/StatusType.vue";
 const statusTypeButtons = ref([
   "asset",
   "condition-type",
@@ -31,5 +31,6 @@ const statusTypeButtons = ref([
   "maintenance",
   "urgency",
 ]);
-const selectedStatusType = ref("asset");
+const selectedStatusType = ref("");
+selectedStatusType.value = "asset";
 </script>

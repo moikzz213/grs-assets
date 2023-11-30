@@ -140,11 +140,6 @@
               :rules="[(v) => !!v || 'Asset Status is required']"
             />
           </div>
-          <div class="v-col-12 v-col-md-12 pt-0 pb-2">
-            <v-textarea v-model="assetObj.remarks" density="compact"
-            label="Remarks"
-              variant="outlined"></v-textarea>
-          </div>
         </v-row>
         <v-row>
           <div v-if="props.page == 'edit'" class="v-col-12 pt-0 font-weight-bold">

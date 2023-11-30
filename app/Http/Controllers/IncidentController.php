@@ -21,11 +21,11 @@ class IncidentController extends Controller
         $orderBy = $request->sort;
         $filter = $request->filter;
         $filterSearch = json_decode($filter);
-       
+
         $dataObj = new Incident;
-        
+
         if($role !== 'admin' && $role !== 'superadmin' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID); 
+            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
 
         $dataObj = $dataObj->whereNot('type_id', 2); // where not type maintenance
@@ -50,44 +50,44 @@ class IncidentController extends Controller
             }
             $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
         }
-    
+
         if($search){
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
                 $checking = explode("ISR-2", $capSearch);
-                
+
                 if(count($checking) > 1){
                     $searchID = (int)end($checking);
                     $q->where('id', '=', $searchID);
-                }else{                    
+                }else{
                     $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhereHas('asset', function ($qq) use($search) { 
+                    ->orWhereHas('asset', function ($qq) use($search) {
                         $qq->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code', '=', $search);
-                    });     
-                } 
+                    });
+                }
             });
 
             $dataObj = $dataObj->get();
-          
+
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function fetchMaintenanceData(Request $request){
         $paginate = $request->show;
-        $search = $request->search; 
+        $search = $request->search;
 
         $sort = "";
         $orderBy = $request->sort;
         $filter = $request->filter;
         $filterSearch = json_decode($filter);
-       
-        $dataObj = new Incident; 
+
+        $dataObj = new Incident;
         $dataObj = $dataObj->where('type_id', 2);
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -109,36 +109,36 @@ class IncidentController extends Controller
             }
             $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by');
         }
-    
+
         if($search){
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
                 $checking = explode("ISR-2", $capSearch);
-                
+
                 if(count($checking) > 1){
                     $searchID = (int)end($checking);
                     $q->where('id', '=', $searchID);
-                }else{                    
+                }else{
                     $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhereHas('asset', function ($qq) use($search) { 
+                    ->orWhereHas('asset', function ($qq) use($search) {
                         $qq->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code', '=', $search);
-                    });     
-                } 
+                    });
+                }
             });
 
             $dataObj = $dataObj->get();
-          
+
             $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function storeUpdate(Request $request){
-        
+
         $assetID = @$request->asset_id;
 
         if(!$assetID && $request->asset_code){
@@ -151,19 +151,19 @@ class IncidentController extends Controller
         if($request->id){
             $query = Incident::where('id', $request->id)->first();
             $dataForm = array(
-                'asset_id' => $assetID, 
+                'asset_id' => $assetID,
                 'profile_id' => $request->profile_id,
                 'title' => $request->title,
-                'description' => $request->description, 
-                'company_id' => $request->company_id,  
-                'location_id' => $request->location_id, 
-                'type_id' => $request->type_id,  
-                'urgency' => $request->urgency,   
-                'asset_code' => @$request->asset_code,   
+                'description' => $request->description,
+                'company_id' => $request->company_id,
+                'location_id' => $request->location_id,
+                'type_id' => $request->type_id,
+                'urgency_id' => $request->urgency,
+                'asset_code' => @$request->asset_code,
             );
 
             $query->update($dataForm);
-            if($request->type_id == 2){ 
+            if($request->type_id == 2){
                 $message = 'Maintenance has been updated';
             }else{
                 $message = 'Incident has been updated';
@@ -179,7 +179,7 @@ class IncidentController extends Controller
                 'company_id' => $request->company_id,
                 'location_id' => $request->location_id,
                 'type_id' => $request->type_id,
-                'urgency' => $request->urgency,
+                'urgency_id' => $request->urgency,
                 'asset_code' => @$request->asset_code,
                 'reminder_date' => Carbon::now(),
                 'status_id' => 7
@@ -189,17 +189,17 @@ class IncidentController extends Controller
             $ID = $query->id;
 
             $dataForm = array_merge(array('id' => $ID), $dataForm);
-            IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default'); 
-            if($request->type_id == 2){ 
+            IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default');
+            if($request->type_id == 2){
                 $message = 'Asset Maintenance has been created';
-                
+
                 Asset::where(['id' => $assetID])->update(['status_id' => 2]);
             }else{
                 $message = 'Incident has been reported';
             }
             $log_type = 'new';
-            
-        } 
+
+        }
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
@@ -209,13 +209,13 @@ class IncidentController extends Controller
 
     public function updateIncidentFacilityTeam(Request $request){
         if($request->id){
-             
+
             $query = Incident::where('id', $request->id)->first();
-           
+
             $query->update(array(
                 'priority' => $request->priority,
                 'handled_by' => $request->handled_by,
-                'status_id' => $request->status_id                
+                'status_id' => $request->status_id
             ));
 
             if($request->remarks_data){
@@ -232,9 +232,20 @@ class IncidentController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = Incident::where('id', $id)->with('asset.pivot_warranties.vendor', 'profile', 'company', 'location', 'type', 'status','attachment','remarks.profile')->first(); 
+        $query = Incident::where('id', $id)
+        ->with(
+            'asset.pivot_warranties.vendor',
+            'profile',
+            'company',
+            'location',
+            'type',
+            'status',
+            'attachment',
+            'remarks.profile',
+            'urgency'
+        )->first();
         return response()->json($query, 200);
-        
+
     }
 
     public function syncImages(Request $request) {
@@ -242,7 +253,7 @@ class IncidentController extends Controller
         $query->attachment()->sync($request['file_ids']);
         $log_type = 'delete';
         if(count($request['file_ids']) > 0){
-            $log_type = 'add-update'; 
+            $log_type = 'add-update';
         }
 
         $helper = new GlobalHelper;
