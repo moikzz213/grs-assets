@@ -29,6 +29,21 @@
                                     'technical-operation')
                         "
                         :class="`${
+                            isActive == 'warranty' ? 'tab-active' : ''
+                        }   v-col-12 v-col-md-2 mx-2`"
+                        @click="changeType('warranty')"
+                        >Warranty</v-btn
+                    >
+                    <v-btn
+                        v-if="
+                            isEdit &&
+                            (authStore.user.profile.role == 'facility' ||
+                                authStore.user.profile.role == 'admin' ||
+                                authStore.user.profile.role == 'superadmin' ||
+                                authStore.user.profile.role ==
+                                    'technical-operation')
+                        "
+                        :class="`${
                             isActive == 'facility' ? 'tab-active' : ''
                         }   v-col-12 v-col-md-2 mx-2`"
                         @click="changeType('facility')"
@@ -230,7 +245,40 @@
                         </v-card-text>
                     </Form>
                 </v-card>
+                <div v-if="isActive == 'warranty'">
+                    <v-card >
+                        <v-card-text>
+                            <h4 class="headline mb-0 text-center ">WARRANTY INFORMATION</h4>
+                        </v-card-text>
+                    </v-card>
+                        <v-row v-if="objData.asset?.pivot_warranties?.length > 0">
+                            <div class="v-col-12 v-col-md-12 "> 
 
+                                    <v-card class="my-3 px-5" v-for="item in objData.asset.pivot_warranties" :key="item.id">
+                                        <v-card-text>
+                                            <v-row>
+                                                <v-col cols="4">Vendor</v-col>
+                                                <v-col cols="8">{{ item.vendor.title }}</v-col>
+                                                <v-col cols="4">Warranty Start Date</v-col>
+                                                <v-col cols="8">{{ useFormatDate(item.warranty_start_date) }}</v-col>
+                                                <v-col cols="4">Warranty End Date</v-col>
+                                                <v-col cols="8">{{ useFormatDate(item.warranty_end_date) }}</v-col>
+                                                <v-col cols="4">AMC Start Date</v-col>
+                                                <v-col cols="8">{{ useFormatDate(item.amc_start_date) }}</v-col>
+                                                <v-col cols="4">AMC End Date</v-col>
+                                                <v-col cols="8">{{ useFormatDate(item.amc_end_date) }}</v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                    </v-card>
+                            </div>
+                        </v-row>
+                        <v-card class="mt-2" v-else>
+                        <v-card-text>
+                            <h5 class="headline mb-0 text-center">NO WARRANTY FOUND. <br/>HAVING THE CORRECT ASSET CODE IN DETAILS SECTION WILL SHOW IT'S CORRESPONDING WARRANTY </h5>
+                        </v-card-text>
+                    </v-card>
+                   
+            </div>
                 <Attachment
                     v-else-if="isEdit && isActive == 'attachment'"
                     :incident-id="route.params.id"
