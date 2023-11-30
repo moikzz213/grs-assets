@@ -277,10 +277,10 @@
                             <h4 class="headline mb-0 text-center ">WARRANTY INFORMATION</h4>
                         </v-card-text>
                     </v-card>
-                        <v-row v-if="objData.asset?.warranty_latest?.length > 0">
+                        <v-row v-if="objData.asset?.pivot_warranties?.length > 0">
                             <div class="v-col-12 v-col-md-12 "> 
 
-                                    <v-card class="my-3 px-5" v-for="item in objData.asset.warranty_latest" :key="item.id">
+                                    <v-card class="my-3 px-5" v-for="item in objData.asset.pivot_warranties" :key="item.id">
                                         <v-card-text>
                                             <v-row>
                                                 <v-col cols="4">Vendor</v-col>

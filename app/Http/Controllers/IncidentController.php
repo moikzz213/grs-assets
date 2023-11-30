@@ -28,7 +28,7 @@ class IncidentController extends Controller
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID); 
         }
 
-        //$dataObj = $dataObj->whereNot('type_id', 2); // where not type maintenance
+        $dataObj = $dataObj->whereNot('type_id', 2); // where not type maintenance
 
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -232,7 +232,7 @@ class IncidentController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = Incident::where('id', $id)->with('asset.warranty_latest.vendor', 'profile', 'company', 'location', 'type', 'status','attachment','remarks.profile')->first(); 
+        $query = Incident::where('id', $id)->with('asset.pivot_warranties.vendor', 'profile', 'company', 'location', 'type', 'status','attachment','remarks.profile')->first(); 
         return response()->json($query, 200);
         
     }
