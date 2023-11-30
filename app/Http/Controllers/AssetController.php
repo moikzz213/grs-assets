@@ -163,7 +163,8 @@ class AssetController extends Controller
             'maintenance.profile',
             'maintenance.status',
             'maintenance.handled_by',
-            'attachments'
+            'attachments',
+            'incidents',
         )->first();
         return response()->json($asset, 200);
     }
@@ -263,13 +264,13 @@ class AssetController extends Controller
 
         DB::beginTransaction();
         try {
-           
-            $warranty = Asset::find($request['asset_id']);  
+
+            $warranty = Asset::find($request['asset_id']);
             if($request['id']){
-                $warranty->pivot_warranties()->detach($request['old_warranty_id']); 
-                $warranty->pivot_warranties()->detach($request['warranty_id']); 
+                $warranty->pivot_warranties()->detach($request['old_warranty_id']);
+                $warranty->pivot_warranties()->detach($request['warranty_id']);
             }else{
-                $warranty->pivot_warranties()->detach($request['warranty_id']); 
+                $warranty->pivot_warranties()->detach($request['warranty_id']);
             }
 
             $warranty->pivot_warranties()->attach($request['warranty_id']);
@@ -288,7 +289,7 @@ class AssetController extends Controller
     }
 
     function searchAssets($search){
-        $query = Asset::where('asset_name', 'LIKE', '%'.$search.'%')->orWhere('asset_code', 'LIKE', '%'.$search.'%') 
+        $query = Asset::where('asset_name', 'LIKE', '%'.$search.'%')->orWhere('asset_code', 'LIKE', '%'.$search.'%')
         ->orderBy('asset_name', 'ASC')
         ->get();
 
@@ -301,7 +302,7 @@ class AssetController extends Controller
         ->orderBy('id', 'DESC')
         ->get();
 
-        
+
         if($warranties && count($warranties) > 0){
             $warranties = $warranties[0]->pivot_warranties;
         }
