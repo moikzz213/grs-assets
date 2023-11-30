@@ -47,6 +47,299 @@
             @click="changeType('facility')"
             >Facility Team</v-btn
           >
+          <v-col class="v-col-12 mt-1 col-sm-12 py-0">
+            <v-row class="mb-3">
+              <v-btn
+                :class="`${
+                  isActive == 'details' ? 'tab-active' : ''
+                }  v-col-12 v-col-md-2 mx-2`"
+                @click="changeType('details')"
+                >Details</v-btn
+              >
+              <v-btn
+                v-if="isEdit"
+                :class="`${
+                  isActive == 'attachment' ? 'tab-active' : ''
+                }   v-col-12 v-col-md-2 mx-2`"
+                @click="changeType('attachment')"
+                >Attachments</v-btn
+              >
+              <v-btn
+                v-if="
+                  isEdit &&
+                  (authStore.user.profile.role == 'facility' ||
+                    authStore.user.profile.role == 'admin' ||
+                    authStore.user.profile.role == 'superadmin' ||
+                    authStore.user.profile.role == 'technical-operation')
+                "
+                :class="`${
+                  isActive == 'warranty' ? 'tab-active' : ''
+                }   v-col-12 v-col-md-2 mx-2`"
+                @click="changeType('warranty')"
+                >Warranty</v-btn
+              >
+              <v-btn
+                v-if="
+                  isEdit &&
+                  (authStore.user.profile.role == 'facility' ||
+                    authStore.user.profile.role == 'admin' ||
+                    authStore.user.profile.role == 'superadmin' ||
+                    authStore.user.profile.role == 'technical-operation')
+                "
+                :class="`${
+                  isActive == 'facility' ? 'tab-active' : ''
+                }   v-col-12 v-col-md-2 mx-2`"
+                @click="changeType('facility')"
+                >Facility Team</v-btn
+              >
+            </v-row>
+            <v-card v-if="isActive == 'details'">
+              <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
+                <v-card-title class="my-3 ml-3 text-uppercase text-h6">
+                  {{ props.headertitle }}</v-card-title
+                >
+                <v-card-text>
+                  <v-row v-if="isEdit">
+                    <div class="v-col-12 v-col-md-6 d-flex justify-space-between">
+                      <div class="font-weight-bold">SN: ISR-2{{ pad(objData.id) }}</div>
+                      <div class="reported-by">
+                        REPORTED BY:
+                        {{ objData.profile?.display_name }}
+                      </div>
+                    </div>
+                    <div class="v-col-12 v-col-md-6 text-right font-weight-bold">
+                      STATUS: {{ objData.status?.title }}
+                    </div>
+                  </v-row>
+                  <v-row>
+                    <div class="v-col-12 v-col-md-3">
+                      <Field
+                        name="Type"
+                        v-slot="{ field, errors }"
+                        v-model="objData.type_id"
+                      >
+                        <v-select
+                          :items="typeList"
+                          v-model="objData.type_id"
+                          variant="outlined"
+                          density="compact"
+                          hide-details
+                          item-value="id"
+                          item-title="title"
+                          clearable
+                          label="Incident Type*"
+                          v-bind="field"
+                          :error-messages="errors"
+                        ></v-select>
+                      </Field>
+                    </div>
+                    <div class="v-col-12 v-col-md-3">
+                      <Field
+                        name="Urgency"
+                        v-slot="{ field, errors }"
+                        v-model="objData.urgency"
+                      >
+                        <v-select
+                          :items="urgencyList"
+                          v-model="objData.urgency"
+                          variant="outlined"
+                          density="compact"
+                          hide-details
+                          clearable
+                          label="Urgency*"
+                          item-value="id"
+                          item-title="title"
+                          v-bind="field"
+                          :error-messages="errors"
+                        ></v-select>
+                      </Field>
+                    </div>
+                    <div class="v-col-12 v-col-md-6 d-flex">
+                      <v-text-field
+                        v-model="objData.asset_code"
+                        variant="outlined"
+                        density="compact"
+                        hide-details
+                        label="Asset Code"
+                      ></v-text-field>
+                      <v-icon
+                        @click="enableBarcodeFn"
+                        class="ml-2 my-auto"
+                        size="large"
+                        :icon="mdiBarcodeScan"
+                      ></v-icon>
+                    </div>
+                    <div class="v-col-12">
+                      <Field
+                        name="Title"
+                        v-slot="{ field, errors }"
+                        v-model="objData.title"
+                      >
+                        <v-text-field
+                          v-model="objData.title"
+                          variant="outlined"
+                          density="compact"
+                          hide-details
+                          label="Asset Name*"
+                          v-bind="field"
+                          :error-messages="errors"
+                        ></v-text-field>
+                      </Field>
+                    </div>
+                    <div class="v-col-12 v-col-md-12">
+                      <v-row>
+                        <div class="v-col-12 v-col-md-3">
+                          <v-row>
+                            <div class="v-col-12">
+                              <Field
+                                name="Company"
+                                v-slot="{ field, errors }"
+                                v-model="objData.company_id"
+                              >
+                                <v-select
+                                  :items="companyList"
+                                  v-model="objData.company_id"
+                                  variant="outlined"
+                                  density="compact"
+                                  hide-details
+                                  item-value="id"
+                                  item-title="title"
+                                  clearable
+                                  label="Company*"
+                                  v-bind="field"
+                                  :error-messages="errors"
+                                ></v-select>
+                              </Field>
+                            </div>
+                            <div class="v-col-12">
+                              <Field
+                                name="Location"
+                                v-slot="{ field, errors }"
+                                v-model="objData.location_id"
+                              >
+                                <v-select
+                                  :items="locationList"
+                                  v-model="objData.location_id"
+                                  variant="outlined"
+                                  density="compact"
+                                  hide-details
+                                  item-value="id"
+                                  item-title="title"
+                                  clearable
+                                  label="Location*"
+                                  v-bind="field"
+                                  :error-messages="errors"
+                                ></v-select>
+                              </Field>
+                            </div>
+                          </v-row>
+                        </div>
+                        <div class="v-col-12 v-col-md-9">
+                          <v-textarea
+                            variant="outlined"
+                            density="compact"
+                            label="Description"
+                            hide-details
+                            v-model="objData.description"
+                          ></v-textarea>
+                        </div>
+                      </v-row>
+                    </div>
+                  </v-row>
+                  <v-divider class="my-3"></v-divider>
+                  <v-row>
+                    <div class="v-col-12 v-col-md-6">
+                      <v-btn
+                        size="small"
+                        color="primary"
+                        @click="saveData"
+                        :disabled="!meta.valid"
+                        :loading="loadingBtn"
+                        v-if="
+                          objData?.status_id != 8 &&
+                          (!isEdit ||
+                            (isEdit &&
+                              (props.objectdata.profile_id == loggedID ||
+                                loggedRole == 'asset-supervisor')))
+                        "
+                        >Submit</v-btn
+                      >
+                    </div>
+                    <div class="v-col-12 v-col-md-3">
+                      DATE REPORTED:
+                      {{ objData.created_at ? useFormatDate(objData.created_at) : "" }}
+                    </div>
+                    <div class="v-col-12 v-col-md-3">
+                      DATE CLOSED:
+                      {{ date_closed ? useFormatDate(objData.date_closed) : "" }}
+                    </div>
+                  </v-row>
+                </v-card-text>
+              </Form>
+            </v-card>
+            <div v-if="isActive == 'warranty'">
+              <v-card>
+                <v-card-text>
+                  <h4 class="headline mb-0 text-center">WARRANTY INFORMATION</h4>
+                </v-card-text>
+              </v-card>
+              <v-row v-if="objData.asset?.pivot_warranties?.length > 0">
+                <div class="v-col-12 v-col-md-12">
+                  <v-card
+                    class="my-3 px-5"
+                    v-for="item in objData.asset.pivot_warranties"
+                    :key="item.id"
+                  >
+                    <v-card-text>
+                      <v-row>
+                        <v-col cols="4">Vendor</v-col>
+                        <v-col cols="8">{{ item.vendor.title }}</v-col>
+                        <v-col cols="4">Warranty Start Date</v-col>
+                        <v-col cols="8">{{
+                          useFormatDate(item.warranty_start_date)
+                        }}</v-col>
+                        <v-col cols="4">Warranty End Date</v-col>
+                        <v-col cols="8">{{
+                          useFormatDate(item.warranty_end_date)
+                        }}</v-col>
+                        <v-col cols="4">AMC Start Date</v-col>
+                        <v-col cols="8">{{ useFormatDate(item.amc_start_date) }}</v-col>
+                        <v-col cols="4">AMC End Date</v-col>
+                        <v-col cols="8">{{ useFormatDate(item.amc_end_date) }}</v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </div>
+              </v-row>
+              <v-card class="mt-2" v-else>
+                <v-card-text>
+                  <h5 class="headline mb-0 text-center">
+                    NO WARRANTY FOUND. <br />HAVING THE CORRECT ASSET CODE IN DETAILS
+                    SECTION WILL SHOW IT'S CORRESPONDING WARRANTY
+                  </h5>
+                </v-card-text>
+              </v-card>
+            </div>
+            <Attachment
+              v-else-if="isEdit && isActive == 'attachment'"
+              :incident-id="route.params.id"
+              :attachment="objData.attachment"
+              @save="DataUpdateEmit"
+              :objectdata="objData"
+            />
+            <Facility
+              v-else-if="
+                (loggedRole == 'superadmin' ||
+                  loggedRole == 'admin' ||
+                  loggedRole == 'technical-operation' ||
+                  loggedRole == 'facility') &&
+                isEdit &&
+                isActive == 'facility'
+              "
+              :objectdata="objData"
+              @saved="DataUpdateEmit"
+            />
+          </v-col>
         </v-row>
         <v-card v-if="isActive == 'details'">
           <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
