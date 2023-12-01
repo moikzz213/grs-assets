@@ -54,12 +54,7 @@
                                 >
                                     Code
                                 </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('title')"
-                                >
-                                    Parent Category
-                                </th>
+                                 
                                  
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
@@ -95,7 +90,7 @@
                             <tr v-for="item in dataObj.data" :key="item.id">
                                 <td>{{ item.title }}</td>  
                                 <td>{{ item.code }}</td>  
-                                <td>{{ item.title }}</td>  
+                               
                                 <td>{{ item.profile?.display_name }}</td>
                                 <td>
                                     <v-chip

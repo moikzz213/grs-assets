@@ -244,7 +244,7 @@
                         :color="`${item.is_available ? 'success' : 'error'}`"
                     ></v-icon>
                 </div>
-                <div v-if="dataObj?.data?.status == 'complete'">
+                <div v-if="dataObj?.data?.status == 'complete' && checkLastApproval == 'receiver'">
                     <v-icon
                         class="mt-3"
                         :icon="
@@ -283,7 +283,7 @@
                     <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
                     RECEIVED ASSETS
                 </div>
-                <div class="ml-6" v-if="dataObj.data?.status == 'complete'">
+                <div class="ml-6" v-if="dataObj.data?.status == 'complete' && checkLastApproval == 'receiver'">
                     <v-icon :icon="mdiTruckDelivery" color="success"></v-icon>
                     RECEIVED
                     <v-icon
@@ -566,12 +566,14 @@ const queryData = async () => {
                         o.approval_type == "receiver"
                 )[0];
 
+                checkLastApproval.value = dataObj.value.data.request_approvals[dataObj.value.data.request_approvals.length - 1].approval_type;
+               
                 if (is_receiver.value || is_asset_supervisor.value) {
                     noticeLoader.value = true;
                 }
             }
             assetsOnly.value = dataObj.value?.data?.items;
-            console.log("dataObj.value", dataObj.value);
+           
         })
         .catch((err) => {
             console.log(err.response.data);
@@ -585,6 +587,8 @@ const openAttachment = (index) => {
     currentSlider.value = index;
     dialogAttachment.value = true;
 };
+
+const checkLastApproval = ref('');
 
 const rejectItem = ref({});
 const rejectRequest = (item) => {
