@@ -1,125 +1,129 @@
 <template>
   <v-container class="no-print" v-if="!dialogPrintBarcoce">
     <AppPageHeader title="ASSET list page" />
+    <v-row class="mt-0">
+      <div class="v-col py-0 d-flex align-center">
+        <v-btn
+          color="primary"
+          class="mr-3 mb-3"
+          @click="addNew('add-asset')"
+          v-if="
+            authStore.user.role == 'superadmin' || authStore.capabilities?.includes('add')
+          "
+          >Add new asset</v-btn
+        >
+        <v-btn color="primary" class="mr-3 mb-3" @click="addNew('NewTransferAsset')"
+          >transfer asset</v-btn
+        >
+        <v-btn color="primary" class="mr-3 mb-3" @click="addNew('NewRequestAsset')"
+          >request asset</v-btn
+        >
+        <v-btn
+          color="primary"
+          class="ml-auto mr-3 mb-3"
+          :disabled="!enablePrintBarcode"
+          @click="printBarcodesFn"
+          >print barcodes({{ draftPrints.length }})</v-btn
+        >
+        <DownloadExcel
+          v-if="dataObj.data?.length > 0"
+          :fetch="donwloadLeads"
+          :fields="json_field"
+          worksheet="Report"
+          name="Assets.csv"
+          type="csv"
+          disabled
+        >
+          <v-btn
+            color="success"
+            :disabled="Object.keys(dataObj.data).length == 0 ? true : false"
+            :loading="loadingDownloadLeads"
+            dark
+            class="mb-3"
+          >
+            Download
+          </v-btn>
+        </DownloadExcel>
+      </div>
+    </v-row>
     <v-row class="mb-3">
-      <v-col class="v-col-12 mt-1 col-sm-12 py-0">
-        <v-card class="px-5 mb-1">
-          <v-card-text>
-            <v-row>
-              <div class="v-col-12 v-col-md-8 d-flex">
-                <v-btn
-                  color="primary"
-                  class="mx-2"
-                  @click="addNew('add-asset')"
-                  v-if="
-                    authStore.user.role == 'superadmin' ||
-                    authStore.capabilities?.includes('add')
-                  "
-                  >Add new asset</v-btn
-                >
-                <v-btn color="primary" class="mx-2" @click="addNew('NewTransferAsset')"
-                  >transfer asset</v-btn
-                >
-                <v-btn color="primary" class="mx-2" @click="addNew('NewRequestAsset')"
-                  >request asset</v-btn
-                >
-              </div>
-              <div class="v-col-12 v-col-md-4 d-flex justify-end">
-                <v-btn
-                  color="primary"
-                  class="mx-2"
-                  :disabled="!enablePrintBarcode"
-                  @click="printBarcodesFn"
-                  >print barcodes({{ draftPrints.length }})</v-btn
-                >
-                <DownloadExcel
-                  v-if="dataObj.data?.length > 0"
-                  :fetch="donwloadLeads"
-                  :fields="json_field"
-                  worksheet="Report"
-                  name="Assets.csv"
-                  type="csv"
-                  disabled
-                  class="mr-3"
-                >
-                  <v-btn
-                    color="success"
-                    :disabled="Object.keys(dataObj.data).length == 0 ? true : false"
-                    :loading="loadingDownloadLeads"
-                    dark
-                  >
-                    Download
-                  </v-btn>
-                </DownloadExcel>
-              </div>
-              <v-divider class="mb-2"></v-divider>
-            </v-row>
-            <v-row>
-              <div class="my-auto">Filter</div>
-              <div class="v-col-md-2 py-1">
-                <v-autocomplete
-                  :items="companyList"
-                  v-model="objFIlter.company_id"
-                  @update:modelValue="filterSearch"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  item-value="id"
-                  item-title="title"
-                  clearable
-                  label="Company"
-                ></v-autocomplete>
-              </div>
-              <div class="v-col-md-2 py-1">
-                <v-autocomplete
-                  :items="locationList"
-                  v-model="objFIlter.location_id"
-                  @update:modelValue="filterSearch"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  label="Location"
-                  item-value="id"
-                  clearable
-                  item-title="title"
-                ></v-autocomplete>
-              </div>
-              <div class="v-col-md-2 py-1">
-                <v-autocomplete
-                  :items="categoryStore.list"
-                  v-model="objFIlter.location_id"
-                  @update:modelValue="filterSearch"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  label="Category"
-                  item-value="id"
-                  clearable
-                  item-title="title"
-                ></v-autocomplete>
-              </div>
+      <v-col class="v-col-12">
+        <v-card :loading="dataObj.loading">
+          <v-card-title class="d-flex align-center mb-3 pa-3">
+            <div class="mr-auto">Asset Incidents</div>
+            <v-text-field
+              v-model="search"
+              variant="outlined"
+              density="compact"
+              clearable
+              label="Search (ex. ISR-100035 )"
+              type="text"
+              hide-details
+              style="max-width: 300px"
+              @click:append-outer="searchData"
+              @keydown.enter="searchData"
+              @click:clear="clearSearch('search')"
+            ></v-text-field>
+          </v-card-title>
+          <v-row class="px-3">
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="companyList"
+                v-model="objFIlter.company_id"
+                @update:modelValue="filterSearch"
+                variant="outlined"
+                density="compact"
+                hide-details
+                item-value="id"
+                item-title="title"
+                clearable
+                label="Company"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="locationList"
+                v-model="objFIlter.location_id"
+                @update:modelValue="filterSearch"
+                variant="outlined"
+                density="compact"
+                hide-details
+                label="Location"
+                item-value="id"
+                clearable
+                item-title="title"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="categoryStore.list"
+                v-model="objFIlter.location_id"
+                @update:modelValue="filterSearch"
+                variant="outlined"
+                density="compact"
+                hide-details
+                label="Category"
+                item-value="id"
+                clearable
+                item-title="title"
+              ></v-autocomplete>
+            </div>
 
-              <div class="v-col-md-2 py-1">
-                <v-autocomplete
-                  :items="statusList"
-                  v-model="objFIlter.status_id"
-                  @update:modelValue="filterSearch"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  item-value="id"
-                  item-title="title"
-                  clearable
-                  label="Status"
-                ></v-autocomplete>
-              </div>
-            </v-row>
-          </v-card-text>
-        </v-card>
-        <v-card class="px-5">
-          <v-row>
-            <v-col class="v-col-6 v-col-md-2 v-col-sm-6 d-flex my-2">
-              <div class="mt-2 mr-2">Show</div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="statusList"
+                v-model="objFIlter.status_id"
+                @update:modelValue="filterSearch"
+                variant="outlined"
+                density="compact"
+                hide-details
+                item-value="id"
+                item-title="title"
+                clearable
+                label="Status"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="showRows"
                 v-model="showPerPage"
@@ -129,28 +133,9 @@
                 hide-details
                 label="Entry"
               ></v-autocomplete>
-            </v-col>
-
-            <v-spacer></v-spacer>
-            <v-col class="v-col-6 v-col-md-3 v-col-sm-6 my-2">
-              <v-text-field
-                v-model="search"
-                variant="outlined"
-                density="compact"
-                clearable
-                label="Search (ex. ISR-100035 )"
-                type="text"
-                hide-details
-                @click:append-outer="searchData"
-                @keydown.enter="searchData"
-                @click:clear="clearSearch('search')"
-              ></v-text-field>
-            </v-col>
+            </div>
           </v-row>
-        </v-card>
-      </v-col>
-      <div class="v-col-12">
-        <v-card :loading="dataObj.loading">
+
           <v-table>
             <thead>
               <tr>
@@ -306,27 +291,22 @@
             >No records found</v-sheet
           >
         </v-card>
-        <div style="position: relative" class="mb-5">
-          <div style="position: absolute; left: 10px; font-weight: bold; top: 10px">
-            Total: {{ totalResult && totalResult > 0 ? totalResult : 0 }}
-          </div>
-          <v-pagination
-            v-if="totalPageCount > 1"
-            v-model="currentPage"
-            class="my-4"
-            :length="totalPageCount"
-            :total-visible="8"
-            variant="elevated"
-            active-color="primary"
-            density="comfortable"
-            :disabled="dataObj.loading"
-          ></v-pagination>
-        </div>
-      </div>
+        Total: {{ totalResult && totalResult > 0 ? totalResult : 0 }}
+        <v-pagination
+          v-if="totalPageCount > 1"
+          v-model="currentPage"
+          class="my-4"
+          :length="totalPageCount"
+          :total-visible="8"
+          variant="elevated"
+          active-color="primary"
+          density="comfortable"
+          :disabled="dataObj.loading"
+        ></v-pagination>
+      </v-col>
     </v-row>
     <AppSnackBar :options="sbOptions" />
   </v-container>
-
   <div v-if="dialogPrintBarcoce">
     <div class="text-center no-print my-2">
       <v-btn @click="dialogPrintBarcoce = false" class="mx-1" size="small" color="primary"
