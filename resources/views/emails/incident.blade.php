@@ -10,5 +10,6 @@ Regards,
 
 <div>Grandiose - Asset System</div> 
 <div>Ghassan Aboud Group</div>
-<div>https://assets.grandiose.ae</div>
+<div style="font-size:11px;">IT Department</div>
+<div>https://assets.grandiose.ae</div> 
 @endcomponent

@@ -6,15 +6,17 @@
           <thead>
             <tr>
               <th class="text-left text-primary">#</th>
-              <th class="text-left text-primary">Alloted to</th>
+              <th class="text-left text-primary">Transferred from</th>
               <th class="text-left text-primary">Remarks</th>
+              <th class="text-left text-primary">Date</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in props.asset.allotted_informations" :key="item.id">
               <td>{{ index + 1 }}</td>
-              <td>{{ item.title }}</td>
+              <td>{{ item.location?.title }}</td>
               <td>{{ item.remarks }}</td>
+              <td>{{ useFormatDate(item.created_at) }}</td>
             </tr>
           </tbody>
         </v-table>
@@ -32,7 +34,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+ 
+import { useFormatDate } from "@/composables/formatDate.js";
 const props = defineProps({
   asset: {
     type: Object,

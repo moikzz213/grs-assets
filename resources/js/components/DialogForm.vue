@@ -104,11 +104,11 @@
 
                     <div
                         class="v-col-4"
-                        style="border-left: 1px solid #ccc"
+                        style="border-left: 1px solid #ccc; border-right: 1px solid #ccc;"
                         v-if="warrantyAsset"
                     >
                         <v-card-text>
-                            <h5>ADD ASSET</h5>
+                            <h5>LINK ASSET</h5>
                             <v-row class="mt-1">
                                 <v-col>
                                     <v-autocomplete
@@ -158,7 +158,7 @@
                             border-left: 1px solid #ccc;
                             background-color: #e0e0e0;
                         "
-                        v-if="warrantyAsset"
+                        v-if="warrantyAsset && props.dataObject.type"
                     >
                         <v-card-text>
                             <div class="d-flex mb-5 justify-center">
@@ -172,15 +172,15 @@
                                 <v-btn
                                     color="primary"
                                     @click="saveImage"
-                                    :disabled="selectedFiles.length == 0"
+                                    :disabled="selectedFiles?.length == 0"
                                     >Save Images</v-btn
                                 >
                             </div>
-                            <v-row v-if="selectedFiles.length > 0" class="px-1">
+                            <v-row v-if="selectedFiles?.length > 0" class="px-1">
                                 <div
                                     v-for="(file, index) in selectedFiles"
                                     :key="file.id"
-                                    class="v-col-12 v-col-md-2 pa-2"
+                                    class="v-col-12 v-col-md-4 pa-2"
                                     style="position: relative"
                                 >
                                     <v-btn
@@ -191,7 +191,7 @@
                                             z-index: 1;
                                         "
                                         :icon="mdiClose"
-                                        size="18px"
+                                        size="20px"
                                         color="error"
                                         @click="() => removeAttachment(file.id)"
                                     >
@@ -297,6 +297,7 @@ const props = defineProps({
     },
 });
 
+const selectedFiles = ref([]);
 const studioSelectResponse = (v) => {
     let fileExist = null;
     v.map((sudioFile) => {
@@ -319,7 +320,7 @@ const removeAttachment = (theId) => {
     selectedFiles.value = selectedFiles.value.filter((f) => f.id !== theId);
 };
 
-const selectedFiles = ref([]);
+
 const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 const saveImage = () => {
     let formObj = {
@@ -394,7 +395,10 @@ let validation = yup.object(requiredFields.value);
 const warrantyAsset = ref(false);
 
 const fetchAssetWarranty = (id) => {
-    //selectedFiles.value;
+    selectedFiles.value = [];
+    if(!id){
+        return;
+    }
 
     clientKey(authStore.token)
         .post("/api/fetch/warranty/by/id/" + id)
@@ -419,12 +423,12 @@ watch(
         dataObj.value = {};
         popDialog.value = newVal;
         title.value = "New " + props.title;
-
+      
         if (props.dataObject.type) {
             dataObj.value = props.dataObject;
-            title.value = "Edit " + props.title;
-
-            if (props.title == "Warranty") {
+            title.value = "Edit " + props.title; 
+        }
+        if (props.title == "Warranty") {
                 dataObj.value.assets = [];
                 dataObj.value.display_assets = [];
                 dataObj.value.pivot_assets = [];
@@ -432,7 +436,6 @@ watch(
                 currentID.value = dataObj.value.id;
                 warrantyAsset.value = true;
             }
-        }
     }
 );
 

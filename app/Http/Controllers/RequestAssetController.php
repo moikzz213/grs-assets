@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asset;
 use App\Models\Profile;
 use App\Jobs\RejectMailJob;
 use App\Helper\GlobalHelper;
@@ -12,6 +13,7 @@ use App\Jobs\NotifyApproverJob;
 use App\Models\RequestApproval;
 use App\Jobs\RequestTransferJob;
 use App\Models\RequestAssetDetail;
+use App\Models\AllottedInformation;
 
 class RequestAssetController extends Controller
 {
@@ -177,7 +179,9 @@ class RequestAssetController extends Controller
         $newOrder = (int)$order + 1; 
         
 
-        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->first(); 
+        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->with('items', function($q) {
+            $q->whereNotNull('asset_code');
+        })->first(); 
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first(); 
             $message = 'Request has been rejected';
@@ -188,19 +192,20 @@ class RequestAssetController extends Controller
             RejectMailJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
         }else{ 
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $newOrder])->first();  
-            $query2->update(array('status' => 'done','date_approved' => Carbon::now()));  
+            //$query2->update(array('status' => 'done','date_approved' => Carbon::now()));  
             
             if($query3){
                 $jobData = array( 'profile_id' => $query3->profile_id, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $newOrder);
                 $query3->update(array('status' => 'awaiting-approval'));
-                RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default'); 
-
-                $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
-                NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default'); 
+                RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');  
+                
                 $stats = 'awaiting-approval';
-            }else{
+            }else{ 
                 $stats = 'complete';
             }
+
+            $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
+           // NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default'); 
 
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
@@ -215,10 +220,42 @@ class RequestAssetController extends Controller
                 $query->update($updateData); 
             }else{
                 $updateData = array('status' => $stats);
+
+                // Approval completed
+
                 if($stats == 'complete'){
-                    $updateData = array_merge($updateData,array('date_closed', Carbon::now()));
+                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now()); 
+
+                    $pluckAssetCodes = array();
+                    $pluckAssetRemarks = array();
+                    if($query['items'] && count($query['items']) > 0){
+                        foreach ($query['items'] as $key => $value) {
+                            $pluckAssetCodes[] = $value['asset_code'];
+                            $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => $value['reason_for_request']);
+                        }
+                    }
+                    if(count($pluckAssetCodes) > 0){
+                      
+                        $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
+                        if(count($updateAsset)> 0){
+                            $getAssetIds = array();
+                            foreach ($updateAsset as $k => $v) {
+                                $v->update(array('location_id' => $query->transferred_to));
+                                
+                                if($pluckAssetRemarks[$k] == $v->asset_code){
+                                    $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $query->transferred_to,
+                                    'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
+                                }
+                                
+                            } 
+                            AllottedInformation::insert($getAssetIds);
+                        }
+
+                       
+                    }
+                    dd($query,$pluckAssetCodes);
                 }
-                $query->update($updateData); 
+               // $query->update($updateData); 
             }
 
             $message = 'Request has been approved';

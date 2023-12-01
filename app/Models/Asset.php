@@ -88,7 +88,7 @@ class Asset extends Model
 
     public function allotted_informations()
     {
-        return $this->hasMany(AllottedInformation::class);
+        return $this->hasMany(AllottedInformation::class)->orderBy('id', 'DESC');
     }
 
     public function allotted_information_latest()
