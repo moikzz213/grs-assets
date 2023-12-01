@@ -44,11 +44,7 @@ class UsersTableSeeder extends Seeder
             array(
                 'username' => '102587', 'ecode' => '102587', 'email' => 'mussaab@gagroup.net','display_name'  => 'Mussaab Aboud','first_name'  => 'Mussaab',
                 'last_name'  => 'Aboud','company_id'   => 5,'status' => 'active', 'role' => 'normal'
-            ),
-            array(
-                'username' => '100001', 'ecode' => '100001', 'email' => 'jerico@gagroup.net','display_name'  => 'Jerico','first_name'  => 'Jerico',
-                'last_name'  => 'Aboud','company_id'   => 5,'status' => 'active', 'role' => 'normal'
-            ),
+            ), 
         );
 
 

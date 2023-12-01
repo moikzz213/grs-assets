@@ -464,7 +464,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -569,7 +569,7 @@ const deleteData = (id, index) => {
     requiredData();
 };
 
-const errorMsg = ref('Error: Administrator needs to setup signatories first.');
+const errorMsg = ref('Note: Administrator needs to setup signatories first.');
 
 const submitRequest = () => {
     sbOptions.value = {

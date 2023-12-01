@@ -41,8 +41,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import { mdiPlus, mdiClose } from "@mdi/js";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useFormatDate } from "@/composables/formatDate.js";
 
