@@ -140,11 +140,6 @@
               :rules="[(v) => !!v || 'Asset Status is required']"
             />
           </div>
-          <div class="v-col-12 v-col-md-12 pt-0 pb-2">
-            <v-textarea v-model="assetObj.remarks" density="compact"
-            label="Remarks"
-              variant="outlined"></v-textarea>
-          </div>
         </v-row>
         <v-row>
           <div v-if="props.page == 'edit'" class="v-col-12 pt-0 font-weight-bold">
@@ -152,40 +147,12 @@
           </div>
           <div v-if="props.page == 'edit'" class="v-col-12 pt-0">
             <v-btn
+              v-for="(btn, index) in buttonArray"
+              :key="index"
               class="mr-2 mb-2"
-              @click="() => changeTab('specification')"
-              :color="selectedTab == 'specification' ? 'primary' : 'white'"
-              >Specification</v-btn
-            >
-            <v-btn
-              class="mr-2 mb-2"
-              @click="() => changeTab('purchase')"
-              :color="selectedTab == 'purchase' ? 'primary' : 'white'"
-              >Purchase</v-btn
-            >
-            <v-btn
-              class="mr-2 mb-2"
-              @click="() => changeTab('financial')"
-              :color="selectedTab == 'financial' ? 'primary' : 'white'"
-              >Financial</v-btn
-            >
-            <v-btn
-              class="mr-2 mb-2"
-              @click="() => changeTab('warranty')"
-              :color="selectedTab == 'warranty' ? 'primary' : 'white'"
-              >Warranty</v-btn
-            >
-            <v-btn
-              class="mr-2 mb-2"
-              @click="() => changeTab('allotted')"
-              :color="selectedTab == 'allotted' ? 'primary' : 'white'"
-              >Allotted</v-btn
-            >
-            <v-btn
-              class="mr-2 mb-2"
-              @click="() => changeTab('maintenance')"
-              :color="selectedTab == 'maintenance' ? 'primary' : 'white'"
-              >Maintenance</v-btn
+              @click="() => changeTab(btn)"
+              :color="selectedTab == btn ? 'primary' : 'white'"
+              >{{ btn }}</v-btn
             >
           </div>
           <div class="v-col-12 pt-0 text-capitalize">
@@ -241,7 +208,7 @@
               <div class="v-col-12 v-col-md-12 pt-0 pb-2">
                 <v-textarea
                   v-model="assetObj.remarks"
-                  label="Asset Remarks*"
+                  label="Asset Remarks"
                   density="compact"
                   variant="outlined"
                   rows="2"
@@ -432,6 +399,10 @@
           <div class="v-col-12 mb-6" v-show="selectedTab == 'maintenance'">
             <AssetMaintenances :asset="assetObj" />
           </div>
+          <!-- Incident Information -->
+          <div class="v-col-12 mb-6" v-show="selectedTab == 'incident'">
+            <AssetIncidents :asset="assetObj" />
+          </div>
 
           <div class="v-col-12 pt-0 font-weight-bold">Attachment</div>
           <div class="v-col-12 pt-0">
@@ -508,11 +479,11 @@ import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
 import { useRouter } from "vue-router";
-import { mdiPlus, mdiClose } from "@mdi/js";
-import dayjs from "dayjs";
-import AssetWarranties from "./additional-info/AssetWarranties.vue";
-import AssetMaintenances from "./additional-info/AssetMaintenances.vue";
-import AssetAllotedLocations from "./additional-info/AssetAllotedLocations.vue";
+import { mdiClose } from "@mdi/js";
+import AssetWarranties from "@/pages/assets/additional-info/AssetWarranties.vue";
+import AssetMaintenances from "@/pages/assets/additional-info/AssetMaintenances.vue";
+import AssetIncidents from "@/pages/assets/additional-info/AssetIncidents.vue";
+import AssetAllotedLocations from "@/pages/assets/additional-info/AssetAllotedLocations.vue";
 
 const router = useRouter();
 
@@ -526,6 +497,16 @@ const props = defineProps({
     default: null,
   },
 });
+
+const buttonArray = ref([
+  "specification",
+  "purchase",
+  "financial",
+  "warranty",
+  "allotted",
+  "maintenance",
+  "incident",
+]);
 
 // snackbar
 const sbOptions = ref({});

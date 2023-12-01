@@ -2,72 +2,94 @@
   <v-container>
     <AppPageHeader title="Incident detail page" />
     <v-row class="mt-5">
-      <v-col class="v-col-12 mt-1 col-sm-12 py-0">
-        <v-row class="mb-3">
-          <v-btn
-            :class="`${
-              isActive == 'details' ? 'tab-active' : ''
-            }  v-col-12 v-col-md-2 mx-2`"
-            @click="changeType('details')"
-            >Details</v-btn
-          >
-          <v-btn
-            v-if="isEdit"
-            :class="`${
-              isActive == 'attachment' ? 'tab-active' : ''
-            }   v-col-12 v-col-md-2 mx-2`"
-            @click="changeType('attachment')"
-            >Attachments</v-btn
-          >
-          <v-btn
-            v-if="
-              isEdit &&
-              (authStore.user.profile.role == 'facility' ||
-                authStore.user.profile.role == 'admin' ||
-                authStore.user.profile.role == 'superadmin' ||
-                authStore.user.profile.role == 'technical-operation')
-            "
-            :class="`${
-              isActive == 'warranty' ? 'tab-active' : ''
-            }   v-col-12 v-col-md-2 mx-2`"
-            @click="changeType('warranty')"
-            >Warranty</v-btn
-          >
-          <v-btn
-            v-if="
-              isEdit &&
-              (authStore.user.profile.role == 'facility' ||
-                authStore.user.profile.role == 'admin' ||
-                authStore.user.profile.role == 'superadmin' ||
-                authStore.user.profile.role == 'technical-operation')
-            "
-            :class="`${
-              isActive == 'facility' ? 'tab-active' : ''
-            }   v-col-12 v-col-md-2 mx-2`"
-            @click="changeType('facility')"
-            >Facility Team</v-btn
-          >
-        </v-row>
+      <div class="v-col py-0">
+        <v-btn
+          @click="changeType('details')"
+          class="mr-3 mb-3"
+          :color="`${isActive == 'details' ? 'primary' : 'white'}`"
+          >Details</v-btn
+        >
+        <v-btn
+          v-if="isEdit"
+          class="mr-3 mb-3"
+          :color="`${isActive == 'attachment' ? 'primary' : 'white'}`"
+          @click="changeType('attachment')"
+          >Attachments</v-btn
+        >
+        <v-btn
+          v-if="
+            isEdit &&
+            (authStore.user.profile.role == 'facility' ||
+              authStore.user.profile.role == 'admin' ||
+              authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'technical-operation')
+          "
+          class="mr-3 mb-3"
+          :color="`${isActive == 'warranty' ? 'primary' : 'white'}`"
+          @click="changeType('warranty')"
+          >Warranty</v-btn
+        >
+        <v-btn
+          v-if="
+            isEdit &&
+            (authStore.user.profile.role == 'facility' ||
+              authStore.user.profile.role == 'admin' ||
+              authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'technical-operation')
+          "
+          class="mr-3 mb-3"
+          :color="`${isActive == 'facility' ? 'primary' : 'white'}`"
+          @click="changeType('facility')"
+          >Facility Team</v-btn
+        >
+      </div>
+    </v-row>
+    <v-row class="mb-10">
+      <div class="v-col py-0">
         <v-card v-if="isActive == 'details'">
           <Form as="v-form" :validation-schema="validation" v-slot="{ meta }">
-            <v-card-title class="my-3 ml-3 text-uppercase text-h6">
+            <v-card-title class="text-capitalize my-1">
               {{ props.headertitle }}</v-card-title
             >
             <v-card-text>
-              <v-row v-if="isEdit">
-                <div class="v-col-12 v-col-md-6 d-flex justify-space-between">
-                  <div class="font-weight-bold">SN: ISR-2{{ pad(objData.id) }}</div>
-                  <div class="reported-by">
-                    REPORTED BY:
+              <v-row v-if="isEdit" class="bg-background-darken-1 ma-0 rounded">
+                <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">SN:</div>
+                  <div>ISR-2{{ pad(objData.id) }}</div>
+                </div>
+                <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Reported by:</div>
+                  <div>
                     {{ objData.profile?.display_name }}
                   </div>
                 </div>
-                <div class="v-col-12 v-col-md-6 text-right font-weight-bold">
-                  STATUS: {{ objData.status?.title }}
+                <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Status</div>
+                  <div>{{ objData.status?.title }}</div>
+                </div>
+                <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Date Reported</div>
+                  <div>
+                    {{
+                      objData.created_at
+                        ? dayjs(objData.created_at).format("MMM. DD, YYYY")
+                        : "-"
+                    }}
+                  </div>
+                </div>
+                <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Date Closed</div>
+                  <div>
+                    {{
+                      objData.date_closed
+                        ? dayjs(objData.date_closed).format("MMM. DD, YYYY")
+                        : "-"
+                    }}
+                  </div>
                 </div>
               </v-row>
               <v-row>
-                <div class="v-col-12 v-col-md-3">
+                <div class="v-col-12 v-col-md-4">
                   <Field name="Type" v-slot="{ field, errors }" v-model="objData.type_id">
                     <v-select
                       :items="typeList"
@@ -84,15 +106,15 @@
                     ></v-select>
                   </Field>
                 </div>
-                <div class="v-col-12 v-col-md-3">
+                <div class="v-col-12 v-col-md-4">
                   <Field
                     name="Urgency"
                     v-slot="{ field, errors }"
-                    v-model="objData.urgency"
+                    v-model="objData.urgency_id"
                   >
                     <v-select
                       :items="urgencyList"
-                      v-model="objData.urgency"
+                      v-model="objData.urgency_id"
                       variant="outlined"
                       density="compact"
                       hide-details
@@ -105,7 +127,7 @@
                     ></v-select>
                   </Field>
                 </div>
-                <div class="v-col-12 v-col-md-6 d-flex">
+                <div class="v-col-12 v-col-md-4 d-flex">
                   <v-text-field
                     v-model="objData.asset_code"
                     variant="outlined"
@@ -133,71 +155,60 @@
                     ></v-text-field>
                   </Field>
                 </div>
-                <div class="v-col-12 v-col-md-12">
-                  <v-row>
-                    <div class="v-col-12 v-col-md-3">
-                      <v-row>
-                        <div class="v-col-12">
-                          <Field
-                            name="Company"
-                            v-slot="{ field, errors }"
-                            v-model="objData.company_id"
-                          >
-                            <v-select
-                              :items="companyList"
-                              v-model="objData.company_id"
-                              variant="outlined"
-                              density="compact"
-                              hide-details
-                              item-value="id"
-                              item-title="title"
-                              clearable
-                              label="Company*"
-                              v-bind="field"
-                              :error-messages="errors"
-                            ></v-select>
-                          </Field>
-                        </div>
-                        <div class="v-col-12">
-                          <Field
-                            name="Location"
-                            v-slot="{ field, errors }"
-                            v-model="objData.location_id"
-                          >
-                            <v-select
-                              :items="locationList"
-                              v-model="objData.location_id"
-                              variant="outlined"
-                              density="compact"
-                              hide-details
-                              item-value="id"
-                              item-title="title"
-                              clearable
-                              label="Location*"
-                              v-bind="field"
-                              :error-messages="errors"
-                            ></v-select>
-                          </Field>
-                        </div>
-                      </v-row>
-                    </div>
-                    <div class="v-col-12 v-col-md-9">
-                      <v-textarea
-                        variant="outlined"
-                        density="compact"
-                        label="Description"
-                        hide-details
-                        v-model="objData.description"
-                      ></v-textarea>
-                    </div>
-                  </v-row>
-                </div>
-              </v-row>
-              <v-divider class="my-3"></v-divider>
-              <v-row>
                 <div class="v-col-12 v-col-md-6">
+                  <Field
+                    name="Company"
+                    v-slot="{ field, errors }"
+                    v-model="objData.company_id"
+                  >
+                    <v-select
+                      :items="companyList"
+                      v-model="objData.company_id"
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                      item-value="id"
+                      item-title="title"
+                      clearable
+                      label="Company*"
+                      v-bind="field"
+                      :error-messages="errors"
+                    ></v-select>
+                  </Field>
+                </div>
+                <div class="v-col-12 v-col-md-6">
+                  <Field
+                    name="Location"
+                    v-slot="{ field, errors }"
+                    v-model="objData.location_id"
+                  >
+                    <v-select
+                      :items="locationList"
+                      v-model="objData.location_id"
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                      item-value="id"
+                      item-title="title"
+                      clearable
+                      label="Location*"
+                      v-bind="field"
+                      :error-messages="errors"
+                    ></v-select>
+                  </Field>
+                </div>
+                <div class="v-col-12">
+                  <v-textarea
+                    rows="3"
+                    variant="outlined"
+                    density="compact"
+                    label="Incident Description"
+                    hide-details="auto"
+                    v-model="objData.description"
+                  ></v-textarea>
+                </div>
+                <div class="v-col-12">
                   <v-btn
-                    size="small"
                     color="primary"
                     @click="saveData"
                     :disabled="!meta.valid"
@@ -209,16 +220,8 @@
                           (props.objectdata.profile_id == loggedID ||
                             loggedRole == 'asset-supervisor')))
                     "
-                    >Submit</v-btn
+                    >{{ isEdit ? "update" : "submit" }}</v-btn
                   >
-                </div>
-                <div class="v-col-12 v-col-md-3">
-                  DATE REPORTED:
-                  {{ objData.created_at ? useFormatDate(objData.created_at) : "" }}
-                </div>
-                <div class="v-col-12 v-col-md-3">
-                  DATE CLOSED:
-                  {{ date_closed ? useFormatDate(objData.date_closed) : "" }}
                 </div>
               </v-row>
             </v-card-text>
@@ -265,7 +268,7 @@
         </div>
         <Attachment
           v-else-if="isEdit && isActive == 'attachment'"
-          :incident-id="route.params.id"
+          :incident-id="parseInt(route.params.id)"
           :attachment="objData.attachment"
           @save="DataUpdateEmit"
           :objectdata="objData"
@@ -282,10 +285,9 @@
           :objectdata="objData"
           @saved="DataUpdateEmit"
         />
-      </v-col>
+      </div>
     </v-row>
     <AppSnackBar :options="sbOptions" />
-
     <v-dialog width="500" v-model="enableBarcode">
       <v-card>
         <v-card-text>
@@ -317,8 +319,9 @@ import { mdiBarcodeScan } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
 import { useFormatDate } from "@/composables/formatDate.js";
 import { useStatusStore } from "@/stores/status";
-import Attachment from "./Attachment.vue";
+import Attachment from "@/pages/normal/incidents/Attachment.vue";
 import Facility from "./Facility.vue";
+import dayjs from "dayjs";
 const emit = defineEmits(["saved"]);
 
 const authStore = useAuthStore();
@@ -363,10 +366,13 @@ const isActive = ref(route.query.type);
 
 // status list
 const statusStore = useStatusStore();
-const urgencyList = ref(statusStore.urgencies_active_list);
+const urgencyList = ref([]);
+urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
+console.log("created", urgencyList.value);
 if (statusStore.list.length == 0) {
   statusStore.getStatuses(authStore.token).then(() => {
-    urgencyList.value = statusStore.urgencies_active_list;
+    urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
+    console.log("after get", urgencyList.value);
   });
 }
 
@@ -445,7 +451,10 @@ const saveData = async () => {
         loadingBtn.value = false;
       }
     })
-    .catch((err) => {});
+    .catch((err) => {
+      console.log("save incident error: ", err);
+      loadingBtn.value = false;
+    });
 };
 
 const isEdit = ref(false);

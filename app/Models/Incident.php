@@ -19,7 +19,7 @@ class Incident extends Model
     protected $guarded = [];
 
     public function attachment()
-    {  
+    {
         return $this->morphToMany(
             File::class,
             'fileable',
@@ -75,6 +75,11 @@ class Incident extends Model
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id', 'id');
+    }
+
+    public function urgency()
+    {
+        return $this->belongsTo(Status::class, 'urgency_id', 'id');
     }
 }
 /**
