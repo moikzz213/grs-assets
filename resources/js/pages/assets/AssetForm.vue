@@ -208,7 +208,7 @@
               <div class="v-col-12 v-col-md-12 pt-0 pb-2">
                 <v-textarea
                   v-model="assetObj.remarks"
-                  label="Asset Remarks*"
+                  label="Asset Remarks"
                   density="compact"
                   variant="outlined"
                   rows="2"
