@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asset_id')->constrained();
+            $table->unsignedBigInteger('asset_id')->nullable();
             $table->foreignId('profile_id')->constrained();
             $table->string('title',120);
             $table->string('asset_code',120)->nullable();
