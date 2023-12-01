@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Location;
+use App\Models\Status;
 use App\Models\Notification;
 use App\Mail\IncidentMail; 
 use Illuminate\Bus\Queueable;
@@ -48,7 +49,7 @@ class IncidentReport implements ShouldQueue
         if($emails && count($emails) > 0){
             $toEmail = $emails;  
 
-            $message = '<table width="600"><tr><td width="150">Urgency:</td><td>'.$this->statusFn($data->urgency).'</td></tr>';
+            $message = '<table width="600"><tr><td width="150">Urgency:</td><td>'.$this->statusFn($data->urgency_id).'</td></tr>';
             $message .= '<tr><td>Asset Name:</td><td>'.$data->title.'</td></tr>';
             $message .= '<tr><td>Location:</td><td>'.$location->title.'</td></tr>';
             $message .= '<tr><td>Description</td><td>'.$data->description.'</td></tr></table>';
@@ -61,12 +62,7 @@ class IncidentReport implements ShouldQueue
     }
 
     private function statusFn($v){
-        if($v == 1){
-            return 'Normal';
-        }elseif($v == 2){
-            return 'Medium';
-        }else{
-            return 'High';
-        }
+        $query = Status::select('title')->where('id', $v)->first();
+        return $query->title;
     }
 }

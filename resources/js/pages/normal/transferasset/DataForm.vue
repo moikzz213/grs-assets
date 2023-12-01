@@ -8,6 +8,9 @@
                         class="my-0 ml-3 text-uppercase text-h6 d-flex justify-space-between font-weight-bold"
                     >
                         <div>{{ props.headertitle }}</div>
+                        <div v-if="!hasSignatories" class="text-error text-h6">
+                            {{ errorMsg }}
+                        </div>
                         <div
                             v-if="isEdit"
                             :class="
@@ -429,7 +432,7 @@
                         </template>
                         <v-row v-else>
                             <div class="v-col-12 text-error">
-                                Error: Administrator needs to setup signatories first.
+                                {{ errorMsg }}
                             </div>
                         </v-row>
                         <v-row>
@@ -477,7 +480,7 @@ const props = defineProps({
         default: null,
     },
 });
-
+const errorMsg = ref('Note: Administrator needs to setup signatories first.');
 const isValidate = ref(false);
 const route = useRoute();
 const router = useRouter();

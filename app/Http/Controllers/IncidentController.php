@@ -34,7 +34,7 @@ class IncidentController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -48,7 +48,7 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
         }
 
         if($search){

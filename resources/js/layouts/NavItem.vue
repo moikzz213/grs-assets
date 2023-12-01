@@ -78,7 +78,7 @@ function validateAccess(data) {
 }
  
 const returnAccess = (item, type = null) => {
-   
+ 
   let hasAccess = false;
   if (authStore.authRole == "superadmin") {
     hasAccess = true;
@@ -90,10 +90,14 @@ const returnAccess = (item, type = null) => {
     item.slug == "transfer-asset"
   ) {
     hasAccess = true;
+
+    if (type == "group") {
+      groupNull = false;
+    }
     
   } else if(validateAccess(item)){ 
-    hasAccess = true;
-
+    hasAccess = true; 
+    
     if (validateAccess(item) && type == "group") {
       groupNull = false;
     }

@@ -8,7 +8,7 @@
                         class="my-0 ml-3 text-uppercase text-h6 d-flex justify-space-between font-weight-bold"
                     >
                         <div>{{ props.headertitle }}</div>
-                        <div v-if="!hasSignatories" class="text-error">
+                        <div v-if="!hasSignatories" class="text-error text-h6">
                             {{ errorMsg }}
                         </div>
                         <div
