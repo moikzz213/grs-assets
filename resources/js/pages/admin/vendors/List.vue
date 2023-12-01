@@ -120,7 +120,6 @@
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.brand }}</td>
                                 <td>{{ item.origin }}</td>
-
                                 <td>{{ item.contact_name }}</td>
                                 <td>{{ item.contact_email }}</td>
                                 <td>{{ item.contact_no }}</td>
@@ -412,6 +411,7 @@ const freeForm = computed(() => {
             type: "number",
         },
         { name: "address", label: "Address", required: false, type: "text" },
+        { name: "remarks", label: "Remarks", required: false, type: "textarea" },
     ];
 });
 
