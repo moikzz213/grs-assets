@@ -60,6 +60,7 @@ class VendorController extends Controller
                     'contact_no'  => $request->contact_no,
                     'contact_email'  => $request->contact_email,
                     'category_id'  => @$request->category_id,
+                    'remarks'  => @$request->remarks,
                 );
         if($request->id){
             $query = Vendor::where('id', $request->id)->first();

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('contact_no_2', 20)->nullable();
             $table->string('contact_email_2', 80)->nullable();
             $table->text('remarks')->nullable(); 
-            $table->string('category',50)->nullable(); 
+            $table->foreignId('category_id')->nullable();
         });
     }
 

@@ -58,8 +58,9 @@
                                                 v-bind="field"
                                                 @keydown.enter="saveData"
                                                 :error-messages="errors"
-                                            ></v-text-field>
-                                            <v-autocomplete
+                                            ></v-text-field> 
+                                        </Field>
+                                        <v-autocomplete
                                                 v-if="item.type == 'select'"
                                                 :autofocus="
                                                     index === 0 ? true : false
@@ -73,11 +74,21 @@
                                                 :items="item.data"
                                                 hide-details
                                                 item-value="id"
-                                                item-title="title"
-                                                v-bind="field"
-                                                :error-messages="errors"
+                                                item-title="title" 
                                             ></v-autocomplete>
-                                        </Field>
+                                            <v-textarea v-if="item.type == 'textarea'"
+                                            :autofocus="
+                                                index === 0 ? true : false
+                                                "
+                                                v-model="dataObj[item.name]"
+                                                density="compact"
+                                                variant="outlined"
+                                                :label="`${item.label}${
+                                                    item.required ? '*' : ' (Optional)'
+                                                }`"
+                                                :items="item.data"
+                                                hide-details 
+                                            ></v-textarea>
                                     </div>
                                 </v-row>
                             </v-card-text>
