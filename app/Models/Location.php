@@ -22,10 +22,10 @@ class Location extends Model
     }
 
 
-    public function allotted_to()
-    {
-        return $this->hasMany(AllottedInformation::class);
-    }
+    // public function allotted_to()
+    // {
+    //     return $this->hasMany(AllottedInformation::class);
+    // }
 
     public function transferred_to()
     {

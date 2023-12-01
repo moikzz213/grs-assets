@@ -71,15 +71,15 @@ class WarrantyController extends Controller
             $query = Warranty::where('id', $request->id)->first();
             $query->update($data);
             $message = 'Data has been updated';
-            $log_type = 'update';
-
-            $query->pivot_assets()->sync($request['assets']); 
+            $log_type = 'update'; 
              
         }else{
             $query = Warranty::create($data);
             $message = 'Data has been created';
             $log_type = 'new';
         }
+
+        $query->pivot_assets()->sync($request['assets']);
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);

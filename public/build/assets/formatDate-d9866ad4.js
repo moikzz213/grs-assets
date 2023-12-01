@@ -1,1 +1,0 @@
-function t(e){return new Date(e).toLocaleString("en-GB",{day:"2-digit",year:"numeric",month:"2-digit",hour12:!0,hour:"numeric",minute:"numeric"})}function i(e){if(e)return new Date(e).toLocaleString("en-GB",{day:"2-digit",year:"numeric",month:"2-digit"})}export{t as a,i as u};

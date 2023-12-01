@@ -13,6 +13,7 @@
                     <thead>
                         <tr>
                             <th class="text-left text-primary">#</th>
+                            <th class="text-left text-primary">Image</th>
                             <th class="text-left text-primary">Title</th>
                             <th class="text-left text-primary">Vendor</th>
                             <th class="text-left text-primary">
@@ -27,43 +28,66 @@
                         <tr
                             v-for="(item, index) in warranties"
                             :key="item.id"
-                            @click="() => openWarrantyDialog(item)"
                             class="cursor-pointer table-cell-hover"
                         >
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ item.warranty_title }}</td>
-                            <td>{{ item.vendor && item.vendor.title }}</td>
-                            <td>
-                                {{
-                                    item.warranty_start_date && item.warranty_start_date != '0000-00-00' ?
-                                    dayjs(item.warranty_start_date).format(
-                                        "MMM. DD, YYYY"
-                                    ) : ''
-                                }}
+                            <td @click="() => openWarrantyDialog(item)">
+                                {{ index + 1 }}
                             </td>
                             <td>
+                                <v-icon
+                                    v-if="item.attachment.length > 0"
+                                    :icon="mdiImage"
+                                    color="success"
+                                    @click="
+                                        openAttachment(item.attachment, index)
+                                    "
+                                ></v-icon>
+                            </td>
+                            <td @click="() => openWarrantyDialog(item)">
+                                {{ item.warranty_title }}
+                            </td>
+                            <td @click="() => openWarrantyDialog(item)">
+                                {{ item.vendor && item.vendor.title }}
+                            </td>
+                            <td @click="() => openWarrantyDialog(item)">
                                 {{
-                                    item.warranty_end_date && item.warranty_end_date != '0000-00-00' ?
-                                    dayjs(item.warranty_end_date).format(
-                                        "MMM. DD, YYYY"
-                                    ) : ''
+                                    item.warranty_start_date &&
+                                    item.warranty_start_date != "0000-00-00"
+                                        ? dayjs(
+                                              item.warranty_start_date
+                                          ).format("MMM. DD, YYYY")
+                                        : ""
+                                }}
+                            </td>
+                            <td @click="() => openWarrantyDialog(item)">
+                                {{
+                                    item.warranty_end_date &&
+                                    item.warranty_end_date != "0000-00-00"
+                                        ? dayjs(item.warranty_end_date).format(
+                                              "MMM. DD, YYYY"
+                                          )
+                                        : ""
                                 }}
                             </td>
 
-                            <td>
+                            <td @click="() => openWarrantyDialog(item)">
                                 {{
-                                    item.amc_start_date && item.amc_start_date != '0000-00-00' ?
-                                    dayjs(item.amc_start_date).format(
-                                        "MMM. DD, YYYY"
-                                    ) : ''
+                                    item.amc_start_date &&
+                                    item.amc_start_date != "0000-00-00"
+                                        ? dayjs(item.amc_start_date).format(
+                                              "MMM. DD, YYYY"
+                                          )
+                                        : ""
                                 }}
                             </td>
-                            <td>
+                            <td @click="() => openWarrantyDialog(item)">
                                 {{
-                                    item.amc_end_date && item.amc_end_date != '0000-00-00' ?
-                                    dayjs(item.amc_end_date).format(
-                                        "MMM. DD, YYYY"
-                                    ): ''
+                                    item.amc_end_date &&
+                                    item.amc_end_date != "0000-00-00"
+                                        ? dayjs(item.amc_end_date).format(
+                                              "MMM. DD, YYYY"
+                                          )
+                                        : ""
                                 }}
                             </td>
                         </tr>
@@ -89,22 +113,18 @@
                     ></v-btn>
                 </v-card-title>
                 <v-card-text>
-                    <Form
-                        as="v-form" 
-                    >
+                    <Form as="v-form">
                         <v-row class="mb-0">
                             <div class="v-col-12 v-col-md-12 pt-0 pb-2">
-                                 
-                                    <v-autocomplete
-                                        v-model="dialogWarranty.data.warranty_id"
-                                        :items="allWarranties"
-                                        item-title="warranty_title"
-                                        item-value="id"
-                                        label="Select Warranty"
-                                        density="compact"
-                                        variant="outlined" 
-                                    />
-                               
+                                <v-autocomplete
+                                    v-model="dialogWarranty.data.warranty_id"
+                                    :items="allWarranties"
+                                    item-title="warranty_title"
+                                    item-value="id"
+                                    label="Select Warranty"
+                                    density="compact"
+                                    variant="outlined"
+                                />
                             </div>
 
                             <div class="v-col-12 pt-0 pb-2 d-flex justify-end">
@@ -121,6 +141,32 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogAttachment" width="95%" max-width="900">
+            <v-card class="bg-black">
+                <v-carousel
+                    hide-delimiter-background
+                    show-arrows="hover"
+                    height="680px"
+                    v-model="currentSlider"
+                >
+                    <v-carousel-item
+                        v-for="(item, i) in selectedFiles"
+                        :key="i"
+                        reverse-transition="fade"
+                        transition="fade"
+                    >
+                        <div
+                            style="height: 680px; width: 100%"
+                            class="d-flex align-center justify-center"
+                        >
+                            <v-img
+                                :src="baseURL + '/file/' + item.path"
+                            ></v-img>
+                        </div>
+                    </v-carousel-item>
+                </v-carousel>
+            </v-card>
+        </v-dialog>
         <AppSnackBar :options="sbOptions" />
     </v-row>
 </template>
@@ -130,9 +176,9 @@ import { ref, watch } from "vue";
 import { Form, Field } from "vee-validate";
 import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
-import { mdiPlus, mdiClose } from "@mdi/js";
+import { mdiPlus, mdiClose, mdiImage } from "@mdi/js";
 import dayjs from "dayjs";
-import * as yup from "yup";
+
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -140,7 +186,7 @@ const route = useRoute();
 // authStore
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
-
+const baseURL = ref(window.location.origin);
 // snackbar
 const sbOptions = ref({});
 
@@ -153,7 +199,7 @@ const props = defineProps({
         type: Object,
         default: null,
     },
-}); 
+});
 
 // warranty
 const dialogWarranty = ref({
@@ -171,6 +217,15 @@ watch(
         fetchAllWarranties();
     }
 );
+
+const dialogAttachment = ref(false);
+const selectedFiles = ref([]);
+const currentSlider = ref(1);
+const openAttachment = (item, index) => {
+    selectedFiles.value = item;
+    currentSlider.value = index;
+    dialogAttachment.value = true;
+};
 
 const oldWarrantyID = ref(0);
 const openWarrantyDialog = (warranty = null) => {

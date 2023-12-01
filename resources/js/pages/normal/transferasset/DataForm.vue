@@ -272,7 +272,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
-                                    label="ITEM VALUE"
+                                    label="VALUE"
                                 ></v-text-field>
                             </div>
                             <div class="v-col-12 v-col-md-3 d-flex">
@@ -317,6 +317,8 @@
                             <div class="v-col-12 v-col-md-6">
                                 {{ formObjData?.profile?.display_name }}
                             </div>
+                            <div class="v-col-12 v-col-md-1">Status</div>
+                            <div class="v-col-12 v-col-md-2">Date Approved</div>
                         </v-row>
                         <template v-if="hasSignatories">
                             <v-row
@@ -347,7 +349,7 @@
                                     <v-btn variant="text" size="x-small">
                                         <v-icon
                                             v-if="item.status"
-                                            class="mx-2 my-auto"
+                                            class="mx-2 my-3"
                                             :icon="
                                                 item.status ==
                                                 'awaiting-approval'
@@ -574,6 +576,7 @@ const submitRequest = () => {
         delete o.updated_at;
         delete o.created_at;
         delete o.id;
+        delete o.attachment;
         return o;
     });
 
