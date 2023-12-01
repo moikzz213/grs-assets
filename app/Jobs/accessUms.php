@@ -41,5 +41,6 @@ class accessUms implements ShouldQueue
         $url = $serverURL.'/api/other-application/access/add-update';
 
         $response = $helper->runCurl($url, $data, $loginpassw); 
+        echo $response;
     }
 }

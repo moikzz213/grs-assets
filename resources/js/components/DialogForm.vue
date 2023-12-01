@@ -348,12 +348,9 @@ const deleteData = (index) => {
     rows.splice(index, 1);
     dataObj.value.display_assets = [...rows];
 
-    rows2.splice(index, 1);
-
-    console.log("index", index);
-    dataObj.value.assets = [...rows2];
-
-    console.log("dataObj.value", dataObj.value);
+    rows2.splice(index, 1); 
+    dataObj.value.assets = [...rows2]; 
+ 
 };
 
 const popDialog = ref(false);
@@ -363,9 +360,7 @@ const freeForm = ref(props.freeForm);
 watch(
     () => props.freeForm,
     (newVal) => {
-        freeForm.value = [...[], ...newVal];
-        console.log("props.freeForm", props.freeForm);
-        console.log("freeForm.value", freeForm.value);
+        freeForm.value = [...[], ...newVal]; 
     }
 );
 const kpiEmit = defineEmits(["savedResponse", "fileSave", "save"]);

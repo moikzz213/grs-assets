@@ -44,15 +44,33 @@
                             <tr>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('category_id')"
+                                >
+                                    Category
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('title')"
                                 >
                                     Vendors
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('brand')"
+                                >
+                                    Brand
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('origin')"
+                                >
+                                    Origin
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('contact_name')"
                                 >
-                                    Name
+                                    ContactName
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
@@ -71,12 +89,6 @@
                                     @click="OrderByField('address')"
                                 >
                                     Address
-                                </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('profile_id')"
-                                >
-                                    Updated By
                                 </th>
 
                                 <th
@@ -104,12 +116,16 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in dataObj.data" :key="item.id">
+                                <td>{{ item.category?.title }}</td>
                                 <td>{{ item.title }}</td>
+                                <td>{{ item.brand }}</td>
+                                <td>{{ item.origin }}</td>
+
                                 <td>{{ item.contact_name }}</td>
                                 <td>{{ item.contact_email }}</td>
                                 <td>{{ item.contact_no }}</td>
                                 <td>{{ item.address }}</td>
-                                <td>{{ item.profile?.display_name }}</td>
+
                                 <td>
                                     <v-chip
                                         class="text-uppercase"
@@ -127,7 +143,7 @@
                                         class="d-flex align-center justify-end"
                                     >
                                         <v-btn
-                                            :loading="iconLoading" 
+                                            :loading="iconLoading"
                                             v-if="
                                                 authStore.user.role ==
                                                     'superadmin' ||
@@ -142,7 +158,7 @@
                                             class="mx-2"
                                         ></v-btn>
                                         <v-btn
-                                        density="compact"
+                                            density="compact"
                                             :loading="iconLoading"
                                             :icon="mdiEyeOff"
                                             v-if="
@@ -224,7 +240,7 @@
 
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { mdiPencil, mdiEyeOff, mdiEyeCheck } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
@@ -356,15 +372,48 @@ const saveData = async (data) => {
         });
 };
 
+import { useCategoryStore } from "@/stores/categories";
+const categoryStore = useCategoryStore();
+if (categoryStore.list.length == 0) {
+    categoryStore.getCategories(authStore.token);
+}
+
 const dataObject = ref({});
 
-const freeForm = ref([
-    { name: "title", label: "Vendor", required: true, type: "text" },
-    { name: "contact_name", label: "Name", required: true, type: "text" },
-    { name: "contact_email", label: "Email", required: true, type: "email" },
-    { name: "contact_no", label: "Contact", required: false, type: "number" },
-    { name: "address", label: "Address", required: false, type: "text" },
-]);
+const freeForm = computed(() => {
+    return [
+        {
+            name: "category_id",
+            label: "Category",
+            required: true,
+            type: "select",
+            data: categoryStore.list,
+        },
+        { name: "title", label: "Vendor Name", required: true, type: "text" },
+        { name: "brand", label: "Brand", required: true, type: "text" },
+        { name: "origin", label: "Origin", required: false, type: "text" },
+        {
+            name: "designation",
+            label: "Designation",
+            required: false,
+            type: "text",
+        },
+        { name: "contact_name", label: "Name", required: true, type: "text" },
+        {
+            name: "contact_email",
+            label: "Email",
+            required: true,
+            type: "email",
+        },
+        {
+            name: "contact_no",
+            label: "Contact",
+            required: false,
+            type: "number",
+        },
+        { name: "address", label: "Address", required: false, type: "text" },
+    ];
+});
 
 const editData = (data) => {
     dataObject.value = Object.assign({}, data);

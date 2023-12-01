@@ -28,16 +28,15 @@ class VendorController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('profile');
+            $dataObj = $dataObj->orderBy($field, $sort)->with('profile','category');
         }else{
-            $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile');
+            $dataObj = $dataObj->orderBy('status', 'ASC')->orderBy('title', 'ASC')->with('profile','category');
         }
 
         if($search){
             $dataObj->where(function($q) use($search){
                 $q->where('title', 'like', '%'.$search.'%')
-                ->orWhere('contact_name', 'like', '%'.$search.'%')
-                ->orWhere('contact_no', 'like', '%'.$search.'%');
+                ->orWhere('contact_name', 'like', '%'.$search.'%');
             });
 
             $dataObj = $dataObj->get();
@@ -50,30 +49,25 @@ class VendorController extends Controller
     }
 
     public function storeUpdate(Request $request){
-
-        if($request->id){
-            $query = Vendor::where('id', $request->id)->first();
-            $query->update(
-                array(
+        $saveData = array(
                     'title' => $request->title,
                     'contact_name' => $request->contact_name,
                     'profile_id' => $request->profile_id,
+                    'brand' => $request->brand,
+                    'origin' => $request->origin,
+                    'designation' => $request->designation,
                     'address' => $request->address,
                     'contact_no'  => $request->contact_no,
                     'contact_email'  => $request->contact_email,
-                    )
-            );
+                    'category_id'  => @$request->category_id,
+                );
+        if($request->id){
+            $query = Vendor::where('id', $request->id)->first();
+            $query->update($saveData);
             $message = 'Data has been updated';
             $log_type = 'update';
         }else{
-            $query = Vendor::create(array(
-                'title' => $request->title,
-                'contact_name' => $request->contact_name,
-                'profile_id' => $request->profile_id,
-                'address' => $request->address,
-                'contact_no'  => $request->contact_no,
-                'contact_email'  => $request->contact_email
-            ));
+            $query = Vendor::create($saveData);
             $message = 'Data has been created';
             $log_type = 'new';
         }
