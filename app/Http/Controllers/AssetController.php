@@ -165,7 +165,12 @@ class AssetController extends Controller
             'maintenance.status',
             'maintenance.handled_by',
             'attachments',
-            'incidents',
+            'incidents.urgency',
+            'incidents.status',
+            'incidents.type',
+            'incidents.handled_by',
+            'incidents.handled_by',
+            'incidents.profile',
         )->first();
         return response()->json($asset, 200);
     }
