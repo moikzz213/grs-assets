@@ -11,7 +11,7 @@
               variant="outlined"
               density="compact"
               clearable
-              label="Search (ex. ISR-100035 )"
+              label="Search (ex. ISR-200035 )"
               type="text"
               hide-details
               style="max-width: 300px"
@@ -144,7 +144,7 @@
             <tbody>
               <tr v-for="item in users.data" :key="item.id">
                 <td>ISR-2{{ pad(item.id) }}</td>
-                <td>{{ staticStatus(item.urgency) }}</td>
+                <td>{{ item.urgency?.title}}</td>
                 <td>{{ item.type?.title }}</td>
                 <td>{{ item.company?.title }}</td>
                 <td>{{ item.location?.title }}</td>
@@ -322,20 +322,10 @@ const fetchStatus = async () => {
       statusList.value = res.data;
     })
     .catch((err) => {});
-};
-
-const staticStatus = (v) => {
-  if (v == 1) {
-    return "Normal";
-  } else if (v == 2) {
-    return "Medium";
-  } else {
-    return "High";
-  }
-};
-
+}; 
+ 
 const getAllData = async () => {
-  console.log("objFIlter", objFIlter.value);
+   
   users.value.loading = true;
   await clientKey(authStore.token)
     .get(

@@ -43,9 +43,8 @@ const router = createRouter({
 
 function returnAccess(data) {
     let hasAccess = false;
-    console.log("authStore.access",authStore.access);
     authStore.access.map((o) => {
-        console.log(data.title + " == "+ o.slug);
+      
         if (data.title == o.slug) {
             hasAccess = true;
            
@@ -90,7 +89,7 @@ function validateAccess(data) {
 }
 
 router.beforeEach((to, from, next) => {
-   console.log("to.path",to.name);
+ 
     if (to.name == 'PublicApproval' ) { 
         next();
     }else if (to.path == '/' && !to.meta.requiresAuth) {
