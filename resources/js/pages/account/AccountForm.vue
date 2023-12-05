@@ -140,8 +140,7 @@ const selectStatus = (selected) => {
   user.value.data.status = selected;
 };
 
-const roleList = ref([
-    { title: "Administrator", value: "admin" },
+const roleList = ref([ 
     { title: "Asset Supervisor-Project", value: "asset-supervisor" },
     { title: "Commercial Manager-Project", value: "commercial-manager" }, 
     { title: "Facility Team", value: "facility" },

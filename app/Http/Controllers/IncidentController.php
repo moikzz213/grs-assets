@@ -24,7 +24,7 @@ class IncidentController extends Controller
 
         $dataObj = new Incident;
 
-        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'facility' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
 
@@ -93,7 +93,7 @@ class IncidentController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by');
+            $dataObj = $dataObj->orderBy($field, $sort)->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by', 'urgency');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -107,7 +107,7 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by');
+            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status', 'handled_by', 'urgency');
         }
 
         if($search){

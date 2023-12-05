@@ -53,6 +53,7 @@ Route::prefix('asset-list')->group(function () {
     Route::get('/', [PageController::class, 'home'])->name('');
     Route::get('/add', [PageController::class, 'home'])->name('add');
     Route::get('/edit/{id}', [PageController::class, 'home'])->name('edit');
+    Route::get('/view-only/{id}', [PageController::class, 'home'])->name('edit');
     Route::get('/import', [PageController::class, 'home'])->name('import');
 });
 

@@ -9,7 +9,7 @@ export const useStatusStore = defineStore("status", {
         list: (state) => state.status,
         conditions: (state) =>
             state.status.filter((s) => s.type == "condition-type"),
-        assets: (state) => state.status.filter((s) => s.type == "asset"),
+        assets: (state) => state.status.filter((s) => s.type == "asset" || s.id == 2),
         urgencies: (state) => state.status.filter((s) => s.type == "urgency"),
         urgencies_active_list: (state) =>
             state.status.filter(

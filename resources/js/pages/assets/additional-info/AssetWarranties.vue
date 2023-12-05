@@ -5,6 +5,7 @@
                 @click="() => openWarrantyDialog()"
                 class="mb-3"
                 size="small"
+                v-if="route.name !='view-asset'"
             >
                 New Warranty <v-icon class="ml-2" :icon="mdiPlus"></v-icon>
             </v-btn>

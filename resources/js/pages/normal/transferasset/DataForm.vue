@@ -29,31 +29,41 @@
                     <v-divider></v-divider>
                     <v-card-text>
                         <v-row>
-                            <div :class="`${formObjData.status == 'complete' ? 'v-col-12' : 'v-col-4'}`" v-if="isEdit">
+                            <div
+                                :class="`${
+                                    formObjData.status == 'complete'
+                                        ? 'v-col-12'
+                                        : 'v-col-4'
+                                }`"
+                                v-if="isEdit"
+                            >
                                 REQUEST NO: SN-3{{ pad(formObjData.id) }}
                             </div>
-                            <div
-                                class="v-col-8 text-right"
-                                v-if="
-                                    isEdit &&
-                                    (formObjData.status == 'pending' ||
-                                        formObjData.status == 'cancelled')
-                                "
-                            >
-                                <v-btn
-                                    v-if="formObjData.status == 'pending'"
-                                    @click="changeRequestStatus('cancelled')"
-                                    size="small"
-                                    color="warning"
-                                    >Cancel request</v-btn
+                            <div class="v-col-8 text-right">
+                                <div
+                                    v-if="
+                                        isEdit &&
+                                        (formObjData.status == 'pending' ||
+                                            formObjData.status == 'cancelled')
+                                    "
                                 >
-                                <v-btn
-                                    v-if="formObjData.status == 'cancelled'"
-                                    @click="changeRequestStatus('pending')"
-                                    size="small"
-                                    color="info"
-                                    >Change status to Pending</v-btn
-                                >
+                                    <v-btn
+                                        v-if="formObjData.status == 'pending'"
+                                        @click="
+                                            changeRequestStatus('cancelled')
+                                        "
+                                        size="small"
+                                        color="warning"
+                                        >Cancel request</v-btn
+                                    >
+                                    <v-btn
+                                        v-if="formObjData.status == 'cancelled'"
+                                        @click="changeRequestStatus('pending')"
+                                        size="small"
+                                        color="info"
+                                        >Change status to Pending</v-btn
+                                    >
+                                </div>
                             </div>
                             <div class="v-col-12 v-col-md-6">
                                 <v-autocomplete
@@ -142,17 +152,18 @@
                             v-for="(item, index) in assetDataObj"
                             :key="index"
                         >
-                        <div class="v-col-12 v-col-md-1 px-1">
-                                <v-row
-                                    v-if="item.attachment?.id"
-                                    class="px-1"
-                                >
-                                    <div 
+                            <div class="v-col-12 v-col-md-1 px-1">
+                                <v-row v-if="item.attachment?.id" class="px-1">
+                                    <div
                                         class="v-col-12 v-col-md-12 pa-2"
                                         style="position: relative"
                                     >
-                                     
-                                    <v-text-field style="display:none;" type="hidden" class="hidden" v-model="item.attachment.id"></v-text-field>
+                                        <v-text-field
+                                            style="display: none"
+                                            type="hidden"
+                                            class="hidden"
+                                            v-model="item.attachment.id"
+                                        ></v-text-field>
                                         <v-btn
                                             style="
                                                 position: absolute;
@@ -164,15 +175,24 @@
                                             size="16px"
                                             color="error"
                                             @click="
-                                                () => removeAttachment(index, item.attachment.id)
+                                                () =>
+                                                    removeAttachment(
+                                                        index,
+                                                        item.attachment.id
+                                                    )
                                             "
                                         >
                                         </v-btn>
                                         <v-card
                                             @click="() => openAttachment(index)"
                                             maxHeight="40"
-                                            style="background-image:url('/assets/images/fav.png');background-size: cover;height:100px; width:100px;"
-                                        >  
+                                            style="
+                                                background-image: url('/assets/images/fav.png');
+                                                background-size: cover;
+                                                height: 100px;
+                                                width: 100px;
+                                            "
+                                        >
                                         </v-card>
                                     </div>
 
@@ -188,7 +208,7 @@
                                                 height="680px"
                                                 v-model="currentSlider"
                                             >
-                                                <v-carousel-item 
+                                                <v-carousel-item
                                                     reverse-transition="fade"
                                                     transition="fade"
                                                 >
@@ -203,7 +223,8 @@
                                                             :src="
                                                                 baseURL +
                                                                 '/file/' +
-                                                                item.attachment.path
+                                                                item.attachment
+                                                                    .path
                                                             "
                                                         ></v-img>
                                                     </div>
@@ -223,7 +244,13 @@
                                                     multiSelect: false,
                                                     type: 'transfer-asset',
                                                 }"
-                                                @select="(e) => studioSelectResponse(index, e)"
+                                                @select="
+                                                    (e) =>
+                                                        studioSelectResponse(
+                                                            index,
+                                                            e
+                                                        )
+                                                "
                                             />
                                         </v-sheet>
                                     </div>
@@ -439,9 +466,7 @@
                             <div class="v-col-12 v-col-md-12 text-info">
                                 Note: Once submitted and approval is on-going,
                                 you will no longer allowed to update the
-                                request.<br />
-                                Only Asset Supervisor - Projects can update the
-                                data specially the asset code.
+                                request. 
                             </div>
                         </v-row>
                     </v-card-text>
@@ -480,13 +505,13 @@ const props = defineProps({
         default: null,
     },
 });
-const errorMsg = ref('Note: Administrator needs to setup signatories first.');
+const errorMsg = ref("Note: Administrator needs to setup signatories first.");
 const isValidate = ref(false);
 const route = useRoute();
 const router = useRouter();
 const objData = ref({});
 const isEdit = ref(false);
-const assetDataObj = ref([{ qty: 1, attachment: {}  }]);
+const assetDataObj = ref([{ qty: 1, attachment: {} }]);
 const currentDate = ref(new Date());
 
 const statusTitle = (v) => {
@@ -496,14 +521,17 @@ const statusTitle = (v) => {
         return "Review By";
     } else if (v == "receiver") {
         return "Receiver";
+    } else if (v == "transport") {
+        return "Trasportation Arrangement";
+    } else if (v == "releasing") {
+        return "Asset Releasing";
     } else if (v == "verify") {
         return "Verify By";
     }
 };
 
-
 const baseURL = ref(window.location.origin);
-const studioSelectResponse = (index,v) => {
+const studioSelectResponse = (index, v) => {
     assetDataObj.value[index].attachment = v[0];
 };
 const dialogAttachment = ref(false);
@@ -512,22 +540,22 @@ const openAttachment = (index) => {
     currentSlider.value = index;
     dialogAttachment.value = true;
 };
-const removeAttachment = (index) => { 
-    assetDataObj.value[index].attachment = ''
+const removeAttachment = (index) => {
+    assetDataObj.value[index].attachment = "";
 };
 
 const requestTypeList = ref([]);
 const fetchSetupRequest = async () => {
-    let typeOfRequest = 'request';
-    console.log("props.headertitle",props.headertitle);
-    if(props.headertitle == 'Transfer Assets'){
-        typeOfRequest = 'transfer';
+    let typeOfRequest = "request";
+ 
+    if (props.headertitle == "Transfer Assets") {
+        typeOfRequest = "transfer";
     }
     await clientKey(authStore.token)
-        .get("/api/fetch/approval-setups/non-paginated/data/"+typeOfRequest)
+        .get("/api/fetch/approval-setups/non-paginated/data/" + typeOfRequest)
         .then((res) => {
             requestTypeList.value = res.data;
-            console.log("requestTypeList.value",requestTypeList.value);
+           
         })
         .catch((err) => {});
 };
@@ -554,7 +582,7 @@ const fetchLocations = async () => {
 };
 
 const AddAsset = () => {
-    assetDataObj.value.push({ qty: 1, attachment: {}});
+    assetDataObj.value.push({ qty: 1, attachment: {} });
     requiredData();
 };
 
@@ -571,8 +599,8 @@ const submitRequest = () => {
     };
 
     let newAssetDataObj = assetDataObj.value.map((o, i) => {
-        o.file_id = '';
-        if(o.attachment){
+        o.file_id = "";
+        if (o.attachment) {
             o.file_id = o.attachment.id;
         }
         delete o.assets;
@@ -588,6 +616,7 @@ const submitRequest = () => {
         assets: newAssetDataObj,
         approval: approvalSetupList.value,
         profile_id: authStore.user.profile.id,
+        role: authStore.user.profile.role,
         type: "transfer",
     };
 
@@ -647,6 +676,29 @@ const setupApprovals = async () => {
                         onUpdateApproval.value[i].reason_rejected;
                     return o;
                 });
+
+                if(approvalSetupList.value.length > 1){
+                    approvalSetupList.value[onUpdateApproval.value.length-1] = {
+                        id:onUpdateApproval.value[onUpdateApproval.value.length -1].id,
+                        profile_id:onUpdateApproval.value[onUpdateApproval.value.length -1].profile_id,
+                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                        date_approved: onUpdateApproval.value[onUpdateApproval.value.length -1].date_approved,
+                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                        reason_rejected: '',
+                        types: onUpdateApproval.value[onUpdateApproval.value.length -1].approval_type,
+                        sort: onUpdateApproval.value[onUpdateApproval.value.length -1].orders,
+                        request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length -1].request_asset_id,
+                        signatures:[
+                            {
+                                id: formObjData.value.profile?.id,
+                                display_name: formObjData.value.profile?.display_name,
+                                first_name: formObjData.value.profile?.first_name,
+                                last_name: formObjData.value.profile?.last_name,
+                                 
+                            }
+                        ]
+                    }
+                } 
             }
 
             if (res.data?.stages.length > 0) {
@@ -739,7 +791,7 @@ onMounted(() => {
         onUpdateApproval.value = v.request_approvals;
 
         assetDataObj.value = v.items;
-        console.log("assetDataObj.value ",assetDataObj.value );
+ 
         setupApprovals();
     } else {
         objData.value.company_id = authStore.user.profile.company_id;

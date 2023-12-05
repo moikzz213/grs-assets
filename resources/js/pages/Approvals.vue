@@ -7,7 +7,7 @@
                     <div>{{ dataObj.data?.transfer_from?.title }}</div>
                 </div>
                 <div class="d-flex">
-                    <div class="mr-6">TO:&nbsp;</div>
+                    <div class="mr-6 pr-2">TO:</div>
                     <div>{{ dataObj.data?.transfer_to?.title }}</div>
                 </div>
             </div>
@@ -669,17 +669,17 @@ const approvalFn = (item, isReject = null) => {
 
 const statusFn = (v) => {
     if (v == "approve") {
-        return "Approved";
-    } else if (v == "reject") {
-        return "Rejected";
-    } else if (v == "verify") {
-        return "Verified";
-    } else if (v == "confirm") {
-        return "Confirmed";
+        return "Approval By";
     } else if (v == "reviewer") {
-        return "Reviewed";
+        return "Review By";
     } else if (v == "receiver") {
         return "Received";
+    } else if (v == "transport") {
+        return "Trasportation Arranged";
+    } else if (v == "releasing") {
+        return "Asset Released";
+    } else if (v == "verify") {
+        return "Verified By";
     }
 };
 
