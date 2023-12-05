@@ -123,14 +123,14 @@ class AssetController extends Controller
                             }
 
                             // create allotted information if allotted_to is not empty
-                            if(@$item->alloted_to){
-                                $allotedInformation = AllottedInformation::create([
-                                    'asset_id' => $assetLastInsertedId, // asset id
-                                    'location_id' => (int)$item->alloted_to, // allotted location id
-                                    'type' => 'allotted', // allotted type
-                                    'remarks' => '', // allotted info remarks
-                                ]);
-                            }
+                            // if(@$item->alloted_to){
+                            //     $allotedInformation = AllottedInformation::create([
+                            //         'asset_id' => $assetLastInsertedId, // asset id
+                            //         'location_id' => (int)$item->alloted_to, // allotted location id
+                            //         'type' => 'allotted', // allotted type
+                            //         'remarks' => '', // allotted info remarks
+                            //     ]);
+                            // }
 
                             $importCount++;
 
