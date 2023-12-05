@@ -112,7 +112,7 @@ router.beforeEach((to, from, next) => {
               
                 next({ name: 'Unauthorized' });
             }
-        }   else if (to.path != '/login' && to.path != '/public/employee-signatory/request/approvals' && to.path != '/public/employee-signatory/transfer/approvals') {
+        }   else if (to.path != '/login' && to.path != '/pv/employee-signatory/request/approvals' && to.path != '/pv/employee-signatory/transfer/approvals') {
           
             next({ name: 'Login' });
         }

@@ -1,6 +1,6 @@
 export const jc = [
     {
-        path: "/public/employee-signatory/:type/approvals",
+        path: "/pv/employee-signatory/:type/approvals",
         component: () => import("../../pages/Approvals.vue"),
         name: "PublicApproval",
         meta: {
