@@ -6,7 +6,7 @@
           {{ props.page + " Asset" }}
         </div>
         <div class="d-flex align-center">
-          <v-btn color="primary" :loading="loadingAsset" @click="saveAsset">Save</v-btn>
+          <v-btn v-if="route.name != 'view-asset'" color="primary" :loading="loadingAsset" @click="saveAsset"  >Save</v-btn>
         </div>
       </v-card-title>
       <v-card-text>
@@ -142,10 +142,10 @@
           </div>
         </v-row>
         <v-row>
-          <div v-if="props.page == 'edit'" class="v-col-12 pt-0 font-weight-bold">
+          <div v-if="props.page == 'edit' || props.page == 'view'" class="v-col-12 pt-0 font-weight-bold">
             Additional Info
           </div>
-          <div v-if="props.page == 'edit'" class="v-col-12 pt-0">
+          <div v-if="props.page == 'edit' || props.page == 'view'" class="v-col-12 pt-0">
             <v-btn
               v-for="(btn, index) in buttonArray"
               :key="index"
@@ -408,7 +408,7 @@
           <div class="v-col-12 pt-0">
             <v-row>
               <div class="v-col-12 pb-2">
-                <Studio :options="{ multiSelect: true }" @select="studioSelectResponse" />
+                <Studio :options="{ multiSelect: true }" @select="studioSelectResponse" v-if="route.name !='view-asset'"/>
               </div>
             </v-row>
             <v-row v-if="selectedFiles.length > 0" class="px-1">
@@ -478,7 +478,7 @@ import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { mdiClose } from "@mdi/js";
 import AssetWarranties from "@/pages/assets/additional-info/AssetWarranties.vue";
 import AssetMaintenances from "@/pages/assets/additional-info/AssetMaintenances.vue";
@@ -486,7 +486,8 @@ import AssetIncidents from "@/pages/assets/additional-info/AssetIncidents.vue";
 import AssetAllotedLocations from "@/pages/assets/additional-info/AssetAllotedLocations.vue";
 
 const router = useRouter();
-
+const route = useRoute();
+ 
 const props = defineProps({
   page: {
     type: String,
@@ -498,6 +499,7 @@ const props = defineProps({
   },
 });
 
+
 const buttonArray = ref([
   "specification",
   "purchase",
@@ -507,7 +509,7 @@ const buttonArray = ref([
   "maintenance",
   "incident",
 ]);
-
+const assetObj = ref({});
 // snackbar
 const sbOptions = ref({});
 
@@ -534,20 +536,12 @@ import { useLocationStore } from "@/stores/locations";
 const locationStore = useLocationStore();
 if (locationStore.list.length == 0) {
   locationStore.getLocations(authStore.token);
-}
-
-// status
-import { useStatusStore } from "@/stores/status";
-const statusStore = useStatusStore();
-if (statusStore.list.length == 0 || statusStore.conditions.length == 0) {
-  statusStore.getStatuses(authStore.token);
-}
+} 
 
 // vendor
 import { useVendorStore } from "@/stores/vendors";
 const vendorStore = useVendorStore();
 if (vendorStore.list.length == 0) {
-  console.log("fORM", vendorStore.list);
   vendorStore.getVendors(authStore.token);
 }
 
@@ -581,7 +575,7 @@ let validation = yup.object({
 
 // save asset
 const loadingAsset = ref(false);
-const assetObj = ref({});
+
 const selectedFiles = ref([]);
 const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 
@@ -603,6 +597,8 @@ const setAssetData = (assetData) => {
       assetData.financial_information.capitalization_date;
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
   }
+
+  console.log("assetObj.value.status_id",assetObj.value);
 };
 
 setAssetData(props.asset);
@@ -613,6 +609,15 @@ watch(
     setAssetData(newVal);
   }
 );
+
+
+
+// status
+import { useStatusStore } from "@/stores/status";
+const statusStore = useStatusStore();
+if (statusStore.list.length == 0 || statusStore.conditions.length == 0) { 
+      statusStore.getStatuses(authStore.token); 
+}
 
 const saveAsset = async () => {
   loadingAsset.value = true;

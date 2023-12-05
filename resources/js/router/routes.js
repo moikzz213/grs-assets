@@ -139,6 +139,15 @@ export const routes = [
         },
     },
     {
+        path: "/asset-list/view-only/:id",
+        component: () => import("../pages/assets/EditAsset.vue"),
+        name: "view-asset",
+        meta: {
+            requiresAuth: true,
+            title: "asset-list",
+        },
+    },
+    {
         path: "/asset-list/add",
         component: () => import("../pages/assets/AddAsset.vue"),
         name: "add-asset",

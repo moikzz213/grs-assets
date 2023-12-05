@@ -84,11 +84,11 @@
                                     <Field
                                         name="Urgency"
                                         v-slot="{ field, errors }"
-                                        v-model="objData.urgency"
+                                        v-model="objData.urgency_id"
                                     >
                                         <v-select
                                             :items="urgencyList"
-                                            v-model="objData.urgency"
+                                            v-model="objData.urgency_id"
                                             variant="outlined"
                                             density="compact"
                                             hide-details
@@ -315,9 +315,10 @@ import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
  
 import { useFormatDate } from "@/composables/formatDate.js";
-
-import Attachment from "./Attachment.vue"
+import { useStatusStore } from "@/stores/status";
+import Attachment from "@/pages/normal/maintenance/Attachment.vue"
 import Facility from "./Facility.vue"
+
 const emit = defineEmits(["saved"]);
 
 const authStore = useAuthStore();
@@ -353,11 +354,16 @@ const route = useRoute();
 const router = useRouter();
 const isActive = ref(route.query.type);
 const viewOnly = ref(route.query.v);
-const urgencyList = ref([
-    { id: 1, title: "1. Normal" },
-    { id: 2, title: "2. Medium" },
-    { id: 3, title: "3. High" },
-]);
+const statusStore = useStatusStore();
+const urgencyList = ref([]);
+urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
+ 
+if (statusStore.list.length == 0) {
+  statusStore.getStatuses(authStore.token).then(() => {
+    urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
+   
+  });
+}
 
 let validation = yup.object({ 
     Urgency: yup.string().required(),

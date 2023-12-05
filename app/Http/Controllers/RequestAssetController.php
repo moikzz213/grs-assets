@@ -89,8 +89,10 @@ class RequestAssetController extends Controller
             return;
         }
         
+        $role = $request->role;
         $assetApprovals = array();
         $jobData = array();
+        
         foreach($request->approval AS $k => $v){ 
             $status = 'pending';
             if($k == 0){
@@ -103,8 +105,8 @@ class RequestAssetController extends Controller
                 'orders' => $k, 
                 'status' => $status
             );
-        }
-
+        }  
+       
         $dataArr = array(
             'company_id' => $request->data['company_id'],
             'transferred_from' => $request->data['transferred_from'],
@@ -123,21 +125,31 @@ class RequestAssetController extends Controller
             }
             $query->update($dataArr);
             $query->items()->delete();
-            
+
+            $query->request_approvals()->delete();
+          
+           
             $message = 'Request has been updated.';
             $log_type = 'update';
-        }else{
+        }else{ 
+
+            $assetApprovals[] = array(
+                'profile_id' => $request->profile_id,
+                'approval_type' => 'receiver',
+                'orders' => count($assetApprovals), 
+                'status' => 'pending'
+            ); 
+
             $dataArr = array_merge($dataArr, array( 'request_type_id' => $request->data['request_type_id'],'profile_id' => $request->profile_id));
             $query = RequestAsset::create($dataArr); 
             $ID = $query->id;  
             $message = 'Request has been submitted.';
-            $log_type = 'new';
-            $query->request_approvals()->createMany($assetApprovals);
+            $log_type = 'new'; 
 
             $jobData = array_merge($jobData, array('id' => $ID, 'order' => 0));
             RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default'); 
         }
-
+        $query->request_approvals()->createMany($assetApprovals);
         $query->items()->createMany($request->assets);  
 
         $helper = new GlobalHelper;
@@ -157,7 +169,7 @@ class RequestAssetController extends Controller
 
         $message = 'Request has been '.$request->status;
         return response()->json(array('message' => $message, 'id' => $request->ID), 200);
-    } 
+    }  
 
     public function publicApproveSignatory(Request $request){
         $ID = $request->id;
@@ -165,7 +177,7 @@ class RequestAssetController extends Controller
         $order = $request->order;
         $types = $request->type;
         $is_reject = $request->is_reject;
-        $requestorID = $request->requestor_id; 
+        $requestorID = $request->requestor_id;  
      
         $query2 = RequestApproval::where(['request_asset_id' => $ID, 'profile_id' => $profile, 'orders' => $order])
         ->where(function($q) {
@@ -192,7 +204,7 @@ class RequestAssetController extends Controller
             RejectMailJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
         }else{ 
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $newOrder])->first();  
-            //$query2->update(array('status' => 'done','date_approved' => Carbon::now()));  
+            $query2->update(array('status' => 'done','date_approved' => Carbon::now()));  
             
             if($query3){
                 $jobData = array( 'profile_id' => $query3->profile_id, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $newOrder);
@@ -205,7 +217,7 @@ class RequestAssetController extends Controller
             }
 
             $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
-           // NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default'); 
+            NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default'); 
 
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
@@ -217,8 +229,10 @@ class RequestAssetController extends Controller
                     $updateData = array_merge($updateData,array('date_closed' => Carbon::now()));
                 }
 
-                $query->update($updateData); 
+                $query->update($updateData);
+
             }else{
+
                 $updateData = array('status' => $stats);
 
                 // Approval completed
@@ -253,9 +267,10 @@ class RequestAssetController extends Controller
 
                        
                     }
-                    dd($query,$pluckAssetCodes);
+                   
                 }
-               // $query->update($updateData); 
+
+                $query->update($updateData); 
             }
 
             $message = 'Request has been approved';

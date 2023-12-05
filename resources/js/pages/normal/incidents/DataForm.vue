@@ -368,11 +368,11 @@ const isActive = ref(route.query.type);
 const statusStore = useStatusStore();
 const urgencyList = ref([]);
 urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
-console.log("created", urgencyList.value);
+ 
 if (statusStore.list.length == 0) {
   statusStore.getStatuses(authStore.token).then(() => {
     urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
-    console.log("after get", urgencyList.value);
+   
   });
 }
 

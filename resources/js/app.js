@@ -41,10 +41,10 @@ const router = createRouter({
     routes: [...routes, ...jc, ...ri],
 });
 
-function returnAccess(data) {
+function returnAccess(data) { 
     let hasAccess = false;
     authStore.access.map((o) => {
-      
+     
         if (data.title == o.slug) {
             hasAccess = true;
            
@@ -53,9 +53,11 @@ function returnAccess(data) {
               
                 if (o.capabilities.includes('edit')) {
                     hasAccess = true;
+                  
                 } else if (o.capabilities.includes('new')) {
                     hasAccess = true;
                 } else {
+                 
                     hasAccess = false;
                 }
             }
@@ -66,6 +68,7 @@ function returnAccess(data) {
 }
 
 function validateAccess(data) {
+    
     let hasAccess = false;
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
@@ -100,17 +103,17 @@ router.beforeEach((to, from, next) => {
         
         next({ name: 'Login' });
     } else {
-        
+      
         // private route
         if (authStore.authIsLoggedIn) { 
             if (to.meta.title?.toLowerCase() == 'unauthorized') {
-              
-            } else if (!validateAccess(to.meta)) {
                
+            } else if (!validateAccess(to.meta)) {
+              
                 next({ name: 'Unauthorized' });
             }
         }   else if (to.path != '/login' && to.path != '/public/employee-signatory/request/approvals' && to.path != '/public/employee-signatory/transfer/approvals') {
-           
+          
             next({ name: 'Login' });
         }
     }

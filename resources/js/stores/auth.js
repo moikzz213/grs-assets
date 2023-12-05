@@ -103,8 +103,7 @@ export const useAuthStore = defineStore("authUser", {
 
                                     if (q.data && q.data.id) {
 
-                                        this.auth_access = q.data.access;
-                                        // console.log("checkuser");
+                                        this.auth_access = q.data.access; 
 
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;

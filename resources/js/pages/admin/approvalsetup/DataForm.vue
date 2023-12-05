@@ -175,6 +175,21 @@
                                             </v-btn>
                                         </div>
                                     </v-row>
+                                    <v-row class="mt-0">
+                                        <div
+                                            class="v-col-1 v-col-md-1 my-2 font-weight-bold"
+                                        ></div>
+                                        <div
+                                            class="v-col-3 v-col-md-3 my-2 font-weight-bold"
+                                        >
+                                            Receiver
+                                        </div>
+                                        <div
+                                            class="v-col-8 v-col-md-8 my-2 font-weight-bold"
+                                        >
+                                            Requestor
+                                        </div>
+                                    </v-row>
                                 </div>
                             </v-row>
                         </v-card-text>
@@ -213,9 +228,10 @@ const signatoriesObject = ref([]);
 const sbOptions = ref({});
 const dataObj = ref({ title: props.objectdata.title });
 const typeItems = ref([
-    { id: "approve", value: "Approver" },
-    { id: "receiver", value: "Receiver" },
+    { id: "approve", value: "Approval" },
+    { id: "releasing", value: "Asset Releasing" },
     { id: "reviewer", value: "Reviewer" },
+    { id: "transport", value: "Transport Arrangement" },
     { id: "verify", value: "Verify" },
 ]);
 const signatoryItems = ref([]);

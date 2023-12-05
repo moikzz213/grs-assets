@@ -389,15 +389,15 @@ const freeForm = computed(() => {
             data: categoryStore.list,
         },
         { name: "title", label: "Vendor Name", required: true, type: "text" },
-        { name: "brand", label: "Brand", required: true, type: "text" },
+        { name: "brand", label: "Brand", required: false, type: "text" },
         { name: "origin", label: "Origin", required: false, type: "text" },
+        { name: "contact_name", label: "Name", required: true, type: "text" },
         {
             name: "designation",
             label: "Designation",
             required: false,
             type: "text",
-        },
-        { name: "contact_name", label: "Name", required: true, type: "text" },
+        }, 
         {
             name: "contact_email",
             label: "Email",

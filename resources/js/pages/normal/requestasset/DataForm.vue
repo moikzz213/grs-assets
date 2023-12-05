@@ -450,9 +450,7 @@
                             <div class="v-col-12 v-col-md-12 text-info">
                                 Note: Once submitted and approval is on-going,
                                 you will no longer allowed to update the
-                                request.<br />
-                                Only Asset Supervisor - Projects can update the
-                                data specially the asset code.
+                                request. 
                             </div>
                         </v-row>
                     </v-card-text>
@@ -524,6 +522,10 @@ const statusTitle = (v) => {
         return "Review By";
     } else if (v == "receiver") {
         return "Receiver";
+    } else if (v == "transport") {
+        return "Trasportation Arrangement";
+    } else if (v == "releasing") {
+        return "Asset Releasing";
     } else if (v == "verify") {
         return "Verify By";
     }
@@ -597,6 +599,7 @@ const submitRequest = () => {
         approval: approvalSetupList.value,
         profile_id: authStore.user.profile.id,
         type: "request",
+        role: authStore.user.profile.role,
     };
     
     clientKey(authStore.token)
@@ -655,6 +658,29 @@ const setupApprovals = async () => {
                         onUpdateApproval.value[i].reason_rejected;
                     return o;
                 });
+
+                if(approvalSetupList.value.length > 1){
+                    approvalSetupList.value[onUpdateApproval.value.length-1] = {
+                        id:onUpdateApproval.value[onUpdateApproval.value.length -1].id,
+                        profile_id:onUpdateApproval.value[onUpdateApproval.value.length -1].profile_id,
+                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                        date_approved: onUpdateApproval.value[onUpdateApproval.value.length -1].date_approved,
+                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                        reason_rejected: '',
+                        types: onUpdateApproval.value[onUpdateApproval.value.length -1].approval_type,
+                        sort: onUpdateApproval.value[onUpdateApproval.value.length -1].orders,
+                        request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length -1].request_asset_id,
+                        signatures:[
+                            {
+                                id: formObjData.value.profile?.id,
+                                display_name: formObjData.value.profile?.display_name,
+                                first_name: formObjData.value.profile?.first_name,
+                                last_name: formObjData.value.profile?.last_name,
+                                 
+                            }
+                        ]
+                    }
+                } 
             }
 
             if (res.data?.stages.length > 0) {

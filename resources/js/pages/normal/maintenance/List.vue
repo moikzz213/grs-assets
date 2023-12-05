@@ -137,7 +137,7 @@
             <tbody>
               <tr v-for="item in users.data" :key="item.id">
                 <td>ISR-2{{ pad(item.id) }}</td>
-                <td>{{ staticStatus(item.urgency) }}</td>
+                <td>{{ item.urgency?.title }}</td>
                 <td>{{ staticStatus(item.priority) }}</td>
                 <td>{{ item.company?.title }}</td>
                 <td>{{ item.location?.title }}</td>

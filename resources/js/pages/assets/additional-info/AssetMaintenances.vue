@@ -2,7 +2,7 @@
   <v-row>
     <div class="v-col-12 pt-0 pb-2">
       
-      <v-btn @click="openNewMaintenance" class="mb-3" size="small" v-if="assetDetail.status_id != 2">
+      <v-btn @click="openNewMaintenance" class="mb-3" size="small" v-if="assetDetail.status_id != 2 && route.name !='view-asset'">
         New Maintenance <v-icon class="ml-2" :icon="mdiPlus" ></v-icon>
       </v-btn>
       <v-card>
@@ -47,10 +47,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { mdiPlus } from "@mdi/js";
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useFormatDate } from "@/composables/formatDate.js";
 
 const router = useRouter();
+const route = useRoute();
 const props = defineProps({
   asset: {
     type: Object,

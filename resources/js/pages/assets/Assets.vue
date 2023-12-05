@@ -26,7 +26,7 @@
           >print barcodes({{ draftPrints.length }})</v-btn
         >
         <DownloadExcel
-          v-if="dataObj.data?.length > 0"
+          v-if="dataObj.data?.length > 0 && authStore.capabilities?.includes('edit')"
           :fetch="donwloadLeads"
           :fields="json_field"
           worksheet="Report"
@@ -97,7 +97,7 @@
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="categoryStore.list"
-                v-model="objFIlter.location_id"
+                v-model="objFIlter.category_id"
                 @update:modelValue="filterSearch"
                 variant="outlined"
                 density="compact"
@@ -268,8 +268,15 @@
                         authStore.user.role == 'superadmin' ||
                         authStore.capabilities?.includes('edit')
                       "
-                      @click="() => editUser(item.id)"
+                      @click="() => editUser(item.id,'edit')"
                       :icon="mdiPencil"
+                      class="mx-1"
+                    />
+                    <v-icon
+                      size="small"
+                      v-else
+                      @click="() => editUser(item.id, 'view')"
+                      :icon="mdiFileEye"
                       class="mx-1"
                     />
                     <v-icon
@@ -337,7 +344,7 @@
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { onMounted, ref, watch } from "vue";
-import { mdiPencil, mdiTrashCan } from "@mdi/js";
+import { mdiPencil, mdiTrashCan,mdiFileEye } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
@@ -589,12 +596,16 @@ watch(currentPage, (newValue, oldValue) => {
   }
 });
 
-const editUser = (id) => {
+const editUser = (id, type) => {
+  let componentName = 'edit-asset';
+  if(type == 'view'){
+    componentName = 'view-asset';
+  }
   router
     .push({
-      name: "edit-asset",
+      name: componentName,
       params: {
-        id: id,
+        id: id, 
       },
     })
     .catch((err) => {

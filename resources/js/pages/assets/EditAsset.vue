@@ -1,9 +1,9 @@
 <template>
   <v-container class="pb-10">
-    <AppPageHeader title="Edit Asset" />
+    <AppPageHeader :title="`${type} Asset`" />
     <v-row>
       <div class="v-col-12">
-        <AssetForm :page="'edit'" :asset="asset" @updated="updateResponse" />
+        <AssetForm :page="type" :asset="asset" @updated="updateResponse" />
       </div>
     </v-row>
   </v-container>
@@ -19,6 +19,7 @@ import AssetForm from "@/pages/assets/AssetForm.vue";
 // route
 const route = useRoute();
 
+const type = ref('edit');
 // authStore
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
@@ -30,7 +31,10 @@ const getAssetById = async () => {
     .get("/api/asset/" + route.params.id)
     .then((res) => {
       asset.value = res.data;
-      console.log("asset.value", asset.value);
+      console.log("asset.value", route.name);
+      if(route.name == 'view-asset'){
+        type.value = 'view';
+      }
     })
     .catch((err) => {
       console.log("getAssetById error: ", err);
