@@ -43,8 +43,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
-                                    item-value="id"
-                                    :disabled="loggedRole == 'facility'"
+                                    item-value="id" 
                                     item-title="display_name"
                                     class="my-2"
                                     label="Handled By*"
@@ -111,6 +110,7 @@ const props = defineProps({
 });
 const authStore = useAuthStore();
 const loggedRole = ref(authStore.user.profile.role);
+ 
 const objData = ref({});
 const priorityList = ref([
     { id: 1, title: "1. Normal" },
