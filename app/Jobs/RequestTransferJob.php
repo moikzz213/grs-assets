@@ -54,7 +54,7 @@ class RequestTransferJob implements ShouldQueue
         $randomString2 = Str::random(50);
         
         $type = strtoupper($data->type);
-        $link = env('VITE_APP_URL').'/public/employee-signatory/'.$data->type.'/approvals?o='.$data->order."&key=".$randomString."&pid=".$data->profile_id."&pv=".$randomString2."&id=".$data->id;
+        $link = env('VITE_APP_URL').'/pv/employee-signatory/'.$data->type.'/approvals?o='.$data->order."&key=".$randomString."&pid=".$data->profile_id."&pv=".$randomString2."&id=".$data->id;
          
         $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s) - ".$snNo);
     
