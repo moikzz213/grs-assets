@@ -112,7 +112,7 @@ const importCSV = () => {
 };
 
 const parseComplete = async (results, file) => {
-  console.log("results", results);
+  
   // Remove 1st row header
   // delete results.data[0];
 
