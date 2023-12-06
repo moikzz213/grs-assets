@@ -26,7 +26,7 @@
           >print barcodes({{ draftPrints.length }})</v-btn
         >
         <DownloadExcel
-          v-if="dataObj.data?.length > 0 && authStore.capabilities?.includes('edit')"
+          v-if="dataObj.data?.length > 0 && (authStore.user.role == 'superadmin' || authStore.capabilities?.includes('edit'))"
           :fetch="donwloadLeads"
           :fields="json_field"
           worksheet="Report"
