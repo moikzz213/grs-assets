@@ -257,7 +257,7 @@ const commonNav = ref([
         title: "Import Asset",
         icon: mdiArchiveArrowUpOutline,
         path: "/asset-list/import",
-        slug: "asset-import",
+        slug: "asset-list",
       },
     ],
   },
