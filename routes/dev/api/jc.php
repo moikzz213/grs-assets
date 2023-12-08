@@ -41,7 +41,7 @@ Route::middleware('authkey')->group(function () {
     
 });
 
-Route::prefix('public')->group(function () {
+Route::prefix('pv')->group(function () {
     Route::post('/fetch/request-assets/data', [RequestAssetController::class, 'publicFetchRequest'])->name('public.fetch.request.id');
     Route::post('/store/request-asset/approve-data', [RequestAssetController::class, 'publicApproveSignatory'])->name('public.approve.request');
     Route::get('/run/cron-jobs', [CronJobController::class, 'asset_notification'])->name('public.cron.job');

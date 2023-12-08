@@ -32,8 +32,7 @@
                                     item-value="id"
                                     item-title="title"
                                     class="my-2"
-                                    label="Priority*"
-                                    :disabled="loggedRole == 'facility'"
+                                    label="Priority*" 
                                 >
                                 </v-autocomplete>
                                
@@ -85,9 +84,10 @@
 
                     </div>
                     <div class="v-col-12" style="max-height:400px; overflow: auto;">
-                        <v-row v-for="item in objData.remarks" :key="id">
-                            <div class="v-col-3">{{ item.profile?.display_name }} <br/> <small>{{ useFormatDateTime(item.created_at) }}</small></div>
-                            <div class="v-col-9">{{ item.remarks }}</div>
+                        <v-row v-for="item in objData.remarks" :key="id"> 
+                            <div class="v-col-12 d-flex justify-space-between"><div><pre>{{ item.remarks }}</pre> </div> 
+                                <div>{{ item.profile?.display_name }} - <small>{{ useFormatDateTime(item.created_at) }}</small></div></div>
+                                <v-divider></v-divider>
                         </v-row>
                     </div>
                 </v-row>
@@ -108,8 +108,7 @@ const props = defineProps({
         default: {},
     },
 });
-const authStore = useAuthStore();
-const loggedRole = ref(authStore.user.profile.role);
+const authStore = useAuthStore(); 
  
 const objData = ref({});
 const priorityList = ref([
@@ -157,6 +156,8 @@ onMounted(() => {
     fetchFacilityTeam();
     fetchStatus();
     objData.value = props.objectdata;
+    objData.value.prev_handled_by = props.objectdata.handled_by;
+     
     objData.value.priority = props.objectdata.priority ? parseInt(props.objectdata.priority) : null;
 });
 watch(  () => props.objectdata.remarks,  (newValue, oldValue) => {  

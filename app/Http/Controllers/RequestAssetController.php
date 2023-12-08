@@ -92,12 +92,13 @@ class RequestAssetController extends Controller
         $role = $request->role;
         $assetApprovals = array();
         $jobData = array();
-        
+        $firstReminder = 0;
         foreach($request->approval AS $k => $v){ 
             $status = 'pending';
             if($k == 0){
                 $status = 'awaiting-approval';
                 $jobData = array('profile_id' => $v['profile_id']);
+                $firstReminder = $v['profile_id'];
             }
             $assetApprovals[] = array(
                 'profile_id' => $v['profile_id'],
@@ -106,13 +107,17 @@ class RequestAssetController extends Controller
                 'status' => $status
             );
         }  
+
+        $reminderDate = Carbon::now()->addDay(1);
        
         $dataArr = array(
             'company_id' => $request->data['company_id'],
             'transferred_from' => $request->data['transferred_from'],
             'transferred_to' => $request->data['transferred_to'],
             'subject' => $request->data['subject'],
-            'types' => $request->type  // request or transfer
+            'types' => $request->type,  // request or transfer
+            'reminder_date' => $reminderDate,
+            'reminder_profile_id' => $firstReminder
         );
 
         $jobData = array_merge($jobData, array('type' => $request->type, 'subject' => $request->data['subject']));
@@ -188,8 +193,7 @@ class RequestAssetController extends Controller
             return response()->json(array('message' => 'You already approved this request.', 'success' => false), 200);
         }
 
-        $newOrder = (int)$order + 1; 
-        
+        $newOrder = (int)$order + 1;
 
         $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->with('items', function($q) {
             $q->whereNotNull('asset_code');
@@ -197,7 +201,7 @@ class RequestAssetController extends Controller
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first(); 
             $message = 'Request has been rejected';
-            $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject)); 
+            $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null)); 
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
             $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $order);
@@ -224,21 +228,23 @@ class RequestAssetController extends Controller
                     $request->assets
                 , ['id','request_asset_id'], ['is_available', 'asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks','is_received']);
 
-                $updateData = array('status' => $stats, 'is_available' => 1);
+                
                 if($stats == 'complete'){
-                    $updateData = array_merge($updateData,array('date_closed' => Carbon::now()));
+                    $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => null, 'reminder_profile_id' => null,'date_closed' => Carbon::now());
+                }else{
+                    $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
                 }
 
                 $query->update($updateData);
 
             }else{
 
-                $updateData = array('status' => $stats);
+                $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => @$query3->profile_id);
 
                 // Approval completed
 
                 if($stats == 'complete'){
-                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now()); 
+                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now(), 'reminder_date' => null, 'reminder_profile_id' => null); 
 
                     $pluckAssetCodes = array();
                     $pluckAssetRemarks = array();
@@ -263,12 +269,10 @@ class RequestAssetController extends Controller
                                 
                             } 
                             AllottedInformation::insert($getAssetIds);
-                        }
-
-                       
+                        } 
                     }
                    
-                }
+                } 
 
                 $query->update($updateData); 
             }
