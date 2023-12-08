@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\CronJobController;
+use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\RequestAssetController;
@@ -40,7 +41,7 @@ Route::middleware('authkey')->group(function () {
     Route::post('/warranty/sync-images/store-update', [WarrantyController::class, 'syncImages'])->name('change.warranty.request');
     
 });
-
+Route::post('/send-mail-reset-password', [UserApiController::class, 'resetPasswordMail'])->name('mail.reset.password');
 Route::prefix('pv')->group(function () {
     Route::post('/fetch/request-assets/data', [RequestAssetController::class, 'publicFetchRequest'])->name('public.fetch.request.id');
     Route::post('/store/request-asset/approve-data', [RequestAssetController::class, 'publicApproveSignatory'])->name('public.approve.request');
