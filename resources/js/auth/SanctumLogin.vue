@@ -2,7 +2,7 @@
   <GuestLayout>
     <div
       class="mx-auto px-3 text-center"
-      style="z-index: 1; max-width: 400px; width: 100%; margin-top: 100px"
+      style="z-index: 1; max-width: 320px; width: 100%; margin-top: 100px"
     >
       <WhiteLogo width="100%" />
       <div class="text-subtitle-1 text-white">{{ appName }}</div>

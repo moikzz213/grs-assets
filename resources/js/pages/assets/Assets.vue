@@ -50,13 +50,13 @@
       <v-col class="v-col-12">
         <v-card :loading="dataObj.loading">
           <v-card-title class="d-flex align-center mb-3 pa-3">
-            <div class="mr-auto">Asset Incidents</div>
+            <div class="mr-auto">Asset List</div>
             <v-text-field
               v-model="search"
               variant="outlined"
               density="compact"
               clearable
-              label="Search (ex. ISR-100035 )"
+              label="Search"
               type="text"
               hide-details
               style="max-width: 300px"
@@ -605,7 +605,7 @@ const editUser = (id, type) => {
     .push({
       name: componentName,
       params: {
-        id: id, 
+        id: id,
       },
     })
     .catch((err) => {

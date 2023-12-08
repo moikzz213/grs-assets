@@ -359,14 +359,9 @@ class AssetController extends Controller
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
 
-                    $q->where('title', 'like', '%'.$search.'%')
-                    ->orWhereHas('asset', function ($qq) use($search) {
-                        $qq->where('asset_name', 'like', '%'.$search.'%')
+                    $q->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code',  'like', '%'.$search.'%')
-                        ->orWhere('serial_number',  'like', '%'.$search.'%')
-                        ->orWhere('po_number',  'like', '%'.$search.'%');
-                    });
-
+                        ->orWhere('serial_number',  'like', '%'.$search.'%'); 
             });
 
             $dataObj = $dataObj->get();
