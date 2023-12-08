@@ -93,7 +93,7 @@ function validateAccess(data) {
 
 router.beforeEach((to, from, next) => {
  
-    if (to.name == 'PublicApproval' ) { 
+    if (to.name == 'PublicApproval' || to.name == 'ResetPasswordMail' || to.name == 'ResetPassword') { 
         next();
     }else if (to.path == '/' && !to.meta.requiresAuth) {
         // public route

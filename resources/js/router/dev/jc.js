@@ -149,4 +149,27 @@ export const jc = [
             type: "edit"
         },
     },
+
+    /**
+     * Reset Password
+     */
+    {
+        path: "/reset-password",
+        component: () => import("../../auth/ResetPasswordMail.vue"),
+        name: "ResetPasswordMail",
+        meta: {
+            requiresAuth: false,
+            title: "ResetPasswordMail",
+        },
+    },
+
+    {
+        path: "/link/reset-password/employee-ecode",
+        component: () => import("../../auth/ResetPassword.vue"),
+        name: "ResetPassword",
+        meta: {
+            requiresAuth: false,
+            title: "ResetPassword",
+        },
+    }, 
 ];
