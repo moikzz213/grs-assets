@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Status;
 use App\Models\Incident;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class CronJobController extends Controller
                 } elseif ($v['meta_type'] == 'request_transfer') {
                     $request_notification = $v['meta_value']; // notification for request - transfer
                 } elseif ($v['meta_type'] == 'incidents') {
-                    $incident_notification = $v['meta_value']; // notification for incidents - maintenance
+                   // $incident_notification = $v['meta_value']; // notification for incidents - maintenance
                 } elseif ($v['meta_type'] == 'maintenance-receiver') {
                     $maintenanceReceiver[] = $v['meta_value']; // Email Receiver for maintenance
                 } elseif ($v['meta_type'] == 'incident-receiver') {
@@ -45,18 +46,21 @@ class CronJobController extends Controller
         /**
          * Maintenance
          */ 
-        $this->maintenanceFn($maintenanceReceiver, $incident_notification);
+        $this->maintenanceFn($maintenanceReceiver);
         
 
         /**
          * Incident
          */
         
-        $this->incidentFn($incidentReceiver, $incident_notification);    
+        $this->incidentFn($incidentReceiver);    
        // dd($maintenanceReceiver);
+
+       echo json_encode(array("message" => 'Thank you!'));
+       return;
     }
 
-    private function maintenanceFn($maintenanceReceiver, $addDays){
+    private function maintenanceFn($maintenanceReceiver){
 
         $queryMaintenance = Incident::where('type_id', 2)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
@@ -67,22 +71,31 @@ class CronJobController extends Controller
 
         if (count($queryMaintenance) > 0) {
             foreach ($queryMaintenance as $k => $v) {
-                if ($v['handled_by']) {
-                    $sendToHandler[] = $v;
+               
+                if (@$v['handled_by']) {
+                    //$sendToHandler[] = $v;
                     if(!in_array($v['handled_by'], $sendToHandler)){
                         $sendToHandler[] = $v['handled_by'];
                     }
                 } else {
                     $sendToMaintenanceReceiver[] = $v;
                 }
-                $v->update(['reminder_date' => Carbon::now()->addDays($addDays)]);
-            }
+                $addDays = Status::where('id', $v->id)->first();
+                if($addDays){
+                    $days = $addDays->notification_interval;
+                }else{
+                    $days = 1;
+                }
 
+                $v->update(['reminder_date' => Carbon::now()->addDays($days)]);
+            }
+           dd($sendToMaintenanceReceiver, $maintenanceReceiver, $sendToHandler);
             if (
                 count($sendToMaintenanceReceiver) > 0 &&
                 count($maintenanceReceiver) > 0
             ) {
                 // send to maintenance receiver here
+               
             }
 
             if (count($sendToHandler) > 0) {
@@ -91,7 +104,7 @@ class CronJobController extends Controller
         }
     }
 
-    private function incidentFn($incidentReceiver, $addDays){
+    private function incidentFn($incidentReceiver){
         $queryIncidents = Incident::where('type_id','!=' , 2)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
@@ -108,9 +121,17 @@ class CronJobController extends Controller
                 } else {
                     $sendToIncidentReceiver[] = $v;
                 }
-               // $v->update(['reminder_date' => Carbon::now()->addDays($addDays)]);
-            }
+                
+                $addDays = Status::where('id', $v->id)->first();
+                if($addDays){
+                    $days = $addDays->notification_interval;
+                }else{
+                    $days = 1;
+                }
 
+                $v->update(['reminder_date' => Carbon::now()->addDays($days)]);
+            }
+            dd($sendToIncidentReceiver, $incidentReceiver);
             if (
                 count($sendToIncidentReceiver) > 0 &&
                 count($incidentReceiver) > 0

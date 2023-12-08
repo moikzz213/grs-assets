@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="v-col-12 pt-5">
-            <v-row>
+            <v-row v-if="props.objectdata.profile_id == loggedID">
                 <div class="v-col-12 pb-2">
                     <Studio
                         :options="{ multiSelect: true, type: 'incident' }"
@@ -21,6 +21,7 @@
                         :icon="mdiClose"
                         size="26px"
                         color="error"
+                        v-if="props.objectdata.profile_id == loggedID"
                         @click="() => removeAttachment(file.id)"
                     >
                     </v-btn>
@@ -72,7 +73,7 @@
                     </v-sheet>
                 </div>
             </v-row>
-            <v-row>
+            <v-row v-if="props.objectdata.profile_id == loggedID">
                 <div class="v-col-12">
                     <v-btn color="primary" @click="saveImage">Save</v-btn>
                 </div>
@@ -145,6 +146,7 @@ const saveImage = () => {
         })
         .catch((err) => {});
 };
+const loggedID = ref(authStore.user.profile.id);
 
 onMounted(() => {
     selectedFiles.value = props.attachment; 
