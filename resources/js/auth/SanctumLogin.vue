@@ -147,6 +147,6 @@ const authLogin = async () => {
     loadingLogin.value = false;
     return false;
   }
-  return response;
+  return response; 
 };
 </script>

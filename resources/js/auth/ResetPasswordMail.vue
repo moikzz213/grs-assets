@@ -39,7 +39,7 @@
   
   <script setup>
   import { ref } from "vue"; 
-  import { authApi } from "@/services/clientApi";
+  import axios from "axios";
   import GuestLayout from "../layouts/GuestLayout.vue";
   import WhiteLogo from "@/Components/logo/WhiteLogo.vue"; 
  
@@ -60,7 +60,8 @@
     }
     resetBtn.value = true;
     loadingLogin.value = true;
-    authApi.post("/api/send-mail-reset-password", {ecode: credentials.value.ecode})
+    
+    axios.post("/api/send-mail-reset-password", {ecode: credentials.value.ecode})
       .then((res) => { 
         loadingLogin.value = false;
           message.value = res.data.message;
