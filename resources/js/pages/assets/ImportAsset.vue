@@ -35,14 +35,69 @@
                   {{ "Import" }}
                   <v-icon :icon="mdiTrayArrowUp" class="ml-3"></v-icon>
                 </v-btn>
-                <div class="text-caption text-primary mt-3">
-                  Note: This import function will ignore the data that already exist.
+                <div class="text-caption text-primary mt-3 text-info">
+                  Note: Refer to below ID's upon importing data.
                 </div>
               </div>
             </v-row>
           </v-card-text>
         </v-card>
       </div>
+    </v-row>
+    <v-row>
+       
+      <v-col md="3">
+        <v-card>
+          <v-card-subtitle class="mt-2">Business Unit</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-card-text>
+             <v-row v-for="item in companyStore.list" :key="item.id"> 
+              <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
+                {{ item.title }}</v-col>
+                  <v-divider></v-divider>
+             </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <v-card>
+          <v-card-subtitle class="mt-2">Locations & Alloted Location</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-row v-for="item in locationStore.list" :key="item.id"> 
+              <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
+                {{ item.title }}</v-col>
+                  <v-divider></v-divider>
+             </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <v-card>
+          <v-card-subtitle class="mt-2">Categories</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-row v-for="item in categoryStore.list" :key="item.id"> 
+              <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
+                {{ item.title }}</v-col>
+                  <v-divider></v-divider>
+             </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col md="3">
+        <v-card>
+          <v-card-subtitle class="mt-2">Vendors</v-card-subtitle>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-row v-for="item in vendorStore.list" :key="item.id"> 
+              <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
+                {{ item.title }}</v-col>
+                  <v-divider></v-divider>
+             </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
     <AppSnackBar :options="sbOptions" />
   </v-container>
@@ -68,9 +123,7 @@ import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 
 const baseURL = ref(window.location.origin);
-const loadingImport = ref(false);
-
-const importData = ref(null);
+const loadingImport = ref(false); 
 
 const inputFile = ref(null);
 const rules = ref([
@@ -111,29 +164,13 @@ const importCSV = () => {
   });
 };
 
-const parseComplete = async (results, file) => {
-  
-  // Remove 1st row header
-  // delete results.data[0];
+const parseComplete = async (results, file) => { 
 
   // Filter Empty Rows
   let resultsArray = results.data.filter(function (el) {
     let firstKey = Object.keys(el)[0].toString(); // get the first property and check
     return el != null && el[firstKey] != "";
-  });
-
-  //   let validation = new Set(
-  //     resultsArray.map((obj) => {
-  //       return obj.title;
-  //     })
-  //   );
-
-  //   if (validation.size < resultsArray.length) {
-  //     setTimeout(() => {
-  //       loadingImport.value = false;
-  //     }, 1500);
-  //     return false;
-  //   }
+  }); 
 
   // set data
   let data = {
@@ -171,5 +208,33 @@ const parseComplete = async (results, file) => {
       };
       loadingImport.value = false;
     });
-};
+}; 
+ 
+// companies
+import { useCompanyStore } from "@/stores/companies";
+const companyStore = useCompanyStore();
+if (companyStore.list.length == 0) {
+  companyStore.getCompanies(authStore.token);
+}
+
+// categories
+import { useCategoryStore } from "@/stores/categories";
+const categoryStore = useCategoryStore();
+if (categoryStore.list.length == 0) {
+  categoryStore.getCategories(authStore.token);
+}
+
+// locations
+import { useLocationStore } from "@/stores/locations";
+const locationStore = useLocationStore();
+if (locationStore.list.length == 0) {
+  locationStore.getLocations(authStore.token);
+} 
+
+// vendor
+import { useVendorStore } from "@/stores/vendors";
+const vendorStore = useVendorStore();
+if (vendorStore.list.length == 0) {
+  vendorStore.getVendors(authStore.token);
+}
 </script>

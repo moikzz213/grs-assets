@@ -151,8 +151,7 @@ class IncidentController extends Controller
         if($request->id){
             $query = Incident::where('id', $request->id)->first();
             $dataForm = array(
-                'asset_id' => $assetID,
-                'profile_id' => $request->profile_id,
+                'asset_id' => $assetID, 
                 'title' => $request->title,
                 'description' => $request->description,
                 'company_id' => $request->company_id,
@@ -160,6 +159,7 @@ class IncidentController extends Controller
                 'type_id' => $request->type_id,
                 'urgency_id' => $request->urgency_id,
                 'asset_code' => @$request->asset_code,
+                'reminder_date' => Carbon::now()->addDay(1),
             );
 
             $query->update($dataForm);
@@ -181,7 +181,7 @@ class IncidentController extends Controller
                 'type_id' => $request->type_id,
                 'urgency_id' => $request->urgency_id,
                 'asset_code' => @$request->asset_code,
-                'reminder_date' => Carbon::now(),
+                'reminder_date' => Carbon::now()->addDay(1),
                 'status_id' => 7
             );
             $query = Incident::create( $dataForm );
@@ -208,6 +208,7 @@ class IncidentController extends Controller
     }
 
     public function updateIncidentFacilityTeam(Request $request){
+        
         if($request->id){
 
             $query = Incident::where('id', $request->id)->first();
@@ -220,6 +221,26 @@ class IncidentController extends Controller
 
             if($request->remarks_data){
                 $query->remarks()->create(['remarks' => $request->remarks_data, 'profile_id' => $request->profile_id]);
+            }
+
+            if($request->handled_by !== $request->prev_handled_by){
+                $dataForm = array(
+                    'id'            => $request->id,
+                    'asset_id'      => @$request->asset_id,
+                    'profile_id'    => $request->profile_id,
+                    'title'         => $request->title,
+                    'description'   => $request->description,
+                    'company_id'    => $request->company_id,
+                    'location_id'   => $request->location_id,
+                    'type_id'       => $request->type_id,
+                    'urgency_id'    => $request->urgency_id,
+                    'asset_code'    => @$request->asset_code,
+                    'reminder_date' => Carbon::now()->addDay(1),
+                    'status_id'     => $request->status_id,
+                    'handled_by'     => $request->handled_by,
+                );
+                
+                IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default');
             }
 
             $helper = new GlobalHelper;

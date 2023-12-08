@@ -2,10 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Models\Location;
 use App\Models\Status;
-use App\Models\Notification;
+use App\Models\Profile;
+use App\Models\Location;
 use App\Mail\IncidentMail; 
+use App\Models\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -37,15 +38,22 @@ class IncidentReport implements ShouldQueue
         $data =  json_decode($data);
         if($data->type_id == 2){
             $receiver = 'maintenance-receiver';
-            $subject = "Asset System: Asset Maintenance requested";
+            $subject = "Asset System: Asset Maintenance";
         }else{
             $receiver = 'incident-receiver';
-            $subject = "Asset System: New Incident Reported";
+            $subject = "Asset System: Incident Reported";
         }
-        $query = Notification::where('meta_type','=', $receiver)->whereNotNull('meta_value')->orderBy('id', 'ASC')->get(); 
-        $location = Location::where('id','=', $data->location_id)->first(); 
-        $emails = $query->pluck('meta_value');
+        if($data->handled_by){
+            $query = Profile::where('id','=', $data->handled_by)->first(); 
+           
+            $emails = array($query->email);
+        }else{
+            $query = Notification::where('meta_type','=', $receiver)->whereNotNull('meta_value')->orderBy('id', 'ASC')->get(); 
+            $emails = $query->pluck('meta_value');
+        }
 
+        $location = Location::where('id','=', $data->location_id)->first();
+        
         if($emails && count($emails) > 0){
             $toEmail = $emails;  
 
