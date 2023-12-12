@@ -316,7 +316,7 @@ class AssetController extends Controller
     }
 
     public function fetchAssetCode($code){
-        $query = Asset::where('asset_code', '=',$code)->with('warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','category','company','location')->first();
+        $query = Asset::where('asset_code', '=',$code)->with('pivot_warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','category','company','location','status')->first();
         return response()->json($query, 200);
     }
 

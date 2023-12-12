@@ -1,1 +1,0 @@
-import{ao as s,n as t}from"./app-b23a62eb.js";const r=s("vendors",{state:()=>({vendors:[]}),getters:{list:e=>e.vendors},actions:{async getVendors(e){await t(e).get("/api/vendor/state/vendor-list").then(o=>{this.vendors=Object.assign([],o.data),console.log("getVendors",this.vendors)}).catch(o=>{console.log("getvendors error: ",o)})}}});export{r as u};
