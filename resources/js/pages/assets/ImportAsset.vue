@@ -48,9 +48,9 @@
        
       <v-col md="3">
         <v-card>
-          <v-card-subtitle class="mt-2">Business Unit</v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text>
+          <v-card-subtitle class="mt-2 font-weight-bold">Business Unit</v-card-subtitle>
+          <v-divider class="mt-2 mb-1" ></v-divider>
+          <v-card-text style="max-height:600px; overflow: auto;">
              <v-row v-for="item in companyStore.list" :key="item.id"> 
               <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
                 {{ item.title }}</v-col>
@@ -61,9 +61,9 @@
       </v-col>
       <v-col md="3">
         <v-card>
-          <v-card-subtitle class="mt-2">Locations & Alloted Location</v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text>
+          <v-card-subtitle class="mt-2 font-weight-bold">Locations & Alloted Location</v-card-subtitle>
+          <v-divider class="mt-2 mb-1"></v-divider>
+          <v-card-text  style="max-height:600px; overflow: auto;">
             <v-row v-for="item in locationStore.list" :key="item.id"> 
               <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
                 {{ item.title }}</v-col>
@@ -74,9 +74,9 @@
       </v-col>
       <v-col md="3">
         <v-card>
-          <v-card-subtitle class="mt-2">Categories</v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text>
+          <v-card-subtitle class="mt-2 font-weight-bold">Categories</v-card-subtitle>
+          <v-divider class="mt-2 mb-1"></v-divider>
+          <v-card-text  style="max-height:600px; overflow: auto;">
             <v-row v-for="item in categoryStore.list" :key="item.id"> 
               <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
                 {{ item.title }}</v-col>
@@ -87,9 +87,9 @@
       </v-col>
       <v-col md="3">
         <v-card>
-          <v-card-subtitle class="mt-2">Vendors</v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text>
+          <v-card-subtitle class="mt-2 font-weight-bold">Vendors</v-card-subtitle>
+          <v-divider class="mt-2 mb-1"></v-divider>
+          <v-card-text  style="max-height:600px; overflow: auto;">
             <v-row v-for="item in vendorStore.list" :key="item.id"> 
               <v-col class="py-1"  md="12"><strong>ID: {{item.id}}</strong><br/>
                 {{ item.title }}</v-col>
