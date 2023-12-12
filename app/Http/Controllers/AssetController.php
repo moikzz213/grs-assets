@@ -40,31 +40,7 @@ class AssetController extends Controller
                     $check = Asset::where('asset_code', $item->asset_code)->first();
 
                     if(!$check){
-                        // insert multiple assets
-                        // push fields into assetArray
-                        // array_push($assetArray, array(
-                        //     // asset
-                        //     'asset_name' => $item->asset_name,  // asset_name
-                        //     'asset_code' => $item->asset_code, // asset_code
-                        //     'brand' => $item->brand, // brand
-                        //     'model' => $item->model, // model
-                        //     'specification' => $item->specification, // specification
-                        //     'serial_number' => $item->serial_number, // serial_number
-                        //     'company_id' => (int)$item->business_unit, // business_unit should be id
-                        //     'category_id' => (int)$item->category, // category should be id
-                        //     'location_id' => (int)$item->location, // location should be id
-                        //     'status_id' => (int)$item->status, // status
-                        //     'condition_id' => (int)$item->condition, // condition should be id
-
-                        //     // purchase info
-                        //     'vendor_id' => (int)$item->vendor, // amc_vendor
-                        //     'po_number' => $item->po_number, // po_number
-                        //     'purchased_date' => $item->purchased_date, // purchased_date
-                        //     'price' => (float)$item->price, // price
-                        //     'remarks' => $item->remarks, // remarks
-                        // ));
-                        // $assetLastInsertedId = $importAsset->insertGetId($assetArray);
-
+                       
                         // insert asset and get the id
                         $assetLastInsertedId = Asset::insertGetId([
                            // asset
@@ -86,6 +62,7 @@ class AssetController extends Controller
                            'purchased_date' => $item->purchased_date, // purchased_date
                            'price' => (float)$item->price, // price
                            'remarks' => $item->remarks, // remarks
+                           'created_at' => Carbon::now(),
                         ]);
 
                         if($assetLastInsertedId){
@@ -343,9 +320,7 @@ class AssetController extends Controller
             if(@$filterSearch->location_id){
                 $dataObj = $dataObj->where('location_id', $filterSearch->location_id);
             }
-            if(@$filterSearch->brand_id){
-                $dataObj = $dataObj->where('brand_id', $filterSearch->brand_id);
-            }
+            
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
