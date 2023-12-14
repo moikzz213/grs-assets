@@ -48,7 +48,7 @@ const checkUser = async () => {
     }, 300);
 };
 
- 
+console.log("authStore.authIsLoggedIn",authStore.authIsLoggedIn);
 checkUser();
 
 // set dark mode on load
