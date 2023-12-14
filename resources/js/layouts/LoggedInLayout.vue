@@ -386,9 +386,9 @@ const logout = () => {
   loadingLogout.value = true;
   authlogout()
     .then(() => {
+      localStorage.removeItem("authUser");
       authStore.logout().then(() => {
-        loadingLogout.value = false;
-        localStorage.removeItem("authUser");
+        loadingLogout.value = false; 
         window.location = "/login";
       });
     })
