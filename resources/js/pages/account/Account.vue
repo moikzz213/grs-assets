@@ -3,7 +3,7 @@
     <AppPageHeader title="Account" />
     <v-row>
       <div class="v-col-12">
-        <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Cancel</v-btn>
+        <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Back</v-btn>
       </div>
       <div class="v-col-12 v-col-md-8">
 
