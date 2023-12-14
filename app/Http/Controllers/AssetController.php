@@ -148,6 +148,7 @@ class AssetController extends Controller
             'incidents.handled_by',
             'incidents.handled_by',
             'incidents.profile',
+            'last_updated_by'
         )->first();
         return response()->json($asset, 200);
     }

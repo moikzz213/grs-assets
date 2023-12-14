@@ -73,7 +73,7 @@ class Asset extends Model
 
     public function incidents()
     {
-        return $this->hasMany(Incident::class)->orderBy('id', 'DESC');
+        return $this->hasMany(Incident::class)->orderBy('id', 'DESC')->whereNot('type_id',2);
     }
 
     public function created_by()
