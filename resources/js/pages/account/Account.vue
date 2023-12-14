@@ -2,7 +2,11 @@
   <v-container>
     <AppPageHeader title="Account" />
     <v-row>
+      <div class="v-col-12">
+        <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Cancel</v-btn>
+      </div>
       <div class="v-col-12 v-col-md-8">
+
         <div class="d-flex flex-wrap">
           <v-btn
             :color="`${currentForm == 'profile' ? 'primary' : 'white'} `"
@@ -56,12 +60,15 @@ import ProfileForm from "./ProfileForm.vue";
 import ChangePassword from "./ChangePassword.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const sbOptions = ref({
   status: false,
   type: "primary",
   text: null,
 });
+console.log("router",router);
 
 // user
 const authStore = useAuthStore();
@@ -75,7 +82,9 @@ const currentForm = ref("profile");
 const openForm = async (comp) => {
   currentForm.value = comp;
 };
-
+const cancelFn = () =>{
+  router.back();
+}
 // form response
 const savedResponse = (res) => {
   sbOptions.value = {
