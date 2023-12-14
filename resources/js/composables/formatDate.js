@@ -1,10 +1,12 @@
 // November 11, 2023
 function useFormatDateFull(date) {
-    return new Date(date).toLocaleString("en-US", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-    });
+    if(date){
+        return new Date(date).toLocaleString("en-US", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+        });
+    }
 }
 // 13/11/2023, 4:00 am
 function useFormatDateTime(date) {

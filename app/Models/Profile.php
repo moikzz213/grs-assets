@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\Access;
 use App\Models\Company;
 use App\Models\Incident;
+use App\Models\Location;
 use App\Models\ClientKey;
 use App\Models\ApprovalStages;
 use App\Models\IncidentRemark;
@@ -27,6 +28,11 @@ class Profile extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 
     public function remarks()
