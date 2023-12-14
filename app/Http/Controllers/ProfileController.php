@@ -53,8 +53,7 @@ class ProfileController extends Controller
             'ecode' => 'required|string'          
         ]);
         $compData = 0;
-        $comp = Company::where('id',$request['company_id'])->first();
-        if(!$comp){
+       
             $comp = Company::where('title',"LIKE", "%".$request['company']."%")->first();
             if(!$comp){
                 preg_match_all('/\b\w/', $request['company'], $matches);
@@ -66,9 +65,7 @@ class ProfileController extends Controller
             }else{
                 $compData = $comp->id;
             }
-        }else{
-            $compData = $request['company_id'];
-        }
+        
        
         $profileArray = array(
             'display_name' => $request['display_name'],

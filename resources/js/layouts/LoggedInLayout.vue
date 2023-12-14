@@ -383,10 +383,12 @@ const authlogout = async () => {
   return response;
 };
 const logout = () => {
+
   loadingLogout.value = true;
+  localStorage.removeItem("authUser");
   authlogout()
     .then(() => {
-      localStorage.removeItem("authUser");
+      
       authStore.logout().then(() => {
         loadingLogout.value = false; 
         window.location = "/login";
