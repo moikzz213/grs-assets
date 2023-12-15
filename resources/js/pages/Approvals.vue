@@ -669,15 +669,15 @@ const approvalFn = (item, isReject = null) => {
 
 const statusFn = (v) => {
     if (v == "approve") {
-        return "Approval By";
+        return "Approved By";
     } else if (v == "reviewer") {
-        return "Review By";
+        return "Reviewed By";
     } else if (v == "receiver") {
-        return "Received";
+        return "Received By";
     } else if (v == "transport") {
-        return "Trasportation Arranged";
+        return "Trasport Arranged By";
     } else if (v == "releasing") {
-        return "Asset Released";
+        return "Released By";
     } else if (v == "verify") {
         return "Verified By";
     }

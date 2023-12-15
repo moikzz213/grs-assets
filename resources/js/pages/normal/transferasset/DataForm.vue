@@ -516,17 +516,17 @@ const currentDate = ref(new Date());
 
 const statusTitle = (v) => {
     if (v == "approve") {
-        return "Approval By";
+        return "Approved By";
     } else if (v == "reviewer") {
-        return "Review By";
+        return "Reviewed By";
     } else if (v == "receiver") {
-        return "Receiver";
+        return "Received By";
     } else if (v == "transport") {
-        return "Trasportation Arrangement";
+        return "Trasport Arranged By";
     } else if (v == "releasing") {
-        return "Asset Releasing";
+        return "Released By";
     } else if (v == "verify") {
-        return "Verify By";
+        return "Verified By";
     }
 };
 
