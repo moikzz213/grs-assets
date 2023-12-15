@@ -134,6 +134,8 @@
                     density="compact"
                     hide-details
                     label="Asset Code"
+                    :append-inner-icon="mdiMagnify"
+                    @click:appendInner="onDecode(objData.asset_code)"
                   ></v-text-field>
                   <v-icon
                     @click="enableBarcodeFn"
@@ -315,7 +317,7 @@ import { useRoute, useRouter } from "vue-router";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
-import { mdiBarcodeScan } from "@mdi/js";
+import { mdiBarcodeScan, mdiMagnify } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
 import { useFormatDate } from "@/composables/formatDate.js";
 import { useStatusStore } from "@/stores/status";

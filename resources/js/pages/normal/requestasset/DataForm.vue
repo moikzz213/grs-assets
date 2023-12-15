@@ -457,9 +457,9 @@ const statusTitle = (v) => {
   } else if (v == "receiver") {
     return "Received By";
   } else if (v == "transport") {
-    return "Trasportation Arrangement";
+    return "Trasport Arranged By";
   } else if (v == "releasing") {
-    return "Asset Releasing";
+    return "Released By";
   } else if (v == "verify") {
     return "Verified By";
   }
