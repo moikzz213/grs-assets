@@ -22,12 +22,12 @@ class RequestAssetController extends Controller
         $search = $request->search;
         $ID = $request->userid;
         $role = $request->role;
-        
+
         $sort = "";
         $orderBy = $request->sort;
         $filter = $request->filter;
         $filterSearch = json_decode($filter);
-       
+
         $dataObj = new RequestAsset;
         $dataObj = $dataObj->where('types','=', $page);
         if($role != 'admin' && $role != 'superadmin' && $role != 'asset-supervisor'){
@@ -36,7 +36,7 @@ class RequestAssetController extends Controller
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
-            $sort = $orderBy[1]; 
+            $sort = $orderBy[1];
             $dataObj = $dataObj->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to');
         }else{
             if(@$filterSearch->company_id){
@@ -45,42 +45,42 @@ class RequestAssetController extends Controller
             if(@$filterSearch->location_id){
                 $dataObj = $dataObj->where('transferred_to', $filterSearch->location_id);
             }
-            
+
             if(@$filterSearch->status){
                 $dataObj = $dataObj->where('status', $filterSearch->status);
             }
             $dataObj = $dataObj->orderBy('status', 'DESC')->orderBy('id', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to');
         }
-    
+
         if($search){
 
             $dataObj = $dataObj->where(function($q) use($search){
                 $capSearch = strtoupper($search);
                 $checking = explode("SN-5", $capSearch);
                 $checking2 = explode("SN-3", $capSearch);
-                
+
                 if(count($checking) > 1){
                     $searchID = (int)end($checking);
                     $q->where('id', '=', $searchID);
                 }elseif(count($checking2) > 1){
                     $searchID = (int)end($checking2);
                     $q->where('id', '=', $searchID);
-                }else{                    
-                    $q->where('subject', 'like', '%'.$search.'%');   
-                } 
+                }else{
+                    $q->where('subject', 'like', '%'.$search.'%');
+                }
             });
 
-            $dataObj = $dataObj->get(); 
-            $dataArray['data'] = $dataObj->toArray(); 
+            $dataObj = $dataObj->get();
+            $dataArray['data'] = $dataObj->toArray();
         }else{
             $dataArray = $dataObj->paginate($paginate);
         }
-       
+
         return response()->json($dataArray, 200);
     }
 
     public function fetchDataByID($id){
-        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals', 'profile', 'company',  'transfer_to')->first(); 
+        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals', 'profile', 'company',  'transfer_to')->first();
         return response()->json($query, 200);
     }
 
@@ -88,12 +88,12 @@ class RequestAssetController extends Controller
         if(!$request->profile_id){
             return;
         }
-        
+
         $role = $request->role;
         $assetApprovals = array();
         $jobData = array();
         $firstReminder = 0;
-        foreach($request->approval AS $k => $v){ 
+        foreach($request->approval AS $k => $v){
             $status = 'pending';
             if($k == 0){
                 $status = 'awaiting-approval';
@@ -103,13 +103,13 @@ class RequestAssetController extends Controller
             $assetApprovals[] = array(
                 'profile_id' => $v['profile_id'],
                 'approval_type' => $v['types'],
-                'orders' => $k, 
+                'orders' => $k,
                 'status' => $status
             );
-        }  
+        }
 
         $reminderDate = Carbon::now()->addDay(1);
-       
+
         $dataArr = array(
             'company_id' => $request->data['company_id'],
             'transferred_from' => $request->data['transferred_from'],
@@ -132,30 +132,33 @@ class RequestAssetController extends Controller
             $query->items()->delete();
 
             $query->request_approvals()->delete();
-          
-           
+
+
             $message = 'Request has been updated.';
             $log_type = 'update';
-        }else{ 
+        }else{
 
             $assetApprovals[] = array(
                 'profile_id' => $request->profile_id,
                 'approval_type' => 'receiver',
-                'orders' => count($assetApprovals), 
+                'orders' => count($assetApprovals),
                 'status' => 'pending'
-            ); 
+            );
 
-            $dataArr = array_merge($dataArr, array( 'request_type_id' => $request->data['request_type_id'],'profile_id' => $request->profile_id));
-            $query = RequestAsset::create($dataArr); 
-            $ID = $query->id;  
+            $dataArr = array_merge($dataArr, array(
+                'request_type_id' => $request->data['request_type_id'],
+                'profile_id' => $request->profile_id
+            ));
+            $query = RequestAsset::create($dataArr);
+            $ID = $query->id;
             $message = 'Request has been submitted.';
-            $log_type = 'new'; 
+            $log_type = 'new';
 
             $jobData = array_merge($jobData, array('id' => $ID, 'order' => 0));
-            RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default'); 
+            RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
         }
         $query->request_approvals()->createMany($assetApprovals);
-        $query->items()->createMany($request->assets);  
+        $query->items()->createMany($request->assets);
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
@@ -174,7 +177,7 @@ class RequestAssetController extends Controller
 
         $message = 'Request has been '.$request->status;
         return response()->json(array('message' => $message, 'id' => $request->ID), 200);
-    }  
+    }
 
     public function publicApproveSignatory(Request $request){
         $ID = $request->id;
@@ -182,8 +185,8 @@ class RequestAssetController extends Controller
         $order = $request->order;
         $types = $request->type;
         $is_reject = $request->is_reject;
-        $requestorID = $request->requestor_id;  
-     
+        $requestorID = $request->requestor_id;
+
         $query2 = RequestApproval::where(['request_asset_id' => $ID, 'profile_id' => $profile, 'orders' => $order])
         ->where(function($q) {
             $q->where('status','=', 'awaiting-approval')
@@ -197,38 +200,38 @@ class RequestAssetController extends Controller
 
         $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->with('items', function($q) {
             $q->whereNotNull('asset_code');
-        })->first(); 
+        })->first();
         if($is_reject){
-            $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first(); 
+            $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first();
             $message = 'Request has been rejected';
-            $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null)); 
+            $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
             $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $order);
             RejectMailJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
-        }else{ 
-            $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $newOrder])->first();  
-            $query2->update(array('status' => 'done','date_approved' => Carbon::now()));  
-            
+        }else{
+            $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $newOrder])->first();
+            $query2->update(array('status' => 'done','date_approved' => Carbon::now()));
+
             if($query3){
                 $jobData = array( 'profile_id' => $query3->profile_id, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $newOrder);
                 $query3->update(array('status' => 'awaiting-approval'));
-                RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');  
-                
+                RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
+
                 $stats = 'awaiting-approval';
-            }else{ 
+            }else{
                 $stats = 'complete';
             }
 
             $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
-            NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default'); 
+            NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default');
 
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
                     $request->assets
                 , ['id','request_asset_id'], ['is_available', 'asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks','is_received']);
 
-                
+
                 if($stats == 'complete'){
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => null, 'reminder_profile_id' => null,'date_closed' => Carbon::now());
                 }else{
@@ -244,7 +247,7 @@ class RequestAssetController extends Controller
                 // Approval completed
 
                 if($stats == 'complete'){
-                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now(), 'reminder_date' => null, 'reminder_profile_id' => null); 
+                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now(), 'reminder_date' => null, 'reminder_profile_id' => null);
 
                     $pluckAssetCodes = array();
                     $pluckAssetRemarks = array();
@@ -255,26 +258,26 @@ class RequestAssetController extends Controller
                         }
                     }
                     if(count($pluckAssetCodes) > 0){
-                      
+
                         $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
                         if(count($updateAsset)> 0){
                             $getAssetIds = array();
                             foreach ($updateAsset as $k => $v) {
                                 $v->update(array('location_id' => $query->transferred_to));
-                                
+
                                 if($pluckAssetRemarks[$k] == $v->asset_code){
                                     $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $query->transferred_to,
                                     'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
                                 }
-                                
-                            } 
-                            AllottedInformation::insert($getAssetIds);
-                        } 
-                    }
-                   
-                } 
 
-                $query->update($updateData); 
+                            }
+                            AllottedInformation::insert($getAssetIds);
+                        }
+                    }
+
+                }
+
+                $query->update($updateData);
             }
 
             $message = 'Request has been approved';
@@ -289,11 +292,11 @@ class RequestAssetController extends Controller
                 return response()->json(array('access' => false, 'data' => null), 200);
             }
 
-            //if($query->status == 'awaiting-approval' || $query->status == 'reject'){ 
-                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from')->first(); 
-               
+            //if($query->status == 'awaiting-approval' || $query->status == 'reject'){
+                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from')->first();
+
                 return response()->json(array('access' => true, 'data' => $query), 200);
-           // } 
+           // }
           //  return response()->json(array('access' => false, 'data' => null), 200);
     }
 }
