@@ -131,6 +131,8 @@ export const useAuthStore = defineStore("authUser", {
 
         async logout() {
             localStorage.removeItem('current-pg')
+            localStorage.removeItem('authUser');
+            useLocalStorage("authUser", {});
             this.auth = {};
         },
     },

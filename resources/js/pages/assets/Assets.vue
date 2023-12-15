@@ -226,7 +226,7 @@
                   {{ item.category?.title }}
                   <strong>({{ item.category?.code }})</strong>
                 </td>
-                <td>{{ item.brand?.title }}</td>
+                <td>{{ item.brand }}</td>
                 <td>{{ item.asset_name }}</td>
                 <td>{{ item.asset_code }}</td>
 

@@ -3,6 +3,9 @@
         <AppPageHeader title="Edit User" />
         <v-row class="mb-3" :disabled="loadingPage">
             <div class="v-col-12">
+                <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Back</v-btn>
+            </div>
+            <div class="v-col-12">
                 <div class="d-flex flex-wrap">
                     <v-btn
                         :color="`${
@@ -155,16 +158,21 @@ import ProfileForm from "@/pages/account/ProfileForm.vue";
 import AppSnackbar from "@/components/AppSnackBar.vue";
 import Capability from "./Capability.vue";
 import ChangePassword from "@/pages/account/ChangePassword.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const loadingPage = ref(true);
 const user = ref({
     loading: false,
     data: {},
 });
+
+const cancelFn = () =>{
+  router.back();
+}
 
 const getSingleUser = async () => {
     loadingPage.value = true;

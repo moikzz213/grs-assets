@@ -62,8 +62,19 @@
             density="compact"
             variant="outlined"
           />
+          <v-autocomplete
+          
+          label="Location"
+          :items="locations"
+          v-model="profileData.data.location_id"
+          item-value="id"
+          item-title="title"
+          variant="outlined"
+          density="compact"
+          class="mb-2"
+        />
         <v-autocomplete
-          v-bind="field"
+           
           label="Company"
           :items="companies"
           v-model="profileData.data.company_id"
@@ -127,6 +138,18 @@ if (props.user?.id) {
   getProfile();
 }
 
+const locations = ref([]);
+const fetchLocations = async () => {
+  await clientKey(authStore.token)
+    .get("/api/fetch/locations/non-paginated/data")
+    .then((res) => {
+      locations.value = res.data;
+    })
+    .catch((err) => {
+    });
+
+}
+
 const companies = ref([]);
 
 const fetchCompanies = async () => {
@@ -139,7 +162,9 @@ const fetchCompanies = async () => {
     });
 
 }
-fetchCompanies();
+fetchCompanies().then(() =>{
+  fetchLocations();
+});
 
 // save profile
 let validation = yup.object({

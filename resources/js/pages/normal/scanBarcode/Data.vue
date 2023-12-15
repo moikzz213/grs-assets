@@ -39,6 +39,10 @@
             style="max-width: 600px"
             class="mx-auto"
         >
+        <div class="v-col-4 py-1">STATUS:</div>
+            <div class="v-col-8 py-1">
+                {{ dataObj.status ? dataObj.status.title : "" }}
+            </div>
             <div class="v-col-4 py-1">COMPANY:</div>
             <div class="v-col-8 py-1">
                 {{ dataObj.company ? dataObj.company.title : "" }}
@@ -57,35 +61,41 @@
             <div class="v-col-8 py-1">{{ dataObj.asset_name }}</div>
             <v-divider></v-divider>
             <div class="v-col-4 py-1">BRAND:</div>
-            <div class="v-col-8 py-1">
-                {{ dataObj.brand ? dataObj.brand.title : "" }}
-            </div>
+            <div class="v-col-8 py-1"> {{ dataObj.brand }} </div>
             <div class="v-col-4 py-1">MODEL:</div>
-            <div class="v-col-8 py-1">
-                {{ dataObj.model ? dataObj.model.title : "" }}
-            </div>
+            <div class="v-col-8 py-1"> {{ dataObj.model }} </div>
             <div class="v-col-4 py-1">SPECIFICATION:</div>
             <div class="v-col-8 py-1">{{ dataObj.specification }}</div>
+            <div class="v-col-4 py-1">SERIAL NO:</div>
+            <div class="v-col-8 py-1"> {{ dataObj.serial_number }} </div>
+            <div class="v-col-4 py-1">PRICE:</div>
+            <div class="v-col-8 py-1">{{ dataObj.price }}</div>
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">WARRANTY</div>
-            <div class="v-col-4 py-1">START DATE:</div>
-            <div class="v-col-8 py-1">
-                {{ warrantyData.warranty_start_date }}
-            </div>
-            <div class="v-col-4 py-1">END DATE:</div>
-            <div class="v-col-8 py-1">{{ warrantyData.warranty_end_date }}</div>
-            <v-divider></v-divider>
-            <div class="v-col-12 py-1 font-weight-bold">AMC VENDOR</div>
-            <div class="v-col-4 py-1">VENDOR</div>
+            <div class="v-col-4 py-1">VENDOR:</div>
             <div class="v-col-8 py-1">
                 {{ warrantyData.vendor ? warrantyData.vendor.title : "" }}
             </div>
             <div class="v-col-4 py-1">START DATE:</div>
+            <div class="v-col-8 py-1">
+                {{ warrantyData.warranty_start_date }}
+            </div>
+            <div class="v-col-4 py-1">END DATE:</div>
+            <div class="v-col-8 py-1">{{ warrantyData.warranty_end_date }}</div>
+            <v-divider></v-divider>
+            <div class="v-col-12 py-1 font-weight-bold">AMC</div>
+           
+            <div class="v-col-4 py-1">START DATE:</div>
             <div class="v-col-8 py-1">{{ warrantyData.warranty_end_date }}</div>
             <div class="v-col-4 py-1">END DATE:</div>
             <div class="v-col-8 py-1">
                 {{ warrantyData.warranty_start_date }}
             </div>
+            <v-divider></v-divider>
+            <div class="v-col-12 py-1 font-weight-bold">REMARKS</div>
+             
+            <div class="v-col-12 py-1">{{ dataObj.remarks }}</div>
+            
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">MAINTENANCE & INCIDENTS</div>
             <div
@@ -154,9 +164,9 @@ const onDecode = async (result) => {
                 isEnable.value = false;
                 scanValue.value = '';
             }
-            if (res.data.warranty.length > 0) {
+            if (res.data.pivot_warranties.length > 0) {
                 warrantyData.value =
-                    res.data.warranty[res.data.warranty.length - 1];
+                    res.data.pivot_warranties[res.data.pivot_warranties.length - 1];
             } 
             
         })

@@ -6,6 +6,7 @@
           {{ props.page + " Asset" }}
         </div>
         <div class="d-flex align-center">
+          <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Cancel</v-btn>
           <v-btn v-if="route.name != 'view-asset'" color="primary" :loading="loadingAsset" @click="saveAsset"  >Save</v-btn>
         </div>
       </v-card-title>
@@ -161,6 +162,12 @@
           <!-- Additional Information -->
           <div class="v-col-12" v-show="selectedTab == 'specification'">
             <v-row>
+              <div class="v-col-12 pt-0 d-flex justify-space-between" v-if="props.page == 'edit' || props.page == 'view'">
+                <div>Date Created: {{ useFormatDateTime(assetObj.created_at) }}<br/>
+                     Date Updated: {{ useFormatDateTime(assetObj.updated_at) }}
+                </div>
+                <div>UpdatedBy: {{ assetObj.last_updated_by?.display_name }}</div>
+              </div>
               <div class="v-col-12 v-col-md-6 pt-0 pb-2">
                 <Field
                   name="Specification"
@@ -484,7 +491,7 @@ import AssetWarranties from "@/pages/assets/additional-info/AssetWarranties.vue"
 import AssetMaintenances from "@/pages/assets/additional-info/AssetMaintenances.vue";
 import AssetIncidents from "@/pages/assets/additional-info/AssetIncidents.vue";
 import AssetAllotedLocations from "@/pages/assets/additional-info/AssetAllotedLocations.vue";
-
+import { useFormatDateTime } from "@/composables/formatDate.js";
 const router = useRouter();
 const route = useRoute();
  
@@ -598,7 +605,7 @@ const setAssetData = (assetData) => {
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
   }
 
-  console.log("assetObj.value.status_id",assetObj.value);
+  console.log("assetObj.value",assetData);
 };
 
 setAssetData(props.asset);
@@ -617,6 +624,10 @@ import { useStatusStore } from "@/stores/status";
 const statusStore = useStatusStore();
 if (statusStore.list.length == 0 || statusStore.conditions.length == 0) { 
       statusStore.getStatuses(authStore.token); 
+}
+
+const cancelFn = () =>{
+  router.go(-1);
 }
 
 const saveAsset = async () => {

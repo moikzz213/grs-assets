@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\accessUms;
 use App\Models\Profile;
+use App\Models\Company;
 use App\Models\ClientKey;
 use App\Helper\GlobalHelper;
 use Illuminate\Http\Request;
@@ -26,6 +27,11 @@ class ProfileController extends Controller
             $company = array('company_id' => $request['company_id']);
             $profileArray = array_merge($profileArray, $company);
         }
+
+        if(@$request['location_id']){
+            $location = array('location_id' => $request['location_id']);
+            $profileArray = array_merge($profileArray, $location);
+        }
        
         $profile = Profile::updateOrCreate([
             'id' => $request['id'], 
@@ -46,12 +52,26 @@ class ProfileController extends Controller
         $request->validate([
             'ecode' => 'required|string'          
         ]);
+        $compData = 0;
+       
+            $comp = Company::where('title',"LIKE", "%".$request['company']."%")->first();
+            if(!$comp){
+                preg_match_all('/\b\w/', $request['company'], $matches);
+                $compCode = implode('', $matches[0]);
+               
+                $compData = Company::create(array('title' => $request['company'], 'code' => $compCode,'profile_id' => $request->profile_id));
+                $compData = $compData->id;
+               
+            }else{
+                $compData = $comp->id;
+            }
+        
        
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
-            'company_id' => $request['company_id'], 
+            'company_id' => $compData, 
             'email' => $request['email'],
             'contact' => $request['contact'],
             'role' => $request['role'], 
