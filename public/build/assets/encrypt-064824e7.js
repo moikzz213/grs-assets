@@ -1,1 +1,0 @@
-import{aI as r}from"./app-02c7c2aa.js";const n="mel182";function o(t){return t?JSON.parse(r.AES.decrypt(t,n).toString(r.enc.Utf8)):null}function c(t){return r.AES.encrypt(JSON.stringify(t),n).toString()}export{o as d,c as e};

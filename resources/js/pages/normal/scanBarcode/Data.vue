@@ -65,7 +65,7 @@
             <div class="v-col-8 py-1"> {{ dataObj.brand }} </div>
             <div class="v-col-4 py-1">MODEL:</div>
             <div class="v-col-8 py-1"> {{ dataObj.model }} </div>
-            <div class="v-col-4 py-1">SPECIFICATION:</div>
+            <div class="v-col-4 py-1">SPECS:</div>
             <div class="v-col-8 py-1">{{ dataObj.specification }}</div>
             <div class="v-col-4 py-1">SERIAL NO:</div>
             <div class="v-col-8 py-1"> {{ dataObj.serial_number }} </div>
