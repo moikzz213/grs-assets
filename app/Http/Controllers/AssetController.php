@@ -355,15 +355,39 @@ class AssetController extends Controller
      * Below is for Dashboard
      */
     public function dashboardData(Request $request){
-        $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8)->count();
-        $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8)->count();
-        $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete')->count();
-        $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete')->count();
+        $role = 'normal';
+
+        
+
+        $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8);
+        $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8);
+        $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete');
+        $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete');
 
 
-        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10)->get();
-        $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10)->get();
-        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10)->get();
+        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10);
+        $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
+        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10);
+
+        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor'){
+            $incidents   = $incidents->where('profile_id', $request->input('id'));
+            $maintenance = $maintenance->where('profile_id', $request->input('id'));
+            $req         = $req->where('profile_id', $request->input('id'));
+            $transfer    = $transfer->where('profile_id', $request->input('id'));
+
+            $query_all_asset = $query_all_asset->where('author_id', $request->input('id'));
+            $query_all_incident = $query_all_incident->where('profile_id', $request->input('id'));
+            $query_all_request = $query_all_request->where('profile_id', $request->input('id'));
+        }
+
+        $incidents   = $incidents->count();
+        $maintenance = $maintenance->count();
+        $req         = $req->count();
+        $transfer    = $transfer->count();
+
+        $query_all_asset = $query_all_asset->get();
+        $query_all_incident = $query_all_incident->get();
+        $query_all_request = $query_all_request->get();
 
         $newArray = array();
 
