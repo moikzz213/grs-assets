@@ -40,9 +40,7 @@ class accessUms implements ShouldQueue
         $loginpassw = $username . ':' . $password;
         $url = $serverURL.'/api/other-application/access/add-update';
 
-        $response = $helper->runCurl($url, $data, $loginpassw);
-
-        $query = Profile::where('ecode', $ecode)->first();
-        $helper->createLogs($query, $query->id, 'new', $response);
+        $response = $helper->runCurl($url, $data, $loginpassw); 
+        echo $response;
     }
 }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->string('original_name', 150)->nullable();
+            // $table->string('original_name', 150)->nullable(); // to remove
             $table->string('title', 150)->nullable();
             $table->string('disk', 150)->nullable();
             $table->string('path', 150)->nullable();
-            $table->string('type', 50)->nullable(); // post, employee
+            $table->string('type', 50)->nullable(); // to remove
             $table->string('mime', 80)->nullable();
             $table->unsignedBigInteger('profile_id');
             $table->timestamps();

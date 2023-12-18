@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->string('meta_type',80);
-            $table->text('meta_value');
+            $table->text('meta_value')->nullable();
             $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });

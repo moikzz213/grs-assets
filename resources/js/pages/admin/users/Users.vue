@@ -42,12 +42,20 @@
                     <v-table>
                         <thead>
                             <tr>
+                                
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('role')"
+                                    @click="OrderByField('company_id')"
                                 >
-                                    Role
+                                    Company
                                 </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('location_id')"
+                                >
+                                    Location
+                                </th>
+                               
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('display_name')"
@@ -65,6 +73,12 @@
                                     @click="OrderByField('email')"
                                 >
                                     Email
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('role')"
+                                >
+                                    Role
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
@@ -91,10 +105,13 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in users.data" :key="item.id">
-                                <td>{{ item.role }}</td>
+                                
+                                <td>{{ item.company?.title }}</td>
+                                <td>{{ item.location?.title }}</td>
                                 <td>{{ item.display_name }}</td>
                                 <td>{{ item.username }}</td>
                                 <td>{{ item.email }}</td>
+                                <td>{{ item.role }}</td>
                                 <td>
                                     <v-chip
                                         class="text-uppercase"
@@ -107,6 +124,7 @@
                                         >{{ item.status }}</v-chip
                                     >
                                 </td>
+                               
                                 <td>
                                     <div
                                         class="d-flex align-center justify-end"
@@ -267,13 +285,14 @@ const search = ref("");
 const showRows = ref([10, 20, 50, 100]);
 const showPerPage = ref(10);
 const roleList = ref([
+    { title: "Administrator", value: "admin" },
+    { title: "Asset Supervisor-Project", value: "asset-supervisor" },
+    { title: "Commercial Manager-Project", value: "commercial-manager" }, 
+    { title: "Facility Team", value: "facility" },
     { title: "Normal", value: "normal" },
-    { title: "Asset Supervisor-Project", value: "asset-supervisor-project" },
-    { title: "Asset Supervisor-WH", value: "asset-supervisor-wh" },
-    { title: "Admin", value: "admin" },
-    { title: "manager", value: "manager" },
+    { title: "Technical Operation", value: "technical-operation" },
 ]);
-
+ 
 const filterRows = () => {
     getAllUsers();
 };
@@ -439,6 +458,8 @@ const saveData = async () => {
         ecode: profileObject.value.profile.ecode,
         username: profileObject.value.profile.ecode,
         designation: profileObject.value.profile.position,
+        profile_id: authStore.user.profile.id,
+        company: profileObject.value.profile?.company?.title,
     };
 
     await clientKey(authStore.token)

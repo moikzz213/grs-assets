@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 200);
             $table->string('type',20); // transfer / request
+            $table->string('status', 15)->default('active'); 
             $table->unsignedBigInteger('profile_id');
             $table->timestamps();
         });

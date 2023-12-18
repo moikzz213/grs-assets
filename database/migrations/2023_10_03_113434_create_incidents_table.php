@@ -13,19 +13,20 @@ return new class extends Migration
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('asset_id');
-            $table->unsignedBigInteger('profile_id');
-            $table->string('title',80);
-            $table->text('description');
-            $table->text('remarks')->nullable();
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('location_id');
+            $table->unsignedBigInteger('asset_id')->nullable();
+            $table->foreignId('profile_id')->constrained();
+            $table->string('title',120);
+            $table->string('asset_code',120)->nullable();
+            $table->text('description')->nullable();
+            $table->foreignId('company_id')->constrained();
+            $table->foreignId('location_id')->constrained();
             $table->unsignedBigInteger('handled_by')->nullable();
-            $table->string('type_id',30); // complaint/ faults/ breakdown/ broken
             $table->string('priority',1)->nullable(); // 1 - High, 2 - Medium, 3 - Low
-            $table->string('urgency',1); // 1 - High, 2 - Medium, 3 - Low
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('urgency_id')->nullable(); // urgency_id is status_id
+            $table->unsignedBigInteger('type_id')->nullable(); // updated // complaint/ faults/ breakdown/ broken
+            $table->unsignedBigInteger('status_id')->nullable()->default(7);
             $table->date('date_closed')->nullable();
+            $table->date('reminder_date')->nullable();
             $table->timestamps();
         });
     }

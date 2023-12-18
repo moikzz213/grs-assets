@@ -25,7 +25,8 @@ const encryptData = (data) => {
 export const useAuthStore = defineStore("authUser", {
     state: () => ({
         auth: useLocalStorage("authUser", {}),
-        auth_capabilities: null
+        auth_capabilities: null,
+        auth_access: null,
     }),
     getters: {
         user: (state) => {
@@ -49,21 +50,14 @@ export const useAuthStore = defineStore("authUser", {
                 : null;
         },
         access: (state) => {
-            return state.auth && state.auth.data
-                ? decryptData(state.auth.data).q
-                : null;
+
+            return state.auth_access ? state.auth_access : ( state.auth && state.auth.data ? decryptData(state.auth.data).q : null );
         },
         capabilities: (state) => {
             return state.auth_capabilities;
         }
     },
     actions: {
-        setCapabilities(path) {
-            this.auth_capabilities = null;
-            this.auth_capabilities = this.access.filter(
-                (o, i) => path == o.slug
-            )[0]?.capabilities;
-        },
         async setCredentials(res) {
             // save to localstorage
             useStorage(
@@ -84,47 +78,61 @@ export const useAuthStore = defineStore("authUser", {
             );
         },
 
+        setCapabilities(path) {
+            this.auth_capabilities = null;
+            this.auth_capabilities = this.access.filter(
+                (o, i) => path == o.slug
+            )[0]?.capabilities;
+        },
+
         async checkUser() {
+            this.auth_access = null;
             if (this.token) {
                 await axiosToken(this.token)
                     .get("/api/checkuser")
                     .then((res) => {
 
-                        localStorage.removeItem("authUser");
+                        // localStorage.removeItem("authUser");
                         if (res.data?.user) {
-                            let user = JSON.stringify(res.data.user);
+                            let user = res.data.user.username;
                             let token = res.data.token;
 
                             axios
                                 .get("/api/fetch/log-profile/" + user + "/" + token)
                                 .then((q) => {
-                                    if (q.data) {
 
-                                        let user_access = q.data.access.map((a) => {
-                                            return a;
-                                        });
+                                    if (q.data && q.data.id) {
 
-                                        res.data.access = user_access;
+                                        this.auth_access = q.data.access; 
+
                                         res.data.user.role = q.data.role;
                                         res.data.user.profile = q.data;
+                                        res.data.access = q.data.access;
                                         this.setCredentials(res.data);
+                                        this.setCapabilities(localStorage.getItem('current-pg'));
+                                    }else{
+                                        this.logout();
+                                        window.location = "/login";
                                     }
                                 })
                                 .catch((err) => {
-                                    console.log("errrr 1", err);
+                                    this.logout();
+                                    window.location = "/login";
                                 });
                         }
                     })
                     .catch((err) => {
-
+                        localStorage.removeItem('current-pg')
                         localStorage.removeItem("authUser");
                         window.location = "/login";
                     });
-
             }
-
         },
+
         async logout() {
+            localStorage.removeItem('current-pg')
+            localStorage.removeItem('authUser');
+            useLocalStorage("authUser", {});
             this.auth = {};
         },
     },

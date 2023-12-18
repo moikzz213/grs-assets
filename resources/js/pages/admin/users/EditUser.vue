@@ -3,6 +3,9 @@
         <AppPageHeader title="Edit User" />
         <v-row class="mb-3" :disabled="loadingPage">
             <div class="v-col-12">
+                <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Back</v-btn>
+            </div>
+            <div class="v-col-12">
                 <div class="d-flex flex-wrap">
                     <v-btn
                         :color="`${
@@ -53,7 +56,7 @@
                         />
                         <ChangePassword
                             v-show="currentForm == 'change_password'"
-                            :user-id="1"
+                            :user="user.data"
                         />
                     </div>
                 </v-row>
@@ -69,7 +72,7 @@
                                     hide-details
                                     variant="outlined"
                                     density="compact"
-                                    label=" Access Pages"
+                                    label=" Access / View Pages"
                                 ></v-checkbox>
                                 <v-btn
                                     class="ml-5"
@@ -155,16 +158,21 @@ import ProfileForm from "@/pages/account/ProfileForm.vue";
 import AppSnackbar from "@/components/AppSnackBar.vue";
 import Capability from "./Capability.vue";
 import ChangePassword from "@/pages/account/ChangePassword.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const loadingPage = ref(true);
 const user = ref({
     loading: false,
     data: {},
 });
+
+const cancelFn = () =>{
+  router.back();
+}
 
 const getSingleUser = async () => {
     loadingPage.value = true;
@@ -283,7 +291,7 @@ const capabilitySave = (data) => {
         }
     });
 };
-
+const profile_id = ref(authStore?.user?.profile?.id);
 const SaveAccessCapabilities = () => {
     loadingBtn.value = true;
     if (capabilities.value.length > 0) {
@@ -298,7 +306,7 @@ const SaveAccessCapabilities = () => {
 
     let dataFiltered = pageSlug.value.filter((o) => o.isSelected);
 
-    let formData = { profileID: route.params.id, data: dataFiltered };
+    let formData = { profileID: route.params.id, data: dataFiltered, profile_id: authStore.user.profile.id };
     clientKey(authStore.token)
         .post("/api/store-page/settings-capabilities/profile", formData)
         .then((res) => {

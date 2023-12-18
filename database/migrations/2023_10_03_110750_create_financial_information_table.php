@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('financial_information', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('asset_id');
             $table->decimal('capitalization_price', 10,2)->nullable();
-            $table->string('end_of_life', 50)->nullable();
+            $table->date('end_of_life')->nullable();
             $table->date('capitalization_date')->nullable();
             $table->string('depreciation_percentage', 20)->nullable();
             $table->decimal('scrap_value', 10,2)->nullable();
             $table->date('scrap_date')->nullable();
+            $table->foreignId('asset_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

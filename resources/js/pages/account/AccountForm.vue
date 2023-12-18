@@ -100,7 +100,7 @@ const user = ref({
   data: Object.assign({}, props.user),
 });
 const isOwnAccount = ref(true);
-console.log("props.user",props.user);
+ 
 watch(
   () => props.user,
   (newVal) => {
@@ -109,6 +109,8 @@ watch(
     user.value.data = newVal;
   }
 );
+
+console.log("props.user", props.user);
 const emit = defineEmits(["saved"]);
  
 /**
@@ -134,12 +136,17 @@ const statusColor = computed(() => {
   }
   return color;
 });
-const selectStatus = (selected) => {
-  console.log("selected",selected);
+const selectStatus = (selected) => { 
   user.value.data.status = selected;
 };
 
-const roleList = ref(["normal", "admin"]);
+const roleList = ref([ 
+    { title: "Asset Supervisor-Project", value: "asset-supervisor" },
+    { title: "Commercial Manager-Project", value: "commercial-manager" }, 
+    { title: "Facility Team", value: "facility" },
+    { title: "Normal", value: "normal" },
+    { title: "Technical Operation", value: "technical-operation" },
+]);
 
 /**
  * Submit user
@@ -150,8 +157,13 @@ let validation = yup.object({
 });
 const saveUser = async () => {
   let data = user.value.data;
-  user.value.loading = true; 
  
+  user.value.loading = true; 
+  if(data.profile){
+    data = data.profile;
+  }
+  data.profile_id = authStore.user.profile.id;
+  
   await clientKey(authStore.token)
   .post("/api/account/profile/save", data)
     .then((response) => {

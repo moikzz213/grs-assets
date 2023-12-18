@@ -56,10 +56,10 @@ class UserController extends Controller
                 ->orWhere('role', 'like', '%'.$search.'%');
             }); 
 
-            $profiles = $profiles->get();
+            $profiles = $profiles->with('location','company')->get();
             $dataArray['data'] = $profiles->toArray();
         }else{
-            $dataArray = $profiles->paginate($paginate);
+            $dataArray = $profiles->with('location','company')->paginate($paginate);
         }
        
         return response()->json($dataArray, 200);

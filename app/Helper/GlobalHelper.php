@@ -1,8 +1,15 @@
-<?php 
-namespace App\Helper; 
+<?php
+namespace App\Helper;
 
 class GlobalHelper
-{  
+{
+    public function client_auth() {
+        $profile = \App\Models\Profile::whereHas('client_keys', function($q){
+            $q->where('key', request()->bearerToken());
+        })->first();
+        return isset($profile) ? $profile : null;
+    }
+
     public function randomLettersOnly($length)
     {
         $pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -27,7 +34,7 @@ class GlobalHelper
         return true;
     }
 
-    public function runCurl($url,$data, $loginpassw){ 
+    public function runCurl($url,$data, $loginpassw){
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -44,7 +51,7 @@ class GlobalHelper
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => array( 
+            CURLOPT_HTTPHEADER => array(
                'Content-Type: application/json'
             ),
          ));

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('contact_no', 30)->nullable();
             $table->string('contact_name', 120)->nullable();
             $table->string('contact_email', 80)->nullable();
+            $table->string('status', 15)->default('active'); 
+            $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });
     }

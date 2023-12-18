@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Jobs\accessUms;
 use App\Models\Profile;
+use App\Models\Company;
 use App\Models\ClientKey;
+use App\Helper\GlobalHelper;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
     public function saveProfile(Request $request)
-    {  
+    {   
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
@@ -19,15 +21,25 @@ class ProfileController extends Controller
             'contact' => $request['contact'],
             'status' => $request['status'],
             'role' => $request['role'], 
+            'designation' => $request['designation'], 
         );
         if(@$request['company_id']){
             $company = array('company_id' => $request['company_id']);
             $profileArray = array_merge($profileArray, $company);
         }
-      
+
+        if(@$request['location_id']){
+            $location = array('location_id' => $request['location_id']);
+            $profileArray = array_merge($profileArray, $location);
+        }
+       
         $profile = Profile::updateOrCreate([
             'id' => $request['id'], 
         ], $profileArray);
+
+        $helper = new GlobalHelper;
+        $helper->createLogs($profile, $request['profile_id'], 'update', $profile);
+        
 
         return response()->json([
             'message' => 'Profile saved successfully',
@@ -40,12 +52,26 @@ class ProfileController extends Controller
         $request->validate([
             'ecode' => 'required|string'          
         ]);
+        $compData = 0;
+       
+            $comp = Company::where('title',"LIKE", "%".$request['company']."%")->first();
+            if(!$comp){
+                preg_match_all('/\b\w/', $request['company'], $matches);
+                $compCode = implode('', $matches[0]);
+               
+                $compData = Company::create(array('title' => $request['company'], 'code' => $compCode,'profile_id' => $request->profile_id));
+                $compData = $compData->id;
+               
+            }else{
+                $compData = $comp->id;
+            }
         
+       
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
             'last_name' => $request['last_name'],
-            'company_id' => $request['company_id'], 
+            'company_id' => $compData, 
             'email' => $request['email'],
             'contact' => $request['contact'],
             'role' => $request['role'], 
@@ -57,6 +83,9 @@ class ProfileController extends Controller
 
         accessUms::dispatch(['ecode' => $request['ecode'], 'status' => 'active'])->onQueue('default'); 
 
+        $helper = new GlobalHelper;
+        $helper->createLogs($profile, $request['profile_id'], 'new', $profile);
+        
         return response()->json([
             'message' => 'New Profile has successfully created',
             'profile' => $profile
@@ -68,8 +97,11 @@ class ProfileController extends Controller
         $profile = Profile::where('id', $request->profileID)->first(); 
         $profile->access()->delete();
 
+        $helper = new GlobalHelper;
+       
         foreach ($request->data as $key => $value) { 
-            $profile->access()->create(['slug' => $value['slug'], 'capabilities' => @$value['capabilities'] ? json_encode($value['capabilities']) : '']);
+            $data = $profile->access()->create(['slug' => $value['slug'], 'capabilities' => @$value['capabilities'] ? json_encode($value['capabilities']) : '']);
+            $helper->createLogs($data, $request->profile_id, 'update-access', $data);
         }
         
         return response()->json([
@@ -82,18 +114,28 @@ class ProfileController extends Controller
         return response()->json($profile, 200);
     }
 
-    public function fetchProfile($ecode, $token){ 
-        $data = json_decode($ecode);
+    public function fetchSignatories(){ 
+        $query = Profile::whereNot('role','superadmin')->whereIn('status', ['active', 'Active'])->orderBy('display_name', 'ASC')->get(); 
+        return response()->json($query, 200);
+    }
+
+    public function fetchProfile($ecode, $token){  
         
-        $profile = Profile::whereIn('status', ['active', 'Active'])->where('ecode', $data->username)->with('access')->first(); 
+        $profile = Profile::whereIn('status', ['active', 'Active'])->where('ecode', $ecode)->with('access')->first(); 
+       
         if(!$profile){ 
             return response()->json('Your account has not been created for this application. Contact Administrator', 200);
         }
         $clientKey = ClientKey::firstOrCreate([
             'key' => $token,
-            'username' => $data->username,
+            'username' => $ecode,
         ]); 
 
         return response()->json($profile, 200);
+    }
+
+    public function fetchFacilityTeam(){ 
+        $query = Profile::where('role','facility')->whereIn('status', ['active', 'Active'])->orderBy('display_name', 'ASC')->get(); 
+        return response()->json($query, 200);
     }
 }

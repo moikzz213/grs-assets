@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('warranties', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('asset_id');
-            $table->string('title', 150)->nullable();
+
+            // warranty info
+            $table->string('warranty_title', 150)->nullable();
             $table->date('warranty_start_date')->nullable();
             $table->date('warranty_end_date')->nullable();
-            $table->string('amc_vendor', 150)->nullable();
+
+            // Annual Maintenance Contract AMC info
+            $table->foreignId('vendor_id')->nullable()->constrained(); // AMC Vendor
             $table->date('amc_start_date')->nullable();
             $table->date('amc_end_date')->nullable();
-            $table->unsignedBigInteger('status_id')->nullable();
+
+            // asset
+            $table->unsignedTinyInteger('asset_id')->nullable();
             $table->timestamps();
         });
     }

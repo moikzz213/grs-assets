@@ -1,6 +1,7 @@
 <template>
-    <div v-if="isLoaded">
-        <div v-if="authStore.authIsLoggedIn == true">
+    <div v-if="isLoaded" class="parent-main-div">
+
+        <div v-if="authStore.authIsLoggedIn == true && route.name !== 'PublicApproval'" >
             <LoggedInLayout>
                 <router-view></router-view>
             </LoggedInLayout>
@@ -31,10 +32,13 @@ import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import LoggedInLayout from "@/layouts/LoggedInLayout.vue";
 import { useTheme } from "vuetify";
+import { useRoute } from "vue-router";
+const route = useRoute();
 const theme = useTheme();
 const authStore = useAuthStore();
 let isLoaded = ref(false);
-let dialogLoader = ref(true);
+let dialogLoader = ref(true); 
+ 
 // check user
 const checkUser = async () => {
     setTimeout(() => {
@@ -44,6 +48,7 @@ const checkUser = async () => {
     }, 300);
 };
 
+console.log("authStore.authIsLoggedIn",authStore.authIsLoggedIn);
 checkUser();
 
 // set dark mode on load

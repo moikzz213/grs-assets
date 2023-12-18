@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
             $table->string('title', 100);
-            $table->string('type', 30);
+            $table->string('type', 30); // asset, condition-type, incident-type, incident, maintenance, urgency
+            $table->string('status', 15)->default('active');
+            $table->integer('notification_interval')->nullable();
+            $table->unsignedBigInteger('profile_id')->nullable();
             $table->timestamps();
         });
     }

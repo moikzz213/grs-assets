@@ -34,34 +34,56 @@ const authStore = useAuthStore();
  */
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./router/routes";
+import { ri } from "./router/dev/ri";
+import { jc } from "./router/dev/jc";
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: [...routes, ...jc, ...ri],
 });
 
-function returnAccess(slug) {
+function returnAccess(data) { 
     let hasAccess = false;
-
-    authStore.access.map((o, i) => {
-        if (slug == o.slug) {
+    authStore.access.map((o) => {
+     
+        if (data.title == o.slug) {
             hasAccess = true;
+           
+            if (data.type && (data.type == 'edit' || data.type == 'new')) {
+                hasAccess = false;
+              
+                if (o.capabilities.includes('edit')) {
+                    hasAccess = true;
+                  
+                } else if (o.capabilities.includes('new')) {
+                    hasAccess = true;
+                } else {
+                 
+                    hasAccess = false;
+                }
+            }
         }
     });
+  
     return hasAccess;
 }
 
-function validateAccess(slug) {
+function validateAccess(data) {
+    
     let hasAccess = false;
-    console.log("slug",slug);
     if (
         authStore?.user?.status.toLowerCase() == "active" &&
         authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
-    } else if (slug.toLowerCase() == 'dashboard' || slug.toLowerCase() == 'account') {
+    } else if ( data?.title?.toLowerCase() == 'report-incident' ||  
+    data?.title?.toLowerCase() == 'scan' || 
+    data?.title?.toLowerCase() == 'dashboard' || 
+    data?.title?.toLowerCase() == 'request-asset' || 
+    data?.title?.toLowerCase() == 'transfer-asset' || 
+    data?.title?.toLowerCase() == 'account') {
         hasAccess = true;
     } else if (
-        authStore?.user?.status.toLowerCase() == "active" && returnAccess(slug)
+        authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
     ) {
         hasAccess = true;
     }
@@ -70,34 +92,41 @@ function validateAccess(slug) {
 }
 
 router.beforeEach((to, from, next) => {
-
-    if (to.meta.requiresAuth === false) {
+ 
+    if (to.name == 'PublicApproval' || to.name == 'ResetPasswordMail' || to.name == 'ResetPassword') { 
+        next();
+    }else if (to.path == '/' && !to.meta.requiresAuth) {
         // public route
         if (authStore.authIsLoggedIn) {
             next({ name: 'Dashboard' });
         }
-
+        
+        next({ name: 'Login' });
     } else {
+      
         // private route
-        if (authStore.authIsLoggedIn) {
-            if (!validateAccess(to.meta.title)) {
+        if (authStore.authIsLoggedIn) { 
+            if (to.meta.title?.toLowerCase() == 'unauthorized') {
+               
+            } else if (!validateAccess(to.meta)) {
+              
                 next({ name: 'Unauthorized' });
             }
-        } else {
+        }   else if (to.path != '/login' && to.path != '/pv/employee-signatory/request/approvals' && to.path != '/pv/employee-signatory/transfer/approvals') {
+          
             next({ name: 'Login' });
         }
     }
-
-    next();
+   
+    next(); 
 });
 
 router.afterEach((to, from) => {
     document.title =
         import.meta.env.VITE_APP_NAME + " - " + to.meta.title ||
         import.meta.env.VITE_APP_NAME;
-
+    localStorage.setItem('current-pg', to.meta.title.toLowerCase());
     authStore.setCapabilities(to.meta.title.toLowerCase());
-
 });
 app.use(router);
 
@@ -114,6 +143,5 @@ import App from "./App.vue";
 app.component("App", App);
 
 authStore.checkUser().then(() => {
-
     app.mount("#app");
 });

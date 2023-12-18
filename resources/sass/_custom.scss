@@ -1,1 +1,17 @@
- .cursor-pointer{ cursor: pointer;}
+.cursor-pointer {
+    cursor: pointer;
+}
+.table-cell-hover:hover {
+    background-color: #f1f1f1;
+}
+
+table td, table th, div.v-autocomplete__selection, input, select,textarea, option, label.v-label, .v-overlay-container .v-overlay.v-menu div { font-size: 12.5px;}
+
+
+@media print {
+    .no-print{
+        display: none !important;
+        visibility: hidden;
+        opacity: 0;
+    }
+ }
