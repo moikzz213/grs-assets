@@ -1,5 +1,10 @@
 <template>
     <v-container style="max-width: 1200px" class="mt-0 pt-0">
+        <v-row class="mt-0 pt-0 no-print mt-2" v-if="assetsOnly?.length>0">
+            <div>
+                <v-btn color="primary" size="small" @click="printFn">Print</v-btn>
+            </div>
+        </v-row>
         <v-row class="mt-0 pt-0">
             <div class="v-col-3 mt-auto font-weight-bold">
                 <div class="d-flex">
@@ -451,7 +456,7 @@
                 </div>
             </div>
         </v-row>
-        <v-row v-if="dataObj?.data?.status !== 'complete'">
+        <v-row v-if="dataObj?.data?.status !== 'complete'" class="no-print">
             <div class="v-col-12 text-center">
                 <v-divider></v-divider>
                 You will receive a notification once you click the button.
@@ -532,7 +537,7 @@ const queryData = async () => {
     }
 
     await axios
-        .post("/api/public/fetch/request-assets/data", formData)
+        .post("/api/pv/fetch/request-assets/data", formData)
         .then((res) => {
             dataObj.value = res.data;
             if (!dataObj.value.access) {
@@ -580,6 +585,9 @@ const queryData = async () => {
         });
 };
 
+const printFn = () =>{
+    window.print();
+}
 const baseURL = ref(window.location.origin);
 const dialogAttachment = ref(false);
 const currentSlider = ref(1);
@@ -641,7 +649,7 @@ const approvalFn = (item, isReject = null) => {
         }; 
         
         axios
-            .post("/api/public/store/request-asset/approve-data", formData)
+            .post("/api/pv/store/request-asset/approve-data", formData)
             .then((res) => {
                 let typeInfo = "success";
                 if (!res.data.success) {

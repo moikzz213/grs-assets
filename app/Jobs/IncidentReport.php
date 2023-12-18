@@ -43,7 +43,7 @@ class IncidentReport implements ShouldQueue
             $receiver = 'incident-receiver';
             $subject = "Asset System: Incident Reported";
         }
-        if($data->handled_by){
+        if(@$data->handled_by){
             $query = Profile::where('id','=', $data->handled_by)->first(); 
            
             $emails = array($query->email);

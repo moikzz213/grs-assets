@@ -104,9 +104,9 @@ const cards = ref([
 ]);
 
 const recentActivities = ref([]);
-const fetchQuery = async () => {
+const fetchQuery = async () => { 
     await clientKey(authStore.token)
-        .get("/api/dashboard/fetch-query/data")
+        .get("/api/dashboard/fetch-query/data?role="+authStore.user.profile.role+"&id="+authStore.user.profile.id)
         .then((res) => {
           recentActivities.value = res.data.table;
             cards.value = [
