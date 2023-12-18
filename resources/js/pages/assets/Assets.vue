@@ -328,7 +328,7 @@
       id="section-to-print"
       class="pa-0 ma-0 d-flex flex-column justify-center align-center w-100"
     >
-      <BarcodeGenerator
+      <!-- <BarcodeGenerator
         class="ma-auto"
         v-for="(item, index) in draftPrints"
         :key="index"
@@ -336,7 +336,35 @@
         :format="'CODE128'"
         :width="1.5"
         :height="60"
-      />
+      /> -->
+      <div style="width:287px; height:102px;" class="d-flex mr-1 justify-center align-center bg-white" v-for="(item, index) in draftPrints">
+        <QRCodeVue3
+            :width="102"
+            :height="102" 
+            :value="item" 
+            :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'H' }"
+            :imageOptions="{ hideBackgroundDots: true, imageSize: 0.4, margin: 0 }"
+            :dotsOptions="{
+              type: 'dots',
+              color: '#000000',
+              gradient: {
+                type: 'linear',
+                rotation: 0,
+                colorStops: [
+                  { offset: 0, color: '#000000' },
+                  { offset: 1, color: '#000000' },
+                ],
+              },
+            }"
+            :backgroundOptions="{ color: '#ffffff' }"
+            :cornersSquareOptions="{ type: 'dot', color: '#000000' }"
+            :cornersDotOptions="{ type: undefined, color: '#000000' }"
+            fileExt="png" 
+            myclass="my-qur font-weight-bold"
+            imgclass="img-qr" 
+          /> 
+          <strong>{{ item }}</strong>
+      </div>
     </div>
   </div>
 </template>
@@ -353,7 +381,7 @@ import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useFormatDate } from "@/composables/formatDate.js";
 import BarcodeGenerator from "@/components/BarcodeGenerator.vue";
 import DownloadExcel from "vue-json-excel3";
-
+import QRCodeVue3 from "qrcode-vue3";
 const sbOptions = ref({
   status: false,
   type: "primary",

@@ -27,10 +27,11 @@
                     width="100%"
                     class="d-flex align-center justify-center rounded-lg"
                 >
-                    <StreamBarcodeReader
+                <qrcode-stream @decode="onDecode"></qrcode-stream>
+                    <!-- <StreamBarcodeReader
                         @decode="onDecode"
                         @loaded="onLoaded"
-                    ></StreamBarcodeReader>
+                    ></StreamBarcodeReader> -->
                 </v-card>
             </div>
         </v-row>
@@ -142,6 +143,7 @@ import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { mdiBarcodeScan } from "@mdi/js";
 import { StreamBarcodeReader } from "vue-barcode-reader";
+import { QrcodeStream } from 'qrcode-reader-vue3'
 import { useAuthStore } from "@/stores/auth";
 import { useFormatDate } from "@/composables/formatDate.js";
 const authStore = useAuthStore();
