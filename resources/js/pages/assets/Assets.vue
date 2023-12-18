@@ -337,9 +337,9 @@
         :width="1.5"
         :height="60"
       /> -->
-      <div style="width:287px; height:102px;" class="d-flex mr-1 py-3 justify-center align-center bg-white" v-for="(item, index) in draftPrints">
+      <div style="width:287px; height:100px;" class="d-flex mr-1 py-3 justify-space-between align-center bg-white" v-for="(item, index) in draftPrints">
         <QRCodeVue3
-            :width="102"
+            :width="90"
             :height="102" 
             :value="item" 
             :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'H' }"
@@ -360,10 +360,10 @@
             :cornersSquareOptions="{ type: 'dot', color: '#000000' }"
             :cornersDotOptions="{ type: undefined, color: '#000000' }"
             fileExt="png" 
-            myclass="my-qur font-weight-bold"
+            myclass="my-qur font-weight-bold mt-1"
             imgclass="img-qr" 
           /> 
-          <strong style="font-size:14px">{{ item }}</strong>
+          <strong  style="font-size:14px; width: 100%; text-align: center;">{{ item }}</strong>
       </div>
     </div>
   </div>
