@@ -337,7 +337,7 @@
         :width="1.5"
         :height="60"
       /> -->
-      <div style="width:287px; height:102px;" class="d-flex mr-1 justify-center align-center bg-white" v-for="(item, index) in draftPrints">
+      <div style="width:287px; height:102px;" class="d-flex mr-1 py-3 justify-center align-center bg-white" v-for="(item, index) in draftPrints">
         <QRCodeVue3
             :width="102"
             :height="102" 
@@ -363,7 +363,7 @@
             myclass="my-qur font-weight-bold"
             imgclass="img-qr" 
           /> 
-          <strong>{{ item }}</strong>
+          <strong style="font-size:14px">{{ item }}</strong>
       </div>
     </div>
   </div>
