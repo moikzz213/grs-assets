@@ -61,15 +61,16 @@ class CronJobController extends Controller
     }
 
     private function maintenanceFn($maintenanceReceiver){
-
+ 
         $queryMaintenance = Incident::where('type_id', 2)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
 
-        $sendToMaintenanceReceiver = [];
+        $dataSendToMaintenanceReceiver = [];
         $sendToHandler = [];
 
         if (count($queryMaintenance) > 0) {
+         
             foreach ($queryMaintenance as $k => $v) {
                
                 if (@$v['handled_by']) {
@@ -78,7 +79,7 @@ class CronJobController extends Controller
                         $sendToHandler[] = $v['handled_by'];
                     }
                 } else {
-                    $sendToMaintenanceReceiver[] = $v;
+                    $dataSendToMaintenanceReceiver[] = $v;
                 }
                 $addDays = Status::where('id', $v->id)->first();
                 if($addDays){
@@ -89,17 +90,21 @@ class CronJobController extends Controller
 
                 $v->update(['reminder_date' => Carbon::now()->addDays($days)]);
             }
-           dd($sendToMaintenanceReceiver, $maintenanceReceiver, $sendToHandler);
-            if (
-                count($sendToMaintenanceReceiver) > 0 &&
-                count($maintenanceReceiver) > 0
-            ) {
-                // send to maintenance receiver here
-               
-            }
+           dd($dataSendToMaintenanceReceiver, $maintenanceReceiver, $sendToHandler); 
 
             if (count($sendToHandler) > 0) {
-                // send to maintenance handler
+
+                /******
+                 *   send to maintenance handler 
+                 *  */ 
+
+            }else{
+
+                /******
+                 *    send to maintenance default receiver
+                 *    $maintenanceReceiver    
+                 *  */
+                
             }
         }
     }
