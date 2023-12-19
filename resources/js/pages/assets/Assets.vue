@@ -337,33 +337,21 @@
         :width="1.5"
         :height="60"
       /> -->
-      <div style="width:287px; height:102px;" class="d-flex mr-1 py-3 justify-space-between align-center bg-white" v-for="(item, index) in draftPrints">
+      <div style="width:366.7px; height:103px;" class="d-flex mr-1 mt-0 pa-0 justify-space-between align-center bg-white" v-for="(item, index) in draftPrints">
         <QRCodeVue3
-            :width="102"
-            :height="102" 
+            :width="98"
+            :height="98" 
             :value="item" 
-            :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'H' }"
+            :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'Q' }"
             :imageOptions="{ hideBackgroundDots: true, imageSize: 0.4, margin: 0 }"
-            :dotsOptions="{
-              type: 'dots',
-              color: '#000000',
-              gradient: {
-                type: 'linear',
-                rotation: 0,
-                colorStops: [
-                  { offset: 0, color: '#000000' },
-                  { offset: 1, color: '#000000' },
-                ],
-              },
-            }"
+            :dotsOptions="{ type: 'square', color: '#05004d' }"
             :backgroundOptions="{ color: '#ffffff' }"
-            :cornersSquareOptions="{ type: 'dot', color: '#000000' }"
-            :cornersDotOptions="{ type: undefined, color: '#000000' }"
-            fileExt="png" 
-            myclass="my-qur font-weight-bold mt-1"
+            :cornersSquareOptions="{ type: 'square', color: '#0e013c' }" 
+            fileExt="svg" 
+            myclass="my-qur font-weight-bold pl-2 mb-1" 
             imgclass="img-qr" 
           /> 
-          <strong  style="font-size:14px; width: 100%; text-align: center;">{{ item }}</strong>
+          <strong  style="font-size:20px; width: 100%; text-align: center;margin-bottom:20px;">{{ item }}</strong>
       </div>
     </div>
   </div>
