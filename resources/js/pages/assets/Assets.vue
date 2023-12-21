@@ -348,7 +348,7 @@
             :backgroundOptions="{ color: '#ffffff' }"
             :cornersSquareOptions="{ type: 'square', color: '#0e013c' }" 
             fileExt="svg" 
-            myclass="my-qur font-weight-bold pl-2 mt-1" 
+            myclass="my-qur font-weight-bold pl-2" 
             imgclass="img-qr" 
           /> 
           <strong  style="font-size:20px; width: 100%; text-align: center;margin-top:10px;">{{ item }}</strong>
