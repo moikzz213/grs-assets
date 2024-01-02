@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
+use App\Models\Profile;
 use App\Models\Incident;
 use App\Models\Notification;
+use App\Models\RequestAsset;
 use Illuminate\Http\Request;
+use App\Jobs\CronJobIncidents;
 use Illuminate\Support\Carbon;
+use App\Jobs\CronJobMaintenance;
+use App\Jobs\CronJobAssetRequest;
 
 class CronJobController extends Controller
 {
@@ -46,18 +51,57 @@ class CronJobController extends Controller
         /**
          * Maintenance
          */ 
-        $this->maintenanceFn($maintenanceReceiver);
+        //$this->maintenanceFn($maintenanceReceiver);
         
 
         /**
          * Incident
          */
         
-        $this->incidentFn($incidentReceiver);    
-       // dd($maintenanceReceiver);
+        //$this->incidentFn($incidentReceiver);
+
+        /**
+         * Request and Transfer Assets
+         */
+        $this->requestAssetFn();
 
        echo json_encode(array("message" => 'Thank you!'));
        return;
+    }
+
+    private function requestAssetFn(){
+        $query = RequestAsset::whereDate('reminder_date', Carbon::now()->format('Y-m-d'))->with('reminder_profile:id,email')
+        ->with('request_approvals', function($q){
+            $q->where('status', 'awaiting-approval');
+        })->orderBy('reminder_profile_id', 'DESC')->get();
+        if ($query && count($query) > 0) {
+            $segregate_emails = array(); 
+            $emailArray = array();
+            $cnt = 0;
+            $profCnt = 0;
+            foreach ($query as $k => $v) { 
+               
+                if(!in_array($v->reminder_profile['email'], $segregate_emails)){
+                    $segregate_emails[] = $v->reminder_profile['email'];
+                    $emailArray[$cnt]['email'] = $v->reminder_profile['email'];
+                    $cnt++;
+                    $emailArray[$cnt]['ids'][] = array('id' => $v->id, 'type' => $v->types, 'profile' => $v->reminder_profile_id, 'orders' => $v->request_approvals[0]->orders);
+                } else{
+                    $emailArray[$cnt-1]['ids'][] = array('id' => $v->id, 'type' => $v->types, 'profile' => $v->reminder_profile_id, 'orders' => $v->request_approvals[0]->orders);
+                }
+                $v->update(['reminder_date' => Carbon::now()->addDays(1)]); 
+               
+            }
+        
+            if(count($emailArray) > 0){
+                foreach ($emailArray as $k => $v) {
+                    CronJobAssetRequest::dispatchAfterResponse(['data' => json_encode($v)])->onQueue('default');
+                }
+            }
+        }
+
+       return;
+       
     }
 
     private function maintenanceFn($maintenanceReceiver){
@@ -69,19 +113,19 @@ class CronJobController extends Controller
         $dataSendToMaintenanceReceiver = [];
         $sendToHandler = [];
 
-        if (count($queryMaintenance) > 0) {
+        if ($queryMaintenance && count($queryMaintenance) > 0) {
          
             foreach ($queryMaintenance as $k => $v) {
                
-                if (@$v['handled_by']) {
-                    //$sendToHandler[] = $v;
+                if (@$v['handled_by']) { 
                     if(!in_array($v['handled_by'], $sendToHandler)){
                         $sendToHandler[] = $v['handled_by'];
                     }
                 } else {
                     $dataSendToMaintenanceReceiver[] = $v;
                 }
-                $addDays = Status::where('id', $v->id)->first();
+                $addDays = Status::where('id', $v->urgency_id)->first();
+               
                 if($addDays){
                     $days = $addDays->notification_interval;
                 }else{
@@ -90,7 +134,7 @@ class CronJobController extends Controller
 
                 $v->update(['reminder_date' => Carbon::now()->addDays($days)]);
             }
-           dd($dataSendToMaintenanceReceiver, $maintenanceReceiver, $sendToHandler); 
+            $queryProfile = null;
 
             if (count($sendToHandler) > 0) {
 
@@ -98,26 +142,35 @@ class CronJobController extends Controller
                  *   send to maintenance handler 
                  *  */ 
 
+                $queryProfile = Profile::whereIn('id', $sendToHandler)->pluck('email');
+               
             }else{
 
                 /******
                  *    send to maintenance default receiver
                  *    $maintenanceReceiver    
                  *  */
+
+                 $queryProfile = $maintenanceReceiver;
                 
             }
+          
+            CronJobMaintenance::dispatchAfterResponse(['data' => json_encode($queryProfile)])->onQueue('default');
+           
         }
+
+        return;
     }
 
     private function incidentFn($incidentReceiver){
-        $queryIncidents = Incident::where('type_id','!=' , 2)
+        $queryIncidents = Incident::where('type_id','!=', 2)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
  
         $sendToIncidentReceiver = [];
         $sendToIncidentHandler = [];
-
-        if (count($queryIncidents) > 0) {
+        
+        if ($queryIncidents && count($queryIncidents) > 0) {
             foreach ($queryIncidents as $k => $v) {
                 if ($v['handled_by']) {
                     if(!in_array($v['handled_by'], $sendToIncidentHandler)){
@@ -127,7 +180,7 @@ class CronJobController extends Controller
                     $sendToIncidentReceiver[] = $v;
                 }
                 
-                $addDays = Status::where('id', $v->id)->first();
+                $addDays = Status::where('id', $v->urgency_id)->first();
                 if($addDays){
                     $days = $addDays->notification_interval;
                 }else{
@@ -136,17 +189,29 @@ class CronJobController extends Controller
 
                 $v->update(['reminder_date' => Carbon::now()->addDays($days)]);
             }
-            dd($sendToIncidentReceiver, $incidentReceiver);
-            if (
-                count($sendToIncidentReceiver) > 0 &&
-                count($incidentReceiver) > 0
-            ) {
-                // send to maintenance receiver here
-            }
-           
+            
+            $queryProfile = null;
             if (count($sendToIncidentHandler) > 0) {
-                // send to maintenance handler
+
+                /******
+                 *   send to maintenance handler 
+                 *  */ 
+
+                $queryProfile = Profile::whereIn('id', $sendToIncidentHandler)->pluck('email');
+               
+            }else{
+
+                /******
+                 *    send to maintenance default receiver
+                 *    $maintenanceReceiver    
+                 *  */
+
+                 $queryProfile = $incidentReceiver;
+                
             }
+          
+            CronJobIncidents::dispatchAfterResponse(['data' => json_encode($queryProfile)])->onQueue('default');
         }
+        return;
     }
 }

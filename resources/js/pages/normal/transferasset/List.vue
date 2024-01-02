@@ -25,7 +25,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -33,13 +33,14 @@
                 item-title="title"
                 clearable
                 label="Company"
+                @click:clear="clearSearch('company')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -47,19 +48,21 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
                 item-value="id"
                 item-title="title"
                 clearable
+                @click:clear="clearSearch('status')"
                 label="Status"
               ></v-autocomplete>
             </div>
@@ -227,13 +230,21 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
+  localStorage.setItem("transfer-filter-row", encryptData(showPerPage.value));
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => {
   sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        localStorage.setItem("transfer-filter-company", encryptData(objFIlter.value.company_id));
+      }else if(v == 'location'){ 
+        localStorage.setItem("transfer-filter-location", encryptData(objFIlter.value.location_id));
+      } else if(v == 'status'){ 
+        localStorage.setItem("transfer-filter-status", encryptData(objFIlter.value.status));
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
@@ -244,10 +255,20 @@ const searchData = () => {
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("transfer-asset-search", "");
-  getAllData();
+const clearSearch = (v) => {
+    
+  if(v == 'search'){
+    search.value = "";
+    localStorage.setItem("transfer-asset-search", "");
+    getAllData();
+  }else if(v == 'company'){  
+      localStorage.setItem("transfer-filter-company", '');
+  }else if(v == 'location'){  
+    localStorage.setItem("transfer-filter-location", '');
+  }else if(v == 'status'){  
+    localStorage.setItem("transfer-filter-status", '');
+  }
+ 
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -379,8 +400,26 @@ const pad = (v, size = 6) => {
 onMounted(() => {
   let vsearch = localStorage.getItem("transfer-asset-search");
 
+  let vcomp = localStorage.getItem("transfer-filter-company"); 
+  let vlocation = localStorage.getItem("transfer-filter-location");  
+  let vstatus = localStorage.getItem("transfer-filter-status");
+  let vrows = localStorage.getItem("transfer-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
+  }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  }
+  
+  if(vstatus){
+    objFIlter.value.status = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
   }
   getAllData().then(() => {
     fetchCompanies().then(() => {

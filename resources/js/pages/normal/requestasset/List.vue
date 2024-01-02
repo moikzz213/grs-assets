@@ -25,7 +25,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -33,13 +33,14 @@
                 item-title="title"
                 clearable
                 label="Company"
+                @click:clear="clearSearch('company')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -47,6 +48,7 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
 
@@ -54,7 +56,7 @@
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -62,6 +64,7 @@
                 item-title="title"
                 clearable
                 label="Status"
+                @click:clear="clearSearch('status')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
@@ -228,13 +231,21 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
+  localStorage.setItem("request-filter-row", encryptData(showPerPage.value));
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => {
   sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        localStorage.setItem("request-filter-company", encryptData(objFIlter.value.company_id));
+      }else if(v == 'location'){ 
+        localStorage.setItem("request-filter-location", encryptData(objFIlter.value.location_id));
+      } else if(v == 'status'){ 
+        localStorage.setItem("request-filter-status", encryptData(objFIlter.value.status));
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
@@ -245,10 +256,19 @@ const searchData = () => {
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("request-asset-search", "");
-  getAllData();
+const clearSearch = (v) => { 
+  if(v == 'search'){
+    search.value = "";
+    localStorage.setItem("request-asset-search", "");
+    getAllData();
+  }else if(v == 'company'){  
+      localStorage.setItem("request-filter-company", '');
+  }else if(v == 'location'){  
+    localStorage.setItem("request-filter-location", '');
+  }else if(v == 'status'){  
+    localStorage.setItem("request-filter-status", '');
+  }
+  
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -391,8 +411,26 @@ const pad = (v, size = 6) => {
 onMounted(() => {
   let vsearch = localStorage.getItem("request-asset-search");
 
+  let vcomp = localStorage.getItem("request-filter-company"); 
+  let vlocation = localStorage.getItem("request-filter-location");  
+  let vstatus = localStorage.getItem("request-filter-status");
+  let vrows = localStorage.getItem("request-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
+  }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  }
+  
+  if(vstatus){
+    objFIlter.value.status = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
   }
   getAllData().then(() => {
     fetchCompanies().then(() => {
