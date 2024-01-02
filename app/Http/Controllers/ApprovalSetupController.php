@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Helper\GlobalHelper;
+use App\Models\RequestAsset;
 use Illuminate\Http\Request;
 use App\Models\ApprovalSetup;
 use App\Models\ApprovalStage;
+use App\Models\RequestApproval;
 
 class ApprovalSetupController extends Controller
 {
@@ -136,6 +138,31 @@ class ApprovalSetupController extends Controller
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
 
+        return response()->json(array('message' => $message), 200);
+    }
+
+    public function changeSignatory(Request $request){
+        if($request['serial']){
+            $serial_no = explode("SN-",$request['serial']);
+            $serial_no = substr($serial_no[1], 1); 
+            $serial_no = (int) $serial_no;
+           
+            $query = RequestApproval::where('request_asset_id', $serial_no)->where('profile_id', $request['old'])
+            ->where(function($q){
+                $q->where('status', 'awaiting-approval')
+                ->orWhere('status', 'pending')
+                ->orWhere('status', 'reject');
+            })->update(['profile_id' => $request['new']]);
+        }else{ 
+       
+            RequestApproval::where('profile_id', $request['old'])
+                        ->where(function($q){
+                            $q->where('status', 'awaiting-approval')
+                            ->orWhere('status', 'pending')
+                            ->orWhere('status', 'reject');
+                        })->update(['profile_id' => $request['new']]);
+        }
+            $message = 'Approver has been changed successfully.';
         return response()->json(array('message' => $message), 200);
     }
 }

@@ -589,28 +589,24 @@ const setupApprovals = async () => {
           o.reason_rejected = onUpdateApproval.value[i].reason_rejected;
           return o;
         });
-
+        
         if (approvalSetupList.value.length > 1) {
           approvalSetupList.value[onUpdateApproval.value.length - 1] = {
             id: onUpdateApproval.value[onUpdateApproval.value.length - 1].id,
-            profile_id:
-              onUpdateApproval.value[onUpdateApproval.value.length - 1].profile_id,
+            profile_id:  onUpdateApproval.value[onUpdateApproval.value.length - 1].profile_id,
             status: onUpdateApproval.value[onUpdateApproval.value.length - 1].status,
-            date_approved:
-              onUpdateApproval.value[onUpdateApproval.value.length - 1].date_approved,
+            date_approved: onUpdateApproval.value[onUpdateApproval.value.length - 1].date_approved,
             status: onUpdateApproval.value[onUpdateApproval.value.length - 1].status,
             reason_rejected: "",
-            types:
-              onUpdateApproval.value[onUpdateApproval.value.length - 1].approval_type,
+            types: onUpdateApproval.value[onUpdateApproval.value.length - 1].approval_type,
             sort: onUpdateApproval.value[onUpdateApproval.value.length - 1].orders,
-            request_asset_id:
-              onUpdateApproval.value[onUpdateApproval.value.length - 1].request_asset_id,
+            request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length - 1].request_asset_id,
             signatures: [
               {
-                id: formObjData.value.profile?.id,
-                display_name: formObjData.value.profile?.display_name,
-                first_name: formObjData.value.profile?.first_name,
-                last_name: formObjData.value.profile?.last_name,
+                id: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.id,
+                display_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.display_name,
+                first_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.first_name,
+                last_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.last_name,
               },
             ],
           };
@@ -672,6 +668,7 @@ const changeRequestStatus = (v) => {
         type: "success",
         text: res.data.message,
       };
+      formObjData.value.status = v;
       emit("saved", res.data.message);
     })
     .catch((err) => {});
@@ -705,7 +702,7 @@ onMounted(() => {
     objData.value.id = v.id;
     objData.value.requestor_id = v.profile_id;
     onUpdateApproval.value = v.request_approvals;
-
+     
     assetDataObj.value = v.items;
 
     setupApprovals();

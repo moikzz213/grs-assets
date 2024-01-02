@@ -51,14 +51,14 @@ class CronJobController extends Controller
         /**
          * Maintenance
          */ 
-        //$this->maintenanceFn($maintenanceReceiver);
+        $this->maintenanceFn($maintenanceReceiver);
         
 
         /**
          * Incident
          */
         
-        //$this->incidentFn($incidentReceiver);
+        $this->incidentFn($incidentReceiver);
 
         /**
          * Request and Transfer Assets

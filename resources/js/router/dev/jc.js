@@ -171,5 +171,5 @@ export const jc = [
             requiresAuth: false,
             title: "ResetPassword",
         },
-    }, 
+    },  
 ];

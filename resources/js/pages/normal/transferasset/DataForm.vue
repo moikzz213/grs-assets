@@ -756,6 +756,7 @@ const changeRequestStatus = (v) => {
                 type: "success",
                 text: res.data.message,
             };
+            formObjData.value.status = v;
             emit("saved", res.data.message);
         })
         .catch((err) => {});
