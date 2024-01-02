@@ -70,7 +70,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -78,13 +78,14 @@
                 item-title="title"
                 clearable
                 label="Company"
+                @click:clear="clearSearch('company')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -92,13 +93,14 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="categoryStore.list"
                 v-model="objFIlter.category_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('category')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -106,6 +108,7 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('category')"
               ></v-autocomplete>
             </div>
 
@@ -113,7 +116,7 @@
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -121,6 +124,7 @@
                 item-title="title"
                 clearable
                 label="Status"
+                @click:clear="clearSearch('status')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
@@ -367,7 +371,6 @@ import { useAuthStore } from "@/stores/auth";
 import { encryptData, decryptData } from "@/composables/encrypt";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useFormatDate } from "@/composables/formatDate.js";
-import BarcodeGenerator from "@/components/BarcodeGenerator.vue";
 import DownloadExcel from "vue-json-excel3";
 import QRCodeVue3 from "qrcode-vue3";
 const sbOptions = ref({
@@ -448,12 +451,23 @@ const json_field = ref({
 });
 
 const filterRows = () => {
+  localStorage.setItem("asset-filter-row", encryptData(showPerPage.value));
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => {
+  sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        localStorage.setItem("asset-filter-company", encryptData(objFIlter.value.company_id));
+      }else if(v == 'location'){ 
+        localStorage.setItem("asset-filter-location", encryptData(objFIlter.value.location_id));
+      }else if(v == 'category'){ 
+        localStorage.setItem("asset-filter-category", encryptData(objFIlter.value.category_id));
+      }else if(v == 'status'){ 
+        localStorage.setItem("asset-filter-status", encryptData(objFIlter.value.status_id));
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
@@ -464,10 +478,21 @@ const searchData = () => {
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("asset-list-search", "");
-  getAllData();
+const clearSearch = (v) => {
+  if(v == 'search'){
+    search.value = "";
+    localStorage.setItem("asset-list-search", "");
+    getAllData();
+  }else if(v == 'company'){ 
+      localStorage.setItem("asset-filter-company", '');
+    }else if(v == 'location'){ 
+      localStorage.setItem("asset-filter-location", '');
+    }else if(v == 'category'){ 
+      localStorage.setItem("asset-filter-category", '');
+    }else if(v == 'status'){ 
+      localStorage.setItem("asset-filter-status", '');
+    }
+  
 };
 const draftPrints = ref([]);
 const checkAll = ref(false);
@@ -509,7 +534,6 @@ const checkUncheckBoxSingle = () => {
 const dialogPrintBarcoce = ref(false);
 const printBarcodesFn = () => {
   dialogPrintBarcoce.value = true;
-  console.log("printData", draftPrints.value);
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -571,6 +595,7 @@ const fetchStatus = async () => {
 
 const getAllData = async () => {
   dataObj.value.loading = true;
+
   await clientKey(authStore.token)
     .get(
       "/api/fetch/all-assets/data?page=" +
@@ -598,7 +623,7 @@ const getAllData = async () => {
       console.log(err);
     });
 };
-watch(currentPage, (newValue, oldValue) => {
+watch(currentPage, (newValue, oldValue) => { 
   if (currentPage.value && newValue != oldValue) {
     router
       .push({
@@ -658,11 +683,32 @@ const clearBarcodes = () => {
   enablePrintBarcode.value = false;
 };
 onMounted(() => {
-  let vsearch = localStorage.getItem("asset-list-search");
-
+  let vsearch = localStorage.getItem("asset-list-search"); 
+  let vcomp = localStorage.getItem("asset-filter-company"); 
+  let vlocation = localStorage.getItem("asset-filter-location"); 
+  let vcategory = localStorage.getItem("asset-filter-category"); 
+  let vstatus = localStorage.getItem("asset-filter-status");
+  let vrows = localStorage.getItem("asset-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
   }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  }
+  if(vcategory){
+    objFIlter.value.category_id = decryptData(vcategory);
+  }
+  if(vstatus){
+    objFIlter.value.status_id = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
+  }
+ 
   getAllData().then(() => {
     fetchCompanies();
     fetchLocations();

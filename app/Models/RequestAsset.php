@@ -39,6 +39,11 @@ class RequestAsset extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function reminder_profile()
+    {
+        return $this->belongsTo(Profile::class, 'reminder_profile_id');
+    } 
+    
     public function company()
     {
         return $this->belongsTo(Company::class);

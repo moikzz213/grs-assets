@@ -24,7 +24,7 @@ class IncidentController extends Controller
 
         $dataObj = new Incident;
 
-        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'facility' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
 
@@ -81,6 +81,8 @@ class IncidentController extends Controller
     public function fetchMaintenanceData(Request $request){
         $paginate = $request->show;
         $search = $request->search;
+        $ID = $request->userid;
+        $role = $request->role;
 
         $sort = "";
         $orderBy = $request->sort;
@@ -88,7 +90,12 @@ class IncidentController extends Controller
         $filterSearch = json_decode($filter);
 
         $dataObj = new Incident;
+        
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+        }
         $dataObj = $dataObj->where('type_id', 2);
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -212,12 +219,16 @@ class IncidentController extends Controller
         if($request->id){
 
             $query = Incident::where('id', $request->id)->first();
-
-            $query->update(array(
+            $updateData = array(
                 'priority' => $request->priority,
                 'handled_by' => $request->handled_by,
                 'status_id' => $request->status_id
-            ));
+            );
+            if($request->status_id == 8){
+                $updateData = array_merge($updateData,array('reminder_date' => null)); 
+            } 
+
+            $query->update($updateData);
 
             if($request->remarks_data){
                 $query->remarks()->create(['remarks' => $request->remarks_data, 'profile_id' => $request->profile_id]);
