@@ -80,7 +80,7 @@ class RequestAssetController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals', 'profile', 'company',  'transfer_to')->first();
+        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals.profile', 'profile', 'company',  'transfer_to')->first();
         return response()->json($query, 200);
     }
 

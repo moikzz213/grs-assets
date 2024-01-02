@@ -39,6 +39,8 @@ Route::middleware('authkey')->group(function () {
     Route::post('/warranties/status-change/data', [WarrantyController::class, 'statusChangeData'])->name('admin.status.change.warranties');
     Route::post('/fetch/warranty/by/id/{id}', [WarrantyController::class, 'fetchWarrantyById'])->name('admin.warranty.by.id');
     Route::post('/warranty/sync-images/store-update', [WarrantyController::class, 'syncImages'])->name('change.warranty.request');
+
+    Route::post('/approval-setups/change-signatory', [ApprovalSetupController::class, 'changeSignatory'])->name('admin.approval.change.signatory');
     
 });
 Route::post('/send-mail-reset-password', [UserApiController::class, 'resetPasswordMail'])->name('mail.reset.password');

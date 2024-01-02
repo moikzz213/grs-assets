@@ -18,6 +18,12 @@
                         @click="changeType('transfer-asset')"
                         >Transfer Asset Approvals</v-btn
                     >
+                    <v-btn
+                        class="v-col-12 v-col-md-3 mx-2"
+                        color="primary"
+                        @click="changeType('change-approval')"
+                        >Change / Assign Approvals</v-btn
+                    >
                 </div>
                 <v-card>
                     <Form
