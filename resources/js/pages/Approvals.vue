@@ -677,17 +677,17 @@ const approvalFn = (item, isReject = null) => {
 
 const statusFn = (v) => {
     if (v == "approve") {
-        return "Approved By";
+        return "Approved";
     } else if (v == "reviewer") {
-        return "Reviewed By";
+        return "Reviewed";
     } else if (v == "receiver") {
-        return "Received By";
+        return "Received";
     } else if (v == "transport") {
-        return "Trasport Arranged By";
+        return "Trasport Arranged";
     } else if (v == "releasing") {
-        return "Released By";
+        return "Released";
     } else if (v == "verify") {
-        return "Verified By";
+        return "Verified";
     }
 };
 

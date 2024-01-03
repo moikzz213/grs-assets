@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Jobs\NotifyApproverJob;
 use App\Models\RequestApproval;
+use App\Jobs\ApprovalsCompleted;
 use App\Jobs\RequestTransferJob;
 use App\Models\RequestAssetDetail;
 use App\Models\AllottedInformation;
@@ -207,6 +208,9 @@ class RequestAssetController extends Controller
             $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
+
+            // Notify requestor - request has been rejected
+
             $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $order);
             RejectMailJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
         }else{
@@ -223,6 +227,8 @@ class RequestAssetController extends Controller
                 $stats = 'complete';
             }
 
+            // Notify next approver
+
             $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
             NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default');
 
@@ -234,6 +240,11 @@ class RequestAssetController extends Controller
 
                 if($stats == 'complete'){
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => null, 'reminder_profile_id' => null,'date_closed' => Carbon::now());
+
+                      // Notify everyone once completed
+                      $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
+                      ApprovalsCompleted::dispatchAfterResponse(['data' => json_encode($query4), 'id' => $ID, 'type' => $types])->onQueue('default'); 
+
                 }else{
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
                 }
@@ -269,12 +280,14 @@ class RequestAssetController extends Controller
                                     $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $query->transferred_to,
                                     'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
                                 }
-
                             }
                             AllottedInformation::insert($getAssetIds);
                         }
                     }
 
+                    // Notify everyone once completed
+                    $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
+                    dd($query4);
                 }
 
                 $query->update($updateData);

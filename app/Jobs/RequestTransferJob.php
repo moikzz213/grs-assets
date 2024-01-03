@@ -44,7 +44,11 @@ class RequestTransferJob implements ShouldQueue
     }  
  
     private function nextReceiver($query, $data){
-        $snNo = "SN-5".$this->pad($data->id, 6);
+        if($data->type == 'request'){
+            $snNo = "SN-5".$this->pad($data->id, 6);
+        }else{
+            $snNo = "SN-3".$this->pad($data->id, 6);
+        }
         $toEmail = $query->email;
         $message = 'Dear '. $query->display_name. ",<br/><br/>";
         $message .= 'Your approval is requested<br/>';
