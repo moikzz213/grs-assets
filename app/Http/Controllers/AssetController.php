@@ -454,8 +454,40 @@ class AssetController extends Controller
         return response()->json($response, 200);
     }
 
-    public function downloadAsset(){
-        $query = Asset::with(
+    public function downloadAsset(Request $request){
+        $decoded = json_decode($request['filter']);
+        $location = '';
+        $company = '';
+        $category = '';
+        $status = '';
+        if($decoded){
+            if(@$decoded->location_id){
+                $location = array('location_id' => $decoded->location_id);
+            }
+            if(@$decoded->company_id){
+                $company = array('company_id' => $decoded->company_id);
+            }
+            if(@$decoded->category_id){
+                $category = array('category_id' => $decoded->category_id);
+            }
+            if(@$decoded->status_id){
+                $status = array('category_id' => $decoded->status_id);
+            }
+        }
+        $query = Asset::where(function($q) use ($location, $company, $category, $status){
+            if($location){
+                $q->where($location);
+            }
+            if($company){
+                $q->where($company);
+            }
+            if($category){
+                $q->where($category);
+            }
+            if($status){
+                $q->where($status);
+            }
+        })->with(
             'warranty_latest',
             'warranties.vendor',
             'allotted_informations.location',

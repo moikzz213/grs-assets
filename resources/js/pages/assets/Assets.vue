@@ -394,9 +394,10 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 const loadingDownloadLeads = ref(false);
 const donwloadLeads = async () => {
+   //
   loadingDownloadLeads.value = true;
   let allAssets = await clientKey(authStore.token)
-    .get("/api/fetch-assets/download")
+    .get("/api/fetch-assets/download?filter="+JSON.stringify(objFIlter.value))
     .then((res) => {
       loadingDownloadLeads.value = false;
       return res.data;
