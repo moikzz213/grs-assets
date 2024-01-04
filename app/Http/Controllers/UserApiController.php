@@ -112,7 +112,7 @@ class UserApiController extends Controller
         }elseif(!$request->ecode){
             $msg = "Data is Invalid!";
         }else{
-            $msg = "Employee code is invalid / Your account is disabled. Contact your HRBP.";
+            $msg = "Employee code is invalid / Your account is disabled. Contact your IT Department.";
         }  
         return response([
             'message' => $msg

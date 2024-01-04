@@ -227,12 +227,24 @@
           <!-- Purchase Information -->
           <div class="v-col-12" v-show="selectedTab == 'purchase'">
             <v-row>
-              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
                 <Field name="Price" v-slot="{ field, errors }" v-model="assetObj.price">
                   <v-text-field
                     v-model="assetObj.price"
                     v-bind="field"
                     label="Price"
+                    variant="outlined"
+                    density="compact"
+                    :error-messages="errors"
+                  />
+                </Field>
+              </div>
+              <div class="v-col-12 v-col-md-2 pt-0 pb-2">
+                <Field name="Currency" v-slot="{ field, errors }" v-model="assetObj.currency">
+                  <v-text-field
+                    v-model="assetObj.currency"
+                    v-bind="field"
+                    label="Currency(AED/USD)"
                     variant="outlined"
                     density="compact"
                     :error-messages="errors"

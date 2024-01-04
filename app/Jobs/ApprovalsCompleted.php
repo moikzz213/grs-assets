@@ -58,7 +58,7 @@ class ApprovalsCompleted implements ShouldQueue
         $typeTitle = strtoupper($type); 
         $link = env('VITE_APP_URL').'/pv/employee-signatory/'.$type.'/approvals?o=99&key='.$randomString."&pid=".$ID."&pv=".$randomString2."&id=".$request_id;
         
-        $data = array("types" => $typeTitle, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$typeTitle. " ASSET(s)");
+        $data = array("types" => $typeTitle, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$typeTitle. " ASSET(s) - COMPLETED");
     
         Mail::to($query)->queue( new RequestTransferMail( $data) ); 
     } 

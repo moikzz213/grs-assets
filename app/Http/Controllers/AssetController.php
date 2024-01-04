@@ -184,6 +184,7 @@ class AssetController extends Controller
                 'price' => isset($request['price']) ? (float)$request['price'] : null, // or number_format($request['price'], 2, '.', '')
                 'vendor_id' => isset($request['vendor_id']) ? $request['vendor_id'] : null,
                 'po_number' => isset($request['po_number']) ? $request['po_number'] : null,
+                'currency' => isset($request['currency']) ? $request['currency'] : null,
                 'purchased_date' => isset($request['purchased_date']) ?  Carbon::parse($request['purchased_date']) : null,
 
                 // edit fields
