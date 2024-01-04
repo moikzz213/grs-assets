@@ -65,7 +65,7 @@ class CronJobController extends Controller
          */
         $this->requestAssetFn();
 
-       echo json_encode(array("message" => 'Thank you!'));
+       echo json_encode(array("message" => '403: Permission denied!'));
        return;
     }
 
