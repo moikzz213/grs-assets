@@ -232,7 +232,7 @@
                   <v-text-field
                     v-model="assetObj.price"
                     v-bind="field"
-                    label="Price"
+                    label="Price (Numeric Only)"
                     variant="outlined"
                     density="compact"
                     :error-messages="errors"

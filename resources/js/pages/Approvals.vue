@@ -1,5 +1,5 @@
 <template>
-    <v-container style="max-width: 1200px" class="mt-0 pt-0">
+    <v-container style="max-width: 90%" class="mt-0 pt-0">
         <v-row class="mt-0 pt-0 no-print mt-2" v-if="assetsOnly?.length>0">
             <div>
                 <v-btn color="primary" size="small" @click="printFn">Print</v-btn>
@@ -56,7 +56,7 @@
                 ></v-checkbox>
             </div>
         </v-row>
-        <v-row class="mt-1" v-for="(item, index) in assetsOnly" :key="item.id">
+        <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
              
             <div class="v-col-12 v-col-md-3 py-1 d-flex">
                  
@@ -184,17 +184,21 @@
                     :readonly="true"
                 ></v-text-field>
             </div>
+         
             <div
-                v-if="is_asset_supervisor"
+                v-if="is_asset_supervisor || is_commercial_manager || is_realeasing"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
-            >
-                <v-text-field
+            > 
+                <v-textarea
                     v-model="item.remarks"
                     variant="underlined"
                     density="compact"
                     hide-details
-                ></v-text-field>
+                    class="text-remarks"
+                    rows="2"
+                ></v-textarea>
                 <v-checkbox
+                v-if="is_asset_supervisor"
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -208,12 +212,14 @@
                 v-else-if="is_receiver"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-                <v-text-field
+            <v-textarea
                     v-model="item.remarks"
                     variant="underlined"
                     density="compact"
                     hide-details
-                ></v-text-field>
+                    class="text-remarks"
+                    rows="2"
+                ></v-textarea>
                 <div v-if="dataObj?.data?.is_available">
                     <v-icon
                         class="mt-3"
@@ -518,6 +524,7 @@ const isValid = ref(true);
 const dataObj = ref({});
 const sbOptions = ref({});
 const is_asset_supervisor = ref(false);
+const is_realeasing = ref(false);
 const is_commercial_manager = ref(false);
 const is_receiver = ref(false);
 const assetsOnly = ref([]);
@@ -553,7 +560,14 @@ const queryData = async () => {
                             o.status == "awaiting-approval" &&
                             o.profile?.role == "asset-supervisor"
                     )[0];
-
+                is_realeasing.value = dataObj.value.data.request_approvals.filter(
+                        (o) =>
+                            o.profile_id == route.query.pid &&
+                            o.orders == route.query.o &&
+                            o.status == "awaiting-approval" &&
+                            o.approval_type == "releasing"
+                    )[0];
+                    
                 is_commercial_manager.value =
                     dataObj.value.data.request_approvals.filter(
                         (o) =>
@@ -576,6 +590,7 @@ const queryData = async () => {
                 if (is_receiver.value || is_asset_supervisor.value) {
                     noticeLoader.value = true;
                 }
+                
             }
             assetsOnly.value = dataObj.value?.data?.items;
            
@@ -621,7 +636,7 @@ const approvalFn = (item, isReject = null) => {
         };
         let fixeAsset = [];
 
-        if (is_asset_supervisor.value || is_receiver.value) {
+        if (is_asset_supervisor.value || is_commercial_manager.value || is_receiver.value || is_realeasing.value) {
             fixeAsset = assetsOnly.value.map((o, i) => {
                 delete o.created_at;
                 delete o.assets;
@@ -683,7 +698,7 @@ const statusFn = (v) => {
     } else if (v == "receiver") {
         return "Received";
     } else if (v == "transport") {
-        return "Trasport Arranged";
+        return "Transport Arranged";
     } else if (v == "releasing") {
         return "Released";
     } else if (v == "verify") {
@@ -733,4 +748,7 @@ queryData();
 .bg-light-gray input.v-field__input {
     padding-left: 5px !important;
 }
+
+div.py-1, 
+.approval-form-pr textarea, .approval-form-pr input { font-size:12px !important;}
 </style>
