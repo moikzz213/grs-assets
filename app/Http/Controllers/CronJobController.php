@@ -70,7 +70,7 @@ class CronJobController extends Controller
     }
 
     private function requestAssetFn(){
-        $query = RequestAsset::whereDate('reminder_date', Carbon::now()->format('Y-m-d'))->with('reminder_profile:id,email')
+        $query = RequestAsset::whereNot('status', 'cancelled')->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))->with('reminder_profile:id,email')
         ->with('request_approvals', function($q){
             $q->where('status', 'awaiting-approval');
         })->orderBy('reminder_profile_id', 'DESC')->get();

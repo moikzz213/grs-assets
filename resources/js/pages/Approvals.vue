@@ -207,26 +207,30 @@
                     density="compact"
                     @update:modelValue="checkUncheckBoxSingle"
                 ></v-checkbox>
-            </div>
+            </div> 
             <div
                 v-if="is_commercial_manager"
-                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
+                class="v-col-12 v-col-md-2 py-1 d-flex "
             > 
-            <div v-if="item.remarks" class="mb-2">
-                Asset Supervisor - Projects {{ item.remarks }}
-            </div> 
-                <v-textarea
-                    v-model="item.remarks_commercial"
-                    variant="underlined"
-                    density="compact"
-                    hide-details
-                    class="text-remarks"
-                    placeholder="Add remarks here"
-                    rows="2"
-                ></v-textarea> 
-            </div>
+             
+            <div>
+                <div v-if="item.remarks"  >
+                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    -------
+                </div>
+                    <v-textarea
+                        v-model="item.remarks_commercial"
+                        variant="underlined"
+                        density="compact"
+                        hide-details
+                        class="text-remarks"
+                        placeholder="Add remarks here"
+                        rows="2"
+                    ></v-textarea> 
+                </div>
+        </div>
             <div
-                v-if="is_realeasing"
+                v-else-if="is_realeasing"
                 class="v-col-12 v-col-md-2 py-1"
             >  
             <div> 
@@ -416,7 +420,7 @@
             >
                 <div
                     v-if="
-                        item.profile.role == 'commercial-manager' &&
+                        item.profile?.role == 'commercial-manager' &&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                     "
