@@ -58,7 +58,7 @@
         </v-row>
         <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
              
-            <div class="v-col-12 v-col-md-3 py-1 d-flex">
+            <div class="v-col-12 v-col-md-3 py-1 px-1 d-flex">
                  
                     <div 
                         v-if="item.attachment?.id"
@@ -119,74 +119,75 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    class="bg-light-gray"
+                    class="bg-light-gray d-flex flex-column-reverse"
                     :readonly="true"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
                     hide-details
                     :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray' : ''}`"
+                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     :value="item.qty"
                     variant="underlined"
                     density="compact"
                     hide-details
-                    class="bg-light-gray"
+                    class="bg-light-gray d-flex flex-column-reverse"
                     type="number"
                     :readonly="true"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.weight"
                     variant="underlined"
                     density="compact"
                     hide-details
                     :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray' : ''}`"
+                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.item_value"
                     variant="underlined"
                     density="compact"
                     hide-details
                     :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray' : ''}`"
+                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.country_of_origin"
                     variant="underlined"
                     density="compact"
                     hide-details
                     :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray' : ''}`"
+                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    style="width:100%;"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-2 py-1">
+            <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
                 <v-text-field
                     :value="item.reason_for_request"
                     variant="underlined"
                     density="compact"
                     hide-details
-                    class="bg-light-gray"
+                    class="bg-light-gray d-flex flex-column-reverse"
                     :readonly="true"
                 ></v-text-field>
             </div>
          
             <div
-                v-if="is_asset_supervisor || is_commercial_manager || is_realeasing"
+                v-if="is_asset_supervisor"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             > 
                 <v-textarea
@@ -195,10 +196,10 @@
                     density="compact"
                     hide-details
                     class="text-remarks"
+                    placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
-                <v-checkbox
-                v-if="is_asset_supervisor"
+                <v-checkbox 
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -207,20 +208,82 @@
                     @update:modelValue="checkUncheckBoxSingle"
                 ></v-checkbox>
             </div>
-
             <div
-                v-else-if="is_receiver"
+                v-if="is_commercial_manager"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
-            >
-            <v-textarea
-                    v-model="item.remarks"
+            > 
+            <div v-if="item.remarks" class="mb-2">
+                Asset Supervisor - Projects {{ item.remarks }}
+            </div> 
+                <v-textarea
+                    v-model="item.remarks_commercial"
                     variant="underlined"
                     density="compact"
                     hide-details
                     class="text-remarks"
+                    placeholder="Add remarks here"
+                    rows="2"
+                ></v-textarea> 
+            </div>
+            <div
+                v-if="is_realeasing"
+                class="v-col-12 v-col-md-2 py-1"
+            >  
+            <div> 
+                <div v-if="item.remarks"  >
+                        <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_commercial"  >
+                        <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_release"  >
+                        <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                        -------
+                    </div>
+                </div>
+                <v-textarea
+                    v-model="item.remarks_release"
+                    variant="underlined"
+                    density="compact"
+                    hide-details
+                    class="text-remarks"
+                    placeholder="Add remarks here"
+                    rows="2"
+                ></v-textarea> 
+            </div>
+            <div
+                v-else-if="is_receiver"
+                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
+            >
+            <div> 
+            <div>
+                <div v-if="item.remarks"  >
+                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_commercial"  >
+                    <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_release"  >
+                    <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                    -------
+                </div>
+                 </div>
+            
+            <v-textarea
+                    v-model="item.remarks_receive"
+                    variant="underlined"
+                    density="compact"
+                    hide-details
+                    class="text-remarks"
+                    placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
-                <div v-if="dataObj?.data?.is_available">
+            </div>
+                <div v-if="dataObj?.data?.is_available" class="my-auto">
                     <v-icon
                         class="mt-3"
                         :icon="item.is_available ? mdiCheckBold : mdiCloseThick"
@@ -229,7 +292,7 @@
                 </div>
                 <v-checkbox
                     v-model="item.is_received"
-                    class="pa-0 ma-0 v-col-1"
+                    class="pa-0 ma-0 v-col-1 my-auto"
                     hide-details
                     variant="underlined"
                     density="compact"
@@ -240,14 +303,23 @@
                 v-else
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-                <v-text-field
-                    :value="item.remarks"
-                    variant="underlined"
-                    density="compact"
-                    hide-details
-                    class="bg-light-gray"
-                    :readonly="true"
-                ></v-text-field>
+            <div style="border-bottom: 1px solid #000000;" class="pa-1">
+                <div v-if="item.remarks"  >
+                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_commercial"  >
+                    <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_release"  >
+                    <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_receive"  >
+                    <strong> Receiver</strong> <pre>{{ item.remarks_receive }}</pre>
+                </div>
+            </div> 
                 <div v-if="dataObj?.data?.is_available">
                     <v-icon
                         class="mt-3"
@@ -333,7 +405,7 @@
                 <div class="text-center py-1">
                     {{ dataObj.data?.profile?.designation }}
                 </div>
-                <div class="text-center">
+                <div class="text-center text-caption">
                     {{ useFormatDate(dataObj.data?.created_at) }}
                 </div>
             </div>
@@ -444,7 +516,7 @@
                 <div class="text-center py-1">
                     {{ item.profile?.designation }}
                 </div>
-                <div class="text-center">
+                <div class="text-center text-caption">
                     {{
                         item.date_approved
                             ? useFormatDate(item.date_approved)

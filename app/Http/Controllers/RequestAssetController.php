@@ -235,7 +235,7 @@ class RequestAssetController extends Controller
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
                     $request->assets
-                , ['id','request_asset_id'], ['is_available', 'asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks','is_received']);
+                , ['id','request_asset_id'], ['is_available', 'asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks', 'remarks_commercial', 'remarks_receive', 'remarks_release','is_received']);
 
 
                 if($stats == 'complete'){
@@ -287,7 +287,7 @@ class RequestAssetController extends Controller
 
                     // Notify everyone once completed
                     $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-                    dd($query4);
+                   
                 }
 
                 $query->update($updateData);
