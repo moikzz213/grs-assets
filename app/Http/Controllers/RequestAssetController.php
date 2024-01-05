@@ -171,7 +171,13 @@ class RequestAssetController extends Controller
             return;
         }
         $query = RequestAsset::where('id','=', $request->ID)->first();
-        $query->update(array('status' => $request->status));
+        if($request->status == 'cancelled'){
+
+            $query->update(array('status' => $request->status, 'reminder_date' => null));
+        }else{
+            
+            $query->update(array('status' => $request->status, 'reminder_date' => Carbon::now()->addDay(1)));
+        }
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, 'update-status', $query);
