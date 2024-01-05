@@ -311,7 +311,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
-                                    label="REASON"
+                                    label="REASON FOR REQUEST*"
                                 ></v-text-field>
                                 <v-icon
                                     size="small"
@@ -677,28 +677,28 @@ const setupApprovals = async () => {
                     return o;
                 });
 
-                if(approvalSetupList.value.length > 1){
-                    approvalSetupList.value[onUpdateApproval.value.length-1] = {
-                        id:onUpdateApproval.value[onUpdateApproval.value.length -1].id,
-                        profile_id:onUpdateApproval.value[onUpdateApproval.value.length -1].profile_id,
-                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
-                        date_approved: onUpdateApproval.value[onUpdateApproval.value.length -1].date_approved,
-                        status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
-                        reason_rejected: '',
-                        types: onUpdateApproval.value[onUpdateApproval.value.length -1].approval_type,
-                        sort: onUpdateApproval.value[onUpdateApproval.value.length -1].orders,
-                        request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length -1].request_asset_id,
-                        signatures:[
-                            {
-                                id: formObjData.value.profile?.id,
-                                display_name: formObjData.value.profile?.display_name,
-                                first_name: formObjData.value.profile?.first_name,
-                                last_name: formObjData.value.profile?.last_name,
+                // if(approvalSetupList.value.length > 1){
+                //     approvalSetupList.value[onUpdateApproval.value.length-1] = {
+                //         id:onUpdateApproval.value[onUpdateApproval.value.length -1].id,
+                //         profile_id:onUpdateApproval.value[onUpdateApproval.value.length -1].profile_id,
+                //         status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                //         date_approved: onUpdateApproval.value[onUpdateApproval.value.length -1].date_approved,
+                //         status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
+                //         reason_rejected: '',
+                //         types: onUpdateApproval.value[onUpdateApproval.value.length -1].approval_type,
+                //         sort: onUpdateApproval.value[onUpdateApproval.value.length -1].orders,
+                //         request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length -1].request_asset_id,
+                //         signatures:[
+                //             {
+                //                 id: formObjData.value.profile?.id,
+                //                 display_name: formObjData.value.profile?.display_name,
+                //                 first_name: formObjData.value.profile?.first_name,
+                //                 last_name: formObjData.value.profile?.last_name,
                                  
-                            }
-                        ]
-                    }
-                } 
+                //             }
+                //         ]
+                //     }
+                // } 
             }
 
             if (res.data?.stages.length > 0) {
@@ -726,6 +726,8 @@ const requiredData = () => {
     let checkAsset = true;
     assetDataObj.value.map((o) => {
         if (!o.item_description) {
+            checkAsset = false;
+        }else if(!o.reason_for_request){
             checkAsset = false;
         }
     });

@@ -142,7 +142,7 @@
                                             :icon="mdiPencil"
                                             class="mx-1"
                                         />
-                                        <v-icon
+                                        <!-- <v-icon
                                             size="small"
                                             v-if="
                                                 authStore.user.role ==
@@ -154,7 +154,7 @@
                                             @click="() => deleteUser(item.id)"
                                             :icon="mdiTrashCan"
                                             class="mx-1"
-                                        />
+                                        /> -->
                                     </div>
                                 </td>
                             </tr>

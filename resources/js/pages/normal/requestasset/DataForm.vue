@@ -639,6 +639,8 @@ const requiredData = () => {
   assetDataObj.value.map((o) => {
     if (!o.item_description) {
       checkAsset = false;
+    }else if(!o.reason_for_request){
+      checkAsset = false;
     }
   });
 

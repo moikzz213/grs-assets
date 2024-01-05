@@ -208,7 +208,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useAuthStore } from "@/stores/auth";
@@ -236,6 +236,7 @@ const dataObj = ref({ title: props.objectdata.title });
 const typeItems = ref([
     { id: "approve", value: "Approval" },
     { id: "releasing", value: "Asset Releasing" },
+    { id: "receiver", value: "Asset Receiving" },
     { id: "reviewer", value: "Reviewer" },
     { id: "transport", value: "Transport Arrangement" },
     { id: "verify", value: "Verify" },
@@ -248,10 +249,16 @@ const isActive = ref(route.params.type);
 let validation = yup.object({
     Title: yup.string().required(),
 });
-
+ 
 const changeType = (type) => {
     isActive.value = type;
     router.push({ path: "/approval-setup/" + type });
+  
+    if(type == 'transfer-asset'){
+        typeItems.value = typeItems.value.filter((o) => {
+           return o.id !== 'releasing'
+        })
+    } 
 };
 
 const addSort = ref(0);
@@ -394,6 +401,13 @@ onMounted(() => {
     fetchSignatories();
 
     if (route.params.id) {
+       
+        if(isActive.value == 'transfer-asset'){
+            typeItems.value = typeItems.value.filter((o) => {
+            return o.id !== 'releasing'
+            })
+        }
+
         if (props.objectdata.stages.length > 0) {
             let lastSortNumber =
                 props.objectdata.stages[props.objectdata.stages.length - 1]
