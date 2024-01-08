@@ -26,8 +26,7 @@
             </div>
 
             <div class="v-col-3 mt-auto font-weight-bold text-right">
-                SN-{{ dataObj?.data?.types == "request" ? "5" : "3" }}{{ pad(1)
-                }}<br />
+                SN-{{ dataObj?.data?.types == "request" ? "5" : "3" }}{{ pad(pvID) }}<br />
                 {{ useFormatDate(dataObj.data?.created_at) }}
             </div>
         </v-row>
@@ -607,6 +606,7 @@ const assetsOnly = ref([]);
 const rejectReason = ref(false);
 const reasonOfReject = ref("");
 const noticeLoader = ref(false);
+const pvID = ref(route.query.id);
 const queryData = async () => {
     let formData = {
         id: route.query.id,
