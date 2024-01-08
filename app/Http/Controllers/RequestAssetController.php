@@ -194,7 +194,7 @@ class RequestAssetController extends Controller
         $is_reject = $request->is_reject;
         $requestorID = $request->requestor_id;
 
-        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->whereNot('status','=','cancelled')->with('items', function($q) {
+        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->orWhereNot('status','=','cancelled')->with('items', function($q) {
             $q->whereNotNull('asset_code');
         })->first();
         if(!$query){
