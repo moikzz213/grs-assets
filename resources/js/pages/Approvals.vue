@@ -50,7 +50,7 @@
                     @update:modelValue="checkUncheckBox"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
-                    :disabled="requestStatus"
+                    :disabled="requestStatus=='cancelled'"
                     variant="underlined"
                     density="compact"
                 ></v-checkbox>
@@ -129,8 +129,8 @@
                     variant="underlined"
                     density="compact"
                     hide-details 
-                    :readonly="!is_asset_supervisor || requestStatus"
-                    :class="`${!is_asset_supervisor || requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled'"
+                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -150,8 +150,8 @@
                     variant="underlined"
                     density="compact"
                     hide-details 
-                    :readonly="!is_asset_supervisor || requestStatus"
-                    :class="`${!is_asset_supervisor || requestStatus? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
+                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -161,8 +161,8 @@
                     density="compact"
                     hide-details
                      
-                    :readonly="!is_asset_supervisor || requestStatus"
-                    :class="`${!is_asset_supervisor || requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
+                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -171,8 +171,8 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="!is_asset_supervisor || requestStatus"
-                    :class="`${!is_asset_supervisor || requestStatus? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
+                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                     style="width:100%;"
                 ></v-text-field>
             </div>
@@ -197,12 +197,12 @@
                     density="compact"
                     hide-details
                     class="text-remarks"
-                    :class="`${ requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :class="`${ requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                     placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
                 <v-checkbox 
-                :disabled="requestStatus"
+                :disabled="requestStatus == 'cancelled' "
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -348,7 +348,7 @@
             </div>
         </v-row>
         <v-row class="mt-3" v-if="is_asset_supervisor">
-            <div class="v-col-12 text-center font-weight-bold text-info" v-if="!requestStatus">
+            <div class="v-col-12 text-center font-weight-bold text-info" v-if="requestStatus !== 'cancelled' ">
                 YOU CAN UPDATE SOME DATA AND<br />
                 PLEASE TICK CHECKBOX IF ASSET IS AVAILABLE BEFORE CLICKING THE
                 APPROVE BUTTON
@@ -357,7 +357,7 @@
                 THIS REQUEST HAS BEEN CANCELLED.
             </div>
         </v-row>
-        <v-row v-if="dataObj?.data?.is_available && !requestStatus" class="mt-6 mb-2">
+        <v-row v-if="dataObj?.data?.is_available && requestStatus !== 'cancelled' " class="mt-6 mb-2">
             <v-card
                 :loading="noticeLoader"
                 variant="text"
@@ -672,7 +672,7 @@ const queryData = async () => {
                 checkLastApproval.value = dataObj.value.data.request_approvals[dataObj.value.data.request_approvals.length - 1].approval_type;
                
                 if (is_receiver.value || is_asset_supervisor.value) {
-                    if(!requestStatus){
+                    if(requestStatus.value != 'cancelled'){
                         noticeLoader.value = true;
                     }
                 }
