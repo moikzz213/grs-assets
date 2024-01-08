@@ -50,6 +50,7 @@
                     @update:modelValue="checkUncheckBox"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
+                    :disabled="requestStatus"
                     variant="underlined"
                     density="compact"
                 ></v-checkbox>
@@ -127,9 +128,9 @@
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    hide-details 
+                    :readonly="!is_asset_supervisor || requestStatus"
+                    :class="`${!is_asset_supervisor || requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -148,9 +149,9 @@
                     v-model="item.weight"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    hide-details 
+                    :readonly="!is_asset_supervisor || requestStatus"
+                    :class="`${!is_asset_supervisor || requestStatus? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -159,8 +160,9 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                     
+                    :readonly="!is_asset_supervisor || requestStatus"
+                    :class="`${!is_asset_supervisor || requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -169,8 +171,8 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="!is_asset_supervisor"
-                    :class="`${!is_asset_supervisor ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="!is_asset_supervisor || requestStatus"
+                    :class="`${!is_asset_supervisor || requestStatus? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                     style="width:100%;"
                 ></v-text-field>
             </div>
@@ -195,10 +197,12 @@
                     density="compact"
                     hide-details
                     class="text-remarks"
+                    :class="`${ requestStatus ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                     placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
                 <v-checkbox 
+                :disabled="requestStatus"
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -227,7 +231,7 @@
                         rows="2"
                     ></v-textarea> 
                 </div>
-        </div>
+            </div>
             <div
                 v-else-if="is_realeasing"
                 class="v-col-12 v-col-md-2 py-1"
@@ -306,7 +310,8 @@
                 v-else
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-            <div style="border-bottom: 1px solid #000000;" class="pa-1">
+            <div style="border-bottom: 1px solid #000000;" class="pa-1" 
+            v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive">
                 <div v-if="item.remarks"  >
                     <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
                     -------
@@ -342,13 +347,16 @@
             </div>
         </v-row>
         <v-row class="mt-3" v-if="is_asset_supervisor">
-            <div class="v-col-12 text-center font-weight-bold text-info">
+            <div class="v-col-12 text-center font-weight-bold text-info" v-if="!requestStatus">
                 YOU CAN UPDATE SOME DATA AND<br />
                 PLEASE TICK CHECKBOX IF ASSET IS AVAILABLE BEFORE CLICKING THE
                 APPROVE BUTTON
             </div>
+            <div class="v-col-12 text-center font-weight-bold text-info" v-else>
+                THIS REQUEST HAS BEEN CANCELLED.
+            </div>
         </v-row>
-        <v-row v-if="dataObj?.data?.is_available" class="mt-6 mb-2">
+        <v-row v-if="dataObj?.data?.is_available && !requestStatus" class="mt-6 mb-2">
             <v-card
                 :loading="noticeLoader"
                 variant="text"
@@ -391,13 +399,9 @@
             <div class="v-col-12 v-col-md-3 pa-0 mb-4">
                 <div
                     class="text-center mx-2 py-4 font-weight-bold"
-                    style="
-                        color: rgb(3, 167, 3);
-                        border: 1px solid #ccc;
-                        font-size: 17px;
-                    "
+                    :style="`${requestStatus == 'cancelled' ? 'color: red;' : 'color: rgb(3, 167, 3);'} border: 1px solid #ccc; font-size: 17px;`"
                 >
-                    APPROVED
+                   {{ requestStatus == 'cancelled' ? 'CANCELLED' : 'APPROVED' }} 
                 </div>
                 <div class="text-center py-1 font-weight-bold">
                     Requested By
@@ -486,7 +490,7 @@
                     @click="approvalFn(item)"
                     class="cursor-pointer text-center mx-2 py-5"
                     :style="`border:1px solid #ccc; ${
-                        item.status == 'awaiting-approval' &&
+                       requestStatus != 'cancelled' && item.status == 'awaiting-approval' &&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                             ? 'background-color: rgb(182, 3, 3);color:#fff;'
@@ -607,6 +611,7 @@ const rejectReason = ref(false);
 const reasonOfReject = ref("");
 const noticeLoader = ref(false);
 const pvID = ref(route.query.id);
+const requestStatus = ref('');
 const queryData = async () => {
     let formData = {
         id: route.query.id,
@@ -627,6 +632,8 @@ const queryData = async () => {
                 isValid.value = false;
                 return;
             }
+            requestStatus.value = res.data?.data?.status;
+             
             if (dataObj.value?.data?.request_approvals?.length > 0) {
                 is_asset_supervisor.value =
                     dataObj.value.data.request_approvals.filter(
@@ -664,7 +671,9 @@ const queryData = async () => {
                 checkLastApproval.value = dataObj.value.data.request_approvals[dataObj.value.data.request_approvals.length - 1].approval_type;
                
                 if (is_receiver.value || is_asset_supervisor.value) {
-                    noticeLoader.value = true;
+                    if(!requestStatus){
+                        noticeLoader.value = true;
+                    }
                 }
                 
             }
@@ -700,6 +709,9 @@ const cancelReject = () => {
 };
 const approvalFn = (item, isReject = null) => {
     rejectReason.value = false;
+    if(requestStatus.value == 'cancelled'){
+        return;
+    }
     if (
         (item.status == "awaiting-approval" || item.status == "reject") &&
         route.query.pid == item.profile_id &&
