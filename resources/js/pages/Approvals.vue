@@ -328,6 +328,7 @@
                     <strong> Receiver</strong> <pre>{{ item.remarks_receive }}</pre>
                 </div>
             </div> 
+            <div v-else></div>
                 <div v-if="dataObj?.data?.is_available">
                     <v-icon
                         class="mt-3"
