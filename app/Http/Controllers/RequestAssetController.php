@@ -194,6 +194,13 @@ class RequestAssetController extends Controller
         $is_reject = $request->is_reject;
         $requestorID = $request->requestor_id;
 
+        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->whereNot('status','=','cancelled')->with('items', function($q) {
+            $q->whereNotNull('asset_code');
+        })->first();
+        if(!$query){
+            return response()->json(array('message' => 'This request has been cancelled.', 'success' => false), 200);
+        }
+
         $query2 = RequestApproval::where(['request_asset_id' => $ID, 'profile_id' => $profile, 'orders' => $order])
         ->where(function($q) {
             $q->where('status','=', 'awaiting-approval')
@@ -203,11 +210,8 @@ class RequestAssetController extends Controller
             return response()->json(array('message' => 'You already approved this request.', 'success' => false), 200);
         }
 
-        $newOrder = (int)$order + 1;
-
-        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->with('items', function($q) {
-            $q->whereNotNull('asset_code');
-        })->first();
+        $newOrder = (int)$order + 1; 
+        
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first();
             $message = 'Request has been rejected';
