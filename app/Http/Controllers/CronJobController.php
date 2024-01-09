@@ -17,6 +17,10 @@ class CronJobController extends Controller
 {
     public function asset_notification(Request $request)
     {
+        if(!$request->input('key') || !$request->input('c') || ( $request->input('key') != 'Moikzz' || $request->input('c') != 'Ghassan')){
+            return json_encode(array("Message" => 'Forbidden access', 'Status Code' => 403));
+        } 
+
         $query = Notification::whereNotNull('meta_value')->get();
 
         $first_notification = 30;
