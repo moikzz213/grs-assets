@@ -329,7 +329,7 @@ class AssetController extends Controller
             if(@$filterSearch->category_id){
                 $dataObj = $dataObj->where('category_id', $filterSearch->category_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location','category', 'status', 'condition');
+            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->with( 'created_by', 'company', 'location','category', 'status', 'condition');
         }
 
         if($search){
