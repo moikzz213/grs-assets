@@ -187,17 +187,20 @@ class RequestAssetController extends Controller
     }
 
     public function publicApproveSignatory(Request $request){
-        $ID = $request->id;
+        $ID = (int) $request->id;
         $profile = $request->profile_id;
         $order = $request->order;
         $types = $request->type;
         $is_reject = $request->is_reject;
         $requestorID = $request->requestor_id;
-
-        $query = RequestAsset::where('id','=', $ID)->whereNot('status','=','complete')->orWhereNot('status','=','cancelled')->with('items', function($q) {
+       
+        $queryRequest = RequestAsset::where('id','=', $ID)->where(function($q){
+            $q->whereNot('status','=','complete')->orWhereNot('status','=','cancelled');
+        })->with('items', function($q) {
             $q->whereNotNull('asset_code');
         })->first();
-        if(!$query){
+        
+        if(!$queryRequest){
             return response()->json(array('message' => 'This request has been cancelled.', 'success' => false), 200);
         }
 
@@ -215,20 +218,20 @@ class RequestAssetController extends Controller
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first();
             $message = 'Request has been rejected';
-            $query->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
+            $queryRequest->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
 
             // Notify requestor - request has been rejected
 
-            $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $order);
+            $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $queryRequest->subject, 'id' => $ID, 'order' => $order);
             RejectMailJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
         }else{
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $newOrder])->first();
             $query2->update(array('status' => 'done','date_approved' => Carbon::now()));
 
             if($query3){
-                $jobData = array( 'profile_id' => $query3->profile_id, 'type' => $types, 'subject' => $query->subject, 'id' => $ID, 'order' => $newOrder);
+                $jobData = array( 'profile_id' => $query3->profile_id, 'type' => $types, 'subject' => $queryRequest->subject, 'id' => $ID, 'order' => $newOrder);
                 $query3->update(array('status' => 'awaiting-approval'));
                 RequestTransferJob::dispatchAfterResponse(['data' => json_encode($jobData)])->onQueue('default');
 
@@ -239,8 +242,10 @@ class RequestAssetController extends Controller
 
             // Notify next approver
 
-            $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $query->subject, 'id' => $ID);
-            NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default');
+            $selfJobData = array('typeReceiver' => 'success', 'profile_id' => $profile, 'type' => $types, 'subject' => $queryRequest->subject, 'id' => $ID);
+            if($stats != 'complete'){
+                NotifyApproverJob::dispatchAfterResponse(['data' => json_encode($selfJobData)])->onQueue('default');
+            }
 
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
@@ -258,8 +263,8 @@ class RequestAssetController extends Controller
                 }else{
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
                 }
-
-                $query->update($updateData);
+               
+                $queryRequest->update($updateData);
 
             }else{
 
@@ -272,8 +277,8 @@ class RequestAssetController extends Controller
 
                     $pluckAssetCodes = array();
                     $pluckAssetRemarks = array();
-                    if($query['items'] && count($query['items']) > 0){
-                        foreach ($query['items'] as $key => $value) {
+                    if($queryRequest['items'] && count($queryRequest['items']) > 0){
+                        foreach ($queryRequest['items'] as $key => $value) {
                             $pluckAssetCodes[] = $value['asset_code'];
                             $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => $value['reason_for_request']);
                         }
@@ -284,10 +289,10 @@ class RequestAssetController extends Controller
                         if(count($updateAsset)> 0){
                             $getAssetIds = array();
                             foreach ($updateAsset as $k => $v) {
-                                $v->update(array('location_id' => $query->transferred_to));
+                                $v->update(array('location_id' => $queryRequest->transferred_to));
 
                                 if($pluckAssetRemarks[$k] == $v->asset_code){
-                                    $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $query->transferred_to,
+                                    $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $queryRequest->transferred_to,
                                     'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
                                 }
                             }
@@ -299,8 +304,8 @@ class RequestAssetController extends Controller
                     $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
                    
                 }
-
-                $query->update($updateData);
+            
+                $queryRequest->update($updateData);
             }
 
             $message = 'Request has been approved';

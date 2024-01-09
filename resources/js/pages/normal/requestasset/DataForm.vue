@@ -56,7 +56,7 @@
                   >Change status to Pending</v-btn
                 >
               </div>
-              <div class="v-col-8 text-right" v-if="formObjData.status == 'complete'"></div>
+              <div class="v-col-8 text-right" v-else></div>
               <div class="v-col-12 v-col-md-6">
                 <v-autocomplete
                   :items="requestTypeList"
