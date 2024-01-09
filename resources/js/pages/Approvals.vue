@@ -396,6 +396,13 @@
                 <v-divider></v-divider>
             </div>
         </v-row>
+        <!-- <v-row v-if="requestStatus != 'cancelled' && dataObj.data?.request_approvals[route.query.o].status == 'awaiting-approval' &&
+                        route.query.pid == dataObj.data?.request_approvals[route.query.o].profile_id &&
+                        route.query.o == dataObj.data?.request_approvals[route.query.o].orders">
+            <v-col md="12" class="text-center text-info text-caption">
+                By clicking the approve button,
+            </v-col>
+        </v-row> -->
         <v-row v-if="dataObj.data?.request_approvals.length > 0">
             <div class="v-col-12 v-col-md-3 pa-0 mb-4">
                 <div
@@ -545,7 +552,7 @@
         <v-row v-if="dataObj?.data?.status !== 'complete'" class="no-print">
             <div class="v-col-12 text-center">
                 <v-divider></v-divider>
-                You will receive a notification once you click the button.
+                You will receive a notification once you click the approve button.
                 <v-divider></v-divider>
             </div>
         </v-row>

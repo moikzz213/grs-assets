@@ -44,13 +44,15 @@ class ApprovalsCompleted implements ShouldQueue
     } 
 
     private function receivers($query,$ID, $type, $request_id){
+        $title = 'Request';
         if($type == 'request'){
             $snNo = "SN-5".$this->pad($request_id, 6);  
         }else{
+            $title = 'Transfer';
             $snNo = "SN-3".$this->pad($request_id, 6);  
         }
          
-        $message = 'SN No. : '. $snNo." has been approved and received completely<br/><br/>"; 
+        $message = $title.' No. : '. $snNo." has been approved completely<br/><br/>";  
 
         $randomString = Str::random(50);
         $randomString2 = Str::random(50);
