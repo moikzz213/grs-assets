@@ -50,7 +50,7 @@ class RequestAssetController extends Controller
             if(@$filterSearch->status){
                 $dataObj = $dataObj->where('status', $filterSearch->status);
             }
-            $dataObj = $dataObj->orderBy('status', 'DESC')->orderBy('id', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to');
+            $dataObj = $dataObj->orderBy('status', 'DESC')->orderBy('updated_at', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to');
         }
 
         if($search){

@@ -48,7 +48,7 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
+            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->orderBy('status_id', 'ASC')->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
         }
 
         if($search){
