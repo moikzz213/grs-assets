@@ -1,5 +1,5 @@
 <template>
-    <v-container> 
+    <v-container>
         <v-row class="mb-3 justify-center">
             <div class="v-col-12 v-col-md-5 pb-0">
                 <small >Recommended mobile / tablet used only</small>
@@ -69,8 +69,8 @@
             <div class="v-col-8 py-1">{{ dataObj.specification }}</div>
             <div class="v-col-4 py-1">SERIAL NO:</div>
             <div class="v-col-8 py-1"> {{ dataObj.serial_number }} </div>
-            <div class="v-col-4 py-1">PRICE:</div>
-            <div class="v-col-8 py-1">{{ dataObj.price }}</div>
+            <!-- <div class="v-col-4 py-1">PRICE:</div>
+            <div class="v-col-8 py-1">{{ dataObj.price }}</div> -->
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">WARRANTY</div>
             <div class="v-col-4 py-1">VENDOR:</div>
@@ -85,7 +85,7 @@
             <div class="v-col-8 py-1">{{ warrantyData.warranty_end_date }}</div>
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">AMC</div>
-           
+
             <div class="v-col-4 py-1">START DATE:</div>
             <div class="v-col-8 py-1">{{ warrantyData.warranty_end_date }}</div>
             <div class="v-col-4 py-1">END DATE:</div>
@@ -94,9 +94,9 @@
             </div>
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">REMARKS</div>
-             
+
             <div class="v-col-12 py-1">{{ dataObj.remarks }}</div>
-            
+
             <v-divider></v-divider>
             <div class="v-col-12 py-1 font-weight-bold">MAINTENANCE & INCIDENTS</div>
             <div
@@ -117,7 +117,7 @@
                     <div class="v-col-4 py-1">DATE RECEIVED:</div>
                     <div class="v-col-8 py-1">{{ useFormatDate(item.created_at) }}</div>
                     <div class="v-col-4 py-1">DATE CLOSED:</div>
-                    <div class="v-col-8 py-1">{{ item.date_closed ? useFormatDate(item.date_closed) : '' }}</div> 
+                    <div class="v-col-8 py-1">{{ item.date_closed ? useFormatDate(item.date_closed) : '' }}</div>
                     <div class="v-col-4 py-1">REMARKS:</div>
                     <div class="v-col-8 py-1 pb-4">
                         <v-row>
@@ -161,7 +161,7 @@ const onDecode = async (result) => {
     await clientKey(authStore.token)
         .get("/api/fetch/asset-info/by/asset-code/" + result)
         .then((res) => {
-            dataObj.value = res.data; 
+            dataObj.value = res.data;
             if(dataObj.value.asset_code){
                 isEnable.value = false;
                 scanValue.value = '';
@@ -169,11 +169,11 @@ const onDecode = async (result) => {
             if (res.data.pivot_warranties.length > 0) {
                 warrantyData.value =
                     res.data.pivot_warranties[res.data.pivot_warranties.length - 1];
-            } 
-            
+            }
+
         })
         .catch((err) => {
-            
+
             if(err?.response?.status == 401){
                 alert("Error: Something went wrong. page will be refresh.");
                 window.location.href = window.location.href;
