@@ -645,11 +645,13 @@ const setAssetData = (assetData) => {
   assetObj.value = Object.assign({}, assetData);
 
   // set asset tag
-  let str = assetObj.value.asset_code + "";
-  let split = str.split("-");
-  assetObj.value.company_code = split[0];
-  assetObj.value.category_code = split[1];
-  assetObj.value.asset_tag = split[2];
+  if (assetObj.value.asset_code) {
+    let str = assetObj.value.asset_code + "";
+    let split = str.split("-");
+    assetObj.value.company_code = split[0];
+    assetObj.value.category_code = split[1];
+    assetObj.value.asset_tag = split[2];
+  }
 
   // set files
   selectedFiles.value =
