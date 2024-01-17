@@ -175,7 +175,7 @@ class RequestAssetController extends Controller
 
             $query->update(array('status' => $request->status, 'reminder_date' => null));
         }else{
-            
+
             $query->update(array('status' => $request->status, 'reminder_date' => Carbon::now()->addDay(1)));
         }
 
@@ -193,13 +193,13 @@ class RequestAssetController extends Controller
         $types = $request->type;
         $is_reject = $request->is_reject;
         $requestorID = $request->requestor_id;
-       
+
         $queryRequest = RequestAsset::where('id','=', $ID)->where(function($q){
             $q->whereNot('status','=','complete')->orWhereNot('status','=','cancelled');
         })->with('items', function($q) {
             $q->whereNotNull('asset_code');
         })->first();
-        
+
         if(!$queryRequest){
             return response()->json(array('message' => 'This request has been cancelled.', 'success' => false), 200);
         }
@@ -213,8 +213,8 @@ class RequestAssetController extends Controller
             return response()->json(array('message' => 'You already approved this request.', 'success' => false), 200);
         }
 
-        $newOrder = (int)$order + 1; 
-        
+        $newOrder = (int)$order + 1;
+
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first();
             $message = 'Request has been rejected';
@@ -258,12 +258,12 @@ class RequestAssetController extends Controller
 
                       // Notify everyone once completed
                       $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-                      ApprovalsCompleted::dispatchAfterResponse(['data' => json_encode($query4), 'id' => $ID, 'type' => $types])->onQueue('default'); 
+                      ApprovalsCompleted::dispatchAfterResponse(['data' => json_encode($query4), 'id' => $ID, 'type' => $types])->onQueue('default');
 
                 }else{
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
                 }
-               
+
                 $queryRequest->update($updateData);
 
             }else{
@@ -302,9 +302,9 @@ class RequestAssetController extends Controller
 
                     // Notify everyone once completed
                     $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-                   
+
                 }
-            
+
                 $queryRequest->update($updateData);
             }
 

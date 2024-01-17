@@ -57,10 +57,10 @@
             </div>
         </v-row>
         <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
-             
+
             <div class="v-col-12 v-col-md-3 py-1 px-1 d-flex">
-                 
-                    <div 
+
+                    <div
                         v-if="item.attachment?.id"
                     >
                         <v-card
@@ -69,7 +69,7 @@
                             variant="text"
                             class="ma-2"
                         >
-                        <v-icon size="large" :icon="mdiImage" color="success"></v-icon> 
+                        <v-icon size="large" :icon="mdiImage" color="success"></v-icon>
                         </v-card>
                         <v-dialog
                         v-model="dialogAttachment"
@@ -103,17 +103,17 @@
                             </v-carousel>
                         </v-card>
                     </v-dialog>
-                    </div> 
+                    </div>
                     <v-card
                            v-else
                             maxHeight="40"
                             variant="text"
                             class="ma-2"
                         >
-                        <v-icon size="large" :icon="mdiImageOffOutline"></v-icon> 
+                        <v-icon size="large" :icon="mdiImageOffOutline"></v-icon>
                         </v-card>
-                   
-                
+
+
                 <v-text-field
                     :value="item.item_description"
                     variant="underlined"
@@ -128,7 +128,7 @@
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
-                    hide-details 
+                    hide-details
                     :readonly="!is_asset_supervisor || requestStatus == 'cancelled'"
                     :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
@@ -149,7 +149,7 @@
                     v-model="item.weight"
                     variant="underlined"
                     density="compact"
-                    hide-details 
+                    hide-details
                     :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
                     :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
@@ -160,7 +160,7 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                     
+
                     :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
                     :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
@@ -186,11 +186,11 @@
                     :readonly="true"
                 ></v-text-field>
             </div>
-         
+
             <div
                 v-if="is_asset_supervisor"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
-            > 
+            >
                 <v-textarea
                     v-model="item.remarks"
                     variant="underlined"
@@ -201,7 +201,7 @@
                     placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
-                <v-checkbox 
+                <v-checkbox
                 :disabled="requestStatus == 'cancelled' "
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
@@ -210,12 +210,12 @@
                     density="compact"
                     @update:modelValue="checkUncheckBoxSingle"
                 ></v-checkbox>
-            </div> 
+            </div>
             <div
                 v-if="is_commercial_manager"
                 class="v-col-12 v-col-md-2 py-1 d-flex "
-            > 
-             
+            >
+
             <div>
                 <div v-if="item.remarks"  >
                     <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
@@ -229,14 +229,14 @@
                         class="text-remarks"
                         placeholder="Add remarks here"
                         rows="2"
-                    ></v-textarea> 
+                    ></v-textarea>
                 </div>
             </div>
             <div
                 v-else-if="is_realeasing"
                 class="v-col-12 v-col-md-2 py-1"
-            >  
-            <div> 
+            >
+            <div>
                 <div v-if="item.remarks"  >
                         <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
                         -------
@@ -258,13 +258,13 @@
                     class="text-remarks"
                     placeholder="Add remarks here"
                     rows="2"
-                ></v-textarea> 
+                ></v-textarea>
             </div>
             <div
                 v-else-if="is_receiver"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-            <div> 
+            <div>
             <div>
                 <div v-if="item.remarks"  >
                     <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
@@ -279,7 +279,7 @@
                     -------
                 </div>
                  </div>
-            
+
             <v-textarea
                     v-model="item.remarks_receive"
                     variant="underlined"
@@ -310,7 +310,7 @@
                 v-else
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-            <div style="border-bottom: 1px solid #000000;" class="pa-1" 
+            <div style="border-bottom: 1px solid #000000;" class="pa-1"
             v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive">
                 <div v-if="item.remarks"  >
                     <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
@@ -327,7 +327,7 @@
                 <div v-if="item.remarks_receive"  >
                     <strong> Receiver</strong> <pre>{{ item.remarks_receive }}</pre>
                 </div>
-            </div> 
+            </div>
             <div v-else></div>
                 <div v-if="dataObj?.data?.is_available">
                     <v-icon
@@ -409,7 +409,7 @@
                     class="text-center mx-2 py-4 font-weight-bold"
                     :style="`${requestStatus == 'cancelled' ? 'color: red;' : 'color: rgb(3, 167, 3);'} border: 1px solid #ccc; font-size: 17px;`"
                 >
-                   {{ requestStatus == 'cancelled' ? 'CANCELLED' : 'APPROVED' }} 
+                   {{ requestStatus == 'cancelled' ? 'CANCELLED' : 'APPROVED' }}
                 </div>
                 <div class="text-center py-1 font-weight-bold">
                     Requested By
@@ -603,7 +603,7 @@ import {
     mdiTruckDelivery,
     mdiTruckRemove,
     mdiImage,
-    mdiImageOffOutline 
+    mdiImageOffOutline
 } from "@mdi/js";
 
 const route = useRoute();
@@ -641,7 +641,7 @@ const queryData = async () => {
                 return;
             }
             requestStatus.value = res.data?.data?.status;
-             
+
             if (dataObj.value?.data?.request_approvals?.length > 0) {
                 is_asset_supervisor.value =
                     dataObj.value.data.request_approvals.filter(
@@ -658,7 +658,7 @@ const queryData = async () => {
                             o.status == "awaiting-approval" &&
                             o.approval_type == "releasing"
                     )[0];
-                    
+
                 is_commercial_manager.value =
                     dataObj.value.data.request_approvals.filter(
                         (o) =>
@@ -677,16 +677,16 @@ const queryData = async () => {
                 )[0];
 
                 checkLastApproval.value = dataObj.value.data.request_approvals[dataObj.value.data.request_approvals.length - 1].approval_type;
-               
+
                 if (is_receiver.value || is_asset_supervisor.value) {
                     if(requestStatus.value != 'cancelled'){
                         noticeLoader.value = true;
                     }
                 }
-                
+
             }
             assetsOnly.value = dataObj.value?.data?.items;
-           
+
         })
         .catch((err) => {
             console.log(err.response.data);
@@ -757,8 +757,8 @@ const approvalFn = (item, isReject = null) => {
             assets: fixeAsset,
             is_reject: is_reject,
             requestor_id: dataObj.value.data.profile_id,
-        }; 
-        
+        };
+
         axios
             .post("/api/pv/store/request-asset/approve-data", formData)
             .then((res) => {
@@ -845,6 +845,6 @@ queryData();
     padding-left: 5px !important;
 }
 
-div.py-1, 
+div.py-1,
 .approval-form-pr textarea, .approval-form-pr input { font-size:12px !important;}
 </style>
