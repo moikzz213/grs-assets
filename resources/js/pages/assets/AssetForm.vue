@@ -3,7 +3,7 @@
     <Form as="v-form" :validation-schema="validation">
       <v-card-title class="pb-6 pt-3 d-flex align-center justify-space-between">
         <div class="text-primary text-capitalize">
-          {{ props.page + " Asset" }}
+          {{ props.page + ": " }} <strong>{{ assetObj.asset_code }}</strong>
         </div>
         <div class="d-flex align-center">
           <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"
@@ -534,7 +534,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
@@ -581,30 +581,46 @@ const authStore = useAuthStore();
 // companies
 import { useCompanyStore } from "@/stores/companies";
 const companyStore = useCompanyStore();
-if (companyStore.list.length == 0) {
-  companyStore.getCompanies(authStore.token);
-}
+// if (companyStore.list.length == 0) {
+companyStore.getCompanies(authStore.token);
+// }
+watch(
+  () => assetObj.value.company_id,
+  (newVal) => {
+    assetObj.value.company_code = companyStore.list.filter(
+      (comp) => comp.id == newVal
+    )[0].code;
+  }
+);
 
 // categories
 import { useCategoryStore } from "@/stores/categories";
 const categoryStore = useCategoryStore();
-if (categoryStore.list.length == 0) {
-  categoryStore.getCategories(authStore.token);
-}
+// if (categoryStore.list.length == 0) {
+categoryStore.getCategories(authStore.token);
+// }
+watch(
+  () => assetObj.value.category_id,
+  (newVal) => {
+    assetObj.value.category_code = categoryStore.list.filter(
+      (cat) => cat.id == newVal
+    )[0].code;
+  }
+);
 
 // locations
 import { useLocationStore } from "@/stores/locations";
 const locationStore = useLocationStore();
-if (locationStore.list.length == 0) {
-  locationStore.getLocations(authStore.token);
-}
+// if (locationStore.list.length == 0) {
+locationStore.getLocations(authStore.token);
+// }
 
 // vendor
 import { useVendorStore } from "@/stores/vendors";
 const vendorStore = useVendorStore();
-if (vendorStore.list.length == 0) {
-  vendorStore.getVendors(authStore.token);
-}
+// if (vendorStore.list.length == 0) {
+vendorStore.getVendors(authStore.token);
+// }
 
 // base URL
 const baseURL = ref(window.location.origin);
@@ -648,9 +664,19 @@ const setAssetData = (assetData) => {
   if (assetObj.value.asset_code) {
     let str = assetObj.value.asset_code + "";
     let split = str.split("-");
-    assetObj.value.company_code = split[0];
-    assetObj.value.category_code = split[1];
-    assetObj.value.asset_tag = split[2];
+
+    // set asset_tag
+    assetObj.value.asset_tag = split[split.length - 1];
+
+    // set company_code
+    assetObj.value.company_code = companyStore.list.filter(
+      (comp) => comp.id == assetObj.value.company_id
+    )[0].code;
+
+    // set category_code
+    assetObj.value.category_code = categoryStore.list.filter(
+      (cat) => cat.id == assetObj.value.category_id
+    )[0].code;
   }
 
   // set files
@@ -670,8 +696,11 @@ const setAssetData = (assetData) => {
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
   }
 };
-
-setAssetData(props.asset);
+onMounted(() => {
+  setTimeout(() => {
+    setAssetData(props.asset);
+  }, 800);
+});
 
 watch(
   () => props.asset,
@@ -690,24 +719,6 @@ if (statusStore.list.length == 0 || statusStore.conditions.length == 0) {
 const cancelFn = () => {
   router.go(-1);
 };
-
-watch(
-  () => assetObj.value.company_id,
-  (newVal) => {
-    assetObj.value.company_code = companyStore.list.filter(
-      (comp) => comp.id == newVal
-    )[0].code;
-  }
-);
-
-watch(
-  () => assetObj.value.category_id,
-  (newVal) => {
-    assetObj.value.category_code = categoryStore.list.filter(
-      (cat) => cat.id == newVal
-    )[0].code;
-  }
-);
 
 const saveAsset = async () => {
   loadingAsset.value = true;
