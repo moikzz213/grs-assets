@@ -584,14 +584,14 @@ const companyStore = useCompanyStore();
 // if (companyStore.list.length == 0) {
 companyStore.getCompanies(authStore.token);
 // }
-// watch(
-//   () => assetObj.value.company_id,
-//   (newVal) => {
-//     assetObj.value.company_code = companyStore.list.filter(
-//       (comp) => comp.id == newVal
-//     )[0].code;
-//   }
-// );
+watch(
+  () => assetObj.value.company_id,
+  (newVal) => {
+    assetObj.value.company_code = companyStore.list.filter(
+      (comp) => comp.id == newVal
+    )[0].code;
+  }
+);
 
 // categories
 import { useCategoryStore } from "@/stores/categories";
@@ -599,14 +599,14 @@ const categoryStore = useCategoryStore();
 // if (categoryStore.list.length == 0) {
 categoryStore.getCategories(authStore.token);
 // }
-// watch(
-//   () => assetObj.value.category_id,
-//   (newVal) => {
-//     assetObj.value.category_code = categoryStore.list.filter(
-//       (cat) => cat.id == newVal
-//     )[0].code;
-//   }
-// );
+watch(
+  () => assetObj.value.category_id,
+  (newVal) => {
+    assetObj.value.category_code = categoryStore.list.filter(
+      (cat) => cat.id == newVal
+    )[0].code;
+  }
+);
 
 // locations
 import { useLocationStore } from "@/stores/locations";
