@@ -91,7 +91,7 @@
         </v-card>
 
         <v-textarea
-          rows="4"
+          rows="3"
           :value="item.item_description"
           variant="underlined"
           density="compact"
@@ -170,7 +170,7 @@
       </div>
       <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
         <v-textarea
-          rows="4"
+          rows="3"
           :value="item.reason_for_request"
           variant="underlined"
           density="compact"
@@ -194,7 +194,7 @@
             requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''
           }`"
           placeholder="Add remarks here"
-          rows="2"
+          rows="3"
         ></v-textarea>
         <v-checkbox
           :disabled="requestStatus == 'cancelled'"

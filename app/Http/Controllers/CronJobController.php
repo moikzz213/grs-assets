@@ -75,11 +75,19 @@ class CronJobController extends Controller
 
     private function requestAssetFn(){
         $profilesWithAssetRequest = Profile::whereHas('reminder_profile', function($q){
+            // $q->whereNot('status', 'cancelled')
+            // ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             $q->whereHas('request_approvals', function($q){
                 $q->where('status', 'awaiting-approval');
             });
         })
         ->with('reminder_profile.request_approvals')
+        ->with([
+            'reminder_profile' => function($q){
+                $q->whereNot('status', 'cancelled')
+                ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'));
+            },
+        ])
         ->get();
         // dd($profilesWithAssetRequest);
 
