@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Incident;
 use App\Models\Location;
 use App\Models\ClientKey;
+use App\Models\RequestAsset;
 use App\Models\ApprovalStages;
 use App\Models\IncidentRemark;
 use Illuminate\Database\Eloquent\Model;
@@ -67,5 +68,10 @@ class Profile extends Model
     public function last_updated_assets()
     {
         return $this->hasMany(Asset::class);
+    }
+
+    public function reminder_profile()
+    {
+        return $this->hasMany(RequestAsset::class, 'reminder_profile_id');
     }
 }

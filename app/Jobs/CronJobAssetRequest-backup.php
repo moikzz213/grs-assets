@@ -28,25 +28,27 @@ class CronJobAssetRequest implements ShouldQueue
     public function handle(): void
     {
         $publisherData = $this->data;
+
         $data = $publisherData['data'];
-        $data = json_decode($data);
+        $data =  json_decode($data);
         $email = $data->email;
+
         $randomString = Str::random(50);
         $randomString2 = Str::random(50);
-        // dd($data->reminder_profile[0]);
 
         $baseURL = env('VITE_APP_URL').'/pv/employee-signatory/';
+
         $message = 'Dear, <br/>You have a pending approval(s)<br/>Kindly do the needful.<br/>';
         $message .= '<table width="600">';
-        foreach ($data->reminder_profile as $key => $v) {
-            $awaitingApproval = collect($v->request_approvals)->where('request_asset_id', $v->id)->where('status', 'awaiting-approval')->first();
+        foreach ($data->ids as $key => $v) {
             $title = 'SN-5';
             $header = 'Request Asset';
-            if($v->types == 'transfer'){
+            if($v->type == 'transfer'){
                 $title = 'SN-3';
                 $header = 'Transfer Asset';
             }
-            $message .= "<tr><td>{$header}: <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}'>{$title}{$this->pad($v->id,6)}</a></td></tr>";
+
+            $message .= "<tr><td>{$header}: <a href='{$baseURL}{$v->type}/approvals?o={$v->orders}&key={$randomString}&pid={$v->profile}&pv={$randomString2}&id={$v->id}'>{$title}{$this->pad($v->id,6)}</a></td></tr>";
         }
         $message .= '</table>';
 

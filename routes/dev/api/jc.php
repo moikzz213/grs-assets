@@ -1,4 +1,4 @@
-<?php 
+<?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AssetController;
@@ -13,7 +13,7 @@ use App\Http\Controllers\ApprovalSetupController;
 Route::middleware('authkey')->group(function () {
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
     Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
-    
+
 
     Route::get('/fetch/request-assets/by-requestor/{page}', [RequestAssetController::class, 'fetchData'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/data/{id}', [RequestAssetController::class, 'fetchDataByID'])->name('fetch.requestor.assets.id');
@@ -41,12 +41,13 @@ Route::middleware('authkey')->group(function () {
     Route::post('/warranty/sync-images/store-update', [WarrantyController::class, 'syncImages'])->name('change.warranty.request');
 
     Route::post('/approval-setups/change-signatory', [ApprovalSetupController::class, 'changeSignatory'])->name('admin.approval.change.signatory');
-    
+
 });
 Route::post('/send-mail-reset-password', [UserApiController::class, 'resetPasswordMail'])->name('mail.reset.password');
 Route::prefix('pv')->group(function () {
     Route::post('/fetch/request-assets/data', [RequestAssetController::class, 'publicFetchRequest'])->name('public.fetch.request.id');
     Route::post('/store/request-asset/approve-data', [RequestAssetController::class, 'publicApproveSignatory'])->name('public.approve.request');
+    // http://127.0.0.1:8000/api/pv/run/cron-jobs?key=Moikzz&c=Ghassan
     Route::get('/run/cron-jobs', [CronJobController::class, 'asset_notification'])->name('public.cron.job');
 });
 ?>
