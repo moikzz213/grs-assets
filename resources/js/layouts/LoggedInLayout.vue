@@ -96,7 +96,11 @@
                 {{ authStore.user.username }}
               </div>
               <div class="text-caption">
-                {{ authStore.user.email }}
+                {{
+                  authStore.user && authStore.user.profile
+                    ? authStore.user.profile.email
+                    : ""
+                }}
               </div>
             </div>
           </div>
@@ -383,14 +387,12 @@ const authlogout = async () => {
   return response;
 };
 const logout = () => {
-
   loadingLogout.value = true;
   localStorage.removeItem("authUser");
   authlogout()
     .then(() => {
-      
       authStore.logout().then(() => {
-        loadingLogout.value = false; 
+        loadingLogout.value = false;
         window.location = "/login";
       });
     })
