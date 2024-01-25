@@ -31,7 +31,7 @@ class RequestAssetController extends Controller
 
         $dataObj = new RequestAsset;
         $dataObj = $dataObj->where('types','=', $page);
-        if($role != 'admin' && $role != 'superadmin' && $role != 'asset-supervisor' && $role != 'commercial-manager'){
+        if($role != 'admin' && $role != 'superadmin' && $role != 'asset-supervisor' && $role != 'commercial-manager' && $role != 'receiving-releasing'){
             $dataObj = $dataObj->where('profile_id','=', $ID);
         }
         if($orderBy){
