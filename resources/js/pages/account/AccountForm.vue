@@ -7,7 +7,7 @@
       <Form as="v-form" :validation-schema="validation">
         <div class="d-flex ">
           <div class="mb-2 text-body-2 mr-2 mt-2">Status</div>
-         
+
         <v-menu :disabled="isOwnAccount">
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" class="mb-6" :color="statusColor">
@@ -29,7 +29,7 @@
           </v-list>
         </v-menu>
         </div>
-       
+
           <v-text-field
             v-model="user.data.username"
             v-bind="field"
@@ -40,7 +40,7 @@
             class="mb-2"
             :disabled="true"
           />
-       
+
         <Field name="email" v-slot="{ field, errors }" v-model="user.data.email">
           <v-text-field
             v-model="user.data.email"
@@ -73,7 +73,7 @@
             :items="roleList"
             label="Role"
             density="compact"
-           
+
             variant="outlined"
             class="mb-2"
             :error-messages="errors"
@@ -100,11 +100,11 @@ const user = ref({
   data: Object.assign({}, props.user),
 });
 const isOwnAccount = ref(true);
- 
+
 watch(
   () => props.user,
   (newVal) => {
-   
+
     isOwnAccount.value = false;
     user.value.data = newVal;
   }
@@ -112,7 +112,7 @@ watch(
 
 console.log("props.user", props.user);
 const emit = defineEmits(["saved"]);
- 
+
 /**
  * Status
  */
@@ -136,38 +136,39 @@ const statusColor = computed(() => {
   }
   return color;
 });
-const selectStatus = (selected) => { 
+const selectStatus = (selected) => {
   user.value.data.status = selected;
 };
 
-const roleList = ref([ 
+const roleList = ref([
     { title: "Asset Supervisor-Project", value: "asset-supervisor" },
-    { title: "Commercial Manager-Project", value: "commercial-manager" }, 
+    { title: "Commercial Manager-Project", value: "commercial-manager" },
     { title: "Facility Team", value: "facility" },
     { title: "Normal", value: "normal" },
     { title: "Technical Operation", value: "technical-operation" },
+    { title: "Receiving/Releasing", value: "receiving-releasing" },
 ]);
 
 /**
  * Submit user
  */
 let validation = yup.object({
-  
+
   email: yup.string().email()
 });
 const saveUser = async () => {
   let data = user.value.data;
- 
-  user.value.loading = true; 
+
+  user.value.loading = true;
   if(data.profile){
     data = data.profile;
   }
   data.profile_id = authStore.user.profile.id;
-  
+
   await clientKey(authStore.token)
   .post("/api/account/profile/save", data)
     .then((response) => {
-      user.value.loading = false;  
+      user.value.loading = false;
       emit("saved", response.data.message);
     })
     .catch((err) => {

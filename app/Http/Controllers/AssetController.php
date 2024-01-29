@@ -371,7 +371,7 @@ class AssetController extends Controller
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
         $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10);
 
-        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor'){
+        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor' && $request->input('role') !== 'receiving-releasing'){
             $incidents   = $incidents->where('profile_id', $request->input('id'));
             $maintenance = $maintenance->where('profile_id', $request->input('id'));
             $req         = $req->where('profile_id', $request->input('id'));
