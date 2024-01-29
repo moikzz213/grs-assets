@@ -34,6 +34,17 @@ class RequestAssetController extends Controller
         if($role != 'admin' && $role != 'superadmin' && $role != 'asset-supervisor' && $role != 'commercial-manager' && $role != 'receiving-releasing'){
             $dataObj = $dataObj->where('profile_id','=', $ID);
         }
+
+
+        // only get the data if the profile ID is included in approvals
+        if($role == 'receiving-releasing'){
+            $dataObj = $dataObj->whereHas('request_approvals', function($q) use($ID){
+                $q->where('profile_id', $ID);
+            });
+        }
+
+        // dd(count($dataObj->get()));
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];

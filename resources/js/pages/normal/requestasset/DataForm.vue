@@ -288,7 +288,7 @@
             </v-row>
           </v-card-text>
         </v-card>
-        <v-card v-if="!is_receiving_releasing" class="my-2">
+        <v-card class="my-2">
           <v-card-text>
             <v-row>
               <div class="v-col-12 font-weight-bold text-uppercase">APPROVAL SETUP</div>
@@ -365,7 +365,7 @@
               </v-row>
               <v-row>
                 <v-divider></v-divider>
-                <div class="v-col-12">
+                <div v-if="!is_receiving_releasing" class="v-col-12">
                   <v-btn
                     :disabled="!isValidate"
                     @click="submitRequest"
@@ -383,6 +383,13 @@
                     }}</v-btn
                   >
                 </div>
+
+                <!-- Should check if the user is the signatory -->
+                <!-- <div class="v-col-12">
+                  <v-btn :href="requestSignatureUrl" target="_blank" color="primary"
+                    >Sign Request</v-btn
+                  >
+                </div> -->
               </v-row>
             </template>
             <v-row v-else>
@@ -742,5 +749,32 @@ watch(assetDataObj.value, async (newVal, oldVal) => {
 // check if not receiving-releasing
 const is_receiving_releasing = computed(() => {
   return authStore.user.role == "receiving-releasing" ? true : false;
+});
+const appURL = ref(import.meta.env.VITE_APP_URL);
+const requestSignatureUrl = computed(() => {
+  let url = null;
+  let baseURL = appURL.value + "/pv/employee-signatory";
+  let randomKey = "4889547454";
+  let profileId = authStore.user.profile.id;
+
+  if (formObjData.value) {
+    console.log("formObjData.value", formObjData.value);
+    // <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}
+    url =
+      baseURL +
+      "/" +
+      formObjData.value.types +
+      "/approvals?o=0&key=" +
+      randomKey +
+      "&pid=" +
+      profileId +
+      "&pv=" +
+      randomKey +
+      "&id=" +
+      formObjData.value.id;
+    console.log("requestSignatureUrl", url);
+  }
+
+  return url;
 });
 </script>
