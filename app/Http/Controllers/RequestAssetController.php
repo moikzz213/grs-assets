@@ -149,13 +149,14 @@ class RequestAssetController extends Controller
             $message = 'Request has been updated.';
             $log_type = 'update';
         }else{
-
-            $assetApprovals[] = array(
-                'profile_id' => $request->profile_id,
-                'approval_type' => 'receiver',
-                'orders' => count($assetApprovals),
-                'status' => 'pending'
-            );
+            if($request->type == 'request'){
+                $assetApprovals[] = array(
+                    'profile_id' => $request->profile_id,
+                    'approval_type' => 'receiver',
+                    'orders' => count($assetApprovals),
+                    'status' => 'pending'
+                );
+            }
 
             $dataArr = array_merge($dataArr, array(
                 'request_type_id' => $request->data['request_type_id'],

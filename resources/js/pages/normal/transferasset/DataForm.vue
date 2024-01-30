@@ -1,6 +1,6 @@
 <template>
-    <v-container>
-        <AppPageHeader :title="props.headertitle" />
+    <v-container  >
+        <AppPageHeader :title="props.headertitle" class="no-print"/>
         <v-row class="mb-3">
             <v-col class="v-col-12 mt-1 col-sm-12 py-0">
                 <v-card>
