@@ -104,14 +104,15 @@
                         </v-card>
                    
                 
-                <v-text-field
+                <v-textarea
                     :value="item.item_description"
                     variant="underlined"
                     density="compact"
                     hide-details
+                    rows="2"
                     class="bg-light-gray d-flex flex-column-reverse"
                     :readonly="true"
-                ></v-text-field>
+                ></v-textarea>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
@@ -167,14 +168,15 @@
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
-                <v-text-field
+                <v-textarea
                     :value="item.reason_for_request"
                     variant="underlined"
                     density="compact"
                     hide-details
                     class="bg-light-gray d-flex flex-column-reverse"
                     :readonly="true"
-                ></v-text-field>
+                    rows="2"
+                ></v-textarea>
             </div>
          
             <div
