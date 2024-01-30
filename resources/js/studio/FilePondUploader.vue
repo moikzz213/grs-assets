@@ -67,7 +67,7 @@ const uploadOptions = ref({
   //     : "1:1",
   accepted_file_types: props.options.accepted_file_types
     ? props.options.accepted_file_types
-    : "image/jpeg, image/png", // image/jpeg, image/png, application/pdf
+    : "image/jpeg, image/png, application/pdf", // image/jpeg, image/png, application/pdf
   type: props.options.type ? props.options.type : "asset",
   max_parallel_uploads: props.options.max_parallel_uploads
     ? props.options.max_parallel_uploads

@@ -163,15 +163,16 @@
                             Note: Dont forget to click the save button
                         </v-card-action>
                     </div>
+                  
                     <div
                         class="v-col-4 text-center"
                         style="
                             border-left: 1px solid #ccc;
                             background-color: #e0e0e0;
                         "
-                        v-if="warrantyAsset && props.dataObject.type"
+                        v-if="warrantyAsset"
                     >
-                        <v-card-text>
+                        <v-card-text v-if="props.dataObject.type">
                             <div class="d-flex mb-5 justify-center">
                                 <Studio
                                     :options="{
@@ -184,7 +185,7 @@
                                     color="primary"
                                     @click="saveImage"
                                     :disabled="selectedFiles?.length == 0"
-                                    >Save Images</v-btn
+                                    >Save Files</v-btn
                                 >
                             </div>
                             <v-row v-if="selectedFiles?.length > 0" class="px-1">
@@ -207,16 +208,26 @@
                                         @click="() => removeAttachment(file.id)"
                                     >
                                     </v-btn>
+                                    {{ file.mime }}
                                     <v-card
-                                        @click="() => openAttachment(index)"
+                                        @click="() => openAttachment(file)"
                                     >
                                         <v-img
+                                        v-if="file.mime == 'image/jpeg' || file.mime == 'image/png'"
                                             :src="
                                                 baseURL + '/file/' + file.path
                                             "
                                             cover
                                             aspect-ratio="1"
                                         >
+                                        </v-img>
+                                        <v-img v-else
+                                        :src="
+                                                baseURL + '/assets/images/pdf-image.png'
+                                            "
+                                            cover
+                                            aspect-ratio="1"
+                                        >  
                                         </v-img>
                                     </v-card>
                                 </div>
@@ -227,37 +238,28 @@
                                     max-width="900"
                                 >
                                     <v-card class="bg-black">
-                                        <v-carousel
-                                            hide-delimiter-background
-                                            show-arrows="hover"
-                                            height="680px"
-                                            v-model="currentSlider"
-                                        >
-                                            <v-carousel-item
-                                                v-for="(
-                                                    item, i
-                                                ) in selectedFiles"
-                                                :key="i"
-                                                reverse-transition="fade"
-                                                transition="fade"
-                                            >
+                                        
                                                 <div
-                                                    style="
-                                                        height: 680px;
+                                                    :style="`${fileType == 'pdf' ? 'height: 980px;' : 'height: 680px;'} 
                                                         width: 100%;
+                                                        `
                                                     "
                                                     class="d-flex align-center justify-center"
                                                 >
                                                     <v-img
+                                                    v-if="fileType == 'jpg' || fileType == 'jpeg' || fileType == 'png'"
                                                         :src="
                                                             baseURL +
                                                             '/file/' +
-                                                            item.path
+                                                            currentSlider.path
                                                         "
                                                     ></v-img>
+                                                    <object v-if="fileType == 'pdf'" :data="baseURL +
+                                                            '/file/' +
+                                                            currentSlider.path" type="application/pdf" width="100%" height="800px"> 
+                                                    </object>
                                                 </div>
-                                            </v-carousel-item>
-                                        </v-carousel>
+                                           
                                     </v-card>
                                 </v-dialog>
                             </v-row>
@@ -270,6 +272,12 @@
                                     at the top
                                 </div>
                             </v-row>
+                        </v-card-text>
+                        <v-card-text v-else > 
+                          
+                            You can upload files on update only.<br/><br/>
+                            kindly create new warranty first then click update/edit.
+                          
                         </v-card-text>
                     </div>
                 </v-row>
@@ -323,8 +331,13 @@ const assetObj = ref([]);
 const searchAsset = ref("");
 const dialogAttachment = ref(false);
 const currentSlider = ref(1);
-const openAttachment = (index) => {
-    currentSlider.value = index;
+const fileType = ref('image');
+const openAttachment = (file) => {
+    
+    let mimeType = file.path.split(".");
+    fileType.value = mimeType[mimeType.length - 1];
+  
+    currentSlider.value = file;
     dialogAttachment.value = true;
 };
 const removeAttachment = (theId) => {
