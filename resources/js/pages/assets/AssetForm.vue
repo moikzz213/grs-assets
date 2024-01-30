@@ -3,11 +3,19 @@
     <Form as="v-form" :validation-schema="validation">
       <v-card-title class="pb-6 pt-3 d-flex align-center justify-space-between">
         <div class="text-primary text-capitalize">
-          {{ props.page + " Asset" }}
+          {{ props.page + ": " }} <strong>{{ assetObj.asset_code }}</strong>
         </div>
         <div class="d-flex align-center">
-          <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"  >Cancel</v-btn>
-          <v-btn v-if="route.name != 'view-asset'" color="primary" :loading="loadingAsset" @click="saveAsset"  >Save</v-btn>
+          <v-btn color="primary" class="mr-4" :loading="loadingAsset" @click="cancelFn"
+            >Cancel</v-btn
+          >
+          <v-btn
+            v-if="route.name != 'view-asset'"
+            color="primary"
+            :loading="loadingAsset"
+            @click="saveAsset"
+            >Save</v-btn
+          >
         </div>
       </v-card-title>
       <v-card-text>
@@ -111,20 +119,40 @@
               :rules="[(v) => !!v || 'Location is required']"
             />
           </div>
-          <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+          <div class="v-col-12 v-col-md-6 pt-0 pb-2 d-flex align-start">
+            <v-text-field
+              style="width: 33.33%"
+              v-model="assetObj.company_code"
+              readonly
+              label="Company Code"
+              variant="outlined"
+              density="compact"
+              :apped="mdiMinus"
+            />
+            <v-icon :icon="mdiMinus" class="mt-3 mx-1"></v-icon>
+            <v-text-field
+              style="width: 33.33%"
+              readonly
+              v-model="assetObj.category_code"
+              label="Asset Code"
+              variant="outlined"
+              density="compact"
+            />
+            <v-icon :icon="mdiMinus" class="mt-3 mx-1"></v-icon>
             <Field
-              name="Asset Code"
+              name="Asset Number"
               v-slot="{ field, errors }"
-              v-model="assetObj.asset_code"
+              v-model="assetObj.asset_tag"
             >
               <v-text-field
-                readonly
-                v-model="assetObj.asset_code"
+                style="width: 33.33%"
                 v-bind="field"
-                label="Asset Code (Auto Generated)"
+                :error-messages="errors"
+                type="number"
+                v-model="assetObj.asset_tag"
+                label="Asset Number*"
                 variant="outlined"
                 density="compact"
-                :error-messages="errors"
               />
             </Field>
           </div>
@@ -143,7 +171,10 @@
           </div>
         </v-row>
         <v-row>
-          <div v-if="props.page == 'edit' || props.page == 'view'" class="v-col-12 pt-0 font-weight-bold">
+          <div
+            v-if="props.page == 'edit' || props.page == 'view'"
+            class="v-col-12 pt-0 font-weight-bold"
+          >
             Additional Info
           </div>
           <div v-if="props.page == 'edit' || props.page == 'view'" class="v-col-12 pt-0">
@@ -162,9 +193,13 @@
           <!-- Additional Information -->
           <div class="v-col-12" v-show="selectedTab == 'specification'">
             <v-row>
-              <div class="v-col-12 pt-0 d-flex justify-space-between" v-if="props.page == 'edit' || props.page == 'view'">
-                <div>Date Created: {{ useFormatDateTime(assetObj.created_at) }}<br/>
-                     Date Updated: {{ useFormatDateTime(assetObj.updated_at) }}
+              <div
+                class="v-col-12 pt-0 d-flex justify-space-between"
+                v-if="props.page == 'edit' || props.page == 'view'"
+              >
+                <div>
+                  Date Created: {{ useFormatDateTime(assetObj.created_at) }}<br />
+                  Date Updated: {{ useFormatDateTime(assetObj.updated_at) }}
                 </div>
                 <div>UpdatedBy: {{ assetObj.last_updated_by?.display_name }}</div>
               </div>
@@ -240,7 +275,11 @@
                 </Field>
               </div>
               <div class="v-col-12 v-col-md-2 pt-0 pb-2">
-                <Field name="Currency" v-slot="{ field, errors }" v-model="assetObj.currency">
+                <Field
+                  name="Currency"
+                  v-slot="{ field, errors }"
+                  v-model="assetObj.currency"
+                >
                   <v-text-field
                     v-model="assetObj.currency"
                     v-bind="field"
@@ -427,7 +466,11 @@
           <div class="v-col-12 pt-0">
             <v-row>
               <div class="v-col-12 pb-2">
-                <Studio :options="{ multiSelect: true }" @select="studioSelectResponse" v-if="route.name !='view-asset'"/>
+                <Studio
+                  :options="{ multiSelect: true }"
+                  @select="studioSelectResponse"
+                  v-if="route.name != 'view-asset'"
+                />
               </div>
             </v-row>
             <v-row v-if="selectedFiles.length > 0" class="px-1">
@@ -491,14 +534,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import Studio from "@/studio/Studio.vue";
 import { useRouter, useRoute } from "vue-router";
-import { mdiClose } from "@mdi/js";
+import { mdiClose, mdiMinus } from "@mdi/js";
 import AssetWarranties from "@/pages/assets/additional-info/AssetWarranties.vue";
 import AssetMaintenances from "@/pages/assets/additional-info/AssetMaintenances.vue";
 import AssetIncidents from "@/pages/assets/additional-info/AssetIncidents.vue";
@@ -506,7 +549,7 @@ import AssetAllotedLocations from "@/pages/assets/additional-info/AssetAllotedLo
 import { useFormatDateTime } from "@/composables/formatDate.js";
 const router = useRouter();
 const route = useRoute();
- 
+
 const props = defineProps({
   page: {
     type: String,
@@ -517,7 +560,6 @@ const props = defineProps({
     default: null,
   },
 });
-
 
 const buttonArray = ref([
   "specification",
@@ -539,30 +581,46 @@ const authStore = useAuthStore();
 // companies
 import { useCompanyStore } from "@/stores/companies";
 const companyStore = useCompanyStore();
-if (companyStore.list.length == 0) {
-  companyStore.getCompanies(authStore.token);
-}
+// if (companyStore.list.length == 0) {
+companyStore.getCompanies(authStore.token);
+// }
+watch(
+  () => assetObj.value.company_id,
+  (newVal) => {
+    assetObj.value.company_code = companyStore.list.filter(
+      (comp) => comp.id == newVal
+    )[0].code;
+  }
+);
 
 // categories
 import { useCategoryStore } from "@/stores/categories";
 const categoryStore = useCategoryStore();
-if (categoryStore.list.length == 0) {
-  categoryStore.getCategories(authStore.token);
-}
+// if (categoryStore.list.length == 0) {
+categoryStore.getCategories(authStore.token);
+// }
+watch(
+  () => assetObj.value.category_id,
+  (newVal) => {
+    assetObj.value.category_code = categoryStore.list.filter(
+      (cat) => cat.id == newVal
+    )[0].code;
+  }
+);
 
 // locations
 import { useLocationStore } from "@/stores/locations";
 const locationStore = useLocationStore();
-if (locationStore.list.length == 0) {
-  locationStore.getLocations(authStore.token);
-} 
+// if (locationStore.list.length == 0) {
+locationStore.getLocations(authStore.token);
+// }
 
 // vendor
 import { useVendorStore } from "@/stores/vendors";
 const vendorStore = useVendorStore();
-if (vendorStore.list.length == 0) {
-  vendorStore.getVendors(authStore.token);
-}
+// if (vendorStore.list.length == 0) {
+vendorStore.getVendors(authStore.token);
+// }
 
 // base URL
 const baseURL = ref(window.location.origin);
@@ -578,7 +636,7 @@ let validation = yup.object({
   // add
   Name: yup.string().required().max(150),
   "Serial Number": yup.string().max(80).nullable(),
-  "Asset Code": yup.string().max(50).nullable(),
+  "Asset Number": yup.number().typeError("Asset number must be a number").required(),
   "Section code": yup.string().max(30).nullable(),
   Category: yup.string().required(),
   Company: yup.string().required(),
@@ -601,9 +659,30 @@ const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 const setAssetData = (assetData) => {
   // set assetObj
   assetObj.value = Object.assign({}, assetData);
+
+  // set asset tag
+  if (assetObj.value.asset_code) {
+    let str = assetObj.value.asset_code + "";
+    let split = str.split("-");
+
+    // set asset_tag
+    assetObj.value.asset_tag = split[split.length - 1];
+
+    // set company_code
+    assetObj.value.company_code = companyStore.list.filter(
+      (comp) => comp.id == assetObj.value.company_id
+    )[0].code;
+
+    // set category_code
+    assetObj.value.category_code = categoryStore.list.filter(
+      (cat) => cat.id == assetObj.value.category_id
+    )[0].code;
+  }
+
   // set files
   selectedFiles.value =
     assetData && assetData.attachments ? Object.assign([], assetData.attachments) : [];
+
   // set financial info
   if (assetData && assetData.financial_information) {
     assetObj.value.capitalization_price =
@@ -616,11 +695,12 @@ const setAssetData = (assetData) => {
       assetData.financial_information.capitalization_date;
     assetObj.value.end_of_life = assetData.financial_information.end_of_life;
   }
-
-  console.log("assetObj.value",assetData);
 };
-
-setAssetData(props.asset);
+onMounted(() => {
+  setTimeout(() => {
+    setAssetData(props.asset);
+  }, 800);
+});
 
 watch(
   () => props.asset,
@@ -629,28 +709,26 @@ watch(
   }
 );
 
-
-
 // status
 import { useStatusStore } from "@/stores/status";
 const statusStore = useStatusStore();
-if (statusStore.list.length == 0 || statusStore.conditions.length == 0) { 
-      statusStore.getStatuses(authStore.token); 
+if (statusStore.list.length == 0 || statusStore.conditions.length == 0) {
+  statusStore.getStatuses(authStore.token);
 }
 
-const cancelFn = () =>{
+const cancelFn = () => {
   router.go(-1);
-}
+};
 
 const saveAsset = async () => {
   loadingAsset.value = true;
   assetObj.value.file_ids = selectedFilesIds.value;
-  assetObj.value.company_code = companyStore.list.filter(
-    (comp) => comp.id == assetObj.value.company_id
-  )[0].code;
-  assetObj.value.category_code = categoryStore.list.filter(
-    (cat) => cat.id == assetObj.value.category_id
-  )[0].code;
+  assetObj.value.asset_code =
+    assetObj.value.company_code +
+    "-" +
+    assetObj.value.category_code +
+    "-" +
+    assetObj.value.asset_tag;
   assetObj.value.financial_information_id = assetObj.value.financial_information
     ? assetObj.value.financial_information.id
     : null;

@@ -20,7 +20,15 @@
         </v-list-item>
         <v-divider></v-divider>
         <div class="overflow-y-auto gag-scroll" style="height: calc(100% - 120px)">
-          <v-list nav>
+          <v-list nav v-if="is_receiving_releasing">
+            <nav-item
+              v-for="item in receiving_releaseing_nav"
+              :key="item.title"
+              :nav="item"
+            ></nav-item>
+            <v-divider></v-divider>
+          </v-list>
+          <v-list v-else nav>
             <nav-item v-for="item in commonNav" :key="item.title" :nav="item"></nav-item>
             <nav-item
               v-for="item in moderatorNav"
@@ -96,7 +104,11 @@
                 {{ authStore.user.username }}
               </div>
               <div class="text-caption">
-                {{ authStore.user.email }}
+                {{
+                  authStore.user && authStore.user.profile
+                    ? authStore.user.profile.email
+                    : ""
+                }}
               </div>
             </div>
           </div>
@@ -124,7 +136,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useDisplay } from "vuetify";
 import NavItem from "./NavItem.vue";
 import {
@@ -176,6 +188,47 @@ const toggleTheme = () => {
 const authStore = useAuthStore();
 
 const router = useRouter();
+const is_receiving_releasing = computed(() => {
+  return authStore.user.role == "receiving-releasing" ? true : false;
+});
+const receiving_releaseing_nav = ref([
+  {
+    title: "Dashboard",
+    icon: mdiHomeOutline,
+    path: "/dashboard",
+    slug: "dashboard",
+  },
+  {
+    title: "Scan Barcode",
+    icon: mdiBarcodeScan,
+    path: "/scan",
+    slug: "scan",
+  },
+  {
+    title: "Asset Reports",
+    icon: mdiListStatus,
+    subs: [
+      {
+        title: "Incidents",
+        icon: mdiFormatListBulleted,
+        path: "/report-incident",
+        slug: "report-incident",
+      },
+      {
+        title: "Requests",
+        icon: mdiFormatListBulleted,
+        path: "/request-asset",
+        slug: "request-asset",
+      },
+      {
+        title: "Transfers",
+        icon: mdiFormatListBulleted,
+        path: "/transfer-asset",
+        slug: "transfer-asset",
+      },
+    ],
+  },
+]);
 const commonNav = ref([
   {
     title: "Dashboard",
@@ -383,14 +436,12 @@ const authlogout = async () => {
   return response;
 };
 const logout = () => {
-
   loadingLogout.value = true;
   localStorage.removeItem("authUser");
   authlogout()
     .then(() => {
-      
       authStore.logout().then(() => {
-        loadingLogout.value = false; 
+        loadingLogout.value = false;
         window.location = "/login";
       });
     })

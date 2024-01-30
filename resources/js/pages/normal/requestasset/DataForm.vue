@@ -30,33 +30,41 @@
           <v-card-text>
             <v-row>
               <div
-                :class="`${formObjData.status == 'complete' ? 'v-col-12' : 'v-col-4'}`"
+                :class="`${
+                  formObjData.status == 'complete' ? 'v-col-12' : 'v-col-md-12'
+                }`"
                 v-if="isEdit"
               >
-                REQUEST NO: SN-5{{ pad(formObjData.id) }}
+                <v-row>
+                  <div class="col-12 v-col-md-4">
+                    REQUEST NO: SN-5{{ pad(formObjData.id) }}
+                  </div>
+                  <div v-if="!is_receiving_releasing" class="v-col-12 v-col-md-8">
+                    <div
+                      class="text-right"
+                      v-if="
+                        isEdit &&
+                        (formObjData.status == 'pending' ||
+                          formObjData.status == 'cancelled')
+                      "
+                    >
+                      <v-btn
+                        v-if="formObjData.status == 'pending'"
+                        @click="changeRequestStatus('cancelled')"
+                        color="warning"
+                        >Cancel request</v-btn
+                      >
+                      <v-btn
+                        v-if="formObjData.status == 'cancelled'"
+                        @click="changeRequestStatus('pending')"
+                        size="small"
+                        color="info"
+                        >Change status to Pending</v-btn
+                      >
+                    </div>
+                  </div>
+                </v-row>
               </div>
-              <div
-                class="v-col-8 text-right"
-                v-if="
-                  isEdit &&
-                  (formObjData.status == 'pending' || formObjData.status == 'cancelled')
-                "
-              >
-                <v-btn
-                  v-if="formObjData.status == 'pending'"
-                  @click="changeRequestStatus('cancelled')"
-                  color="warning"
-                  >Cancel request</v-btn
-                >
-                <v-btn
-                  v-if="formObjData.status == 'cancelled'"
-                  @click="changeRequestStatus('pending')"
-                  size="small"
-                  color="info"
-                  >Change status to Pending</v-btn
-                >
-              </div>
-              <div class="v-col-8 text-right" v-else></div>
               <div class="v-col-12 v-col-md-6">
                 <v-autocomplete
                   :items="requestTypeList"
@@ -122,7 +130,7 @@
         </v-card>
         <v-card class="my-2">
           <v-card-text>
-            <v-row>
+            <v-row v-if="!is_receiving_releasing">
               <div class="v-col-12">
                 <v-btn
                   color="primary"
@@ -357,7 +365,7 @@
               </v-row>
               <v-row>
                 <v-divider></v-divider>
-                <div class="v-col-12">
+                <div v-if="!is_receiving_releasing" class="v-col-12">
                   <v-btn
                     :disabled="!isValidate"
                     @click="submitRequest"
@@ -375,6 +383,13 @@
                     }}</v-btn
                   >
                 </div>
+
+                <!-- Should check if the user is the signatory -->
+                <!-- <div class="v-col-12">
+                  <v-btn :href="requestSignatureUrl" target="_blank" color="primary"
+                    >Sign Request</v-btn
+                  >
+                </div> -->
               </v-row>
             </template>
             <v-row v-else>
@@ -397,7 +412,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -590,24 +605,34 @@ const setupApprovals = async () => {
           o.reason_rejected = onUpdateApproval.value[i].reason_rejected;
           return o;
         });
-        
+
         if (approvalSetupList.value.length > 1) {
           approvalSetupList.value[onUpdateApproval.value.length - 1] = {
             id: onUpdateApproval.value[onUpdateApproval.value.length - 1].id,
-            profile_id:  onUpdateApproval.value[onUpdateApproval.value.length - 1].profile_id,
+            profile_id:
+              onUpdateApproval.value[onUpdateApproval.value.length - 1].profile_id,
             status: onUpdateApproval.value[onUpdateApproval.value.length - 1].status,
-            date_approved: onUpdateApproval.value[onUpdateApproval.value.length - 1].date_approved,
+            date_approved:
+              onUpdateApproval.value[onUpdateApproval.value.length - 1].date_approved,
             status: onUpdateApproval.value[onUpdateApproval.value.length - 1].status,
             reason_rejected: "",
-            types: onUpdateApproval.value[onUpdateApproval.value.length - 1].approval_type,
+            types:
+              onUpdateApproval.value[onUpdateApproval.value.length - 1].approval_type,
             sort: onUpdateApproval.value[onUpdateApproval.value.length - 1].orders,
-            request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length - 1].request_asset_id,
+            request_asset_id:
+              onUpdateApproval.value[onUpdateApproval.value.length - 1].request_asset_id,
             signatures: [
               {
                 id: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.id,
-                display_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.display_name,
-                first_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.first_name,
-                last_name: onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile.last_name,
+                display_name:
+                  onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile
+                    .display_name,
+                first_name:
+                  onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile
+                    .first_name,
+                last_name:
+                  onUpdateApproval.value[onUpdateApproval.value.length - 1]?.profile
+                    .last_name,
               },
             ],
           };
@@ -640,7 +665,7 @@ const requiredData = () => {
   assetDataObj.value.map((o) => {
     if (!o.item_description) {
       checkAsset = false;
-    }else if(!o.reason_for_request){
+    } else if (!o.reason_for_request) {
       checkAsset = false;
     }
   });
@@ -705,7 +730,7 @@ onMounted(() => {
     objData.value.id = v.id;
     objData.value.requestor_id = v.profile_id;
     onUpdateApproval.value = v.request_approvals;
-     
+
     assetDataObj.value = v.items;
 
     setupApprovals();
@@ -719,5 +744,37 @@ watch(objData.value, async (newVal, oldVal) => {
 });
 watch(assetDataObj.value, async (newVal, oldVal) => {
   requiredData();
+});
+
+// check if not receiving-releasing
+const is_receiving_releasing = computed(() => {
+  return authStore.user.role == "receiving-releasing" ? true : false;
+});
+const appURL = ref(import.meta.env.VITE_APP_URL);
+const requestSignatureUrl = computed(() => {
+  let url = null;
+  let baseURL = appURL.value + "/pv/employee-signatory";
+  let randomKey = "4889547454";
+  let profileId = authStore.user.profile.id;
+
+  if (formObjData.value) {
+    console.log("formObjData.value", formObjData.value);
+    // <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}
+    url =
+      baseURL +
+      "/" +
+      formObjData.value.types +
+      "/approvals?o=0&key=" +
+      randomKey +
+      "&pid=" +
+      profileId +
+      "&pv=" +
+      randomKey +
+      "&id=" +
+      formObjData.value.id;
+    console.log("requestSignatureUrl", url);
+  }
+
+  return url;
 });
 </script>

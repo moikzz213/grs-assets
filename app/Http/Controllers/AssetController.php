@@ -40,7 +40,7 @@ class AssetController extends Controller
                     $check = Asset::where('asset_code', $item->asset_code)->first();
 
                     if(!$check){
-                       
+
                         // insert asset and get the id
                         $assetLastInsertedId = Asset::insertGetId([
                            // asset
@@ -165,6 +165,7 @@ class AssetController extends Controller
         DB::beginTransaction();
         try {
             $assetArray = array(
+                'asset_code' => $request['asset_code'],
                 'asset_name' => $request['asset_name'],
                 'serial_number' => $request['serial_number'],
                 'section_code' => $request['section_code'],
@@ -217,9 +218,9 @@ class AssetController extends Controller
                 $asset->attachments()->sync($request['file_ids']);
             }else{
                 $asset = Asset::create($assetArray);
-                $generatedAssetCode =  $request['company_code'].'-'.$request['category_code'].'-'. str_pad($asset->id, 5, '0', STR_PAD_LEFT);
-                $asset->asset_code = strtoupper($generatedAssetCode);
-                $asset->save();
+                // $generatedAssetCode =  $request['company_code'].'-'.$request['category_code'].'-'. str_pad($asset->id, 5, '0', STR_PAD_LEFT);
+                // $asset->asset_code = strtoupper($generatedAssetCode);
+                // $asset->save();
                 if($asset && $request['file_ids']){
                     $asset->attachments()->sync($request['file_ids']);
                 }
@@ -322,7 +323,7 @@ class AssetController extends Controller
             if(@$filterSearch->location_id){
                 $dataObj = $dataObj->where('location_id', $filterSearch->location_id);
             }
-            
+
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
@@ -338,7 +339,7 @@ class AssetController extends Controller
 
                     $q->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code',  'like', '%'.$search.'%')
-                        ->orWhere('serial_number',  'like', '%'.$search.'%'); 
+                        ->orWhere('serial_number',  'like', '%'.$search.'%');
             });
 
             $dataObj = $dataObj->get();
@@ -358,7 +359,7 @@ class AssetController extends Controller
     public function dashboardData(Request $request){
         $role = 'normal';
 
-        
+
 
         $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8);
         $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8);
@@ -370,7 +371,7 @@ class AssetController extends Controller
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
         $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10);
 
-        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor'){
+        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor' && $request->input('role') !== 'receiving-releasing'){
             $incidents   = $incidents->where('profile_id', $request->input('id'));
             $maintenance = $maintenance->where('profile_id', $request->input('id'));
             $req         = $req->where('profile_id', $request->input('id'));

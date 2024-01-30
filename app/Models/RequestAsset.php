@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Log;
+use App\Models\Profile;
 use App\Models\ApprovalSetup;
 use App\Models\RequestApproval;
 use App\Models\RequestAssetDetail;
@@ -42,8 +43,8 @@ class RequestAsset extends Model
     public function reminder_profile()
     {
         return $this->belongsTo(Profile::class, 'reminder_profile_id');
-    } 
-    
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);
