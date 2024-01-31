@@ -185,7 +185,7 @@
                                         >
                                         </v-btn>
                                         <v-card
-                                            @click="() => openAttachment(index)"
+                                            @click="() => openAttachment(item)"
                                             maxHeight="40"
                                             style="
                                                 background-image: url('/assets/images/fav.png');
@@ -203,16 +203,7 @@
                                         max-width="900"
                                     >
                                         <v-card class="bg-black">
-                                            <v-carousel
-                                                hide-delimiter-background
-                                                show-arrows="hover"
-                                                height="680px"
-                                                v-model="currentSlider"
-                                            >
-                                                <v-carousel-item
-                                                    reverse-transition="fade"
-                                                    transition="fade"
-                                                >
+                                             
                                                     <div
                                                         style="
                                                             height: 680px;
@@ -224,13 +215,12 @@
                                                             :src="
                                                                 baseURL +
                                                                 '/file/' +
-                                                                item.attachment
+                                                                currentSlider.attachment
                                                                     .path
                                                             "
                                                         ></v-img>
                                                     </div>
-                                                </v-carousel-item>
-                                            </v-carousel>
+                                                 
                                         </v-card>
                                     </v-dialog>
                                 </v-row>
@@ -537,8 +527,8 @@ const studioSelectResponse = (index, v) => {
 };
 const dialogAttachment = ref(false);
 const currentSlider = ref(1);
-const openAttachment = (index) => {
-    currentSlider.value = index;
+const openAttachment = (item) => {
+    currentSlider.value = item;
     dialogAttachment.value = true;
 };
 const removeAttachment = (index) => {
