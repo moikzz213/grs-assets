@@ -326,8 +326,14 @@ class RequestAssetController extends Controller
         return response()->json(array('message' => $message, 'success' => true), 200);
     }
 
+    public function fetchAssetLPOOnly(Request $request){
+        $query = Asset::select('po_number')->where('po_number', '<>', '')->groupBy('po_number')->pluck('po_number');
+        
+        return response()->json(array('result' => $query), 200);
+    }
+
     public function publicFetchRequest(Request $request){
-            $query = RequestApproval::where(['request_asset_id' => $request->id, 'profile_id' => $request->profile_id])->first();
+            $query = RequestApproval::where(['request_asset_id' => $request->id])->first();
             if(!$query){
                 return response()->json(array('access' => false, 'data' => null), 200);
             }
