@@ -130,6 +130,7 @@
               :apped="mdiMinus"
             />
             <v-icon :icon="mdiMinus" class="mt-3 mx-1"></v-icon>
+           
             <v-text-field
               style="width: 33.33%"
               readonly
@@ -449,8 +450,8 @@
               v-if="props.page != 'add'"
             />
           </div>
-          <!-- Allotted Information -->
-          <div class="v-col-12 mb-6" v-show="selectedTab == 'allotted'">
+          <!-- Transfer history Information -->
+          <div class="v-col-12 mb-6" v-show="selectedTab == 'transfer history'">
             <AssetAllotedLocations :asset="assetObj" />
           </div>
           <!-- Maintenance Information -->
@@ -566,7 +567,7 @@ const buttonArray = ref([
   "purchase",
   "financial",
   "warranty",
-  "allotted",
+  "transfer history",
   "maintenance",
   "incident",
 ]);
@@ -589,7 +590,7 @@ watch(
   (newVal) => {
     assetObj.value.company_code = companyStore.list.filter(
       (comp) => comp.id == newVal
-    )[0].code;
+    )[0]?.code;
   }
 );
 
@@ -604,7 +605,7 @@ watch(
   (newVal) => {
     assetObj.value.category_code = categoryStore.list.filter(
       (cat) => cat.id == newVal
-    )[0].code;
+    )[0]?.code;
   }
 );
 
@@ -626,7 +627,7 @@ vendorStore.getVendors(authStore.token);
 const baseURL = ref(window.location.origin);
 
 // tabs
-const selectedTab = ref("specification"); // additional, purchase, financial, allotted, warranty, maintenance
+const selectedTab = ref("specification"); // additional, purchase, financial, transfer history, warranty, maintenance
 const changeTab = (tab) => {
   selectedTab.value = tab;
 };
@@ -671,12 +672,14 @@ const setAssetData = (assetData) => {
     // set company_code
     assetObj.value.company_code = companyStore.list.filter(
       (comp) => comp.id == assetObj.value.company_id
-    )[0].code;
+    )[0]?.code;
 
     // set category_code
+    
     assetObj.value.category_code = categoryStore.list.filter(
       (cat) => cat.id == assetObj.value.category_id
-    )[0].code;
+    )[0]?.code;
+    
   }
 
   // set files

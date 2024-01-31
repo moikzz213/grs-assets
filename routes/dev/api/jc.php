@@ -15,6 +15,7 @@ Route::middleware('authkey')->group(function () {
     Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
 
 
+    Route::get('/fetch-assets/lpo-no-only', [RequestAssetController::class, 'fetchAssetLPOOnly'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/{page}', [RequestAssetController::class, 'fetchData'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/data/{id}', [RequestAssetController::class, 'fetchDataByID'])->name('fetch.requestor.assets.id');
     Route::post('/request-asset/store-update/data', [RequestAssetController::class, 'storeUpdate'])->name('request.asset-store.update');

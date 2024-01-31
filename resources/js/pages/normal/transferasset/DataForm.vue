@@ -335,11 +335,10 @@
                 </v-card>
                 <v-card class="my-2">
                     <v-card-text>
-                        <v-row>
-                            <div
-                                class="v-col-12 font-weight-bold text-uppercase"
-                            >
-                                APPROVAL SETUP
+                        <v-row> 
+                            <div class="v-col-12 font-weight-bold text-uppercase d-flex justify-space-between">
+                                <div>APPROVAL SETUP</div>
+                                <div v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
                             </div>
                             <v-divider></v-divider>
                         </v-row>
@@ -479,7 +478,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { useRoute, useRouter } from "vue-router";
 import Studio from "@/studio/Studio.vue";
@@ -494,6 +493,7 @@ import {
     mdiAccountCancel,
 } from "@mdi/js";
 import { useFormatDate } from "@/composables/formatDate.js";
+import { randomAlphaString } from "@/composables/generateRandomString.js";
 const emit = defineEmits(["deleted"]);
 const authStore = useAuthStore();
 const props = defineProps({
@@ -801,6 +801,28 @@ onMounted(() => {
         objData.value.company_id = authStore.user.profile.company_id;
     }
 });
+const appURL = ref(import.meta.env.VITE_APP_URL);
+const requestSignatureUrl = computed(() => {
+      let url = null;
+      let baseURL = appURL.value + "/pv/employee-signatory";
+      let randomKey = randomAlphaString(50);
+      let randomKey2 = randomAlphaString(50);
+
+      if (formObjData.value) {        
+        url =
+          baseURL +
+          "/transfer" + 
+          "/approvals?o=99&key=" +
+          randomKey +
+          "&pid=95" +
+          "&pv=" +
+          randomKey2 +
+          "&id=" +
+          formObjData.value.id;        
+      }
+
+      return url;
+}); 
 
 watch(objData.value, async (newVal, oldVal) => {
     requiredData();

@@ -129,6 +129,19 @@
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
+                :items="lpoList"
+                v-model="objFIlter.po_number"
+                @update:modelValue="filterSearch('po_number')"
+                variant="outlined"
+                density="compact"
+                hide-details 
+                clearable
+                label="LPO No."
+                @click:clear="clearSearch('po_number')"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
                 :items="showRows"
                 v-model="showPerPage"
                 @update:modelValue="filterRows"
@@ -467,6 +480,8 @@ const filterSearch = (v) => {
         localStorage.setItem("asset-filter-category", encryptData(objFIlter.value.category_id));
       }else if(v == 'status'){ 
         localStorage.setItem("asset-filter-status", encryptData(objFIlter.value.status_id));
+      }else if(v == 'po_number'){ 
+        localStorage.setItem("asset-filter-ponum", encryptData(objFIlter.value.po_number));
       }
       getAllData();
   } else {
@@ -492,6 +507,8 @@ const clearSearch = (v) => {
       localStorage.setItem("asset-filter-category", '');
     }else if(v == 'status'){ 
       localStorage.setItem("asset-filter-status", '');
+    }else if(v == 'po_number'){ 
+      localStorage.setItem("asset-filter-ponum", '');
     }
   
 };
@@ -594,6 +611,17 @@ const fetchStatus = async () => {
     .catch((err) => {});
 };
 
+const lpoList = ref([]);
+const fetchLPONos = async () => {
+  await clientKey(authStore.token)
+    .get("/api/fetch-assets/lpo-no-only")
+    .then((res) => {
+      console.log("res.data",res.data);
+      lpoList.value = res.data.result;
+    })
+    .catch((err) => {});
+};
+
 const getAllData = async () => {
   dataObj.value.loading = true;
 
@@ -689,6 +717,7 @@ onMounted(() => {
   let vlocation = localStorage.getItem("asset-filter-location"); 
   let vcategory = localStorage.getItem("asset-filter-category"); 
   let vstatus = localStorage.getItem("asset-filter-status");
+  let vponum = localStorage.getItem("asset-filter-ponum");
   let vrows = localStorage.getItem("asset-filter-row");
      
   if (vsearch) {
@@ -709,11 +738,15 @@ onMounted(() => {
   if(vrows){
     showPerPage.value = decryptData(vrows);
   }
+  if(vponum){
+    objFIlter.value.po_number = decryptData(vponum);
+  } 
  
   getAllData().then(() => {
     fetchCompanies();
     fetchLocations();
     fetchStatus();
+    fetchLPONos();
   });
 });
 </script>

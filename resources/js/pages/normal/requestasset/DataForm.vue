@@ -291,7 +291,10 @@
         <v-card class="my-2">
           <v-card-text>
             <v-row>
-              <div class="v-col-12 font-weight-bold text-uppercase">APPROVAL SETUP</div>
+              <div class="v-col-12 font-weight-bold text-uppercase d-flex justify-space-between">
+                <div>APPROVAL SETUP</div>
+                <div v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
+              </div>
               <v-divider></v-divider>
             </v-row>
             <v-row>
@@ -382,14 +385,7 @@
                       route.params.id ? "Update Request" : "Submit For Approval"
                     }}</v-btn
                   >
-                </div>
-
-                <!-- Should check if the user is the signatory -->
-                <!-- <div class="v-col-12">
-                  <v-btn :href="requestSignatureUrl" target="_blank" color="primary"
-                    >Sign Request</v-btn
-                  >
-                </div> -->
+                </div> 
               </v-row>
             </template>
             <v-row v-else>
@@ -430,6 +426,7 @@ import {
   mdiAccountCancel,
 } from "@mdi/js";
 import { useFormatDate } from "@/composables/formatDate.js";
+import { randomAlphaString } from "@/composables/generateRandomString.js";
 const emit = defineEmits(["deleted"]);
 const authStore = useAuthStore();
 const props = defineProps({
@@ -522,7 +519,7 @@ const deleteData = (id, index) => {
 };
 
 const errorMsg = ref("Note: Administrator needs to setup signatories first.");
-
+ 
 const submitRequest = () => {
   sbOptions.value = {
     status: true,
@@ -752,29 +749,27 @@ const is_receiving_releasing = computed(() => {
 });
 const appURL = ref(import.meta.env.VITE_APP_URL);
 const requestSignatureUrl = computed(() => {
-  let url = null;
-  let baseURL = appURL.value + "/pv/employee-signatory";
-  let randomKey = "4889547454";
-  let profileId = authStore.user.profile.id;
+      let url = null;
+      let baseURL = appURL.value + "/pv/employee-signatory";
+      let randomKey = randomAlphaString(50);
+      let randomKey2 = randomAlphaString(50);
 
-  if (formObjData.value) {
-    console.log("formObjData.value", formObjData.value);
-    // <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}
-    url =
-      baseURL +
-      "/" +
-      formObjData.value.types +
-      "/approvals?o=0&key=" +
-      randomKey +
-      "&pid=" +
-      profileId +
-      "&pv=" +
-      randomKey +
-      "&id=" +
-      formObjData.value.id;
-    console.log("requestSignatureUrl", url);
-  }
+      if (formObjData.value) {        
+        url =
+          baseURL +
+          "/" +
+          formObjData.value.types +
+          "/approvals?o=99&key=" +
+          randomKey +
+          "&pid=95" +
+          "&pv=" +
+          randomKey2 +
+          "&id=" +
+          formObjData.value.id;        
+      }
 
-  return url;
+      return url;
 });
+
+ 
 </script>
