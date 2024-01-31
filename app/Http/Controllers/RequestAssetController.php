@@ -233,7 +233,6 @@ class RequestAssetController extends Controller
             $queryRequest->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
-
             // Notify requestor - request has been rejected
 
             $jobData = array('typeReceiver' => 'requestor','profile_id' => $requestorID, 'type' => $types, 'subject' => $queryRequest->subject, 'id' => $ID, 'order' => $order);

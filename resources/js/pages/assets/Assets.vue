@@ -226,9 +226,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in dataObj.data" :key="item.id">
+              <tr v-for="item in dataObj.data" :key="item.id" :class="`${item.status?.title.toLowerCase() == 'trashed' ? 'bg-deep-orange-lighten-5' :''}`">
                 <td>
                   <v-checkbox
+                  v-if="item.status?.title.toLowerCase() != 'trashed'"
                     v-model="item.print_barcode"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -246,7 +247,6 @@
                 <td>{{ item.brand }}</td>
                 <td>{{ item.asset_name }}</td>
                 <td>{{ item.asset_code }}</td>
-
                 <td>
                   <v-chip
                     class="text-uppercase"
@@ -267,6 +267,7 @@
                     :color="`${
                       item.status?.title.toLowerCase() == 'maintenance' ||
                       item.status?.title.toLowerCase() == 'broken' ||
+                      item.status?.title.toLowerCase() == 'trashed' ||
                       item.status?.title.toLowerCase() == 'damage'
                         ? 'error'
                         : 'info'
