@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppPageHeader :title="props.headertitle" />
+    <AppPageHeader :title="props.headertitle" class="no-print" />
     <v-row class="mb-3">
       <v-col class="v-col-12 mt-1 col-sm-12 py-0">
         <v-card>
@@ -41,7 +41,7 @@
                   </div>
                   <div v-if="!is_receiving_releasing" class="v-col-12 v-col-md-8">
                     <div
-                      class="text-right"
+                      class="text-right no-print"
                       v-if="
                         isEdit &&
                         (formObjData.status == 'pending' ||
@@ -52,6 +52,7 @@
                         v-if="formObjData.status == 'pending'"
                         @click="changeRequestStatus('cancelled')"
                         color="warning"
+                      
                         >Cancel request</v-btn
                       >
                       <v-btn
@@ -134,6 +135,7 @@
               <div class="v-col-12">
                 <v-btn
                   color="primary"
+                  class="no-print"
                   @click="AddAsset"
                   v-if="
                     formObjData.status != 'complete' &&
@@ -146,7 +148,29 @@
                 >
               </div>
             </v-row>
-            <v-row v-for="(item, index) in assetDataObj" :key="index">
+              <!-- This row is for print -->
+              <v-row class="for-print-flex header mb-1">
+                            <div class="w-30">ITEM DESCRIPTION</div>
+                            <div class="w-15">ASSET CODE</div>
+                            <div class="w-10">QTY</div>
+                            <div class="w-10">WEIGHT</div>
+                            <div class="w-10">VALUE</div>
+                            <div class="w-20">REASON FOR REQUEST</div>
+                        </v-row>
+                        <v-row
+                            v-for="(item, index) in assetDataObj"
+                            :key="index"
+                            class="for-print-flex row-bordered"
+                        >
+                            <div class="w-30">{{ item.item_description }}</div>
+                            <div class="w-15">{{ item.asset_code }}</div>
+                            <div class="w-10">{{ item.qty }}</div>
+                            <div class="w-10">{{ item.weight }}</div>
+                            <div class="w-10">{{ item.item_value }}</div>
+                            <div class="w-20"> {{ item.reason_for_request }}</div>
+                        </v-row>
+                        <!-- End for print -->
+            <v-row v-for="(item, index) in assetDataObj" :key="index" class="no-print">
               <div class="v-col-12 v-col-md-1 px-1">
                 <v-row v-if="item.attachment?.id" class="px-1">
                   <div class="v-col-12 v-col-md-12 pa-2" style="position: relative">
@@ -268,7 +292,7 @@
                   size="small"
                   @click="() => deleteData(item.id, index)"
                   :icon="mdiTrashCan"
-                  class="my-auto ml-2"
+                  class="my-auto ml-2 no-print"
                   v-if="
                     !isEdit ||
                     (isEdit &&
@@ -286,7 +310,7 @@
             <v-row>
               <div class="v-col-12 font-weight-bold text-uppercase d-flex justify-space-between">
                 <div>APPROVAL SETUP</div>
-                <div v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
+                <div class="no-print" v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
               </div>
               <v-divider></v-divider>
             </v-row>

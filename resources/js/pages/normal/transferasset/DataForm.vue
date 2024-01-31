@@ -39,8 +39,9 @@
                             >
                                 REQUEST NO: SN-3{{ pad(formObjData.id) }}
                             </div>
-                            <div class="v-col-8 text-right">
+                            <div class="v-col-8 text-right ">
                                 <div
+                                class="no-print"
                                     v-if="
                                         isEdit &&
                                         (formObjData.status == 'pending' ||
@@ -136,6 +137,7 @@
                                 <v-btn
                                     size="small"
                                     color="primary"
+                                    class="no-print"
                                     @click="AddAsset"
                                     v-if="
                                         !route.params.id ||
@@ -149,14 +151,37 @@
                                 >
                             </div>
                         </v-row>
+                        <!-- This row is for print -->
+                        <v-row class="for-print-flex header mb-1">
+                            <div class="w-30">ITEM DESCRIPTION</div>
+                            <div class="w-15">ASSET CODE</div>
+                            <div class="w-10">QTY</div>
+                            <div class="w-10">WEIGHT</div>
+                            <div class="w-10">VALUE</div>
+                            <div class="w-20">REASON FOR REQUEST</div>
+                        </v-row>
                         <v-row
                             v-for="(item, index) in assetDataObj"
                             :key="index"
+                            class="for-print-flex row-bordered"
                         >
-                            <div class="v-col-12 v-col-md-1 px-1">
-                                <v-row v-if="item.attachment?.id" class="px-1">
+                            <div class="w-30">{{ item.item_description }}</div>
+                            <div class="w-15">{{ item.asset_code }}</div>
+                            <div class="w-10">{{ item.qty }}</div>
+                            <div class="w-10">{{ item.weight }}</div>
+                            <div class="w-10">{{ item.item_value }}</div>
+                            <div class="w-20"> {{ item.reason_for_request }}</div>
+                        </v-row>
+                        <!-- End for print -->
+                        <v-row
+                            v-for="(item, index) in assetDataObj"
+                            :key="index"
+                            class="no-print"
+                        >
+                            <div class="v-col-12 v-col-md-1 px-1 no-print">
+                                <v-row v-if="item.attachment?.id" class="px-1 ">
                                     <div
-                                        class="v-col-12 v-col-md-12 pa-2"
+                                        class="v-col-12 v-col-md-12 pa-2 "
                                         style="position: relative"
                                     >
                                         <v-text-field
@@ -225,7 +250,7 @@
                                     </v-dialog>
                                 </v-row>
                                 <v-row v-else class="mt-0">
-                                    <div class="v-col-12 pt-0 pb-0">
+                                    <div class="v-col-12 pt-0 pb-0 ">
                                         <v-sheet
                                             color="grey-lighten-4"
                                             class="text-center"
@@ -255,7 +280,9 @@
                                     hide-details
                                     clearable
                                     label="ITEM DESC*"
+                                    class="no-print"
                                 ></v-text-field>
+                                
                             </div>
                             <div class="v-col-12 v-col-md-2">
                                 <v-text-field
@@ -264,7 +291,9 @@
                                     density="compact"
                                     hide-details
                                     label="ASSET CODE"
+                                    class="no-print"
                                 ></v-text-field>
+                                
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
@@ -273,8 +302,10 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    class="no-print"
                                     label="QTY"
                                 ></v-text-field>
+                              
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
@@ -282,9 +313,11 @@
                                     v-model="item.weight"
                                     variant="outlined"
                                     density="compact"
+                                    class="no-print"
                                     hide-details
                                     label="WEIGHT(KG)"
                                 ></v-text-field>
+                                
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
@@ -293,8 +326,10 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    class="no-print"
                                     label="VALUE"
                                 ></v-text-field>
+                               
                             </div>
                             <div class="v-col-12 v-col-md-3 d-flex">
                                 <v-text-field
@@ -302,13 +337,14 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    class="no-print"
                                     label="REASON FOR REQUEST*"
                                 ></v-text-field>
                                 <v-icon
                                     size="small"
                                     @click="() => deleteData(item.id, index)"
                                     :icon="mdiTrashCan"
-                                    class="my-auto ml-2"
+                                    class="my-auto ml-2 no-print"
                                     v-if="
                                         !isEdit ||
                                         (isEdit &&
@@ -319,16 +355,17 @@
                                     "
                                     color="error"
                                 />
+                                
                             </div>
                         </v-row>
                     </v-card-text>
                 </v-card>
-                <v-card class="my-2">
+                <v-card class="my-2 page-break">
                     <v-card-text>
                         <v-row> 
                             <div class="v-col-12 font-weight-bold text-uppercase d-flex justify-space-between">
                                 <div>APPROVAL SETUP</div>
-                                <div v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
+                                <div class="no-print" v-if="route.params.id"><v-btn color="info" size="small" target="_blank" :href="requestSignatureUrl">View Approval Page</v-btn></div>
                             </div>
                             <v-divider></v-divider>
                         </v-row>
@@ -366,7 +403,7 @@
                                         :disabled="item.status == 'done'"
                                     >
                                     </v-autocomplete>
-                                    <v-btn variant="text" size="x-small">
+                                    <v-btn variant="text" size="x-small" class="no-print">
                                         <v-icon
                                             v-if="item.status"
                                             class="mx-2 my-3"
@@ -420,7 +457,7 @@
                             </v-row>
                             <v-row>
                                 <v-divider></v-divider>
-                                <div class="v-col-12">
+                                <div class="v-col-12 no-print">
                                     <v-btn
                                         size="small"
                                         :disabled="!isValidate"
