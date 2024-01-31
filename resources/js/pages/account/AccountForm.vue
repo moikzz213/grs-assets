@@ -146,7 +146,7 @@ const roleList = ref([
     { title: "Facility Team", value: "facility" },
     { title: "Normal", value: "normal" },
     { title: "Technical Operation", value: "technical-operation" },
-    { title: "Receiving/Releasing", value: "receiving-releasing" },
+    { title: "Receiving/Releasing/Transport", value: "receiving-releasing" },
 ]);
 
 /**
