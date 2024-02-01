@@ -10,7 +10,7 @@
 
         <v-menu :disabled="isOwnAccount">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" class="mb-6" :color="statusColor">
+            <v-btn v-bind="props" class="mb-1" :color="statusColor">
               {{ user.data.status }}
             </v-btn>
           </template>
@@ -28,8 +28,35 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        </div>
 
+
+        <div class="mb-2 text-body-2 mr-2 mt-2 ml-5">At Work?</div>
+
+        <v-menu :disabled="isOwnAccount">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" class="mb-1" :color="onleaveColor">
+              {{ user.data.on_leave == 0 ?  'Working' : 'onLeave' }}
+            </v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item
+              v-for="(item, index) in onLeaveStatus"
+              :key="index"
+              :value="index"
+              @click="() => selectOnleaveStatus(item.title)"
+            >
+              <v-list-item-title class="text-overline d-flex align-center">
+                <v-icon :color="item.color" :icon="mdiCircleMedium" class="mr-1"></v-icon>
+                <div>{{ item.title }}</div></v-list-item-title
+              >
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        
+        </div>
+        <v-divider></v-divider>
+        <div class="mb-5 mt-3 bg-info pa-1">Note: Email reliever will only work if it's on leave</div>
+        
           <v-text-field
             v-model="user.data.username"
             v-bind="field"
@@ -46,6 +73,18 @@
             v-model="user.data.email"
             v-bind="field"
             label="Email"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="mb-2"
+            :error-messages="errors"
+          />
+        </Field>
+        <Field name="reliever" v-slot="{ field, errors }" v-model="user.data.email_reliever">
+          <v-text-field
+            v-model="user.data.email_reliever"
+            v-bind="field"
+            label="Email Reliever (Optional)"
             variant="outlined"
             density="compact"
             hide-details
@@ -110,7 +149,7 @@ watch(
   }
 );
 
-console.log("props.user", props.user);
+ 
 const emit = defineEmits(["saved"]);
 
 /**
@@ -126,18 +165,43 @@ const statusList = ref([
     color: "error",
   },
 ]);
+
+const onLeaveStatus = ref([
+  { 
+    title: "working",
+    color: "success",
+  },
+  { 
+    title: "onleave",
+    color: "error",
+  },
+]);
 const statusColor = computed(() => {
   let color = "";
-  if (user.value.data.status == "active") {
+  if (user.value.data.status == "active" ) {
     color = "success";
   }
-  if (user.value.data.status == "inactive") {
+  if (user.value.data.status == "inactive" ) {
+    color = "error";
+  }
+  return color;
+});
+const onleaveColor = computed(() => {
+  let color = "";
+  if (user.value.data.on_leave == 'working' || user.value.data.on_leave == 0) {
+    color = "success";
+  }
+  if ( user.value.data.on_leave == 'onleave' || user.value.data.on_leave == 1) {
     color = "error";
   }
   return color;
 });
 const selectStatus = (selected) => {
   user.value.data.status = selected;
+};
+
+const selectOnleaveStatus = (selected) => {
+  user.value.data.on_leave = selected;
 };
 
 const roleList = ref([

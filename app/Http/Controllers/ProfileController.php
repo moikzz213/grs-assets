@@ -21,6 +21,8 @@ class ProfileController extends Controller
             'contact' => $request['contact'],
             'status' => $request['status'],
             'role' => $request['role'], 
+            'on_leave' => $request['on_leave'] == 'onleave' || $request['on_leave'] == 1 ? 1 : 0, 
+            'email_reliever' => $request['email_reliever'], 
             'designation' => $request['designation'], 
         );
         if(@$request['company_id']){

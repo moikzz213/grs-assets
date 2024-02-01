@@ -35,7 +35,7 @@ class CronJobMaintenance implements ShouldQueue
         $message = "Dear, <br/><br/>";
         $message .= "There is a schedule or pending asset maintenance that needs your attention. <br/>";
         
-        $link = env('VITE_APP_URL').'/maintenance';
+        $link = env('VITE_APP_URL').'maintenance';
 
         $dataArray = array("data" => $data, "link" => $link, "message" => $message,  "date" => Carbon::now(), 'subject' => 'REMINDER: GRS ASSET SYSTEM : MAINTENANCE');
         Mail::bcc($data)->queue( new MaintenanceMail( $dataArray) ); 
