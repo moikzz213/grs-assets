@@ -179,7 +179,7 @@ const getSingleUser = async () => {
     await clientKey(authStore.token)
         .get("/api/admin/user/single/" + route.params.id)
         .then((response) => {
-            user.value.data = response.data;
+            user.value.data = response.data; 
             loadingPage.value = false;
         })
         .catch((err) => {

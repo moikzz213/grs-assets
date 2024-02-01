@@ -29,7 +29,6 @@
           </v-list>
         </v-menu>
 
-
         <div class="mb-2 text-body-2 mr-2 mt-2 ml-5">At Work?</div>
 
         <v-menu :disabled="isOwnAccount">
@@ -80,6 +79,7 @@
             :error-messages="errors"
           />
         </Field>
+        
         <Field name="reliever" v-slot="{ field, errors }" v-model="user.data.email_reliever">
           <v-text-field
             v-model="user.data.email_reliever"
@@ -118,7 +118,7 @@
             :error-messages="errors"
           />
         </Field>
-        <v-btn color="primary" size="large" :loading="user.loading" @click="saveUser"
+        <v-btn v-if="!isOwnAccount" color="primary" size="large" :loading="user.loading" @click="saveUser"
           >Save</v-btn
         >
       </Form>
@@ -139,16 +139,17 @@ const user = ref({
   data: Object.assign({}, props.user),
 });
 const isOwnAccount = ref(true);
-
+user.value.data.on_leave = props.user?.profile?.on_leave;
+user.value.data.email_reliever = props.user?.profile?.email_reliever;
+ 
 watch(
   () => props.user,
-  (newVal) => {
-
+  (newVal) => { 
     isOwnAccount.value = false;
-    user.value.data = newVal;
+    user.value.data = newVal; 
+    
   }
-);
-
+); 
  
 const emit = defineEmits(["saved"]);
 
@@ -228,7 +229,7 @@ const saveUser = async () => {
     data = data.profile;
   }
   data.profile_id = authStore.user.profile.id;
-
+ 
   await clientKey(authStore.token)
   .post("/api/account/profile/save", data)
     .then((response) => {
