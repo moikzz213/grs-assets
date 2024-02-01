@@ -179,6 +179,7 @@ class AssetController extends Controller
                 'specification' => $request['specification'],
                 'model' => $request['model'],
                 'brand' => $request['brand'],
+                'remarks_lpo' => $request['remarks_lpo'],
                 'condition_id' => $request['condition_id'],
 
                 // purchase

@@ -28,7 +28,7 @@
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
-                        <v-row>
+                        <v-row class="no-print">
                             <div
                                 :class="`${
                                     formObjData.status == 'complete'
@@ -128,6 +128,16 @@
                                 ></v-text-field>
                             </div>
                         </v-row>
+                         <!-- For printing only -->
+                        <v-row class="for-print-flex mx-2 mb-1">
+                        <div class="wd-100">REQUEST NO: SN-3{{ pad(formObjData.id) }}</div>
+                        <div class="wd-60 text-caption">TYPE OF REQUEST: {{ requestTypeTitle }}</div>
+                        <div class="wd-40">COMPANY: {{ formObjData?.company?.title }}</div>
+                        <div class="wd-60">LOCATION FROM: {{ locationTitleFrom }}</div>
+                        <div class="wd-40">LOCATION TO: {{ locationTitleTo }}</div>
+                        <div class="wd-100">SUBJECT: {{ formObjData.subject }}</div>
+                        </v-row>
+                        <!-- End row for printing -->
                     </v-card-text>
                 </v-card>
                 <v-card class="my-2">
@@ -152,25 +162,25 @@
                             </div>
                         </v-row>
                         <!-- This row is for print -->
-                        <v-row class="for-print-flex header mb-1">
-                            <div class="w-30">ITEM DESCRIPTION</div>
-                            <div class="w-15">ASSET CODE</div>
-                            <div class="w-10">QTY</div>
-                            <div class="w-10">WEIGHT</div>
-                            <div class="w-10">VALUE</div>
-                            <div class="w-20">REASON FOR REQUEST</div>
+                        <v-row class="for-print-flex mx-2 header mb-1">
+                            <div class="wd-30">ITEM DESCRIPTION</div>
+                            <div class="wd-15">ASSET CODE</div>
+                            <div class="wd-10">QTY</div>
+                            <div class="wd-10">WEIGHT</div>
+                            <div class="wd-10">VALUE</div>
+                            <div class="wd-20">REASON FOR REQUEST</div>
                         </v-row>
                         <v-row
                             v-for="(item, index) in assetDataObj"
                             :key="index"
-                            class="for-print-flex row-bordered"
+                            class="for-print-flex mx-2 row-bordered"
                         >
-                            <div class="w-30">{{ item.item_description }}</div>
-                            <div class="w-15">{{ item.asset_code }}</div>
-                            <div class="w-10">{{ item.qty }}</div>
-                            <div class="w-10">{{ item.weight }}</div>
-                            <div class="w-10">{{ item.item_value }}</div>
-                            <div class="w-20"> {{ item.reason_for_request }}</div>
+                            <div class="wd-30">{{ item.item_description }}</div>
+                            <div class="wd-15">{{ item.asset_code }}</div>
+                            <div class="wd-10">{{ item.qty }}</div>
+                            <div class="wd-10">{{ item.weight }}</div>
+                            <div class="wd-10">{{ item.item_value }}</div>
+                            <div class="wd-20"> {{ item.reason_for_request }}</div>
                         </v-row>
                         <!-- End for print -->
                         <v-row
@@ -369,7 +379,46 @@
                             </div>
                             <v-divider></v-divider>
                         </v-row>
-                        <v-row>
+                         <!-- for printing -->
+                            <v-row class="for-print-flex mx-2 mt-5 mb-1">
+                            <div class="wd-20">Requestor</div>
+                            <div class="wd-50">  {{ formObjData?.profile?.display_name }} </div>
+                            <div class="wd-10">Status</div>
+                            <div class="wd-20">Date Approved</div>
+                            </v-row>
+                            <v-row class="for-print-flex mx-2 mb-2 mt-0" v-for="item in onUpdateApproval" :key="item.id">
+                            <div class="wd-20">{{statusTitle(item.approval_type)}}</div>
+                            <div class="wd-50">  {{ item?.profile?.display_name }}  </div>
+                            <div class="wd-10">                
+                                <v-icon
+                                    v-if="item.status"
+                                    class="mx-2 my-0"
+                                    :icon="
+                                        item.status == 'awaiting-approval'
+                                        ? mdiAccountClockOutline
+                                        : item.status == 'pending'
+                                        ? mdiAccountDetails
+                                        : item.status == 'reject'
+                                        ? mdiAccountCancel
+                                        : mdiAccountCheck
+                                    "
+                                    :color="
+                                        item.status == 'awaiting-approval'
+                                        ? 'info'
+                                        : item.status == 'pending'
+                                        ? ''
+                                        : item.status == 'reject'
+                                        ? 'error'
+                                        : 'success'
+                                    "
+                                    >
+                                    </v-icon>
+
+                            </div>
+                            <div class="wd-20">{{item.date_approved}}</div>
+                            </v-row>
+                            <!-- end for printing -->
+                        <v-row class="no-print">
                             <div class="v-col-12 v-col-md-2">Requestor</div>
                             <div class="v-col-12 v-col-md-6">
                                 {{ formObjData?.profile?.display_name }}
@@ -381,6 +430,7 @@
                             <v-row
                                 v-for="(item, index) in approvalSetupList"
                                 :key="item.id"
+                                class="no-print"
                             >
                                 <div class="v-col-12 v-col-md-2">
                                     {{
@@ -455,7 +505,7 @@
                                     }}
                                 </div>
                             </v-row>
-                            <v-row>
+                            <v-row class="no-print">
                                 <v-divider></v-divider>
                                 <div class="v-col-12 no-print">
                                     <v-btn
@@ -490,7 +540,7 @@
                             </div>
                         </v-row>
                         <v-row>
-                            <div class="v-col-12 v-col-md-12 text-info">
+                            <div class="v-col-12 no-print v-col-md-12 text-info">
                                 Note: Once submitted and approval is on-going,
                                 you will no longer allowed to update the
                                 request. 
@@ -572,6 +622,7 @@ const removeAttachment = (index) => {
     assetDataObj.value[index].attachment = "";
 };
 
+const requestTypeTitle = ref('');
 const requestTypeList = ref([]);
 const fetchSetupRequest = async () => {
     let typeOfRequest = "request";
@@ -583,6 +634,7 @@ const fetchSetupRequest = async () => {
         .get("/api/fetch/approval-setups/non-paginated/data/" + typeOfRequest)
         .then((res) => {
             requestTypeList.value = res.data;
+            requestTypeTitle.value = res.data.filter((e) => e.id == formObjData.value.request_type_id)?.[0]?.title;
            
         })
         .catch((err) => {});
@@ -599,12 +651,16 @@ const fetchCompanies = async () => {
         .catch((err) => {});
 };
 
+const locationTitleFrom = ref('');
+const locationTitleTo = ref('');
 const locationList = ref([]);
 const fetchLocations = async () => {
     await clientKey(authStore.token)
         .get("/api/fetch/locations/non-paginated/data")
         .then((res) => {
             locationList.value = res.data;
+            locationTitleFrom.value = res.data.filter((e) => e.id == formObjData.value.transferred_from)?.[0]?.title;
+      locationTitleTo.value = res.data.filter((e) => e.id == formObjData.value.transferred_to)?.[0]?.title;
         })
         .catch((err) => {});
 };
