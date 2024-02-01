@@ -13,6 +13,7 @@ class ProfileController extends Controller
 {
     public function saveProfile(Request $request)
     {   
+         
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
@@ -25,6 +26,7 @@ class ProfileController extends Controller
             'email_reliever' => $request['email_reliever'], 
             'designation' => $request['designation'], 
         );
+      
         if(@$request['company_id']){
             $company = array('company_id' => $request['company_id']);
             $profileArray = array_merge($profileArray, $company);
