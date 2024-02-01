@@ -333,6 +333,7 @@
               <div class="v-col-12 v-col-md-1">Status</div>
               <div class="v-col-12 v-col-md-2">Date Approved</div>
             </v-row>
+            <!-- for printing -->
             <v-row class="for-print-flex mx-2 mt-5 mb-1">
               <div class="wd-20">Requestor</div>
               <div class="wd-50">  {{ formObjData?.profile?.display_name }} </div>
@@ -370,6 +371,7 @@
               </div>
               <div class="wd-20">{{item.date_approved}}</div>
             </v-row>
+            <!-- end for printing -->
             <template v-if="hasSignatories" >
               <v-row class="no-print" v-for="(item, index) in approvalSetupList" :key="item.id">
                 <div class="v-col-12 v-col-md-2">

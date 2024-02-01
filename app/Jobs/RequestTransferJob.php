@@ -48,8 +48,14 @@ class RequestTransferJob implements ShouldQueue
             $snNo = "SN-5".$this->pad($data->id, 6);
         }else{
             $snNo = "SN-3".$this->pad($data->id, 6);
-        }
+        } 
+
         $toEmail = $query->email;
+         
+        if($query->on_leave && $query->email_reliever){
+            $toEmail = array($query->email, $query->email_reliever);
+        } 
+       
         $message = 'Dear '. $query->display_name. ",<br/><br/>";
         $message .= 'Your approval is requested<br/>';
         $message .= 'SN No. : '. $snNo."<br/>"; 
@@ -59,10 +65,10 @@ class RequestTransferJob implements ShouldQueue
         $randomString2 = Str::random(50);
         
         $type = strtoupper($data->type);
-        $link = env('VITE_APP_URL').'/pv/employee-signatory/'.$data->type.'/approvals?o='.$data->order."&key=".$randomString."&pid=".$data->profile_id."&pv=".$randomString2."&id=".$data->id;
+        $link = env('VITE_APP_URL').'pv/employee-signatory/'.$data->type.'/approvals?o='.$data->order."&key=".$randomString."&pid=".$data->profile_id."&pv=".$randomString2."&id=".$data->id;
          
         $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s) - ".$snNo);
-    
+      
         Mail::to($toEmail)->queue( new RequestTransferMail( $data) ); 
     }
 

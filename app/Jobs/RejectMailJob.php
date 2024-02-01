@@ -57,7 +57,7 @@ class RejectMailJob implements ShouldQueue
         $randomString2 = Str::random(50);
         
         $type = strtoupper($data->type);
-        $link = env('VITE_APP_URL').'/request-asset/update/id/'.$data->id;
+        $link = env('VITE_APP_URL').'request-asset/update/id/'.$data->id;
          
         $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s)");
     
