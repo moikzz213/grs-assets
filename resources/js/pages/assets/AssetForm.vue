@@ -263,7 +263,7 @@
           <!-- Purchase Information -->
           <div class="v-col-12" v-show="selectedTab == 'purchase'">
             <v-row>
-              <div class="v-col-12 v-col-md-4 pt-0 pb-2">
+              <div class="v-col-12 v-col-md-3 pt-0 pb-2">
                 <Field name="Price" v-slot="{ field, errors }" v-model="assetObj.price">
                   <v-text-field
                     v-model="assetObj.price"
@@ -291,7 +291,8 @@
                   />
                 </Field>
               </div>
-              <div class="v-col-12 v-col-md-6 pt-0 pb-2">
+              
+              <div class="v-col-12 v-col-md-7 pt-0 pb-2">
                 <v-autocomplete
                   v-model="assetObj.vendor_id"
                   :items="vendorStore.list"
@@ -331,6 +332,24 @@
                     v-bind="field"
                     label="Purchase Date"
                     variant="outlined"
+                    density="compact"
+                    :error-messages="errors"
+                  />
+                </Field>
+              </div>
+              <div class="v-col-12 v-col-md-12 pt-0 pb-2">
+                <Field
+                  name="Purchase Remarks"
+                  v-slot="{ field, errors }"
+                  v-model="assetObj.remarks_lpo"
+                >
+                  <v-textarea
+                    type="date"
+                    v-model="assetObj.remarks_lpo"
+                    v-bind="field"
+                    label="Purchase Remarks"
+                    variant="outlined"
+                    rows="3"
                     density="compact"
                     :error-messages="errors"
                   />
