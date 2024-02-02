@@ -67,7 +67,7 @@ class RequestTransferJob implements ShouldQueue
         $type = strtoupper($data->type);
         $link = env('VITE_APP_URL').'pv/employee-signatory/'.$data->type.'/approvals?o='.$data->order."&key=".$randomString."&pid=".$data->profile_id."&pv=".$randomString2."&id=".$data->id;
          
-        $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s) - ".$snNo);
+        $data = array("types" => $type, "link" => $link, "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s) - ".$snNo. " - ". $data->subject);
       
         Mail::to($toEmail)->queue( new RequestTransferMail( $data) ); 
     }

@@ -58,7 +58,7 @@ class CronJobAssetRequest implements ShouldQueue
 
             // set the list of requests in email body
             if($awaitingApproval){
-                $message .= "<tr><td>{$header}: <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}'>{$title}{$this->pad($v->id,6)}</a></td></tr>";
+                $message .= "<tr><td>{$header}: <a href='{$baseURL}{$v->types}/approvals?o={$awaitingApproval->orders}&key={$randomString}&pid={$data->id}&pv={$randomString2}&id={$v->id}'>{$title}{$this->pad($v->id,6)}</a></td><td>{$v->subject}</td></tr>";
             }
         }
         $message .= '</table>';
