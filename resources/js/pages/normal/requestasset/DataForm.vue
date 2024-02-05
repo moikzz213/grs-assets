@@ -162,10 +162,11 @@
               <v-row class="for-print-flex mx-2 header mb-1 mt-0">
                             <div class="wd-30">ITEM DESCRIPTION</div>
                             <div class="wd-15">ASSET CODE</div>
-                            <div class="wd-10">QTY</div>
+                            <div class="wd-5">QTY</div>
+                            <div class="wd-10">UOM</div>
                             <div class="wd-10">WEIGHT</div>
                             <div class="wd-10">VALUE</div>
-                            <div class="wd-20">REASON FOR REQUEST</div>
+                            <div class="wd-15">REASON FOR REQUEST</div>
                 </v-row>
                 <v-row
                     v-for="(item, index) in assetDataObj"
@@ -174,10 +175,11 @@
                 >
                     <div class="wd-30">{{ item.item_description }}</div>
                     <div class="wd-15">{{ item.asset_code }}</div>
-                    <div class="wd-10">{{ item.qty }}</div>
+                    <div class="wd-5">{{ item.qty }}</div>
+                    <div class="wd-10">{{ item.uom }}</div>
                     <div class="wd-10">{{ item.weight }}</div>
                     <div class="wd-10">{{ item.item_value }}</div>
-                    <div class="wd-20"> {{ item.reason_for_request }}</div>
+                    <div class="wd-15"> {{ item.reason_for_request }}</div>
                 </v-row>
                 <!-- End for print -->
             <v-row v-for="(item, index) in assetDataObj" :key="index" class="no-print">
@@ -213,8 +215,7 @@
                   </div>
 
                   <v-dialog v-model="dialogAttachment" width="95%" max-width="900">
-                    <v-card class="bg-black">
-                
+                    <v-card class="bg-black"> 
                           <div
                             style="height: 680px; width: 100%"
                             class="d-flex align-center justify-center"
@@ -242,15 +243,16 @@
                 </v-row>
               </div>
               <div class="v-col-12 v-col-md-3">
-                <v-text-field
+                <v-textarea
                   v-model="item.item_description"
                   variant="outlined"
                   density="compact"
                   hide-details
                   clearable
+                  rows="2"
                   label="ITEM DESC*"
                   @update:modelValue="requiredData"
-                ></v-text-field>
+                ></v-textarea>
               </div>
               <div class="v-col-12 v-col-md-2">
                 <v-text-field
@@ -272,13 +274,22 @@
                 ></v-text-field>
               </div>
               <div class="v-col-12 v-col-md-1">
+                <v-text-field 
+                  v-model="item.uom"
+                  variant="outlined"
+                  density="compact"
+                  hide-details
+                  label="UOM"
+                ></v-text-field>
+              </div>
+              <div class="v-col-12 v-col-md-1">
                 <v-text-field
                   type="number"
                   v-model="item.weight"
                   variant="outlined"
                   density="compact"
                   hide-details
-                  label="WEIGHT(KG)"
+                  label="WGT(KG)"
                 ></v-text-field>
               </div>
               <div class="v-col-12 v-col-md-1">
@@ -291,14 +302,15 @@
                   label="VALUE"
                 ></v-text-field>
               </div>
-              <div class="v-col-12 v-col-md-3 d-flex">
-                <v-text-field
+              <div class="v-col-12 v-col-md-2 d-flex">
+                <v-textarea
                   v-model="item.reason_for_request"
                   variant="outlined"
                   density="compact"
                   hide-details
+                  rows="2"
                   label="REASON"
-                ></v-text-field>
+                ></v-textarea>
                 <v-icon
                   size="small"
                   @click="() => deleteData(item.id, index)"
@@ -782,6 +794,7 @@ const pad = (v, size = 6) => {
 
 const onUpdateApproval = ref([]);
 const formObjData = ref({});
+const getCurrentApprover = ref({});
 onMounted(() => {
   fetchSetupRequest().then(() => {
     fetchCompanies().then(() => {
@@ -805,7 +818,7 @@ onMounted(() => {
     onUpdateApproval.value = v.request_approvals;
 
     assetDataObj.value = v.items;
-
+    getCurrentApprover.value = v.request_approvals?.filter((e)=> e.status == 'awaiting-approval')?.[0];
     setupApprovals();
   } else {
     objData.value.company_id = authStore.user.profile.company_id;
@@ -829,20 +842,26 @@ const requestSignatureUrl = computed(() => {
       let baseURL = appURL.value + "pv/employee-signatory";
       let randomKey = randomAlphaString(50);
       let randomKey2 = randomAlphaString(50);
+      let pid = 95;
+      let order = 99;
+  
+      if(authStore.user?.profile?.id == getCurrentApprover.value?.profile_id){ 
+          pid = getCurrentApprover.value?.profile_id;
+          order = getCurrentApprover.value?.orders;
+      }
 
       if (formObjData.value) {        
-        url =
-          baseURL +
-          "/" +
-          formObjData.value.types +
-          "/approvals?o=99&key=" +
-          randomKey +
-          "&pid=95" +
-          "&pv=" +
-          randomKey2 +
-          "&id=" +
-          formObjData.value.id;        
-      }
+      url =
+        baseURL +
+        "/transfer" + 
+        "/approvals?o="+order+"&key=" +
+        randomKey +
+        "&pid=" +pid+
+        "&pv=" +
+        randomKey2 +
+        "&id=" +
+        formObjData.value.id;        
+    }
 
       return url;
 });

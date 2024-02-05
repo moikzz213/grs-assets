@@ -35,7 +35,7 @@ class CronJobIncidents implements ShouldQueue
         $message = "Dear, <br/><br/>";
         $message .= "There is a pending asset incident that needs your attention. <br/>";
         
-        $link = env('VITE_APP_URL').'report-incident';
+        $link = env('VITE_APP_URL').'/report-incident';
 
         $dataArray = array("data" => $data, "link" => $link, "message" => $message,  "date" => Carbon::now(), 'subject' => 'REMINDER: GRS ASSET SYSTEM : INCIDENT');
         Mail::bcc($data)->queue( new IncidentMail( $dataArray) ); 
