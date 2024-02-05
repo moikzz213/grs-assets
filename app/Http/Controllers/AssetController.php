@@ -361,15 +361,12 @@ class AssetController extends Controller
      * Below is for Dashboard
      */
     public function dashboardData(Request $request){
-        $role = 'normal';
-
-
+        $role = 'normal'; 
 
         $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8);
         $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8);
         $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete');
         $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete');
-
 
         $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10);
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
@@ -397,8 +394,7 @@ class AssetController extends Controller
 
         $newArray = array();
 
-
-        if(count($query_all_asset) > 0){
+        if(count($query_all_asset) > 0 && $request->input('role') !== 'receiving-releasing' && $request->input('role') !== 'facility'){
             foreach ($query_all_asset as $k => $v) {
                 $newArray[] = array(
                     'company' => $v->company ? $v->company['title'] : '',
