@@ -39,11 +39,11 @@ class IncidentReport implements ShouldQueue
         if($data->type_id == 2){
             $receiver = 'maintenance-receiver';
             $subject = "Asset System: Asset Maintenance";
-            $subLink = 'maintenance/update/id/';
+            $subLink = '/maintenance/update/id/';
         }else{
             $receiver = 'incident-receiver';
             $subject = "Asset System: Incident Reported";
-            $subLink = 'report-incident/update/id/';
+            $subLink = '/report-incident/update/id/';
         }
         if(@$data->handled_by){
             $query = Profile::where('id','=', $data->handled_by)->first(); 

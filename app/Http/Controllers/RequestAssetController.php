@@ -39,7 +39,8 @@ class RequestAssetController extends Controller
         // only get the data if the profile ID is included in approvals
         if($role == 'receiving-releasing' || $role == 'facility'){
             $dataObj = $dataObj->whereHas('request_approvals', function($q) use($ID){
-                $q->where('profile_id', $ID);
+                $q->where('profile_id', $ID)
+                ->where('status','=', 'awaiting-approval');
             });
         }
 
