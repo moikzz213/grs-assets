@@ -33,7 +33,7 @@
         <v-divider class="my-5"></v-divider>
         <v-row>
             <div class="v-col-12 v-col-md-1 py-1">IMG</div>
-            <div class="v-col-12 v-col-md-1 py-1">ITEM DESCRIPTION</div>
+            <div class="v-col-12 v-col-md-1 py-1">ITEM DESC</div>
             <div class="v-col-12 v-col-md-1 py-1">ASSET NO</div>
             <div class="v-col-12 v-col-md-1 py-1">QTY</div>
             <div class="v-col-12 v-col-md-1 py-1">UOM</div>
@@ -125,7 +125,7 @@
                     :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1 px-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     :value="item.qty"
                     variant="underlined"
@@ -136,7 +136,7 @@
                     :readonly="true"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1 px-1">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     :value="item.uom"
                     variant="underlined"
