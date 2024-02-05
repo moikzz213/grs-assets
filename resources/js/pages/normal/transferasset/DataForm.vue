@@ -39,7 +39,7 @@
                             >
                                 REQUEST NO: SN-3{{ pad(formObjData.id) }}
                             </div>
-                            <div class="v-col-8 text-right ">
+                            <div class="v-col-8 text-right " v-if="!is_receiving_releasing">
                                 <div
                                 class="no-print"
                                     v-if="
@@ -142,7 +142,7 @@
                 </v-card>
                 <v-card class="my-2">
                     <v-card-text>
-                        <v-row>
+                        <v-row v-if="!is_receiving_releasing">
                             <div class="v-col-12">
                                 <v-btn
                                     size="small"
@@ -507,7 +507,7 @@
                             </v-row>
                             <v-row class="no-print">
                                 <v-divider></v-divider>
-                                <div class="v-col-12 no-print">
+                                <div class="v-col-12 no-print" v-if="!is_receiving_releasing">
                                     <v-btn
                                         size="small"
                                         :disabled="!isValidate"
@@ -906,6 +906,11 @@ const requestSignatureUrl = computed(() => {
 
       return url;
 }); 
+
+// check if not receiving-releasing
+const is_receiving_releasing = computed(() => {
+  return authStore.user.role == "receiving-releasing" || authStore.user.role == "facility" ? true : false;
+});
 
 watch(objData.value, async (newVal, oldVal) => {
     requiredData();

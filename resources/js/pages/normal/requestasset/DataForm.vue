@@ -821,7 +821,7 @@ watch(assetDataObj.value, async (newVal, oldVal) => {
 
 // check if not receiving-releasing
 const is_receiving_releasing = computed(() => {
-  return authStore.user.role == "receiving-releasing" ? true : false;
+  return authStore.user.role == "receiving-releasing" || authStore.user.role == "facility" ? true : false;
 });
 const appURL = ref(import.meta.env.VITE_APP_URL);
 const requestSignatureUrl = computed(() => {

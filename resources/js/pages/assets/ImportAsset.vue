@@ -1,7 +1,7 @@
 <template>
   <v-container class="pb-10">
     <AppPageHeader title="Import Asset" />
-    <v-row>
+    <v-row v-if="check_auth">
       <div class="v-col-12">
         <v-card
           max-width="900px"
@@ -44,7 +44,7 @@
         </v-card>
       </div>
     </v-row>
-    <v-row>
+    <v-row v-if="check_auth">
        
       <v-col md="3">
         <v-card>
@@ -99,12 +99,21 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-card-text class="text-center">
+            You dont have permission to access this page.
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
     <AppSnackBar :options="sbOptions" />
   </v-container>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { mdiPaperclip, mdiDownload, mdiTrayArrowUp } from "@mdi/js";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import * as papa from "papaparse";
@@ -120,7 +129,11 @@ const route = useRoute();
 
 // authStore
 import { useAuthStore } from "@/stores/auth";
-const authStore = useAuthStore();
+const authStore = useAuthStore(); 
+ 
+const check_auth = computed(() => {
+  return authStore.user.role == "superadmin" || authStore.user.role == "asset-supervisor" ? true : false;
+});
 
 const baseURL = ref(window.location.origin);
 const loadingImport = ref(false); 
@@ -178,13 +191,12 @@ const parseComplete = async (results, file) => {
   };
 
   // check import data
-  // console.log("import data", data);
-
+ 
   // save result to database
   await clientKey(authStore.token)
     .post("/api/asset/import", data)
     .then((res) => {
-      console.log("import success");
+     
       loadingImport.value = false;
       sbOptions.value = {
         status: true,
