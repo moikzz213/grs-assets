@@ -36,6 +36,7 @@
             <div class="v-col-12 v-col-md-2 py-1">ITEM DESCRIPTION</div>
             <div class="v-col-12 v-col-md-1 py-1">ASSET NO</div>
             <div class="v-col-12 v-col-md-1 py-1">QTY</div>
+            <div class="v-col-12 v-col-md-1 py-1">UOM</div>
             <div class="v-col-12 v-col-md-1 py-1">WEIGHT</div>
             <div class="v-col-12 v-col-md-1 py-1">ITEM VALUE</div>
             <div class="v-col-12 v-col-md-1 py-1">COUNTRY OF ORIGIN</div>
@@ -127,6 +128,17 @@
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     :value="item.qty"
+                    variant="underlined"
+                    density="compact"
+                    hide-details
+                    class="bg-light-gray d-flex flex-column-reverse"
+                    type="number"
+                    :readonly="true"
+                ></v-text-field>
+            </div>
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+                <v-text-field
+                    :value="item.uom"
                     variant="underlined"
                     density="compact"
                     hide-details

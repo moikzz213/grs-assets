@@ -839,7 +839,7 @@ const is_receiving_releasing = computed(() => {
 const appURL = ref(import.meta.env.VITE_APP_URL);
 const requestSignatureUrl = computed(() => {
       let url = null;
-      let baseURL = appURL.value + "pv/employee-signatory";
+      let baseURL = appURL.value + "/pv/employee-signatory";
       let randomKey = randomAlphaString(50);
       let randomKey2 = randomAlphaString(50);
       let pid = 95;
