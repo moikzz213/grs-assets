@@ -104,7 +104,7 @@
                                 <td>{{ item.warranty_end_date }}</td>
                                 <td>{{ item.amc_start_date }}</td>
                                 <td>{{ item.amc_end_date }}</td>
-                                <td>
+                                <td>  
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
@@ -117,55 +117,22 @@
                                                     'edit'
                                                 )
                                             "
-                                            @click="() => editData(item)"
+                                            @click="() => editData(item, 'edit')"
                                             :icon="mdiPencil"
                                             title="Edit"
                                             density="compact"
                                             class="mx-2"
-                                        ></v-btn>
-                                        <v-btn
-                                            density="compact"
-                                            :loading="iconLoading"
-                                            :icon="mdiEyeOff"
-                                            v-if="
-                                                item.status == 'active' &&
-                                                (authStore.user.role ==
-                                                    'superadmin' ||
-                                                    authStore.capabilities?.includes(
-                                                        'delete'
-                                                    ))
-                                            "
-                                            @click="
-                                                () =>
-                                                    deleteData(
-                                                        item.id,
-                                                        'disabled'
-                                                    )
-                                            "
-                                            title="Disable"
-                                            class="mx-2 text-error"
-                                        >
-                                        </v-btn>
+                                        ></v-btn> 
                                         <v-btn
                                             :loading="iconLoading"
                                             density="compact"
-                                            v-if="
-                                                item.status == 'disabled' &&
-                                                (authStore.user.role ==
-                                                    'superadmin' ||
-                                                    authStore.capabilities?.includes(
-                                                        'delete'
-                                                    ))
-                                            "
+                                            v-if="!authStore.capabilities?.includes( 'edit')"
                                             @click="
                                                 () =>
-                                                    deleteData(
-                                                        item.id,
-                                                        'active'
-                                                    )
+                                                editData( item, 'view')
                                             "
                                             :icon="mdiEyeCheck"
-                                            title="Enable"
+                                            title="View"
                                             class="mx-2 text-success"
                                         ></v-btn>
                                     </div>
@@ -199,6 +166,7 @@
             :data-object="dataObject"
             @cancelled="cancelledAction"
             @save="saveData"
+            :is-view="is_view"
             @fileSave="fileSave"
         />
         <AppSnackBar :options="sbOptions" />
@@ -402,10 +370,13 @@ const freeForm = computed(() => {
     ];
 });
 
-const editData = (data) => {
+const is_view = ref(false);
+const editData = (data, type) => {
+    is_view.value  = type === "view" ? true : false;
     dataObject.value = Object.assign({}, data);
     dataObject.value.type = "warranties";
     addNewDialog.value = true;
+    
 };
 
 const iconLoading = ref(false);

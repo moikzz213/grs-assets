@@ -103,6 +103,7 @@
                                 ></v-btn>
 
                                 <v-btn
+                                v-if="!props.isView"
                                     size="small"
                                     color="primary"
                                     @click="saveData"
@@ -159,6 +160,7 @@
                         <v-card-action
                             class="mb-5"
                             style="position: absolute; bottom: 0"
+                            v-if="!props.isView"
                         >
                             Note: Dont forget to click the save button
                         </v-card-action>
@@ -173,8 +175,9 @@
                         v-if="warrantyAsset"
                     >
                         <v-card-text v-if="props.dataObject.type">
-                            <div class="d-flex mb-5 justify-center">
+                            <div class="d-flex mb-5 justify-center" v-if="!props.isView">
                                 <Studio
+                                    
                                     :options="{
                                         multiSelect: true,
                                         type: 'warranty',
@@ -182,6 +185,7 @@
                                     @select="studioSelectResponse"
                                 />
                                 <v-btn
+                                
                                     color="primary"
                                     @click="saveImage"
                                     :disabled="selectedFiles?.length == 0"
@@ -196,6 +200,7 @@
                                     style="position: relative"
                                 >
                                     <v-btn
+                                    v-if="!props.isView"
                                         style="
                                             position: absolute;
                                             top: 0;
@@ -267,6 +272,7 @@
                                 <div
                                     class="mb-5"
                                     style="position: absolute; bottom: 0"
+                                    v-if="!props.isView"
                                 >
                                     Note: Dont forget to click the save button
                                     at the top
@@ -309,6 +315,10 @@ const props = defineProps({
     title: {
         type: String,
         default: "",
+    },
+    isView: {
+        type: Boolean,
+        default: true,
     },
     freeForm: {
         type: Array,
