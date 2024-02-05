@@ -59,7 +59,7 @@
         </v-row>
         <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
              
-            <div class="v-col-12 v-col-md-3 py-1 px-1 d-flex">
+            <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
                  
                     <div 
                         v-if="item.attachment?.id"
