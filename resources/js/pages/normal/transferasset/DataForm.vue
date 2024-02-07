@@ -615,7 +615,7 @@ const statusTitle = (v) => {
     } else if (v == "receiver") {
         return "Received By";
     } else if (v == "transport") {
-        return "Trasport Arranged By";
+        return "Transport Arranged By";
     } else if (v == "releasing") {
         return "Released By";
     } else if (v == "verify") {
