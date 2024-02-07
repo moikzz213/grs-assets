@@ -33,7 +33,7 @@
                                 :class="`${
                                     formObjData.status == 'complete'
                                         ? 'v-col-12'
-                                        : 'v-col-4'
+                                        : 'v-col-md-12'
                                 }`"
                                 v-if="isEdit"
                             >
