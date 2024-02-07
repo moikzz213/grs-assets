@@ -700,8 +700,9 @@
                                         class="no-print"
                                         color="primary"
                                         v-if="
-                                        objData.requestor_id == authStore.user.profile.id &&
-                                            (!route.params.id ||
+                                        
+                                            (objData.requestor_id == authStore.user.profile.id && !route.params.id ||
+                                            
                                                 props.objectdata?.status ==
                                                     'pending' ||
                                                 authStore.user.profile.role ==
