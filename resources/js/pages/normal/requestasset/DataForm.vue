@@ -179,19 +179,19 @@
                         <v-row v-if="!is_receiving_releasing">
                             <div class="v-col-12">
                                 <v-btn
+                                size="small"
                                     color="primary"
                                     class="no-print"
                                     @click="AddAsset"
-                                    v-if="
-                                    objData.requestor_id == authStore.user.profile.id && 
+                                    v-if=" 
                                         formObjData.status != 'complete' &&
-                                        (!route.params.id ||
+                                        (!route.params.id || ( objData.requestor_id == authStore.user.profile.id && 
                                             props.objectdata?.status ==
                                                 'pending' ||
                                             authStore.user.profile.role ==
                                                 'superadmin' ||
                                             authStore.user.profile.role ==
-                                                'administrator')
+                                                'administrator'))
                                     "
                                     >Add</v-btn
                                 >
@@ -241,7 +241,7 @@
                                             v-model="item.attachment.id"
                                         ></v-text-field>
                                         <v-btn
-                                        v-if="objData.requestor_id == authStore.user.profile.id"
+                                        v-if="!isEdit || (isEdit && objData.requestor_id == authStore.user.profile.id)"
                                             style="
                                                 position: absolute;
                                                 top: 0;
@@ -701,8 +701,8 @@
                                         color="primary"
                                         v-if="
                                         
-                                            (objData.requestor_id == authStore.user.profile.id && !route.params.id ||
-                                            
+                                            ( !route.params.id || (
+                                              objData.requestor_id == authStore.user.profile.id && 
                                                 props.objectdata?.status ==
                                                     'pending' ||
                                                 authStore.user.profile.role ==
@@ -710,7 +710,7 @@
                                                 authStore.user.profile.role ==
                                                     'superadmin' ||
                                                 authStore.user.profile.role ==
-                                                    'administrator') &&
+                                                    'administrator') ) &&
                                             formObjData.status != 'complete'
                                         "
                                         >{{

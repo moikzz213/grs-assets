@@ -49,7 +49,7 @@
                                     "
                                 >
                                     <v-btn
-                                        v-if="formObjData.status == 'pending'"
+                                        v-if="formObjData.status == 'pending' && objData.requestor_id == authStore.user.profile.id"
                                         @click="
                                             changeRequestStatus('cancelled')
                                         "
@@ -149,13 +149,15 @@
                                     color="primary"
                                     class="no-print"
                                     @click="AddAsset"
-                                    v-if="
-                                        !route.params.id ||
-                                        props.objectdata?.status == 'pending' ||
-                                        authStore.user.profile.role ==
-                                            'superadmin' ||
-                                        authStore.user.profile.role ==
-                                            'administrator'
+                                    v-if=" 
+                                        formObjData.status != 'complete' &&
+                                        (!route.params.id || ( objData.requestor_id == authStore.user.profile.id && 
+                                            props.objectdata?.status ==
+                                                'pending' ||
+                                            authStore.user.profile.role ==
+                                                'superadmin' ||
+                                            authStore.user.profile.role ==
+                                                'administrator'))
                                     "
                                     >Add</v-btn
                                 >
@@ -203,6 +205,7 @@
                                             v-model="item.attachment.id"
                                         ></v-text-field>
                                         <v-btn
+                                        v-if="!isEdit || (isEdit && objData.requestor_id == authStore.user.profile.id)"
                                             style="
                                                 position: absolute;
                                                 top: 0;
@@ -525,7 +528,8 @@
                                         @click="submitRequest"
                                         color="primary"
                                         v-if="
-                                            (!route.params.id ||
+                                            ( !route.params.id || (
+                                              objData.requestor_id == authStore.user.profile.id && 
                                                 props.objectdata?.status ==
                                                     'pending' ||
                                                 authStore.user.profile.role ==
@@ -533,7 +537,7 @@
                                                 authStore.user.profile.role ==
                                                     'superadmin' ||
                                                 authStore.user.profile.role ==
-                                                    'administrator') &&
+                                                    'administrator') ) &&
                                             formObjData.status != 'complete'
                                         "
                                         >{{
