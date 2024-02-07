@@ -222,7 +222,7 @@
              
             <div>
                 <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    <strong> Asset Supervisor - Projects</strong> <br/><p>{{ item.remarks }}</p>
                     -------
                 </div>
                     <v-textarea
@@ -242,15 +242,15 @@
             >  
             <div> 
                 <div v-if="item.remarks"  >
-                        <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                        <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
                         -------
                     </div>
                     <div v-if="item.remarks_commercial"  >
-                        <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                        <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
                         -------
                     </div>
                     <div v-if="item.remarks_release"  >
-                        <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                        <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
                         -------
                     </div>
                 </div>
@@ -271,15 +271,15 @@
             <div> 
             <div>
                 <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_commercial"  >
-                    <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                    <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_release"  >
-                    <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                    <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
                     -------
                 </div>
                  </div>
@@ -317,19 +317,19 @@
             <div style="border-bottom: 1px solid #000000;" class="pa-1" 
             v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive">
                 <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><pre>{{ item.remarks }}</pre>
+                    <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_commercial"  >
-                    <strong> Commercial Manager - Projects</strong> <br/><pre>{{ item.remarks_commercial }}</pre>
+                    <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_release"  >
-                    <strong> Releasing</strong> <br/><pre>{{ item.remarks_release }}</pre>
+                    <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_receive"  >
-                    <strong> Receiver</strong> <pre>{{ item.remarks_receive }}</pre>
+                    <strong> Receiver</strong> <pre style="text-wrap:wrap">{{ item.remarks_receive }}</pre>
                 </div>
             </div> 
             <div v-else></div>
