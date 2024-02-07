@@ -44,7 +44,7 @@ class RequestAssetController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to');
+            $dataObj = $dataObj->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to', 'reminder_profile');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -56,7 +56,7 @@ class RequestAssetController extends Controller
             if(@$filterSearch->status){
                 $dataObj = $dataObj->where('status', $filterSearch->status);
             }
-            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->orderBy('status', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to');
+            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->orderBy('status', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to', 'reminder_profile');
         }
 
         if($search){
