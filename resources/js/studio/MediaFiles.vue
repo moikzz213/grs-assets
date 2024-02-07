@@ -2,13 +2,27 @@
   <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <div class="mb-3">
       <v-row v-if="files.length > 0" class="ma-0">
-        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1">
+        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1" style="border:1px solid #e7e7e7; border-radius: 5px;">
           <v-img
+          v-if="file.mime.includes('image/png','image/jpeg','image/gif', 'image/jpg')"
             cover
             :aspect-ratio="1"
             class="cursor-pointer"
             :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
             :src="baseURL + '/file/' + file.path"
+            @click="() => selectFile(file)"
+            :style="`border: 4px solid ${
+              theSelectedFiles.includes(file.id) == true ? '#ffed00' : 'transparent'
+            }`"
+          >
+          </v-img>
+          <v-img
+          v-else
+            cover
+            :aspect-ratio="1"
+            class="cursor-pointer"
+            :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
+            :src="baseURL + '/assets/images/pdf-image.png'"
             @click="() => selectFile(file)"
             :style="`border: 4px solid ${
               theSelectedFiles.includes(file.id) == true ? '#ffed00' : 'transparent'
@@ -79,11 +93,15 @@ const selectedFile = ref([]);
 const selectFile = (file) => {
   const fileExist = selectedFile.value.find((f) => f.id == file.id);
   if (!fileExist) {
-    selectedFile.value.push(file);
+    if(selectedFile.value.length  >= 1 && !props.multiSelect){
+      selectedFile.value[0] = file;
+    }else{
+      selectedFile.value.push(file);
+    }
   } else {
     selectedFile.value = selectedFile.value.filter((f) => f.id !== file.id);
   }
-  console.log("selectedFile.value", selectedFile.value);
+ 
 };
 
 // the selected files

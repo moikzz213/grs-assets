@@ -93,7 +93,7 @@ class RequestAssetController extends Controller
     }
 
     public function fetchDataByID($id){
-        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals.profile', 'profile', 'company',  'transfer_to')->first();
+        $query = RequestAsset::where('id', $id)->with('items.assets', 'items.attachment','request_approvals.profile', 'profile', 'company',  'transfer_to','attachment')->first();
         return response()->json($query, 200);
     }
 
@@ -101,7 +101,7 @@ class RequestAssetController extends Controller
         if(!$request->profile_id){
             return;
         }
-
+        
         $role = $request->role;
         $assetApprovals = array();
         $jobData = array();
@@ -142,10 +142,8 @@ class RequestAssetController extends Controller
                 return response()->json(array('error' => "This request has already been signed, you cannot update anymore.", 'id' => $ID), 200);
             }
             $query->update($dataArr);
-            $query->items()->delete();
-
+            $query->items()->delete(); 
             $query->request_approvals()->delete();
-
 
             $message = 'Request has been updated.';
             $log_type = 'update';
@@ -173,6 +171,11 @@ class RequestAssetController extends Controller
         }
         $query->request_approvals()->createMany($assetApprovals);
         $query->items()->createMany($request->assets);
+         
+        if($request->data['request_type_id'] == 2){
+            $query->attachment()->sync($request['additionalFiles']); 
+
+        }
 
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
