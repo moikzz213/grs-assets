@@ -36,11 +36,7 @@ class RequestAssetController extends Controller
                 $q->where('profile_id', $ID)
                 ->where('status','=', 'awaiting-approval');
             });
-        }
-
-
-         
-        // dd(count($dataObj->get()));
+        } 
 
         if($orderBy){
             $orderBy = json_decode($orderBy);
