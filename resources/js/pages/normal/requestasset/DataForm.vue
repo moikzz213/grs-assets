@@ -59,6 +59,7 @@
                                         >
                                             <v-btn
                                                 v-if="
+                                                objData.requestor_id == authStore.user.profile.id && 
                                                     formObjData.status ==
                                                     'pending'
                                                 "
@@ -182,6 +183,7 @@
                                     class="no-print"
                                     @click="AddAsset"
                                     v-if="
+                                    objData.requestor_id == authStore.user.profile.id && 
                                         formObjData.status != 'complete' &&
                                         (!route.params.id ||
                                             props.objectdata?.status ==
@@ -239,6 +241,7 @@
                                             v-model="item.attachment.id"
                                         ></v-text-field>
                                         <v-btn
+                                        v-if="objData.requestor_id == authStore.user.profile.id"
                                             style="
                                                 position: absolute;
                                                 top: 0;
@@ -407,7 +410,7 @@
                 </v-card>
                 <v-card v-if="objData.request_type_id == 2">
                     <v-card-text v-if="!is_receiving_releasing">
-                        <div>
+                        <div v-if="objData.requestor_id == authStore.user.profile.id">
                         <div>Additional File can be upload here</div>
                             <Studio
                                 :options="{
@@ -691,11 +694,13 @@
                                     class="v-col-12"
                                 >
                                     <v-btn
+                                   
                                         :disabled="!isValidate"
                                         @click="submitRequest"
                                         class="no-print"
                                         color="primary"
                                         v-if="
+                                        objData.requestor_id == authStore.user.profile.id &&
                                             (!route.params.id ||
                                                 props.objectdata?.status ==
                                                     'pending' ||
