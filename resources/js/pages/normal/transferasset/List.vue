@@ -78,6 +78,7 @@
               ></v-autocomplete>
             </div>
           </v-row>
+         
           <v-table>
             <thead>
               <tr>
@@ -108,6 +109,13 @@
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
+                  @click="OrderByField('reminder_profile_id')"
+                >
+                  Approval<br/>
+                  <small>PENDING</small>
+                </th>
+                <th
+                  class="text-left text-capitalize cursor-pointer"
                   @click="OrderByField('status')"
                 >
                   Status
@@ -130,12 +138,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in dataobj.data" :key="item.id">
+              <tr v-for="item in dataobj.data" :key="item.id" :class="`${authStore.user.profile.id == item.reminder_profile_id ? 'bg-blue-lighten-5' : ''} `">
                 <td>SN-3{{ pad(item.id) }}</td>
                 <td>{{ item.company?.title }}</td>
                 <td>{{ item.transfer_to?.title }}</td>
                 <td>{{ item.subject }}</td>
                 <td>{{ item.profile?.display_name }}</td>
+                <td>{{ item.reminder_profile?.display_name }}</td>
                 <td>
                   <v-chip
                     class="text-uppercase"
