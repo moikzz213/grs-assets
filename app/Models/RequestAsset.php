@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Log;
+use App\Models\File;
 use App\Models\Profile;
 use App\Models\ApprovalSetup;
 use App\Models\RequestApproval;
@@ -58,5 +59,19 @@ class RequestAsset extends Model
     public function transfer_to()
     {
         return $this->belongsTo(Location::class, 'transferred_to');
+    }
+
+    public function attachment()
+    {  
+        return $this->morphToMany(
+            File::class,
+            'fileable',
+            'fileables',
+            'fileable_id',
+            'file_id',
+            '',
+            'id'
+        );
+
     }
 }

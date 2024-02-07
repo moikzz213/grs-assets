@@ -49,6 +49,7 @@
                         </v-btn>
                     </div>
                     <div>
+                        
                         <v-sheet class="bg-grey-lighten-4">
                             <MediaFiles
                                 v-if="selectedTab == 'studio'"
@@ -80,7 +81,7 @@ const props = defineProps({
     options: {
         type: Object,
         default: null,
-    },
+    }, 
 });
 
 const filepondOptions = ref({
@@ -91,11 +92,13 @@ const filepondOptions = ref({
 
 const studioSettings = ref({
     dialog: false,
-    multiSelect: false,
+    multiSelect: props.options?.multiSelect ? props.options?.multiSelect : false,
 });
+ 
 watch(
     () => props.options,
     (newVal) => {
+ 
         studioSettings.value = { ...studioSettings.value, ...newVal };
       //  console.log("watch studio settings", studioSettings.value);
     }
