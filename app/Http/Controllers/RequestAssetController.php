@@ -28,16 +28,18 @@ class RequestAssetController extends Controller
         $orderBy = $request->sort;
         $filter = $request->filter;
         $filterSearch = json_decode($filter);
-
+      
         $dataObj = new RequestAsset;
         $dataObj = $dataObj->where('types','=', $page);
         if($role != 'admin' && $role != 'superadmin' && $role != 'asset-supervisor' && $role != 'commercial-manager' ){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhereHas('request_approvals', function($q) use($ID){
-                $q->where('profile_id', $ID)
-                ->where('status','=', 'awaiting-approval');
-            });
+            $dataObj = $dataObj->where(function($q) use($ID){
+                $q->where('profile_id','=', $ID)->orWhereHas('request_approvals', function($q) use($ID){
+                    $q->where('profile_id', $ID)
+                    ->where('status','=', 'awaiting-approval');
+                });
+            }); 
         } 
-
+       
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
