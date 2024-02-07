@@ -342,7 +342,7 @@ class RequestAssetController extends Controller
             }
 
             //if($query->status == 'awaiting-approval' || $query->status == 'reject'){
-                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from')->first();
+                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from', 'attachment')->first();
 
                 return response()->json(array('access' => true, 'data' => $query), 200);
            // }

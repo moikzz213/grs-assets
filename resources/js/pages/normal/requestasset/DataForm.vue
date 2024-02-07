@@ -444,7 +444,7 @@
                                     "
                                 >
                                 </v-btn>
-                                {{ file.mime }}
+                                
                                 <v-card
                                     @click="() => openAttachmentMultiple(file,index)"
                                 >

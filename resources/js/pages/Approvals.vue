@@ -87,7 +87,7 @@
                                             :src="
                                                 baseURL +
                                                 '/file/' +
-                                                currentSlider.attachment.path
+                                                fileItem.attachment.path
                                             "
                                         ></v-img>
                                     </div>
@@ -393,7 +393,7 @@
                     NOT RECEIVE
                 </div>
             </v-card>
-        </v-row>
+        </v-row> 
         <v-row class="mt-3">
             <div class="v-col-12 px-0 my-0">
                 <v-divider></v-divider>
@@ -407,6 +407,79 @@
                 By clicking the approve button,
             </v-col>
         </v-row> -->
+        <v-row v-if="requestTypeId == 2 && selectedFiles?.length > 0" class=" my-3 d-flex justify-center "> 
+                 
+                            <div
+                                v-for="(file, index) in selectedFiles"
+                                :key="file.id"
+                                class="pa-2"
+                                style="position: relative"
+                            > 
+                                <v-card
+                                    @click="() => openAttachmentMultiple(file,index)"
+                                >
+                                <v-icon size="large" :icon="mdiImage" color="success"></v-icon> 
+                                </v-card>
+                            </div>
+
+                            <v-dialog
+                                v-model="dialogAttachment"
+                                width="95%"
+                                max-width="900"
+                            >
+                                <v-card class="bg-black">
+                                    <v-carousel
+                                        hide-delimiter-background
+                                        show-arrows="hover"
+                                        height="680px"
+                                        v-model="currentSlider"
+                                    >
+                                        <v-carousel-item
+                                            v-for="(item, i) in selectedFiles"
+                                            :key="i"
+                                            reverse-transition="fade"
+                                            transition="fade"
+                                        >
+                                            <div
+                                                :style="`${
+                                                    fileType == 'pdf'
+                                                        ? 'height: 980px;'
+                                                        : 'height: 680px;'
+                                                } 
+                                                        width: 100%;
+                                                        `"
+                                                class="d-flex align-center justify-center"
+                                            >
+                                                <v-img
+                                                    v-if="
+                                                        fileType == 'jpg' ||
+                                                        fileType == 'jpeg' ||
+                                                        fileType == 'png'
+                                                    "
+                                                    :src="
+                                                        baseURL +
+                                                        '/file/' +
+                                                        item.path
+                                                    "
+                                                ></v-img>
+                                                <object
+                                                    v-if="fileType == 'pdf'"
+                                                    :data="
+                                                        baseURL +
+                                                        '/file/' +
+                                                        item.path
+                                                    "
+                                                    type="application/pdf"
+                                                    width="100%"
+                                                    height="800px"
+                                                ></object>
+                                            </div>
+                                        </v-carousel-item>
+                                    </v-carousel>
+                                </v-card>
+                            </v-dialog>
+                        </v-row>
+           
         <v-row v-if="dataObj.data?.request_approvals.length > 0">
             <div class="v-col-12 v-col-md-3 pa-0 mb-4">
                 <div
@@ -624,6 +697,8 @@ const reasonOfReject = ref("");
 const noticeLoader = ref(false);
 const pvID = ref(route.query.id);
 const requestStatus = ref('');
+const requestTypeId = ref(0);
+const selectedFiles = ref([]);
 const queryData = async () => {
     let formData = {
         id: route.query.id,
@@ -645,6 +720,8 @@ const queryData = async () => {
                 return;
             }
             requestStatus.value = res.data?.data?.status;
+            requestTypeId.value = res.data?.data?.request_type_id;
+            selectedFiles.value = res.data?.data?.attachment;
              
             if (dataObj.value?.data?.request_approvals?.length > 0) {
                 is_asset_supervisor.value =
@@ -697,15 +774,25 @@ const queryData = async () => {
         });
 };
 
+const currentSlider = ref(1);
+const fileType = ref("image");
+const openAttachmentMultiple = (file,index) => {
+    let mimeType = file.path.split(".");
+    fileType.value = mimeType[mimeType.length - 1];
+
+    currentSlider.value = index;
+    dialogAttachment.value = true;
+};
+
 const printFn = () =>{
     window.print();
 }
 const baseURL = ref(window.location.origin);
 const dialogAttachment = ref(false);
-const currentSlider = ref(1);
+const fileItem = ref(1);
 const openAttachment = (item) => {
      
-    currentSlider.value = item;
+    fileItem.value = item;
     dialogAttachment.value = true;
 };
 
