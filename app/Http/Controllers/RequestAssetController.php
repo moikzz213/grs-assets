@@ -51,6 +51,7 @@ class RequestAssetController extends Controller
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
             }
+            
             if(@$filterSearch->location_id){
                 $dataObj = $dataObj->where('transferred_to', $filterSearch->location_id);
             }
@@ -58,6 +59,7 @@ class RequestAssetController extends Controller
             if(@$filterSearch->status){
                 $dataObj = $dataObj->where('status', $filterSearch->status);
             }
+            
             $dataObj = $dataObj->orderBy(DB::raw("FIELD(reminder_profile_id,$ID)"), 'DESC')
             ->orderBy(DB::raw("FIELD(status,'awaiting-approval')"), 'ASC')->orderBy('updated_at', 'DESC')->orderBy('status', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to', 'reminder_profile');
         }
