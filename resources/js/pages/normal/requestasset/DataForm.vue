@@ -73,7 +73,7 @@
                                             >
                                             <v-btn
                                                 v-if="
-                                                    formObjData.status ==
+                                                   objData.requestor_id == authStore.user.profile.id &&  formObjData.status ==
                                                     'cancelled'
                                                 "
                                                 @click="
@@ -704,9 +704,7 @@
                                             ( !route.params.id || (
                                               objData.requestor_id == authStore.user.profile.id && 
                                                 props.objectdata?.status ==
-                                                    'pending' ||
-                                                authStore.user.profile.role ==
-                                                    'asset-supervisor' ||
+                                                    'pending' || 
                                                 authStore.user.profile.role ==
                                                     'superadmin' ||
                                                 authStore.user.profile.role ==

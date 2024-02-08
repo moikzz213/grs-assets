@@ -58,7 +58,7 @@
                                         >Cancel request</v-btn
                                     >
                                     <v-btn
-                                        v-if="formObjData.status == 'cancelled'"
+                                        v-if="objData.requestor_id == authStore.user.profile.id && formObjData.status == 'cancelled'"
                                         @click="changeRequestStatus('pending')"
                                         size="small"
                                         color="info"
@@ -531,9 +531,7 @@
                                             ( !route.params.id || (
                                               objData.requestor_id == authStore.user.profile.id && 
                                                 props.objectdata?.status ==
-                                                    'pending' ||
-                                                authStore.user.profile.role ==
-                                                    'asset-supervisor' ||
+                                                    'pending' || 
                                                 authStore.user.profile.role ==
                                                     'superadmin' ||
                                                 authStore.user.profile.role ==
