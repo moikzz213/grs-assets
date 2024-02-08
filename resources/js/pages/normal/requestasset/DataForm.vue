@@ -1139,7 +1139,14 @@ onMounted(() => {
         getCurrentApprover.value = v.request_approvals?.filter(
             (e) => e.status == "awaiting-approval"
         )?.[0];
-      
+        
+
+        if(!getCurrentApprover.value && v.status == 'reject'){
+            getCurrentApprover.value = v.request_approvals?.filter(
+            (e) => e.status == "reject"
+            )?.[0];
+        }
+        
         selectedFiles.value = v.attachment;
         setupApprovals();
     } else {

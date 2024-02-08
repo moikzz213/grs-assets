@@ -356,7 +356,7 @@ const getAllData = async () => {
         JSON.stringify(objFIlter.value)
     )
     .then((res) => {
-      console.log("dataobj.value", dataobj.value);
+      
       totalPageCount.value = res.data.last_page ? res.data.last_page : res.data.length;
       currentPage.value = res.data.current_page
         ? res.data.current_page
@@ -367,7 +367,7 @@ const getAllData = async () => {
     })
     .catch((err) => {
       dataobj.value.loading = false;
-      console.log(err);
+    
     });
 };
 watch(currentPage, (newValue, oldValue) => {

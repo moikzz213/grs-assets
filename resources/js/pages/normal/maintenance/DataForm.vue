@@ -442,7 +442,7 @@ onMounted(() => {
     fetchCompanies().then(() => {
         fetchLocations();
     }); 
-    console.log("isEdit.value",isEdit.value);
+ 
     if (isEdit.value) {
         objData.value = props.objectdata;
 
@@ -458,7 +458,7 @@ onMounted(() => {
         objData.value.urgency = parseInt(props.objectdata.urgency);
         objData.value.description = props.objectdata.description;
     }
-    console.log("objData.value",objData.value);
+    
 }); 
 
  

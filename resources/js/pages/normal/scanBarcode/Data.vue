@@ -181,7 +181,5 @@ const onDecode = async (result) => {
         });
 };
 
-const onLoaded = () => {
-    console.log(`Ready to start scanning barcodes`);
-};
+ 
 </script>
