@@ -386,7 +386,7 @@ const getAllData = async () => {
     })
     .catch((err) => {
       users.value.loading = false;
-      console.log(err);
+     
     });
 };
 watch(currentPage, (newValue, oldValue) => {
@@ -413,7 +413,7 @@ const editUser = (id) => {
       query: { type: "details" },
     })
     .catch((err) => {
-      console.log(err);
+      
     });
 };
 

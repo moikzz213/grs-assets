@@ -249,7 +249,7 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
-  console.log("filterrows");
+  
   localStorage.setItem("maintenance-filter-row", encryptData(showPerPage.value)); 
   getAllData();
 };
@@ -283,7 +283,7 @@ const filterSearch = (v) => {
 };
 
 const searchData = () => {
-  console.log("search data");
+ 
   localStorage.setItem("maintenance-search", encryptData(search.value));
   getAllData();
 };
@@ -313,7 +313,7 @@ const orderBy = ref([]);
 const sortBy = ref("");
 const orderByCount = ref(0);
 const OrderByField = (v) => {
-  console.log("orderBy");
+ 
   users.value.loading = true;
 
   orderBy.value[0] = v;
@@ -359,7 +359,7 @@ const fetchStatus = async () => {
 };
 
 const getAllData = async () => { 
-  console.log("sssss");
+ 
   users.value.loading = true;
   await clientKey(authStore.token)
     .get(
@@ -393,7 +393,7 @@ const getAllData = async () => {
     });
 };
 watch(currentPage, (newValue, oldValue) => {
-  console.log("watched");
+ 
   if (currentPage.value && newValue != oldValue) {
     router
       .push({
@@ -426,7 +426,7 @@ const editUser = (id, type) => {
       query: queryParam,
     })
     .catch((err) => {
-      console.log(err);
+ 
     });
 };
 

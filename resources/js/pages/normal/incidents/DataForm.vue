@@ -454,7 +454,7 @@ const saveData = async () => {
       }
     })
     .catch((err) => {
-      console.log("save incident error: ", err);
+      
       loadingBtn.value = false;
     });
 };

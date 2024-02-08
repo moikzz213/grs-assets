@@ -14,6 +14,7 @@ use App\Models\RequestApproval;
 use App\Jobs\ApprovalsCompleted;
 use App\Jobs\RequestTransferJob;
 use App\Models\RequestAssetDetail;
+use Illuminate\Support\Facades\DB;
 use App\Models\AllottedInformation;
 
 class RequestAssetController extends Controller
@@ -44,7 +45,8 @@ class RequestAssetController extends Controller
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
             $sort = $orderBy[1];
-            $dataObj = $dataObj->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to', 'reminder_profile');
+            $dataObj = $dataObj->orderBy(DB::raw("FIELD(reminder_profile_id,$ID)"), 'DESC')
+            ->orderBy(DB::raw("FIELD(status,'awaiting-approval')"), 'ASC')->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to', 'reminder_profile');
         }else{
             if(@$filterSearch->company_id){
                 $dataObj = $dataObj->where('company_id', $filterSearch->company_id);
@@ -56,9 +58,10 @@ class RequestAssetController extends Controller
             if(@$filterSearch->status){
                 $dataObj = $dataObj->where('status', $filterSearch->status);
             }
-            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->orderBy('status', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to', 'reminder_profile');
+            $dataObj = $dataObj->orderBy(DB::raw("FIELD(reminder_profile_id,$ID)"), 'DESC')
+            ->orderBy(DB::raw("FIELD(status,'awaiting-approval')"), 'ASC')->orderBy('updated_at', 'DESC')->orderBy('status', 'DESC')->with('items.assets', 'profile', 'company',  'transfer_to', 'reminder_profile');
         }
-
+         
         if($search){
 
             $dataObj = $dataObj->where(function($q) use($search){
@@ -228,7 +231,7 @@ class RequestAssetController extends Controller
         if($is_reject){
             $query3 = RequestApproval::where(['request_asset_id' => $ID, 'orders' => $order])->first();
             $message = 'Request has been rejected';
-            $queryRequest->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null));
+            $queryRequest->update(array('status' => 'reject', 'reason_rejected' => $is_reject, 'reminder_date' => null, 'reminder_profile_id' => null));
             $query3->update(array('status' => 'reject', 'reason_rejected' => $is_reject));
 
             // Notify requestor - request has been rejected
