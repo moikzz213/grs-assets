@@ -409,7 +409,7 @@
                     </v-card-text>
                 </v-card>
                 <v-card v-if="objData.request_type_id == 2">
-                    <v-card-text v-if="!is_receiving_releasing">
+                    <v-card-text >
                         <div v-if="!isEdit || (isEdit && objData.requestor_id == authStore.user.profile.id)">
                         <div>Additional File can be upload here</div>
                             <Studio
