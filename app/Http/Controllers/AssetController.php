@@ -365,12 +365,12 @@ class AssetController extends Controller
 
         $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8);
         $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8);
-        $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete');
-        $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete');
+        $req = RequestAsset::where('types','=', 'request')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
+        $transfer = RequestAsset::where('types','transfer')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
 
         $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10);
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
-        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10);
+        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10); 
 
         if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor' && $request->input('role') !== 'receiving-releasing' && $request->input('role') !== 'facility'){
             $incidents   = $incidents->where('profile_id', $request->input('id'));
