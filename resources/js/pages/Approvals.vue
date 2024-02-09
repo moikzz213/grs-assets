@@ -45,6 +45,8 @@
             </div>
             <div class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between">
                 REMARKS
+                <div style="position: relative;">
+                <div v-if="noticeLoader" class="checkbox-notice"></div>
                 <v-checkbox
                     v-if="is_asset_supervisor || is_receiver"
                     v-model="checkAll"
@@ -55,6 +57,7 @@
                     variant="underlined"
                     density="compact"
                 ></v-checkbox>
+            </div>
             </div>
         </v-row>
         <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
@@ -301,14 +304,17 @@
                         :color="`${item.is_available ? 'success' : 'error'}`"
                     ></v-icon>
                 </div>
+                <div  class="pa-0 ma-0 v-col-1 my-auto" style="position: relative;">
+                    <div v-if="noticeLoader" class="checkbox-notice"></div>
                 <v-checkbox
                     v-model="item.is_received"
-                    class="pa-0 ma-0 v-col-1 my-auto"
+                   
                     hide-details
                     variant="underlined"
                     density="compact"
                     @update:modelValue="checkUncheckBoxSingle"
                 ></v-checkbox>
+                </div>
             </div>
             <div
                 v-else
@@ -363,7 +369,7 @@
         </v-row>
         <v-row v-if="dataObj?.data?.is_available && requestStatus !== 'cancelled' " class="mt-6 mb-2">
             <v-card
-                :loading="noticeLoader"
+                
                 variant="text"
                 class="v-col-12 text-center pt-2 font-weight-bold pb-0 d-flex justify-center"
             >
@@ -377,10 +383,14 @@
                     ></v-icon>
                     NOT AVAILABLE
                 </div>
-                <div v-if="is_receiver" class="ml-5 d-flex" >
+                <div v-if="is_receiver" class="ml-5 d-flex">
                     <div class="px-2 mr-5">|</div>
+                    <div> 
                     <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
                     RECEIVED ASSETS
+                    <v-divider :thickness="8" color="error" class="divider-notice"></v-divider>
+                    </div>
+                    
                 </div>
                 <div class="ml-6" v-if="dataObj.data?.status == 'complete' && checkLastApproval == 'receiver'">
                     <v-icon :icon="mdiTruckDelivery" color="success"></v-icon>
@@ -896,6 +906,7 @@ const statusFn = (v) => {
 
 const checkUncheckBox = () => {
     let isReceiver = is_receiver.value;
+    noticeLoader.value = false;
     assetsOnly.value.map((o) => {
         if (isReceiver) {
             o.is_received = checkAll.value;
@@ -938,5 +949,55 @@ queryData();
 }
 
 div.py-1, 
-.approval-form-pr textarea, .approval-form-pr input { font-size:12px !important;}
+.approval-form-pr textarea, .approval-form-pr input { font-size:12px !important;} 
+
+.divider-notice{
+    animation: transform 2s infinite;
+}
+
+@keyframes transform {
+	0% {
+		transform: scale(0.2);
+		 
+	}
+
+	50% {
+		transform: scale(1.3, 0.4);
+		 
+	}
+
+	100% {
+		transform: scale(0.2);
+	}
+}
+
+.checkbox-notice  {
+	background: rgba(250, 73, 73, 0.5);
+	border-radius: 50%;
+	margin: 10px;
+    left:-6px;
+	height: 20px;
+    position: absolute;
+	width: 20px; 
+	box-shadow: 0 0 0 0 rgb(250, 73, 73, 0);
+	transform: scale(1);
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+	}
+
+	70% {
+		transform: scale(2);
+		box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+	}
+}
 </style>
