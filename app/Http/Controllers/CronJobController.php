@@ -95,11 +95,12 @@ class CronJobController extends Controller
 
             foreach ($profilesWithAssetRequest as $k => $profile) {
 
-                // run jobs to send email
-                CronJobAssetRequest::dispatchAfterResponse(['data' => $profile])->onQueue('default');
-
-                // update reminder date for all asset requests
-                $updateReminder = $profile->reminder_profile()->update(['reminder_date' => Carbon::now()->addDays(1)]);
+                if(count($profile->reminder_profile) > 0){ 
+                    // run jobs to send email
+                    CronJobAssetRequest::dispatchAfterResponse(['data' => $profile])->onQueue('default');
+                    // update reminder date for all asset requests
+                    $updateReminder = $profile->reminder_profile()->update(['reminder_date' => Carbon::now()->addDays(1)]);
+                }
             }
         }
        return;
