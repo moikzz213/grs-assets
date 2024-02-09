@@ -377,7 +377,7 @@
                     ></v-icon>
                     NOT AVAILABLE
                 </div>
-                <div v-if="is_receiver" class="ml-5 d-flex">
+                <div v-if="is_receiver" class="ml-5 d-flex" >
                     <div class="px-2 mr-5">|</div>
                     <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
                     RECEIVED ASSETS
@@ -616,11 +616,11 @@
                     }}
                 </div>
                 <div
-                    class="v-col-12"
+                    class="v-col-12 text-caption"
                     v-if="item.reason_rejected"
-                    style="border: 1px solid red"
+                    style="border: 1px solid red;border-radius:5px;"
                 >
-                    Reason
+                    Reason rejected
                     <v-divider class="my-2"></v-divider>
                     {{ item.reason_rejected }}
                 </div>
