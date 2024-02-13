@@ -472,7 +472,10 @@ class AssetController extends Controller
                 $category = array('category_id' => $decoded->category_id);
             }
             if(@$decoded->status_id){
-                $status = array('category_id' => $decoded->status_id);
+                $status = array('status_id' => $decoded->status_id);
+            }
+            if(@$decoded->po_number){
+                $po_number = array('po_number' => $decoded->po_number);
             }
         }
         $query = Asset::where(function($q) use ($location, $company, $category, $status){
@@ -487,6 +490,9 @@ class AssetController extends Controller
             }
             if($status){
                 $q->where($status);
+            }
+            if($po_number){
+                $q->where($po_number);
             }
         })->with(
             'warranty_latest',
