@@ -344,7 +344,7 @@ const freeForm = computed(() => {
         },
         {
             name: "warranty_end_date",
-            label: "Warranty Start Date",
+            label: "Warranty End Date",
             required: true,
             type: "date",
         },
