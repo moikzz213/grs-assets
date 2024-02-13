@@ -285,10 +285,9 @@ class AssetController extends Controller
 
     function getWarrantyByAssetId($assetId) {
         $warranties = Asset::where('id', '=',$assetId)
-        ->with( 'pivot_warranties.vendor')
+        ->with( 'pivot_warranties.vendor', 'pivot_warranties.attachment')
         ->orderBy('id', 'DESC')
-        ->get();
-
+        ->get(); 
 
         if($warranties && count($warranties) > 0){
             $warranties = $warranties[0]->pivot_warranties;
