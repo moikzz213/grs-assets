@@ -213,7 +213,7 @@
                                         @click="() => removeAttachment(file.id)"
                                     >
                                     </v-btn>
-                                    {{ file.mime }}
+                                  
                                     <v-card
                                         @click="() => openAttachment(file)"
                                     >
@@ -235,6 +235,7 @@
                                         >  
                                         </v-img>
                                     </v-card>
+                                    <small style="font-size:10px;line-height: 0;">{{ file.title }}</small>
                                 </div>
 
                                 <v-dialog
