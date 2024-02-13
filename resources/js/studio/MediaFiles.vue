@@ -2,7 +2,7 @@
   <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <div class="mb-3">
       <v-row v-if="files.length > 0" class="ma-0">
-        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1" style="border:1px solid #e7e7e7; border-radius: 5px;">
+        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;">
           <v-img
           v-if="file.mime.includes('image/png','image/jpeg','image/gif', 'image/jpg')"
             cover
@@ -29,7 +29,7 @@
             }`"
           >
           </v-img>
-          <small style="font-size:10px;">{{ file.title }}.{{ getExtension(file) }}</small> 
+          <small style="font-size:10px;">{{ limitText(file.title, 25) }}.{{ getExtension(file) }}</small> 
         </div>
       </v-row>
       <v-sheet
@@ -62,6 +62,7 @@
 import { ref, computed } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
+import { limitText } from "@/composables/generateRandomString.js";
 
 const props = defineProps({
   multiSelect: {
@@ -105,7 +106,7 @@ const getFiles = async () => {
       loadingFiles.value = false;
     });
 };
-getFiles();
+getFiles();  
 
 const loadMore = () => {
   loadMoreNumber.value = loadMoreNumber.value + 1;

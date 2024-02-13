@@ -235,7 +235,7 @@
                                         >  
                                         </v-img>
                                     </v-card>
-                                    <small style="font-size:10px;line-height: 0;">{{ file.title }}</small>
+                                    <small style="font-size:10px;line-height: 0;">{{ limitText(file.title, 25) }}</small>
                                 </div>
 
                                 <v-dialog
@@ -301,6 +301,7 @@ import Studio from "@/studio/Studio.vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { mdiTrashCan, mdiClose } from "@mdi/js";
+import { limitText } from "@/composables/generateRandomString.js";
 const authStore = useAuthStore();
 const title = ref("");
 
