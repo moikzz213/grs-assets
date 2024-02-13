@@ -461,6 +461,7 @@ class AssetController extends Controller
         $company = '';
         $category = '';
         $status = '';
+        $po_number = '';
         if($decoded){
             if(@$decoded->location_id){
                 $location = array('location_id' => $decoded->location_id);
@@ -478,7 +479,7 @@ class AssetController extends Controller
                 $po_number = array('po_number' => $decoded->po_number);
             }
         }
-        $query = Asset::where(function($q) use ($location, $company, $category, $status){
+        $query = Asset::where(function($q) use ($location, $company, $category, $status, $po_number){
             if($location){
                 $q->where($location);
             }
