@@ -8,7 +8,7 @@
                 v-if="route.name !='view-asset'"
             >
                 New Warranty <v-icon class="ml-2" :icon="mdiPlus"></v-icon>
-            </v-btn>
+            </v-btn> 
             <v-card>
                 <v-table density="compact">
                     <thead>
@@ -36,7 +36,7 @@
                             </td>
                             <td>
                                 <v-icon
-                                    v-if="item.attachment.length > 0"
+                                    v-if="item?.attachment?.length > 0"
                                     :icon="mdiImage"
                                     color="success"
                                     @click="
@@ -142,7 +142,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogAttachment" width="95%" max-width="900">
+        <v-dialog v-model="dialogAttachment" width="95%" max-width="1200">
             <v-card class="bg-black">
                 <v-carousel
                     hide-delimiter-background
@@ -163,6 +163,31 @@
                             <v-img
                                 :src="baseURL + '/file/' + item.path"
                             ></v-img>
+
+                            <v-img
+                                v-if="
+                                    fileType == 'jpg' ||
+                                    fileType == 'jpeg' ||
+                                    fileType == 'gif' ||
+                                    fileType == 'png'
+                                "
+                                :src="
+                                    baseURL +
+                                    '/file/' +
+                                    item.path
+                                "
+                            ></v-img>
+                            <object
+                                v-if="fileType == 'pdf'"
+                                :data="
+                                    baseURL +
+                                    '/file/' +
+                                    item.path
+                                "
+                                type="application/pdf"
+                                width="100%"
+                                height="800px"
+                            ></object>
                         </div>
                     </v-carousel-item>
                 </v-carousel>
@@ -222,7 +247,10 @@ watch(
 const dialogAttachment = ref(false);
 const selectedFiles = ref([]);
 const currentSlider = ref(1);
-const openAttachment = (item, index) => {
+const fileType = ref("image");
+const openAttachment = (item, index) => { 
+    let mimeType = item[0].path.split(".");
+    fileType.value = mimeType[mimeType.length - 1];
     selectedFiles.value = item;
     currentSlider.value = index;
     dialogAttachment.value = true;
@@ -289,6 +317,7 @@ const getWarranties = async () => {
         .get("/api/asset/warranty/" + route.params.id)
         .then((res) => {
             warranties.value = res.data;
+            console.log("warranties.value",warranties.value);
             dialogWarranty.value.loading = false;
         })
         .catch((err) => {
