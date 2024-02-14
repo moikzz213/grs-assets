@@ -266,11 +266,7 @@ class RequestAssetController extends Controller
 
 
                 if($stats == 'complete'){
-                    $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => null, 'reminder_profile_id' => null,'date_closed' => Carbon::now());
-
-                      // Notify everyone once completed
-                      $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-                      ApprovalsCompleted::dispatchAfterResponse(['data' => json_encode($query4), 'id' => $ID, 'type' => $types])->onQueue('default');
+                    $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => null, 'reminder_profile_id' => null,'date_closed' => Carbon::now()); 
 
                 }else{
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
@@ -314,10 +310,11 @@ class RequestAssetController extends Controller
                         }
                         AllottedInformation::insert($getAssetIds);
                     }
-                } 
+                }  
                 
+                // Notify everyone once completed
                 $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-
+                ApprovalsCompleted::dispatchAfterResponse(['data' => json_encode($query4), 'id' => $ID, 'type' => $types])->onQueue('default');
             }
 
 
