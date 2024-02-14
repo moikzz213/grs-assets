@@ -281,44 +281,45 @@ class RequestAssetController extends Controller
             }else{
 
                 $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => @$query3->profile_id);
-
-                // Approval completed
-
-                if($stats == 'complete'){
-                    $updateData = array('status' => $stats, 'date_closed' => Carbon::now(), 'reminder_date' => null, 'reminder_profile_id' => null);
-
-                    $pluckAssetCodes = array();
-                    $pluckAssetRemarks = array();
-                    if($queryRequest['items'] && count($queryRequest['items']) > 0){
-                        foreach ($queryRequest['items'] as $key => $value) {
-                            $pluckAssetCodes[] = $value['asset_code'];
-                            $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => $value['reason_for_request']);
-                        }
-                    }
-                    if(count($pluckAssetCodes) > 0){
-
-                        $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
-                        if(count($updateAsset)> 0){
-                            $getAssetIds = array();
-                            foreach ($updateAsset as $k => $v) {
-                                $v->update(array('location_id' => $queryRequest->transferred_to));
-
-                                if($pluckAssetRemarks[$k] == $v->asset_code){
-                                    $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $queryRequest->transferred_to,
-                                    'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
-                                }
-                            }
-                            AllottedInformation::insert($getAssetIds);
-                        }
-                    }
-
-                    // Notify everyone once completed
-                    $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
-
-                }
-
+ 
                 $queryRequest->update($updateData);
             }
+
+            // Approval completed 
+               
+            if($stats == 'complete'){
+                $updateData = array('status' => $stats, 'date_closed' => Carbon::now(), 'reminder_date' => null, 'reminder_profile_id' => null);
+
+                $pluckAssetCodes = array();
+                $pluckAssetRemarks = array();
+                if($queryRequest['items'] && count($queryRequest['items']) > 0){
+                    foreach ($queryRequest['items'] as $key => $value) {
+                        $pluckAssetCodes[] = $value['asset_code'];
+                        $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => $value['reason_for_request']);
+                    }
+                }
+                if(count($pluckAssetCodes) > 0){
+
+                    $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
+                  
+                    if(count($updateAsset)> 0){
+                        $getAssetIds = array();
+                        foreach ($updateAsset as $k => $v) {
+                            $v->update(array('location_id' => $queryRequest->transferred_to));
+
+                            if($pluckAssetRemarks[$k]['asset_code'] == $v->asset_code){
+                                $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $queryRequest->transferred_from,
+                                'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
+                            }
+                        }
+                        AllottedInformation::insert($getAssetIds);
+                    }
+                } 
+                
+                $query4 = RequestApproval::where(['request_asset_id' => $ID])->pluck('profile_id');
+
+            }
+
 
             $message = 'Request has been approved';
         }
