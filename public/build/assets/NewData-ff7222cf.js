@@ -1,1 +1,0 @@
-import{p as e,d as t,o as r}from"./app-9ff0b0b0.js";import{_ as a}from"./DataForm-6e5f9f95.js";import"./AppPageHeader-eaeaec63.js";import"./Studio-da7e1532.js";import"./AppSnackBar-42a34af5.js";import"./formatDate-b9aad8c5.js";const f={__name:"NewData",setup(o){return(s,m)=>(r(),e("div",null,[t(a,{headertitle:"Transfer Assets"})]))}};export{f as default};
