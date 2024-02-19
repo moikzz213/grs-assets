@@ -48,12 +48,13 @@ class NotifyApproverJob implements ShouldQueue
         $toEmail = $query->email;
         $message = 'Dear '. $query->display_name. ",<br/><br/>";
         $message .= 'Thank you for your approval on below Request No.<br/>';
-        $message .= 'SN No. : '. $snNo."<br/><br/>";
+        $message .= 'SN No. : '. $snNo."<br/>";
+        $message .= 'Subject : '. $query->subject."<br/><br/>";
         $message .= 'If you did not initiate this approval, kindly notify Commercial Manager - Projects.';
         
         $type = strtoupper($data->type); 
          
-        $data = array("types" => $type, "link" => '', "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s)");
+        $data = array("types" => $type, "link" => '', "message" => $message, 'subject' => "Asset System: ".$type. " ASSET(s) - ". $query->subject);
     
         Mail::to($toEmail)->queue( new RequestTransferMail( $data) ); 
     } 

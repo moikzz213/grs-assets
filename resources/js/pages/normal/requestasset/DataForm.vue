@@ -177,24 +177,26 @@
                 <v-card class="my-2">
                     <v-card-text>
                         <v-row v-if="!is_receiving_releasing">
-                            <div class="v-col-12">
+                            <div class="v-col-12"
+                            v-if=" 
+                                formObjData.status != 'complete' &&
+                                (!route.params.id || ( objData.requestor_id == authStore.user.profile.id && 
+                                    props.objectdata?.status ==
+                                        'pending' ||
+                                    authStore.user.profile.role ==
+                                        'superadmin' ||
+                                    authStore.user.profile.role ==
+                                        'administrator'))
+                                    ">
                                 <v-btn
                                 size="small"
                                     color="primary"
                                     class="no-print"
                                     @click="AddAsset"
-                                    v-if=" 
-                                        formObjData.status != 'complete' &&
-                                        (!route.params.id || ( objData.requestor_id == authStore.user.profile.id && 
-                                            props.objectdata?.status ==
-                                                'pending' ||
-                                            authStore.user.profile.role ==
-                                                'superadmin' ||
-                                            authStore.user.profile.role ==
-                                                'administrator'))
-                                    "
+                                    
                                     >Add</v-btn
                                 >
+                                <small class="mx-5 text-info">UOM: ( pcs, pack, box, etc.. )</small>
                             </div>
                         </v-row>
                         <!-- This row is for print -->
@@ -344,20 +346,22 @@
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
                                     type="number"
-                                    v-model="item.qty"
+                                    v-model="item.qty" 
+                                    @update:modelValue="requiredData"
                                     variant="outlined"
                                     density="compact"
                                     hide-details
-                                    label="QTY"
+                                    label="QTY*" 
                                 ></v-text-field>
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
                                     v-model="item.uom"
+                                    @update:modelValue="requiredData" 
                                     variant="outlined"
                                     density="compact"
                                     hide-details
-                                    label="UOM"
+                                    label="UOM*" 
                                 ></v-text-field>
                             </div>
                             <div class="v-col-12 v-col-md-1">
@@ -387,7 +391,7 @@
                                     density="compact"
                                     hide-details
                                     rows="2"
-                                    label="REASON"
+                                    label="REASON*"
                                 ></v-textarea>
                                 <v-icon
                                     size="small"
@@ -1064,11 +1068,9 @@ const requiredData = () => {
 
     let checkAsset = true;
     assetDataObj.value.map((o) => {
-        if (!o.item_description) {
+        if (!o.item_description || !o.reason_for_request || !o.uom || (!o.qty || o.qty <= 0)) {
             checkAsset = false;
-        } else if (!o.reason_for_request) {
-            checkAsset = false;
-        }
+        }  
     });
 
     let checkSignatories = true;

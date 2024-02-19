@@ -161,6 +161,7 @@
                                     "
                                     >Add</v-btn
                                 >
+                                <small class="mx-5 text-info">UOM: ( pcs, pack, box, etc.. )</small>
                             </div>
                         </v-row>
                         <!-- This row is for print -->
@@ -295,7 +296,7 @@
                                     hide-details
                                     clearable
                                     label="ITEM DESC*"
-                                    rows="2"
+                                    rows="2" 
                                     class="no-print"
                                 ></v-textarea>
                                 
@@ -311,26 +312,30 @@
                                 ></v-text-field>
                                 
                             </div>
+                            
                             <div class="v-col-12 v-col-md-1">
+                            
                                 <v-text-field
                                     type="number"
+                                    @update:modelValue="requiredData" 
                                     v-model="item.qty"
                                     variant="outlined"
                                     density="compact"
                                     hide-details
                                     class="no-print"
-                                    label="QTY"
+                                    label="QTY*" 
                                 ></v-text-field>
                               
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field 
+                                    @update:modelValue="requiredData" 
                                     v-model="item.uom"
                                     variant="outlined"
                                     density="compact"
                                     hide-details
                                     class="no-print"
-                                    label="UOM"
+                                    label="UOM*" 
                                 ></v-text-field>
                               
                             </div>
@@ -363,7 +368,7 @@
                                     v-model="item.reason_for_request"
                                     variant="outlined"
                                     density="compact"
-                                    hide-details
+                                    hide-details 
                                     rows="2"
                                     label="REASON"
                                     ></v-textarea>
@@ -703,7 +708,7 @@ const submitRequest = () => {
         delete o.assets;
         delete o.updated_at;
         delete o.created_at;
-        delete o.id;
+        delete o.id; 
         delete o.attachment;
         return o;
     });
@@ -822,12 +827,13 @@ const requiredData = () => {
 
     let checkAsset = true;
     assetDataObj.value.map((o) => {
-        if (!o.item_description) {
+       
+        if (!o.item_description || !o.reason_for_request || !o.uom || (!o.qty || o.qty <= 0)) {
             checkAsset = false;
-        }else if(!o.reason_for_request){
-            checkAsset = false;
-        }
+        } 
     });
+
+   console.log("assetDataObj.value",assetDataObj.value);
 
     let checkSignatories = true;
     approvalSetupList.value.map((o) => {
@@ -937,9 +943,9 @@ const is_receiving_releasing = computed(() => {
 });
 
 watch(objData.value, async (newVal, oldVal) => {
-    requiredData();
+    requiredData(); 
 });
-watch(assetDataObj.value, async (newVal, oldVal) => {
+watch(assetDataObj.value, async (newVal, oldVal) => { 
     requiredData();
 });
 </script>
