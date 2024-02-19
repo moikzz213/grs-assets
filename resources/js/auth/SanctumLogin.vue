@@ -42,7 +42,7 @@
           <v-btn variant="text" class="mt-3" block @click="resetPassword"
             >Reset Password</v-btn
           >
-          <div class="text-error mt-2">
+          <div class="text-error mt-2 text-center">
             {{ hasError == true ? message : "" }}
           </div>
         </v-form>
@@ -119,9 +119,9 @@ const login = async () => {
           console.log("errrr 1", err);
         });
     })
-    .catch((err) => {
+    .catch((err) => { 
       hasError.value = true;
-      message.value = err.response.data.message;
+      message.value = err?.message ? err.message :  err.response.data.message;
       loadingLogin.value = false;
     });
 };
@@ -140,7 +140,7 @@ const authLogin = async () => {
   };
 
   const response = await authApi.post("/api/sanctumlogin", data);
-
+  
   if (response.data.status == false) {
     hasError.value = true;
     message.value = response.data.message;
