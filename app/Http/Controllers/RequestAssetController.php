@@ -95,8 +95,8 @@ class RequestAssetController extends Controller
     }
 
     public function storeUpdate(Request $request){
-        if(!$request->profile_id){
-            return;
+        if(!$request->profile_id || !$request->assets || !$request->approval){
+            return response()->json(array('error' => "Asset Item or Approval is required! kindly refresh the page and add."), 200);
         }
         
         $role = $request->role;
@@ -139,9 +139,12 @@ class RequestAssetController extends Controller
                 return response()->json(array('error' => "This request has already been signed, you cannot update anymore.", 'id' => $ID), 200);
             }
             $query->update($dataArr);
-            $query->items()->delete(); 
-            $query->request_approvals()->delete();
-
+            if(count($request->assets) > 0 ){
+                $query->items()->delete(); 
+            }
+            if(count($assetApprovals) > 1 ){
+                $query->request_approvals()->delete();
+            }
             $message = 'Request has been updated.';
             $log_type = 'update';
         }else{
@@ -290,8 +293,27 @@ class RequestAssetController extends Controller
                 $pluckAssetRemarks = array();
                 if($queryRequest['items'] && count($queryRequest['items']) > 0){
                     foreach ($queryRequest['items'] as $key => $value) {
-                        $pluckAssetCodes[] = $value['asset_code'];
-                        $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => $value['reason_for_request']);
+                        $assCode = trim($value['asset_code']);
+                        $explodeAsset = explode(",", $assCode);
+                        if(count($explodeAsset) > 1){
+                            foreach($explodeAsset AS $zt => $vt){ 
+                                $pluckAssetCodes[] = $vt;
+                                $pluckAssetRemarks[] = array('asset_code' => $vt, 'remarks' => "ID:".$ID. " - ".$value['reason_for_request']);
+                            }
+                        }else{
+                            $explodeAsset = explode("&", $assCode);
+
+                            if(count($explodeAsset) > 1){
+                                foreach($explodeAsset AS $zt => $vt){ 
+                                    $pluckAssetCodes[] = $vt;
+                                    $pluckAssetRemarks[] = array('asset_code' => $vt, 'remarks' => "ID:".$ID. " - ".$value['reason_for_request']);
+                                }
+                            }else{
+                                $pluckAssetCodes[] = $value['asset_code'];
+                                $pluckAssetRemarks[] = array('asset_code' => $value['asset_code'], 'remarks' => "ID:".$ID. " - ".$value['reason_for_request']);
+                            } 
+                           
+                        } 
                     }
                 }
                 if(count($pluckAssetCodes) > 0){
