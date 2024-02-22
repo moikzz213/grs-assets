@@ -34,9 +34,7 @@
                 >
                 <DownloadExcel
                     v-if="
-                        dataObj.data?.length > 0 &&
-                        (authStore.user.role == 'superadmin' ||
-                            authStore.capabilities?.includes('edit'))
+                        dataObj.data?.length > 0
                     "
                     :fetch="donwloadLeads"
                     :fields="json_field"
