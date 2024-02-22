@@ -126,7 +126,12 @@
                     hide-details 
                     :readonly="!is_asset_supervisor || requestStatus == 'cancelled'"
                     :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    v-if="is_asset_supervisor && requestStatus != 'cancelled'"
                 ></v-text-field>
+
+                <div v-else class="bg-light-gray d-flex flex-column-reverse flex-start-end"
+                    
+                >{{ item.asset_code }}</div>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
