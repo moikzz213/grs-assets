@@ -275,7 +275,7 @@ class RequestAssetController extends Controller
                     $updateData = array('status' => $stats, 'is_available' => 1, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $query3->profile_id);
                 }
 
-                $queryRequest->update($updateData);
+               $queryRequest->update($updateData);
 
             }else{
 
@@ -297,7 +297,7 @@ class RequestAssetController extends Controller
                         $explodeAsset = explode(",", $assCode);
                         if(count($explodeAsset) > 1){
                             foreach($explodeAsset AS $zt => $vt){ 
-                                $pluckAssetCodes[] = $vt;
+                                $pluckAssetCodes[] = trim($vt);
                                 $pluckAssetRemarks[] = array('asset_code' => $vt, 'remarks' => "ID:".$ID. " - ".$value['reason_for_request']);
                             }
                         }else{
@@ -305,7 +305,7 @@ class RequestAssetController extends Controller
 
                             if(count($explodeAsset) > 1){
                                 foreach($explodeAsset AS $zt => $vt){ 
-                                    $pluckAssetCodes[] = $vt;
+                                    $pluckAssetCodes[] = trim($vt);
                                     $pluckAssetRemarks[] = array('asset_code' => $vt, 'remarks' => "ID:".$ID. " - ".$value['reason_for_request']);
                                 }
                             }else{
@@ -316,6 +316,7 @@ class RequestAssetController extends Controller
                         } 
                     }
                 }
+              //  dd($pluckAssetCodes);
                 if(count($pluckAssetCodes) > 0){
 
                     $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
