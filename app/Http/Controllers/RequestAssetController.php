@@ -316,7 +316,7 @@ class RequestAssetController extends Controller
                         } 
                     }
                 }
-              //  dd($pluckAssetCodes);
+              
                 if(count($pluckAssetCodes) > 0){
 
                     $updateAsset = Asset::whereIn('asset_code', $pluckAssetCodes)->get();
@@ -326,11 +326,12 @@ class RequestAssetController extends Controller
                         foreach ($updateAsset as $k => $v) {
                             $v->update(array('location_id' => $queryRequest->transferred_to));
 
-                            if($pluckAssetRemarks[$k]['asset_code'] == $v->asset_code){
+                            //if($pluckAssetCodes[$k] == $v->asset_code){
                                 $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $queryRequest->transferred_from,
                                 'created_at' => Carbon::now(), 'remarks' => $pluckAssetRemarks[$k]['remarks']);
-                            }
+                           // }
                         }
+                        
                         AllottedInformation::insert($getAssetIds);
                     }
                 }  
