@@ -462,6 +462,7 @@ class AssetController extends Controller
         $category = '';
         $status = '';
         $po_number = '';
+        $search = '';
         if($decoded){
             if(@$decoded->location_id){
                 $location = array('location_id' => $decoded->location_id);
@@ -478,8 +479,11 @@ class AssetController extends Controller
             if(@$decoded->po_number){
                 $po_number = array('po_number' => $decoded->po_number);
             }
+            if(@$decoded->search){
+                $search =  $decoded->search;
+            }
         }
-        $query = Asset::where(function($q) use ($location, $company, $category, $status, $po_number){
+        $query = Asset::where(function($q) use ($location, $company, $category, $status, $po_number, $search){
             if($location){
                 $q->where($location);
             }
@@ -494,6 +498,14 @@ class AssetController extends Controller
             }
             if($po_number){
                 $q->where($po_number);
+            }
+            if($search){
+                $q->where(function($qq) use($search){
+                    $capSearch = strtoupper($search); 
+                    $qq->where('asset_name', 'like', '%'.$search.'%')
+                        ->orWhere('asset_code',  'like', '%'.$search.'%')
+                        ->orWhere('serial_number',  'like', '%'.$search.'%');
+                });
             }
         })->with(
             'warranty_latest',

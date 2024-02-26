@@ -583,7 +583,7 @@ const filterRows = () => {
 
 const filterSearch = (v) => {
     sortBy.value = "";
-    if (currentPage.value == 1) {
+    if (currentPage.value == 1) { 
         if (v == "company") {
             localStorage.setItem(
                 "asset-filter-company",
@@ -617,6 +617,8 @@ const filterSearch = (v) => {
 };
 
 const searchData = () => {
+   
+    objFIlter.value.search = search.value;
     localStorage.setItem("asset-list-search", encryptData(search.value));
     getAllData();
 };
