@@ -224,9 +224,10 @@ const props = defineProps({
     asset: {
         type: Object,
         default: null,
-    },
+    }, 
 });
 
+ 
 // warranty
 const dialogWarranty = ref({
     status: false,
@@ -236,11 +237,15 @@ const dialogWarranty = ref({
 });
 const warranties = ref([]);
 
+const runOnce = ref(0);
 watch(
     () => props.asset,
     (newVal) => {
         warranties.value = newVal.pivot_warranties;
-        fetchAllWarranties();
+        if(runOnce.value == 0 ){
+            fetchAllWarranties();
+        }
+        runOnce.value += 1;
     }
 );
 
@@ -317,7 +322,7 @@ const getWarranties = async () => {
         .get("/api/asset/warranty/" + route.params.id)
         .then((res) => {
             warranties.value = res.data;
-            console.log("warranties.value",warranties.value);
+           
             dialogWarranty.value.loading = false;
         })
         .catch((err) => {

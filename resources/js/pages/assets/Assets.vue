@@ -746,7 +746,7 @@ const fetchLPONos = async () => {
     await clientKey(authStore.token)
         .get("/api/fetch-assets/lpo-no-only")
         .then((res) => {
-            console.log("res.data", res.data);
+           
             lpoList.value = res.data.result;
         })
         .catch((err) => {});
