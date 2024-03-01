@@ -76,7 +76,7 @@ export const useAuthStore = defineStore("authUser", {
                     mergeDefaults: true,
                 }
             );
-        },
+        }, 
 
         setCapabilities(path) {
             this.auth_capabilities = null;
