@@ -275,6 +275,35 @@ class AssetController extends Controller
         ], $statusCode);
     }
 
+    function saveAssetHistory(Request $request) {
+        $globalHelper = new GlobalHelper;
+        $msg = "";
+        $statusCode = 200;
+        $query = array();
+        DB::beginTransaction();
+        try { 
+
+            AllottedInformation::create($request->data);
+
+            $query = Asset::where('id', $request->data['asset_id'])
+                ->with( 
+                    'allotted_informations.location', 
+                )->first();
+       
+            DB::commit();
+            $msg = "Warranty has been saved ";
+        } catch (Exception $e) {
+            DB::rollback();
+            $statusCode = 500;
+            $msg = "Error while saving Warranty";
+        }
+
+        return response()->json([ 
+            'response' => $query,
+            'message' => $msg,
+        ], $statusCode);
+    }
+
     function searchAssets($search){
         $query = Asset::where('asset_name', 'LIKE', '%'.$search.'%')->orWhere('asset_code', 'LIKE', '%'.$search.'%')
         ->orderBy('asset_name', 'ASC')

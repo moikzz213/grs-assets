@@ -11,6 +11,8 @@ use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
 
 Route::middleware('authkey')->group(function () {
+    Route::post('/asset/save-history', [AssetController::class, 'saveAssetHistory'])->name('admin.asset.history.save');
+
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
     Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
 

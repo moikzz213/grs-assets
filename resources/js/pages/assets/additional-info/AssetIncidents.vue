@@ -105,7 +105,7 @@ watch(
   () => props.asset,
   (newValue, oldValue) => {
     assetDetail.value = newValue;
-    console.log("assetDetail.value", assetDetail.value);
+     
   },
   { deep: true }
 );

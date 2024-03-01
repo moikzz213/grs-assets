@@ -780,7 +780,7 @@ const saveAsset = async () => {
       }
     })
     .catch((err) => {
-      console.log("saveAsset", err);
+     
       sbOptions.value = {
         status: true,
         type: "error",
