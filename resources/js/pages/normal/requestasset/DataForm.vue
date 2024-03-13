@@ -195,8 +195,7 @@
                                     @click="AddAsset"
                                     
                                     >Add</v-btn
-                                >
-                                <small class="mx-5 text-info">UOM: ( pcs, pack, box, etc.. )</small>
+                                > 
                             </div>
                         </v-row>
                         <!-- This row is for print -->
@@ -322,7 +321,7 @@
                                     </div>
                                 </v-row>
                             </div>
-                            <div class="v-col-12 v-col-md-3">
+                            <div class="v-col-12 v-col-md-1 custom-width-description">
                                 <v-textarea
                                     v-model="item.item_description"
                                     variant="outlined"
@@ -354,15 +353,19 @@
                                     label="QTY*" 
                                 ></v-text-field>
                             </div>
-                            <div class="v-col-12 v-col-md-1">
-                                <v-text-field
-                                    v-model="item.uom"
-                                    @update:modelValue="requiredData" 
-                                    variant="outlined"
-                                    density="compact"
-                                    hide-details
-                                    label="UOM*" 
-                                ></v-text-field>
+                            <div class="v-col-12 v-col-md-1 custom-width-uom">
+                                <v-autocomplete
+                                        :items="listUom"
+                                        v-model="item.uom"
+                                        variant="outlined"
+                                        density="compact"
+                                        hide-details 
+                                        label="UOM*"
+                                        @update:modelValue="requiredData"
+                                        :disabled="item.status == 'done'"
+                                    >
+                                    </v-autocomplete>
+                            
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
@@ -971,6 +974,9 @@ const submitRequest = () => {
 
 const approvalSetupList = ref([]);
 const hasSignatories = ref(true);
+
+const listUom = ref(['Nos', 'Set', 'Pcs','Pack', 'Pallet', 'SqM']);
+
 const setupApprovals = async () => {
     await clientKey(authStore.token)
         .get(
@@ -1083,7 +1089,7 @@ const requiredData = () => {
     if (checkSignatories && checkAsset && checkObj) {
         isValidate.value = true;
     }
-};
+}; 
 
 const changeRequestStatus = (v) => {
     let dataForm = {
@@ -1201,3 +1207,20 @@ const requestSignatureUrl = computed(() => {
     return url;
 });
 </script>
+<style>
+.custom-width-description{
+    max-width:20.6666%;
+    flex: 0 0 20.6666666667%
+}
+.custom-width-uom{
+    max-width:10.6666%;
+    flex: 0 0 16.6666666667%
+}
+@media only screen and (max-width: 600px) {
+    
+.custom-width-description, .custom-width-uom{
+    max-width:100%;
+    flex: 0 0 100%
+} 
+}
+</style>
