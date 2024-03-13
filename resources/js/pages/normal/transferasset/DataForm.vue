@@ -349,6 +349,7 @@
                                     density="compact"
                                     class="no-print"
                                     hide-details
+                                    disabled
                                     label="WGT(KG)"
                                 ></v-text-field>
                                 
@@ -360,6 +361,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    disabled
                                     class="no-print"
                                     label="VALUE"
                                 ></v-text-field>

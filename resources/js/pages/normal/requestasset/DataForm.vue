@@ -374,6 +374,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    disabled
                                     label="WGT(KG)"
                                 ></v-text-field>
                             </div>
@@ -384,6 +385,7 @@
                                     variant="outlined"
                                     density="compact"
                                     hide-details
+                                    disabled
                                     label="VALUE"
                                 ></v-text-field>
                             </div>
