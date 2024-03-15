@@ -520,10 +520,10 @@
                 class="v-col-12 v-col-md-3 pa-0 mb-4"
                 v-for="item in dataObj.data.request_approvals"
                 :key="item.id"
-            >
+            > 
                 <div
                     v-if="
-                        (item.profile?.role == 'commercial-manager' || (item.profile?.role == 'technical-operation' && requestTypeId == 2) )&&
+                        (item.profile.ecode == '102587' || item.profile.ecode == '100316' || item.profile?.role == 'commercial-manager' || (item.profile?.role == 'technical-operation' && requestTypeId == 2) )&&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                     "
