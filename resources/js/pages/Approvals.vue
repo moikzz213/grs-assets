@@ -523,7 +523,7 @@
             > 
                 <div
                     v-if="
-                        (item.profile.ecode == '102587' || item.profile.ecode == '100316' || item.profile?.role == 'commercial-manager' || (item.profile?.role == 'technical-operation' && requestTypeId == 2) )&&
+                        ( item.profile.ecode ==  '100884' || item.profile.ecode == '102587' || item.profile.ecode == '100316' || item.profile?.role == 'commercial-manager' || (item.profile?.role == 'technical-operation' && requestTypeId == 2) )&&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                     "
