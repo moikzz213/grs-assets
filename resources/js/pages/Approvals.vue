@@ -580,7 +580,7 @@
                             {{
                                 item.status == "done"
                                     ? "APPROVED"
-                                    : "CLICK TO APPROVE"
+                                    : item.status == "reject" ? "REJECTED" : "CLICK TO APPROVE"
                             }}
                         </div>
                     </div>
