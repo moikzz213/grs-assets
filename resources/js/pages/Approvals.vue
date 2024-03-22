@@ -571,7 +571,7 @@
                                 item.status == 'reject' &&
                                 route.query.pid == item.profile_id &&
                                 route.query.o == item.orders
-                                    ? 'background-color: rgb(182, 3, 3);color:#fff;'
+                                    ? 'background-color: gray; color:#fff;'
                                     : item.status == 'done'
                                     ? 'background-color: none;color:rgb(3, 167, 3); font-weight:bold;font-size:17px;padding-top:16px !important;padding-bottom:16px !important;'
                                     : 'background-color: gray; color:#fff;'
@@ -824,7 +824,7 @@ const cancelReject = () => {
 };
 const approvalFn = (item, isReject = null) => {
     rejectReason.value = false;
-    if(requestStatus.value == 'cancelled'){
+    if(requestStatus.value == 'cancelled' || item.status == 'reject'){
         return;
     }
     if (
