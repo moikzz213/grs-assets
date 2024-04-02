@@ -257,6 +257,10 @@
                         <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
                         -------
                     </div>
+                    <div v-if="item.remarks_transport"  >
+                        <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
+                        -------
+                    </div>
                     <div v-if="item.remarks_release"  >
                         <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
                         -------
@@ -264,6 +268,34 @@
                 </div>
                 <v-textarea
                     v-model="item.remarks_release"
+                    variant="underlined"
+                    density="compact"
+                    hide-details
+                    class="text-remarks"
+                    placeholder="Add remarks here"
+                    rows="2"
+                ></v-textarea> 
+            </div>
+            <div
+                v-else-if="is_transport"
+                class="v-col-12 v-col-md-2 py-1"
+            >  
+            <div> 
+                <div v-if="item.remarks"  >
+                        <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_commercial"  >
+                        <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_transport"  >
+                        <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
+                        -------
+                    </div>
+                </div>
+                <v-textarea
+                    v-model="item.remarks_transport"
                     variant="underlined"
                     density="compact"
                     hide-details
@@ -284,6 +316,10 @@
                 </div>
                 <div v-if="item.remarks_commercial"  >
                     <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
+                    -------
+                </div>
+                <div v-if="item.remarks_transport"  >
+                    <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
                     -------
                 </div>
                 <div v-if="item.remarks_release"  >
@@ -326,7 +362,7 @@
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
             <div style="border-bottom: 1px solid #000000;" class="pa-1" 
-            v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive">
+            v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive || item.remarks_transport">
                 <div v-if="item.remarks"  >
                     <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
                     -------
@@ -335,10 +371,14 @@
                     <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
                     -------
                 </div>
+                <div v-if="item.remarks_transport"  >
+                    <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
+                    -------
+                </div>
                 <div v-if="item.remarks_release"  >
                     <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
                     -------
-                </div>
+                </div> 
                 <div v-if="item.remarks_receive"  >
                     <strong> Receiver</strong> <pre style="text-wrap:wrap">{{ item.remarks_receive }}</pre>
                 </div>
@@ -704,6 +744,7 @@ const dataObj = ref({});
 const sbOptions = ref({});
 const is_asset_supervisor = ref(false);
 const is_realeasing = ref(false);
+const is_transport = ref(false);
 const is_commercial_manager = ref(false);
 const is_receiver = ref(false);
 const assetsOnly = ref([]);
@@ -754,6 +795,14 @@ const queryData = async () => {
                             o.status == "awaiting-approval" &&
                             o.approval_type == "releasing"
                     )[0];
+
+                is_transport.value = dataObj.value.data.request_approvals.filter(
+                    (o) =>
+                        o.profile_id == route.query.pid &&
+                        o.orders == route.query.o &&
+                        o.status == "awaiting-approval" &&
+                        o.approval_type == "transport"
+                )[0];
                     
                 is_commercial_manager.value =
                     dataObj.value.data.request_approvals.filter(
@@ -839,7 +888,7 @@ const approvalFn = (item, isReject = null) => {
         };
         let fixeAsset = [];
 
-        if (is_asset_supervisor.value || is_commercial_manager.value || is_receiver.value || is_realeasing.value) {
+        if (is_asset_supervisor.value || is_commercial_manager.value || is_receiver.value || is_realeasing.value || is_transport.value) {
             fixeAsset = assetsOnly.value.map((o, i) => {
                 delete o.created_at;
                 delete o.assets;
