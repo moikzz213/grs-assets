@@ -28,7 +28,7 @@ class IncidentController extends Controller
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
 
-        $dataObj = $dataObj->whereNot('type_id', 2); // where not type maintenance
+        $dataObj = $dataObj->whereNot('type_id', 26)->whereNot('type_id', 2); // where not type maintenance
 
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -94,7 +94,7 @@ class IncidentController extends Controller
         if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
             $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
         }
-        $dataObj = $dataObj->where('type_id', 2);
+        $dataObj = $dataObj->where('type_id', 26)->orWhere('type_id', 2);
 
         if($orderBy){
             $orderBy = json_decode($orderBy);
@@ -170,7 +170,7 @@ class IncidentController extends Controller
             );
 
             $query->update($dataForm);
-            if($request->type_id == 2){
+            if($request->type_id == 2 || $request->type_id == 26){
                 $message = 'Maintenance has been updated';
             }else{
                 $message = 'Incident has been updated';
@@ -197,7 +197,7 @@ class IncidentController extends Controller
 
             $dataForm = array_merge(array('id' => $ID), $dataForm);
             IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default');
-            if($request->type_id == 2){
+            if($request->type_id == 2 || $request->type_id == 26){
                 $message = 'Asset Maintenance has been created';
 
                 Asset::where(['id' => $assetID])->update(['status_id' => 2]);
