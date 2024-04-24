@@ -90,7 +90,7 @@
               </v-row>
               <v-row>
                 <div class="v-col-12 v-col-md-4">
-                  <Field name="Type" v-slot="{ field, errors }" v-model="objData.type_id">
+                  <Field name="Type" v-slot="{ field, errors }" v-model="objData.type_id"     >
                     <v-select
                       :items="typeList"
                       v-model="objData.type_id"
@@ -102,6 +102,7 @@
                       clearable
                       label="Incident Type*"
                       v-bind="field"
+                      @update:modelValue="changeIncidentType"
                       :error-messages="errors"
                     ></v-select>
                   </Field>
@@ -376,6 +377,25 @@ if (statusStore.list.length == 0) {
     urgencyList.value = Object.assign([], statusStore.urgencies_active_list);
    
   });
+}
+
+const changeIncidentType  =  (e) =>{
+  if(e === 26){
+    sbOptions.value = {
+    status: true,
+    type: "info",
+    text: "Redirecting to Maintenance Page",
+  };
+     setTimeout(() => {
+      router
+        .push({
+          name: "NewMaintenance", 
+          query: { type: "details" },
+        })
+        .catch((err) => {});
+     }, 1000);
+  }
+  
 }
 
 let validation = yup.object({
