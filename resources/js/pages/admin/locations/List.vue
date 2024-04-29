@@ -203,6 +203,7 @@
             :data-object="dataObject"
             @cancelled="cancelledAction"
             @save="saveData"
+            :is-view="false"
         />
         <AppSnackBar :options="sbOptions" />
     </v-container>

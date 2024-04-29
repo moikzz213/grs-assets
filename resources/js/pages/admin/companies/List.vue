@@ -160,6 +160,7 @@
       :add-new-dialog="addNewDialog"
       title="Company"
       :data-object="dataObject"
+      :is-view="false"
       @cancelled="cancelledAction"
       @save="saveData"
     />
