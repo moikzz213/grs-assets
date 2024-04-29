@@ -57,7 +57,6 @@ class CronJobController extends Controller
          */
         $this->maintenanceFn($maintenanceReceiver);
 
-
         /**
          * Incident
          */
@@ -74,9 +73,7 @@ class CronJobController extends Controller
     }
 
     private function requestAssetFn(){
-        $profilesWithAssetRequest = Profile::whereHas('reminder_profile', function($q){
-            // $q->whereNot('status', 'cancelled')
-            // ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
+        $profilesWithAssetRequest = Profile::whereHas('reminder_profile', function($q){ 
             $q->whereHas('request_approvals', function($q){
                 $q->where('status', 'awaiting-approval');
             });
@@ -89,7 +86,6 @@ class CronJobController extends Controller
             },
         ])
         ->get();
-        // dd($profilesWithAssetRequest);
 
         if ($profilesWithAssetRequest && count($profilesWithAssetRequest) > 0) {
 
@@ -104,50 +100,11 @@ class CronJobController extends Controller
             }
         }
        return;
-    }
-
-    // private function requestAssetFn(){
-    //     $query = RequestAsset::whereNot('status', 'cancelled')
-    //     ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
-    //     ->with('reminder_profile:id,email')
-    //     ->with('request_approvals', function($q){
-    //         $q->where('status', 'awaiting-approval');
-    //     })
-    //     ->orderBy('reminder_profile_id', 'DESC')
-    //     ->get();
-
-    //     if ($query && count($query) > 0) {
-    //         $segregate_emails = array();
-    //         $emailArray = array();
-    //         $cnt = 0;
-    //         $profCnt = 0;
-    //         foreach ($query as $k => $v) {
-
-    //             if(!in_array($v->reminder_profile['email'], $segregate_emails)){
-    //                 $segregate_emails[] = $v->reminder_profile['email'];
-    //                 $emailArray[$cnt]['email'] = $v->reminder_profile['email'];
-    //                 $cnt++;
-    //                 $emailArray[$cnt]['ids'][] = array('id' => $v->id, 'type' => $v->types, 'profile' => $v->reminder_profile_id, 'orders' => $v->request_approvals[0]->orders);
-    //             } else{
-    //                 $emailArray[$cnt-1]['ids'][] = array('id' => $v->id, 'type' => $v->types, 'profile' => $v->reminder_profile_id, 'orders' => $v->request_approvals[0]->orders);
-    //             }
-    //             $v->update(['reminder_date' => Carbon::now()->addDays(1)]);
-    //         }
-
-    //         if(count($emailArray) > 0){
-    //             foreach ($emailArray as $k => $v) {
-    //                 CronJobAssetRequest::dispatchAfterResponse(['data' => json_encode($v)])->onQueue('default');
-    //             }
-    //         }
-    //     }
-
-    //    return;
-
-    // }
+    }  
 
     private function maintenanceFn($maintenanceReceiver){
 
-        $queryMaintenance = Incident::where('type_id', 2)
+        $queryMaintenance = Incident::where('type_id', 2)->orWhere('type_id', 26)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
 
@@ -204,7 +161,7 @@ class CronJobController extends Controller
     }
 
     private function incidentFn($incidentReceiver){
-        $queryIncidents = Incident::where('type_id','!=', 2)
+        $queryIncidents = Incident::where('type_id','!=', 2)->where('type_id','!=', 26)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
 
