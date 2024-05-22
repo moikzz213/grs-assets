@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('file_id')->nullable(); 
             $table->unsignedBigInteger('request_asset_id'); 
-            $table->unsignedTinyInteger('qty')->default(1)->nullable();
+            $table->unsignedInteger('qty')->default(1)->nullable();
             $table->string('item_description');
             $table->string('asset_code')->nullable();
             $table->string('weight')->nullable();
