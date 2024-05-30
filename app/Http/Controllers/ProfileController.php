@@ -53,6 +53,7 @@ class ProfileController extends Controller
 
     public function createNewProfile(Request $request)
     { 
+       
         $request->validate([
             'ecode' => 'required|string'          
         ]);
