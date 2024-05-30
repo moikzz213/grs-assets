@@ -424,6 +424,7 @@ const fetchUMSEcode = () => {
                     ecode: employeeCode.value,
                     key: "SFFjUDI2S1p0bUpWcit2Y21wNlJhQ1p5WndyQUR2Mnpoc0hERmt0RVBUMD0",
                     user: "TW9pa3p6q",
+                    app: 'grs-asset-wvukt'
                 })
                 .then((res) => {
                     ecodeLoading.value = false;
