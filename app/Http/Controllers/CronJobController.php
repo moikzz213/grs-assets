@@ -77,12 +77,11 @@ class CronJobController extends Controller
             $q->whereHas('request_approvals', function($q){
                 $q->where('status', 'awaiting-approval');
             });
-        })
-        ->with('reminder_profile.request_approvals')
+        }) 
         ->with([
             'reminder_profile' => function($q){
                 $q->whereNot('status', 'cancelled')
-                ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'));
+                ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))->with('request_approvals');
             },
         ])
         ->get();
