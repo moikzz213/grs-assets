@@ -52,5 +52,6 @@ Route::prefix('pv')->group(function () {
     Route::post('/store/request-asset/approve-data', [RequestAssetController::class, 'publicApproveSignatory'])->name('public.approve.request');
     // http://127.0.0.1:8000/api/pv/run/cron-jobs?key=Moikzz&c=Ghassan
     Route::get('/run/cron-jobs', [CronJobController::class, 'asset_notification'])->name('public.cron.job');
+    Route::get('/run/test-jobs', [CronJobController::class, 'testJob'])->name('public.cron.test.job');
 });
 ?>
