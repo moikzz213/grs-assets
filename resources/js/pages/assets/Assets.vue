@@ -282,14 +282,7 @@
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
-                                        :color="`${
-                                            item.condition?.title.toLowerCase() ==
-                                                'good' ||
-                                            item.condition?.title.toLowerCase() ==
-                                                'perfect'
-                                                ? 'success'
-                                                : 'success'
-                                        }`"
+                                        :color="`${item.condition?.color}`"
                                         >{{ item.condition?.title }}</v-chip
                                     >
                                 </td>
@@ -298,22 +291,7 @@
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
-                                        :color="`${
-                                            item.status?.title.toLowerCase() ==
-                                                'maintenance' ||
-                                            item.status?.title.toLowerCase() ==
-                                                'write-off' ||
-                                            item.status?.title.toLowerCase() ==
-                                                'for maintenance' ||
-                                            item.status?.title.toLowerCase() ==
-                                                'broken' ||
-                                            item.status?.title.toLowerCase() ==
-                                                'trashed' ||
-                                            item.status?.title.toLowerCase() ==
-                                                'damage'
-                                                ? 'error'
-                                                : 'info'
-                                        }`"
+                                        :color="`${item.status?.color}`"
                                         >{{ item.status?.title }}</v-chip
                                     >
                                 </td>

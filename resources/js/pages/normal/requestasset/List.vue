@@ -149,9 +149,7 @@
                   <v-chip
                     class="text-uppercase"
                     size="small"
-                    :color="`${
-                      item.status.toLowerCase() == 'complete' ? 'success' :  (item.status.toLowerCase() == 'pending' || item.status.toLowerCase() == 'awaiting-approval') ? 'warning' : 'error'
-                    }`"
+                    :color="`${item.status?.color}`"
                     >{{ statusTitle(item.status) }}</v-chip
                   >
                 </td>
