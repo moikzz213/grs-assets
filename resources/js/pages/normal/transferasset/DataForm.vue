@@ -39,7 +39,8 @@
                             >
                                 REQUEST NO: SN-3{{ pad(formObjData.id) }}
                             </div>
-                            <div v-if="!is_receiving_releasing" class="v-col-12 v-col-md-8">
+                            <!-- v-if="!is_receiving_releasing" -->
+                            <div  class="v-col-12 v-col-md-8">
                                 <div
                                 class="no-print"
                                     v-if="
@@ -142,7 +143,8 @@
                 </v-card>
                 <v-card class="my-2">
                     <v-card-text>
-                        <v-row v-if="!is_receiving_releasing">
+                        <!-- <v-row v-if="!is_receiving_releasing"> -->
+                        <v-row>
                             <div class="v-col-12">
                                 <v-btn
                                     size="small"
@@ -530,7 +532,8 @@
                             </v-row>
                             <v-row class="no-print">
                                 <v-divider></v-divider>
-                                <div class="v-col-12 no-print" v-if="!is_receiving_releasing">
+                                <!-- v-if="!is_receiving_releasing" -->
+                                <div class="v-col-12 no-print" >
                                     <v-btn
                                         size="small"
                                         :disabled="!isValidate"

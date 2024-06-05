@@ -43,8 +43,8 @@
                                             pad(formObjData.id)
                                         }}
                                     </div>
-                                    <div
-                                        v-if="!is_receiving_releasing"
+                                    <!--  v-if="!is_receiving_releasing" -->
+                                    <div 
                                         class="v-col-12 v-col-md-8"
                                     >
                                         <div
