@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use Illuminate\Support\Str;
+ 
 use Illuminate\Bus\Queueable;
 use App\Mail\RequestTransferMail;
 use Illuminate\Support\Facades\Mail;
@@ -19,14 +19,20 @@ class TestJob implements ShouldQueue
     /**
      * Execute the job.
      */
+
+     protected $data;
+     public function __construct($data)
+     {
+         $this->data = $data;
+     }
     public function handle(): void
     {
-        $message = array('THIS IS JUST A TEST JOB! IGNORE!');
+        $message = 'THIS IS JUST A TEST JOB! IGNORE!';
         
         // check if has request assets more than 1
         $dataForm = array("data" => null, 'link' => null, "message" => $message, 'subject' => 'TEST JOB: GRS ASSET SYSTEM'); 
-        
-        Mail::to('jacob@gagroup.net')->queue( new RequestTransferMail( $dataForm ) );
+        $email = array('jacob@gagroup.net');
+        Mail::to($email)->queue( new RequestTransferMail( $dataForm ) );
       
     }
  

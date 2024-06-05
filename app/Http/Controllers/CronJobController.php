@@ -74,7 +74,8 @@ class CronJobController extends Controller
     }
 
     public function testJob(){
-        TestJob::dispatch(['data' => 'test'])->onQueue('default');
+        TestJob::dispatchAfterResponse(['data' => 'test'])->onQueue('default');
+        echo json_encode(array("message" => '403: Permission denied!'));
         return;
     }
 
