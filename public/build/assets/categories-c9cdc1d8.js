@@ -1,0 +1,1 @@
+import{au as a,n as s}from"./app-3a97614f.js";const r=a("categories",{state:()=>({categories:[]}),getters:{list:e=>e.categories},actions:{async getCategories(e){await s(e).get("/api/category/state/category-list").then(t=>{this.categories=Object.assign([],t.data)}).catch(t=>{console.log("getCategories error: ",t)})}}});export{r as u};

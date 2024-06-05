@@ -160,11 +160,7 @@
                   <v-chip
                     class="text-uppercase"
                     size="small"
-                    :color="`${
-                      item.status?.title.toLowerCase() == 'completed'
-                        ? 'success'
-                        : 'error'
-                    }`"
+                    :color="`${item.status?.color}`"
                     >{{ item.status?.title }}</v-chip
                   >
                 </td>
