@@ -176,7 +176,8 @@
                 </v-card>
                 <v-card class="my-2">
                     <v-card-text>
-                        <v-row v-if="!is_receiving_releasing">
+                        <!-- <v-row v-if="!is_receiving_releasing"> -->
+                        <v-row>
                             <div class="v-col-12"
                             v-if=" 
                                 formObjData.status != 'complete' &&
@@ -698,8 +699,8 @@
                             </v-row>
                             <v-row>
                                 <v-divider></v-divider>
+                                <!-- v-if="!is_receiving_releasing" -->
                                 <div
-                                    v-if="!is_receiving_releasing"
                                     class="v-col-12"
                                 >
                                     <v-btn
