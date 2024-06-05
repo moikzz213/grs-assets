@@ -72,6 +72,11 @@ class CronJobController extends Controller
        return;
     }
 
+    public function testJob(){
+        CronJobAssetRequest::dispatch()->onQueue('default');
+        return;
+    }
+
     private function requestAssetFn(){
         $profilesWithAssetRequest = Profile::whereHas('reminder_profile', function($q){ 
             $q->whereHas('request_approvals', function($q){
