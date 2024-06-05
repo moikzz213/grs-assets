@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TestJob;
 use App\Models\Status;
 use App\Models\Profile;
 use App\Models\Incident;
@@ -73,7 +74,7 @@ class CronJobController extends Controller
     }
 
     public function testJob(){
-        CronJobAssetRequest::dispatch(['data' => 'test'])->onQueue('default');
+        TestJob::dispatch(['data' => 'test'])->onQueue('default');
         return;
     }
 
