@@ -288,18 +288,23 @@
                                             item.condition?.title.toLowerCase() ==
                                                 'perfect'
                                                 ? 'success'
-                                                : 'error'
+                                                : 'success'
                                         }`"
                                         >{{ item.condition?.title }}</v-chip
                                     >
                                 </td>
                                 <td>
+                                 
                                     <v-chip
                                         class="text-uppercase"
                                         size="small"
                                         :color="`${
                                             item.status?.title.toLowerCase() ==
                                                 'maintenance' ||
+                                            item.status?.title.toLowerCase() ==
+                                                'write-off' ||
+                                            item.status?.title.toLowerCase() ==
+                                                'for maintenance' ||
                                             item.status?.title.toLowerCase() ==
                                                 'broken' ||
                                             item.status?.title.toLowerCase() ==
