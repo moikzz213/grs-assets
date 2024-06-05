@@ -73,7 +73,7 @@ class CronJobController extends Controller
     }
 
     public function testJob(){
-        CronJobAssetRequest::dispatch()->onQueue('default');
+        CronJobAssetRequest::dispatch(['data' => 'test'])->onQueue('default');
         return;
     }
 
