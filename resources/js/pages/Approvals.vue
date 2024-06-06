@@ -1,8 +1,10 @@
 <template>
     <v-container style="max-width: 90%" class="mt-0 pt-0">
-        <v-row class="mt-0 pt-0 no-print mt-2" v-if="assetsOnly?.length>0">
+        <v-row class="mt-0 pt-0 no-print mt-2" v-if="assetsOnly?.length > 0">
             <div>
-                <v-btn color="primary" size="small" @click="printFn">Print</v-btn>
+                <v-btn color="primary" size="small" @click="printFn"
+                    >Print</v-btn
+                >
             </div>
         </v-row>
         <v-row class="mt-0 pt-0">
@@ -26,7 +28,8 @@
             </div>
 
             <div class="v-col-3 mt-auto font-weight-bold text-right">
-                SN-{{ dataObj?.data?.types == "request" ? "5" : "3" }}{{ pad(pvID) }}<br />
+                SN-{{ dataObj?.data?.types == "request" ? "5" : "3"
+                }}{{ pad(pvID) }}<br />
                 {{ useFormatDate(dataObj.data?.created_at) }}
             </div>
         </v-row>
@@ -45,69 +48,65 @@
             </div>
             <div class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between">
                 REMARKS
-                <div style="position: relative;">
-                <div v-if="noticeLoader" class="checkbox-notice"></div>
-                <v-checkbox
-                    v-if="is_asset_supervisor || is_receiver"
-                    v-model="checkAll"
-                    @update:modelValue="checkUncheckBox"
-                    class="pa-0 ma-0 v-col-1"
-                    hide-details
-                    :disabled="requestStatus=='cancelled'"
-                    variant="underlined"
-                    density="compact"
-                ></v-checkbox>
+                <div style="position: relative">
+                    <div v-if="noticeLoader" class="checkbox-notice"></div>
+                    <v-checkbox
+                        v-if="is_asset_supervisor || is_receiver"
+                        v-model="checkAll"
+                        @update:modelValue="checkUncheckBox"
+                        class="pa-0 ma-0 v-col-1"
+                        hide-details
+                        :disabled="requestStatus == 'cancelled'"
+                        variant="underlined"
+                        density="compact"
+                    ></v-checkbox>
+                </div>
             </div>
-            </div>
-        </v-row> 
-        <v-row class="mt-1 approval-form-pr" v-for="(item, index) in assetsOnly" :key="item.id">
-             
+        </v-row>
+        <v-row
+            class="mt-1 approval-form-pr"
+            v-for="(item, index) in assetsOnly"
+            :key="item.id"
+        >
             <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
-                 
-                    <div 
-                        v-if="item.attachment?.id"
+                <div v-if="item.attachment?.id">
+                    <v-card
+                        @click="() => openAttachment(item)"
+                        maxHeight="40"
+                        variant="text"
+                        class="ma-2"
                     >
-                        <v-card
-                            @click="() => openAttachment(item)"
-                            maxHeight="40"
-                            variant="text"
-                            class="ma-2"
-                        >
-                        <v-icon size="large" :icon="mdiImage" color="success"></v-icon> 
-                        </v-card>
-                        <v-dialog
+                        <v-icon
+                            size="large"
+                            :icon="mdiImage"
+                            color="success"
+                        ></v-icon>
+                    </v-card>
+                    <v-dialog
                         v-model="dialogAttachment"
                         width="95%"
                         max-width="900"
-                    > 
+                    >
                         <v-card class="bg-black">
-                                    <div
-                                        style="height: 680px; width: 100%"
-                                        class="d-flex align-center justify-center"
-                                    >
-                          
-                                        <v-img
-                                            :src="
-                                                baseURL +
-                                                '/file/' +
-                                                fileItem.attachment.path
-                                            "
-                                        ></v-img>
-                                    </div>
-                               
+                            <div
+                                style="height: 680px; width: 100%"
+                                class="d-flex align-center justify-center"
+                            >
+                                <v-img
+                                    :src="
+                                        baseURL +
+                                        '/file/' +
+                                        fileItem.attachment.path
+                                    "
+                                ></v-img>
+                            </div>
                         </v-card>
                     </v-dialog>
-                    </div> 
-                    <v-card
-                           v-else
-                            maxHeight="40"
-                            variant="text"
-                            class="ma-2"
-                        >
-                        <v-icon size="large" :icon="mdiImageOffOutline"></v-icon> 
-                        </v-card>
-                   
-                
+                </div>
+                <v-card v-else maxHeight="40" variant="text" class="ma-2">
+                    <v-icon size="large" :icon="mdiImageOffOutline"></v-icon>
+                </v-card>
+
                 <v-textarea
                     :value="item.item_description"
                     variant="underlined"
@@ -123,15 +122,24 @@
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
-                    hide-details 
-                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled'"
-                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    hide-details
+                    :readonly="
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                     v-if="is_asset_supervisor && requestStatus != 'cancelled'"
                 ></v-text-field>
 
-                <div v-else class="bg-light-gray d-flex flex-column-reverse flex-start-end"
-                    
-                >{{ item.asset_code }}</div>
+                <div
+                    v-else
+                    class="bg-light-gray d-flex flex-column-reverse flex-start-end border-bottom"
+                >
+                    {{ item.asset_code }}
+                </div>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
@@ -150,7 +158,7 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    class="bg-light-gray d-flex flex-column-reverse" 
+                    class="bg-light-gray d-flex flex-column-reverse"
                     :readonly="true"
                 ></v-text-field>
             </div>
@@ -159,9 +167,15 @@
                     v-model="item.weight"
                     variant="underlined"
                     density="compact"
-                    hide-details 
-                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
-                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    hide-details
+                    :readonly="
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -170,9 +184,14 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                     
-                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
-                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :readonly="
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -181,9 +200,15 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="!is_asset_supervisor || requestStatus == 'cancelled' "
-                    :class="`${!is_asset_supervisor || requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
-                    style="width:100%;"
+                    :readonly="
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        !is_asset_supervisor || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
+                    style="width: 100%"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
@@ -197,23 +222,27 @@
                     rows="2"
                 ></v-textarea>
             </div>
-         
+
             <div
                 v-if="is_asset_supervisor"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
-            > 
+            >
                 <v-textarea
                     v-model="item.remarks"
                     variant="underlined"
                     density="compact"
                     hide-details
                     class="text-remarks"
-                    :class="`${ requestStatus == 'cancelled' ? 'bg-light-gray d-flex flex-column-reverse' : ''}`"
+                    :class="`${
+                        requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                     placeholder="Add remarks here"
                     rows="2"
                 ></v-textarea>
-                <v-checkbox 
-                :disabled="requestStatus == 'cancelled' "
+                <v-checkbox
+                    :disabled="requestStatus == 'cancelled'"
                     v-model="item.is_available"
                     class="pa-0 ma-0 v-col-1"
                     hide-details
@@ -221,17 +250,17 @@
                     density="compact"
                     @update:modelValue="checkUncheckBoxSingle"
                 ></v-checkbox>
-            </div> 
+            </div>
             <div
                 v-if="is_commercial_manager"
-                class="v-col-12 v-col-md-2 py-1 d-flex "
-            > 
-             
-            <div>
-                <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><p>{{ item.remarks }}</p>
-                    -------
-                </div>
+                class="v-col-12 v-col-md-2 py-1 d-flex"
+            >
+                <div>
+                    <div v-if="item.remarks">
+                        <strong> Asset Supervisor - Projects</strong> <br />
+                        <p>{{ item.remarks }}</p>
+                        -------
+                    </div>
                     <v-textarea
                         v-model="item.remarks_commercial"
                         variant="underlined"
@@ -240,28 +269,43 @@
                         class="text-remarks"
                         placeholder="Add remarks here"
                         rows="2"
-                    ></v-textarea> 
+                    ></v-textarea>
+                </div>
+                <div v-if="dataObj?.data?.is_available">
+                    <v-icon
+                    style="position:absolute; right:60px;"
+                        class="mt-3"
+                        :icon="item.is_available ? mdiCheckBold : mdiCloseThick"
+                        :color="`${item.is_available ? 'success' : 'error'}`"
+                    ></v-icon>
                 </div>
             </div>
-            <div
-                v-else-if="is_realeasing"
-                class="v-col-12 v-col-md-2 py-1"
-            >  
-            <div> 
-                <div v-if="item.remarks"  >
-                        <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
+            <div v-else-if="is_realeasing" class="v-col-12 v-col-md-2 py-1">
+                <div>
+                    <div v-if="item.remarks">
+                        <strong> Asset Supervisor - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{ item.remarks }}</pre>
                         -------
                     </div>
-                    <div v-if="item.remarks_commercial"  >
-                        <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
+                    <div v-if="item.remarks_commercial">
+                        <strong> Commercial Manager - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_commercial
+                        }}</pre>
                         -------
                     </div>
-                    <div v-if="item.remarks_transport"  >
-                        <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
+                    <div v-if="item.remarks_transport">
+                        <strong> Transport</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_transport
+                        }}</pre>
                         -------
                     </div>
-                    <div v-if="item.remarks_release"  >
-                        <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
+                    <div v-if="item.remarks_release">
+                        <strong> Releasing</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_release
+                        }}</pre>
                         -------
                     </div>
                 </div>
@@ -273,23 +317,27 @@
                     class="text-remarks"
                     placeholder="Add remarks here"
                     rows="2"
-                ></v-textarea> 
+                ></v-textarea>
             </div>
-            <div
-                v-else-if="is_transport"
-                class="v-col-12 v-col-md-2 py-1"
-            >  
-            <div> 
-                <div v-if="item.remarks"  >
-                        <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
+            <div v-else-if="is_transport" class="v-col-12 v-col-md-2 py-1">
+                <div>
+                    <div v-if="item.remarks">
+                        <strong> Asset Supervisor - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{ item.remarks }}</pre>
                         -------
                     </div>
-                    <div v-if="item.remarks_commercial"  >
-                        <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
+                    <div v-if="item.remarks_commercial">
+                        <strong> Commercial Manager - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_commercial
+                        }}</pre>
                         -------
                     </div>
-                    <div v-if="item.remarks_transport"  >
-                        <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
+                    <div v-if="item.remarks_transport">
+                        <strong> Transport</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_transport
+                        }}</pre>
                         -------
                     </div>
                 </div>
@@ -301,42 +349,55 @@
                     class="text-remarks"
                     placeholder="Add remarks here"
                     rows="2"
-                ></v-textarea> 
+                ></v-textarea>
             </div>
             <div
                 v-else-if="is_receiver"
                 class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
             >
-            <div> 
-            <div>
-                <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
-                    -------
+                <div>
+                    <div>
+                        <div v-if="item.remarks">
+                            <strong> Asset Supervisor - Projects</strong> <br />
+                            <pre style="text-wrap: wrap">{{
+                                item.remarks
+                            }}</pre>
+                            -------
+                        </div>
+                        <div v-if="item.remarks_commercial">
+                            <strong> Commercial Manager - Projects</strong>
+                            <br />
+                            <pre style="text-wrap: wrap">{{
+                                item.remarks_commercial
+                            }}</pre>
+                            -------
+                        </div>
+                        <div v-if="item.remarks_transport">
+                            <strong> Transport</strong> <br />
+                            <pre style="text-wrap: wrap">{{
+                                item.remarks_transport
+                            }}</pre>
+                            -------
+                        </div>
+                        <div v-if="item.remarks_release">
+                            <strong> Releasing</strong> <br />
+                            <pre style="text-wrap: wrap">{{
+                                item.remarks_release
+                            }}</pre>
+                            -------
+                        </div>
+                    </div>
+
+                    <v-textarea
+                        v-model="item.remarks_receive"
+                        variant="underlined"
+                        density="compact"
+                        hide-details
+                        class="text-remarks"
+                        placeholder="Add remarks here"
+                        rows="2"
+                    ></v-textarea>
                 </div>
-                <div v-if="item.remarks_commercial"  >
-                    <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
-                    -------
-                </div>
-                <div v-if="item.remarks_transport"  >
-                    <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
-                    -------
-                </div>
-                <div v-if="item.remarks_release"  >
-                    <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
-                    -------
-                </div>
-                 </div>
-            
-            <v-textarea
-                    v-model="item.remarks_receive"
-                    variant="underlined"
-                    density="compact"
-                    hide-details
-                    class="text-remarks"
-                    placeholder="Add remarks here"
-                    rows="2"
-                ></v-textarea>
-            </div>
                 <div v-if="dataObj?.data?.is_available" class="my-auto">
                     <v-icon
                         class="mt-3"
@@ -344,45 +405,69 @@
                         :color="`${item.is_available ? 'success' : 'error'}`"
                     ></v-icon>
                 </div>
-                <div  class="pa-0 ma-0 v-col-1 my-auto" style="position: relative;">
+                <div
+                    class="pa-0 ma-0 v-col-1 my-auto"
+                    style="position: relative"
+                >
                     <div v-if="noticeLoader" class="checkbox-notice"></div>
-                <v-checkbox
-                    v-model="item.is_received"
-                   
-                    hide-details
-                    variant="underlined"
-                    density="compact"
-                    @update:modelValue="checkUncheckBoxSingle"
-                ></v-checkbox>
+                    <v-checkbox
+                        v-model="item.is_received"
+                        hide-details
+                        variant="underlined"
+                        density="compact"
+                        @update:modelValue="checkUncheckBoxSingle"
+                    ></v-checkbox>
                 </div>
             </div>
             <div
-                v-else
-                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
+                v-else-if="!is_asset_supervisor"
+                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between ssss"
             >
-            <div style="border-bottom: 1px solid #000000;" class="pa-1" 
-            v-if="item.remarks || item.remarks_commercial || item.remarks_release || item.remarks_receive || item.remarks_transport">
-                <div v-if="item.remarks"  >
-                    <strong> Asset Supervisor - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks }}</pre>
-                    -------
+                <div
+                    style="border-bottom: 1px solid #000000"
+                    class="pa-1"
+                    v-if="
+                        item.remarks ||
+                        item.remarks_commercial ||
+                        item.remarks_release ||
+                        item.remarks_receive ||
+                        item.remarks_transport
+                    "
+                >
+                    <div v-if="item.remarks">
+                        <strong> Asset Supervisor - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{ item.remarks }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_commercial">
+                        <strong> Commercial Manager - Projects</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_commercial
+                        }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_transport">
+                        <strong> Transport</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_transport
+                        }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_release">
+                        <strong> Releasing</strong> <br />
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_release
+                        }}</pre>
+                        -------
+                    </div>
+                    <div v-if="item.remarks_receive">
+                        <strong> Receiver</strong>
+                        <pre style="text-wrap: wrap">{{
+                            item.remarks_receive
+                        }}</pre>
+                    </div>
                 </div>
-                <div v-if="item.remarks_commercial"  >
-                    <strong> Commercial Manager - Projects</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_commercial }}</pre>
-                    -------
-                </div>
-                <div v-if="item.remarks_transport"  >
-                    <strong> Transport</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_transport }}</pre>
-                    -------
-                </div>
-                <div v-if="item.remarks_release"  >
-                    <strong> Releasing</strong> <br/><pre style="text-wrap:wrap">{{ item.remarks_release }}</pre>
-                    -------
-                </div> 
-                <div v-if="item.remarks_receive"  >
-                    <strong> Receiver</strong> <pre style="text-wrap:wrap">{{ item.remarks_receive }}</pre>
-                </div>
-            </div> 
-            <div v-else></div>
+                <div v-else></div>
                 <div v-if="dataObj?.data?.is_available">
                     <v-icon
                         class="mt-3"
@@ -390,7 +475,12 @@
                         :color="`${item.is_available ? 'success' : 'error'}`"
                     ></v-icon>
                 </div>
-                <div v-if="dataObj?.data?.status == 'complete' && checkLastApproval == 'receiver'">
+                <div
+                    v-if="
+                        dataObj?.data?.status == 'complete' &&
+                        checkLastApproval == 'receiver'
+                    "
+                >
                     <v-icon
                         class="mt-3"
                         :icon="
@@ -402,7 +492,10 @@
             </div>
         </v-row>
         <v-row class="mt-3" v-if="is_asset_supervisor">
-            <div class="v-col-12 text-center font-weight-bold text-info" v-if="requestStatus !== 'cancelled' ">
+            <div
+                class="v-col-12 text-center font-weight-bold text-info"
+                v-if="requestStatus !== 'cancelled'"
+            >
                 YOU CAN UPDATE SOME DATA AND<br />
                 PLEASE TICK CHECKBOX IF ASSET IS AVAILABLE BEFORE CLICKING THE
                 APPROVE BUTTON
@@ -411,9 +504,11 @@
                 THIS REQUEST HAS BEEN CANCELLED.
             </div>
         </v-row>
-        <v-row v-if="dataObj?.data?.is_available && requestStatus !== 'cancelled' " class="mt-6 mb-2">
+        <v-row
+            v-if="dataObj?.data?.is_available && requestStatus !== 'cancelled'"
+            class="mt-6 mb-2"
+        >
             <v-card
-                
                 variant="text"
                 class="v-col-12 text-center pt-2 font-weight-bold pb-0 d-flex justify-center"
             >
@@ -429,14 +524,23 @@
                 </div>
                 <div v-if="is_receiver" class="ml-5 d-flex">
                     <div class="px-2 mr-5">|</div>
-                    <div> 
-                    <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
-                    RECEIVED ASSETS
-                    <v-divider :thickness="8" color="error" class="divider-notice"></v-divider>
+                    <div>
+                        <v-icon :icon="mdiCheckboxBlankOutline"></v-icon> TICK
+                        RECEIVED ASSETS
+                        <v-divider
+                            :thickness="8"
+                            color="error"
+                            class="divider-notice"
+                        ></v-divider>
                     </div>
-                    
                 </div>
-                <div class="ml-6" v-if="dataObj.data?.status == 'complete' && checkLastApproval == 'receiver'">
+                <div
+                    class="ml-6"
+                    v-if="
+                        dataObj.data?.status == 'complete' &&
+                        checkLastApproval == 'receiver'
+                    "
+                >
                     <v-icon :icon="mdiTruckDelivery" color="success"></v-icon>
                     RECEIVED
                     <v-icon
@@ -447,7 +551,7 @@
                     NOT RECEIVE
                 </div>
             </v-card>
-        </v-row> 
+        </v-row>
         <v-row class="mt-3">
             <div class="v-col-12 px-0 my-0">
                 <v-divider></v-divider>
@@ -461,86 +565,84 @@
                 By clicking the approve button,
             </v-col>
         </v-row> -->
-        <v-row v-if="requestTypeId == 2 && selectedFiles?.length > 0" class=" my-3 d-flex justify-center "> 
-                 
-                            <div
-                                v-for="(file, index) in selectedFiles"
-                                :key="file.id"
-                                class="pa-2"
-                                style="position: relative"
-                            > 
-                                <v-card
-                                    @click="() => openAttachmentMultiple(file,index)"
-                                >
-                                <v-icon size="large" :icon="mdiImage" color="success"></v-icon> 
-                                </v-card>
-                            </div>
+        <v-row
+            v-if="requestTypeId == 2 && selectedFiles?.length > 0"
+            class="my-3 d-flex justify-center"
+        >
+            <div
+                v-for="(file, index) in selectedFiles"
+                :key="file.id"
+                class="pa-2"
+                style="position: relative"
+            >
+                <v-card @click="() => openAttachmentMultiple(file, index)">
+                    <v-icon
+                        size="large"
+                        :icon="mdiImage"
+                        color="success"
+                    ></v-icon>
+                </v-card>
+            </div>
 
-                            <v-dialog
-                                v-model="dialogAttachment"
-                                width="95%"
-                                max-width="900"
-                            >
-                                <v-card class="bg-black">
-                                    <v-carousel
-                                        hide-delimiter-background
-                                        show-arrows="hover"
-                                        height="680px"
-                                        v-model="currentSlider"
-                                    >
-                                        <v-carousel-item
-                                            v-for="(item, i) in selectedFiles"
-                                            :key="i"
-                                            reverse-transition="fade"
-                                            transition="fade"
-                                        >
-                                            <div
-                                                :style="`${
-                                                    fileType == 'pdf'
-                                                        ? 'height: 980px;'
-                                                        : 'height: 680px;'
-                                                } 
+            <v-dialog v-model="dialogAttachment" width="95%" max-width="900">
+                <v-card class="bg-black">
+                    <v-carousel
+                        hide-delimiter-background
+                        show-arrows="hover"
+                        height="680px"
+                        v-model="currentSlider"
+                    >
+                        <v-carousel-item
+                            v-for="(item, i) in selectedFiles"
+                            :key="i"
+                            reverse-transition="fade"
+                            transition="fade"
+                        >
+                            <div
+                                :style="`${
+                                    fileType == 'pdf'
+                                        ? 'height: 980px;'
+                                        : 'height: 680px;'
+                                } 
                                                         width: 100%;
                                                         `"
-                                                class="d-flex align-center justify-center"
-                                            >
-                                                <v-img
-                                                    v-if="
-                                                        fileType == 'jpg' ||
-                                                        fileType == 'jpeg' ||
-                                                        fileType == 'png'
-                                                    "
-                                                    :src="
-                                                        baseURL +
-                                                        '/file/' +
-                                                        item.path
-                                                    "
-                                                ></v-img>
-                                                <object
-                                                    v-if="fileType == 'pdf'"
-                                                    :data="
-                                                        baseURL +
-                                                        '/file/' +
-                                                        item.path
-                                                    "
-                                                    type="application/pdf"
-                                                    width="100%"
-                                                    height="800px"
-                                                ></object>
-                                            </div>
-                                        </v-carousel-item>
-                                    </v-carousel>
-                                </v-card>
-                            </v-dialog>
-                        </v-row>
-           
+                                class="d-flex align-center justify-center"
+                            >
+                                <v-img
+                                    v-if="
+                                        fileType == 'jpg' ||
+                                        fileType == 'jpeg' ||
+                                        fileType == 'png'
+                                    "
+                                    :src="baseURL + '/file/' + item.path"
+                                ></v-img>
+                                <object
+                                    v-if="fileType == 'pdf'"
+                                    :data="baseURL + '/file/' + item.path"
+                                    type="application/pdf"
+                                    width="100%"
+                                    height="800px"
+                                ></object>
+                            </div>
+                        </v-carousel-item>
+                    </v-carousel>
+                </v-card>
+            </v-dialog>
+        </v-row>
+
         <v-row v-if="dataObj.data?.request_approvals.length > 0">
             <div class="v-col-12 v-col-md-3 pa-0 mb-4">
                 <div
                     class="text-center mx-2 py-4 font-weight-bold"
-                    :style="`${requestStatus == 'cancelled' ? 'color: red;' : 'color: rgb(3, 167, 3);'} border: 1px solid #ccc; font-size: 17px;`"
+                    :style="`${
+                        requestStatus == 'cancelled'
+                            ? 'color: red;'
+                            : 'color: rgb(3, 167, 3);'
+                    } border: 1px solid #ccc; font-size: 17px;`"
                 >
-                   {{ requestStatus == 'cancelled' ? 'CANCELLED' : 'APPROVED' }} 
+                    {{
+                        requestStatus == "cancelled" ? "CANCELLED" : "APPROVED"
+                    }}
                 </div>
                 <div class="text-center py-1 font-weight-bold">
                     Requested By
@@ -559,10 +661,15 @@
                 class="v-col-12 v-col-md-3 pa-0 mb-4"
                 v-for="item in dataObj.data.request_approvals"
                 :key="item.id"
-            > 
+            >
                 <div
                     v-if="
-                        ( item.profile.ecode ==  '100884' || item.profile.ecode == '102587' || item.profile.ecode == '100316' || item.profile?.role == 'commercial-manager' || (item.profile?.role == 'technical-operation' && requestTypeId == 2) )&&
+                        (item.profile.ecode == '100884' ||
+                            item.profile.ecode == '102587' ||
+                            item.profile.ecode == '100316' ||
+                            item.profile?.role == 'commercial-manager' ||
+                            (item.profile?.role == 'technical-operation' &&
+                                requestTypeId == 2)) &&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                     "
@@ -619,7 +726,9 @@
                             {{
                                 item.status == "done"
                                     ? "APPROVED"
-                                    : item.status == "reject" ? "REJECTED" : "CLICK TO APPROVE"
+                                    : item.status == "reject"
+                                    ? "REJECTED"
+                                    : "CLICK TO APPROVE"
                             }}
                         </div>
                     </div>
@@ -629,7 +738,8 @@
                     @click="approvalFn(item)"
                     class="cursor-pointer text-center mx-2 py-5"
                     :style="`border:1px solid #ccc; ${
-                       requestStatus != 'cancelled' && item.status == 'awaiting-approval' &&
+                        requestStatus != 'cancelled' &&
+                        item.status == 'awaiting-approval' &&
                         route.query.pid == item.profile_id &&
                         route.query.o == item.orders
                             ? 'background-color: rgb(182, 3, 3);color:#fff;'
@@ -672,7 +782,7 @@
                 <div
                     class="v-col-12 text-caption"
                     v-if="item.reason_rejected"
-                    style="border: 1px solid red;border-radius:5px;"
+                    style="border: 1px solid red; border-radius: 5px"
                 >
                     Reason rejected
                     <v-divider class="my-2"></v-divider>
@@ -683,7 +793,8 @@
         <v-row v-if="dataObj?.data?.status !== 'complete'" class="no-print">
             <div class="v-col-12 text-center">
                 <v-divider></v-divider>
-                You will receive a notification once you click the approve button.
+                You will receive a notification once you click the approve
+                button.
                 <v-divider></v-divider>
             </div>
         </v-row>
@@ -734,7 +845,7 @@ import {
     mdiTruckDelivery,
     mdiTruckRemove,
     mdiImage,
-    mdiImageOffOutline 
+    mdiImageOffOutline,
 } from "@mdi/js";
 
 const route = useRoute();
@@ -751,7 +862,7 @@ const rejectReason = ref(false);
 const reasonOfReject = ref("");
 const noticeLoader = ref(false);
 const pvID = ref(route.query.id);
-const requestStatus = ref('');
+const requestStatus = ref("");
 const requestTypeId = ref(0);
 const selectedFiles = ref([]);
 const queryData = async () => {
@@ -777,7 +888,7 @@ const queryData = async () => {
             requestStatus.value = res.data?.data?.status;
             requestTypeId.value = res.data?.data?.request_type_id;
             selectedFiles.value = res.data?.data?.attachment;
-             
+
             if (dataObj.value?.data?.request_approvals?.length > 0) {
                 is_asset_supervisor.value =
                     dataObj.value.data.request_approvals.filter(
@@ -787,7 +898,8 @@ const queryData = async () => {
                             o.status == "awaiting-approval" &&
                             o.profile?.role == "asset-supervisor"
                     )[0];
-                is_realeasing.value = dataObj.value.data.request_approvals.filter(
+                is_realeasing.value =
+                    dataObj.value.data.request_approvals.filter(
                         (o) =>
                             o.profile_id == route.query.pid &&
                             o.orders == route.query.o &&
@@ -795,14 +907,15 @@ const queryData = async () => {
                             o.approval_type == "releasing"
                     )[0];
 
-                is_transport.value = dataObj.value.data.request_approvals.filter(
-                    (o) =>
-                        o.profile_id == route.query.pid &&
-                        o.orders == route.query.o &&
-                        o.status == "awaiting-approval" &&
-                        o.approval_type == "transport"
-                )[0];
-                    
+                is_transport.value =
+                    dataObj.value.data.request_approvals.filter(
+                        (o) =>
+                            o.profile_id == route.query.pid &&
+                            o.orders == route.query.o &&
+                            o.status == "awaiting-approval" &&
+                            o.approval_type == "transport"
+                    )[0];
+
                 is_commercial_manager.value =
                     dataObj.value.data.request_approvals.filter(
                         (o) =>
@@ -820,17 +933,18 @@ const queryData = async () => {
                         o.approval_type == "receiver"
                 )[0];
 
-                checkLastApproval.value = dataObj.value.data.request_approvals[dataObj.value.data.request_approvals.length - 1].approval_type;
-               
+                checkLastApproval.value =
+                    dataObj.value.data.request_approvals[
+                        dataObj.value.data.request_approvals.length - 1
+                    ].approval_type;
+
                 if (is_receiver.value || is_asset_supervisor.value) {
-                    if(requestStatus.value != 'cancelled'){
+                    if (requestStatus.value != "cancelled") {
                         noticeLoader.value = true;
                     }
                 }
-                
             }
             assetsOnly.value = dataObj.value?.data?.items;
-           
         })
         .catch((err) => {
             console.log(err.response.data);
@@ -839,7 +953,7 @@ const queryData = async () => {
 
 const currentSlider = ref(1);
 const fileType = ref("image");
-const openAttachmentMultiple = (file,index) => {
+const openAttachmentMultiple = (file, index) => {
     let mimeType = file.path.split(".");
     fileType.value = mimeType[mimeType.length - 1];
 
@@ -847,19 +961,18 @@ const openAttachmentMultiple = (file,index) => {
     dialogAttachment.value = true;
 };
 
-const printFn = () =>{
+const printFn = () => {
     window.print();
-}
+};
 const baseURL = ref(window.location.origin);
 const dialogAttachment = ref(false);
 const fileItem = ref(1);
 const openAttachment = (item) => {
-     
     fileItem.value = item;
     dialogAttachment.value = true;
 };
 
-const checkLastApproval = ref('');
+const checkLastApproval = ref("");
 
 const rejectItem = ref({});
 const rejectRequest = (item) => {
@@ -872,7 +985,7 @@ const cancelReject = () => {
 };
 const approvalFn = (item, isReject = null) => {
     rejectReason.value = false;
-    if(requestStatus.value == 'cancelled' || item.status == 'reject'){
+    if (requestStatus.value == "cancelled" || item.status == "reject") {
         return;
     }
     if (
@@ -887,7 +1000,13 @@ const approvalFn = (item, isReject = null) => {
         };
         let fixeAsset = [];
 
-        if (is_asset_supervisor.value || is_commercial_manager.value || is_receiver.value || is_realeasing.value || is_transport.value) {
+        if (
+            is_asset_supervisor.value ||
+            is_commercial_manager.value ||
+            is_receiver.value ||
+            is_realeasing.value ||
+            is_transport.value
+        ) {
             fixeAsset = assetsOnly.value.map((o, i) => {
                 delete o.created_at;
                 delete o.assets;
@@ -912,8 +1031,8 @@ const approvalFn = (item, isReject = null) => {
             assets: fixeAsset,
             is_reject: is_reject,
             requestor_id: dataObj.value.data.profile_id,
-        }; 
-        
+        };
+
         axios
             .post("/api/pv/store/request-asset/approve-data", formData)
             .then((res) => {
@@ -996,61 +1115,65 @@ queryData();
 <style>
 .bg-light-gray {
     background-color: #f3f3f3;
+    width: 100%;
 }
 .bg-light-gray input.v-field__input {
     padding-left: 5px !important;
 }
+.border-bottom{
+    border-bottom: 1px solid #a1a1a1;
+}
+div.py-1,
+.approval-form-pr textarea,
+.approval-form-pr input {
+    font-size: 12px !important;
+}
 
-div.py-1, 
-.approval-form-pr textarea, .approval-form-pr input { font-size:12px !important;} 
-
-.divider-notice{
+.divider-notice {
     animation: transform 2s infinite;
 }
 
 @keyframes transform {
-	0% {
-		transform: scale(0.2);
-		 
-	}
+    0% {
+        transform: scale(0.2);
+    }
 
-	50% {
-		transform: scale(1.3, 0.4);
-		 
-	}
+    50% {
+        transform: scale(1.3, 0.4);
+    }
 
-	100% {
-		transform: scale(0.2);
-	}
+    100% {
+        transform: scale(0.2);
+    }
 }
 
-.checkbox-notice  {
-	background: rgba(250, 73, 73, 0.5);
-	border-radius: 50%;
-	margin: 10px;
-    left:-6px;
-	height: 20px;
+.checkbox-notice {
+    background: rgba(250, 73, 73, 0.5);
+    border-radius: 50%;
+    margin: 10px;
+    left: -6px;
+    height: 20px;
     position: absolute;
-	width: 20px; 
-	box-shadow: 0 0 0 0 rgb(250, 73, 73, 0);
-	transform: scale(1);
-	animation: pulse 2s infinite;
+    width: 20px;
+    box-shadow: 0 0 0 0 rgb(250, 73, 73, 0);
+    transform: scale(1);
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-	0% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
-	}
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
 
-	70% {
-		transform: scale(2);
-		box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
-	}
+    70% {
+        transform: scale(2);
+        box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+    }
 
-	100% {
-		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
-	}
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
 }
 </style>
