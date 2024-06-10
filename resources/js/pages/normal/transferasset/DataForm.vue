@@ -131,7 +131,7 @@
                         </v-row>
                          <!-- For printing only -->
                         <v-row class="for-print-flex mx-2 mb-1">
-                        <div class="wd-100">REQUEST NO: SN-3{{ pad(formObjData.id) }}</div>
+                        <div class="wd-100">REQUEST NO: {{ formObjData.id ? "SN-3" + pad(formObjData.id) : '' }}</div>
                         <div class="wd-60 text-caption">TYPE OF REQUEST: {{ requestTypeTitle }}</div>
                         <div class="wd-40">COMPANY: {{ formObjData?.company?.title }}</div>
                         <div class="wd-60">LOCATION FROM: {{ locationTitleFrom }}</div>
