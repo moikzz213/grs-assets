@@ -32,10 +32,16 @@ class ApprovalSetupController extends Controller
         return response()->json($query, 200);
     }
 
-    public function fetchDataByIDRequestAsset($id){
-        $query = ApprovalSetup::where('id', $id)->with('stages', function($q) {
+    public function fetchDataByIDRequestAsset(Request $request, $id){
+       $isEdit = $request->input('isEdit');
+
+        $query = ApprovalSetup::where('id', $id)->with('stages', function($q) use($isEdit){
             $q->orderBy('sort', 'ASC');
-            $q->with('signatures');
+            $q->with('signatures', function($qq) use($isEdit){
+                if(!$isEdit){
+                    $qq->whereNot('status','inactive');
+                }
+            });
         })->first(); 
         return response()->json($query, 200);
     }
