@@ -20,7 +20,7 @@ class ApprovalStage extends Model
 
     public function signatures()
     {
-        return $this->belongsToMany(Profile::class)->whereNot('status','inactive');
+        return $this->belongsToMany(Profile::class);
     }
 
     public function logs()

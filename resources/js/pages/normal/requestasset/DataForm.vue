@@ -1036,14 +1036,18 @@ const hasSignatories = ref(true);
 const listUom = ref(['Nos', 'Set', 'Pcs','Pack', 'Pallet', 'SqM']);
 
 const setupApprovals = async () => {
+    let upIsEdit = 0;
+    if (route.params.id) {
+        upIsEdit = 1;
+    }
     await clientKey(authStore.token)
         .get(
             "/api/fetch/request-asset/approval-setup-fetch/" +
-                objData.value.request_type_id
+                objData.value.request_type_id+"?isEdit="+upIsEdit
         )
         .then((res) => {
             approvalSetupList.value = res.data?.stages;
-
+            console.log("approvalSetupList.value 1111",res.data?.stages);
             if (route.params.id && approvalSetupList.value.length > 0) {
                 approvalSetupList.value.map((o, i) => {
                     o.profile_id = onUpdateApproval.value[i].profile_id;
@@ -1107,7 +1111,7 @@ const setupApprovals = async () => {
                         };
                 }
             }
-
+            console.log("approvalSetupList.value",approvalSetupList.value);
             if (res.data?.stages.length > 0) {
                 hasSignatories.value = true;
             } else {
@@ -1204,7 +1208,7 @@ onMounted(() => {
             (e) => e.status == "awaiting-approval"
         )?.[0];
         
-
+       
         if(!getCurrentApprover.value && v.status == 'reject'){
             getCurrentApprover.value = v.request_approvals?.filter(
             (e) => e.status == "reject"
