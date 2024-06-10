@@ -199,7 +199,7 @@ const receiving_releaseing_nav = ref([
     slug: "dashboard",
   },
   {
-    title: "Scan Barcode",
+    title: "Scan QRCode",
     icon: mdiBarcodeScan,
     path: "/scan",
     slug: "scan",
@@ -237,7 +237,7 @@ const commonNav = ref([
     slug: "dashboard",
   },
   {
-    title: "Scan Barcode",
+    title: "Scan QRCode",
     icon: mdiBarcodeScan,
     path: "/scan",
     slug: "scan",
