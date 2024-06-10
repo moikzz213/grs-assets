@@ -8,7 +8,7 @@
             </div>
         </v-row>
         <v-row class="mt-0 pt-0">
-            <div class="v-col-3 mt-auto font-weight-bold">
+            <div class="v-col-12 v-col-md-3 mt-auto font-weight-bold">
                 <div class="d-flex">
                     <div class="mr-2">FROM:</div>
                     <div>{{ dataObj.data?.transfer_from?.title }}</div>
@@ -18,7 +18,7 @@
                     <div>{{ dataObj.data?.transfer_to?.title }}</div>
                 </div>
             </div>
-            <div class="v-col-6 text-center">
+            <div class="v-col-12 v-col-md-6 text-center">
                 <img
                     src="/assets/images/grandiose-logo.jpg"
                     style="max-height: 100px"
@@ -27,7 +27,7 @@
                 <strong>{{ dataObj.data?.setup?.title }}</strong>
             </div>
 
-            <div class="v-col-3 mt-auto font-weight-bold text-right">
+            <div class="v-col-12 v-col-md-3 mt-auto approval-date font-weight-bold">
                 SN-{{ dataObj?.data?.types == "request" ? "5" : "3"
                 }}{{ pad(pvID) }}<br />
                 {{ useFormatDate(dataObj.data?.created_at) }}
@@ -35,18 +35,18 @@
         </v-row>
         <v-divider class="my-5"></v-divider>
         <v-row>
-            <div class="v-col-12 v-col-md-1 py-1">IMG</div>
-            <div class="v-col-12 v-col-md-1 py-1">ITEM DESC</div>
-            <div class="v-col-12 v-col-md-1 py-1">ASSET NO</div>
-            <div class="v-col-12 v-col-md-1 py-1">QTY</div>
-            <div class="v-col-12 v-col-md-1 py-1">UOM</div>
-            <div class="v-col-12 v-col-md-1 py-1">WEIGHT</div>
-            <div class="v-col-12 v-col-md-1 py-1">ITEM VALUE</div>
-            <div class="v-col-12 v-col-md-1 py-1">COUNTRY OF ORIGIN</div>
-            <div class="v-col-12 v-col-md-2 py-1">
+            <div class="v-col-1 v-col-md-1 py-1">IMG</div>
+            <div class="v-col-1 v-col-md-1 py-1">ITEM DESC</div>
+            <div class="v-col-1 v-col-md-1 py-1">ASSET NO</div>
+            <div class="v-col-1 v-col-md-1 py-1">QTY</div>
+            <div class="v-col-1 v-col-md-1 py-1">UOM</div>
+            <div class="v-col-1 v-col-md-1 py-1">WEIGHT</div>
+            <div class="v-col-1 v-col-md-1 py-1">ITEM VALUE</div>
+            <div class="v-col-1 v-col-md-1 py-1">COUNTRY OF ORIGIN</div>
+            <div class="v-col-2 v-col-md-2 py-1">
                 REMARKS<br />REASON FOR REQUEST
             </div>
-            <div class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between">
+            <div class="v-col-2 v-col-md-2 py-1 d-flex justify-space-between">
                 REMARKS
                 <div style="position: relative">
                     <div v-if="noticeLoader" class="checkbox-notice"></div>
@@ -1132,6 +1132,13 @@ div.py-1,
 .divider-notice {
     animation: transform 2s infinite;
 }
+
+.approval-date{ text-align: right;}
+
+@media only screen and (max-width: 600px) {
+    .approval-date{ text-align: center;}
+}
+
 
 @keyframes transform {
     0% {
