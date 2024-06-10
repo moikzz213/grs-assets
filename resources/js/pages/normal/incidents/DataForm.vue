@@ -294,10 +294,11 @@
     <v-dialog width="500" v-model="enableBarcode">
       <v-card>
         <v-card-text>
-          <StreamBarcodeReader
+          <qrcode-stream @decode="onDecode"></qrcode-stream>
+          <!-- <StreamBarcodeReader
             @decode="onDecode"
             @loaded="onLoaded"
-          ></StreamBarcodeReader>
+          ></StreamBarcodeReader> -->
         </v-card-text>
         <v-card-text v-if="!isScanLoaded">Please wait...</v-card-text>
         <v-card-actions>
@@ -319,7 +320,7 @@ import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import { mdiBarcodeScan, mdiMagnify } from "@mdi/js";
-import { StreamBarcodeReader } from "vue-barcode-reader";
+import { QrcodeStream } from 'qrcode-reader-vue3'
 import { useFormatDate } from "@/composables/formatDate.js";
 import { useStatusStore } from "@/stores/status";
 import Attachment from "@/pages/normal/incidents/Attachment.vue";

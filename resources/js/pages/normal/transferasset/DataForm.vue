@@ -295,23 +295,40 @@
                                     v-model="item.item_description"
                                     variant="outlined"
                                     density="compact"
-                                    hide-details
-                                    clearable
+                                    hide-details 
                                     label="ITEM DESC*"
                                     rows="2" 
                                     class="no-print"
                                 ></v-textarea>
                                 
                             </div>
-                            <div class="v-col-12 v-col-md-2">
+                            <div class="v-col-12 v-col-md-2 d-flex">
                                 <v-text-field
                                     v-model="item.asset_code"
                                     variant="outlined"
                                     density="compact"
                                     hide-details
                                     label="ASSET CODE"
-                                    class="no-print"
-                                ></v-text-field>
+                                    :append-inner-icon="mdiMagnify"
+                                    @click:appendInner="onDecode(item.asset_code, index)"
+                                ></v-text-field> 
+                                <v-icon
+                                v-if=" 
+                                        ( !route.params.id || (
+                                            objData.requestor_id == authStore.user.profile.id && 
+                                            props.objectdata?.status ==
+                                                'pending' || 
+                                            authStore.user.profile.role ==
+                                                'superadmin' ||
+                                            authStore.user.profile.role ==
+                                                'administrator') ) &&
+                                        formObjData.status != 'complete'
+                                    "
+                                    @click="enableBarcodeFn(index)"
+                                    class="ml-2 my-auto"
+                                    size="x-small"
+                                    :icon="mdiBarcodeScan"
+                                ></v-icon>
                                 
                             </div>
                             
@@ -576,6 +593,18 @@
             </v-col>
         </v-row>
         <AppSnackBar :options="sbOptions" />
+        <v-dialog width="500" v-model="enableBarcode">
+      <v-card>
+        <v-card-text>
+            <qrcode-stream @decode="onDecode"></qrcode-stream>
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="Close" @click="enableBarcode = false"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-container>
 </template>
 
@@ -586,12 +615,14 @@ import { useRoute, useRouter } from "vue-router";
 import Studio from "@/studio/Studio.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
+import { QrcodeStream } from 'qrcode-reader-vue3'
 import { clientKey } from "@/services/axiosToken";
 import {
     mdiTrashCan,
     mdiAccountCheck,
     mdiAccountClockOutline,
     mdiAccountDetails,
+    mdiBarcodeScan, mdiMagnify,
     mdiAccountCancel,
 } from "@mdi/js";
 import { useFormatDate } from "@/composables/formatDate.js";
@@ -664,6 +695,31 @@ const fetchSetupRequest = async () => {
         })
         .catch((err) => {});
 };
+
+
+const enableBarcode = ref(false);
+const rowIndex = ref(0);
+const enableBarcodeFn = (index) => {
+  rowIndex.value = index; 
+  enableBarcode.value = true;
+};
+
+const onDecode = async (result, index) => {  
+    let nIndex = rowIndex.value;
+    if(index !== undefined){
+        nIndex = index;
+    } 
+   
+  await clientKey(authStore.token)
+    .get("/api/fetch/asset-info/by/asset-code/" + result)
+    .then((res) => {  
+        assetDataObj.value[nIndex].item_description = res.data.asset_name; 
+        assetDataObj.value[nIndex].asset_code = result;  
+        enableBarcode.value = false; 
+    })
+    .catch((err) => {});
+}; 
+ 
 
 const sbOptions = ref({});
 const companyList = ref([]);
@@ -838,9 +894,7 @@ const requiredData = () => {
         if (!o.item_description || !o.reason_for_request || !o.uom || (!o.qty || o.qty <= 0)) {
             checkAsset = false;
         } 
-    });
-
-   console.log("assetDataObj.value",assetDataObj.value);
+    }); 
 
     let checkSignatories = true;
     approvalSetupList.value.map((o) => {

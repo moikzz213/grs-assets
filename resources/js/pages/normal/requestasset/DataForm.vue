@@ -327,21 +327,39 @@
                                     v-model="item.item_description"
                                     variant="outlined"
                                     density="compact"
-                                    hide-details
-                                    clearable
+                                    hide-details 
                                     rows="2"
                                     label="ITEM DESC*"
                                     @update:modelValue="requiredData"
                                 ></v-textarea>
                             </div>
-                            <div class="v-col-12 v-col-md-2">
+                            <div class="v-col-12 v-col-md-2 d-flex"> 
                                 <v-text-field
                                     v-model="item.asset_code"
                                     variant="outlined"
                                     density="compact"
                                     hide-details
                                     label="ASSET CODE"
-                                ></v-text-field>
+                                    :append-inner-icon="mdiMagnify"
+                                    @click:appendInner="onDecode(item.asset_code, index)"
+                                ></v-text-field> 
+                                <v-icon
+                                v-if=" 
+                                        ( !route.params.id || (
+                                            objData.requestor_id == authStore.user.profile.id && 
+                                            props.objectdata?.status ==
+                                                'pending' || 
+                                            authStore.user.profile.role ==
+                                                'superadmin' ||
+                                            authStore.user.profile.role ==
+                                                'administrator') ) &&
+                                        formObjData.status != 'complete'
+                                    "
+                                    @click="enableBarcodeFn(index)"
+                                    class="ml-2 my-auto"
+                                    size="x-small"
+                                    :icon="mdiBarcodeScan"
+                                ></v-icon>
                             </div>
                             <div class="v-col-12 v-col-md-1">
                                 <v-text-field
@@ -749,6 +767,18 @@
             </v-col>
         </v-row>
         <AppSnackBar :options="sbOptions" />
+        <v-dialog width="500" v-model="enableBarcode">
+      <v-card>
+        <v-card-text>
+            <qrcode-stream @decode="onDecode"></qrcode-stream>
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text="Close" @click="enableBarcode = false"></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-container>
 </template>
 
@@ -761,17 +791,19 @@ import Studio from "@/studio/Studio.vue";
 import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { clientKey } from "@/services/axiosToken";
-
+import { QrcodeStream } from 'qrcode-reader-vue3'
 import {
     mdiTrashCan,
     mdiAccountCheck,
     mdiAccountClockOutline,
     mdiAccountDetails,
     mdiClose,
+    mdiBarcodeScan, mdiMagnify,
     mdiAccountCancel,
 } from "@mdi/js";
 import { useFormatDate } from "@/composables/formatDate.js";
 import { randomAlphaString } from "@/composables/generateRandomString.js";
+ 
 const emit = defineEmits(["deleted"]);
 const authStore = useAuthStore();
 const props = defineProps({
@@ -873,6 +905,29 @@ const fetchCompanies = async () => {
         .catch((err) => {});
 };
 
+const enableBarcode = ref(false);
+const rowIndex = ref(0);
+const enableBarcodeFn = (index) => {
+  rowIndex.value = index; 
+  enableBarcode.value = true;
+};
+
+const onDecode = async (result, index) => { 
+    let nIndex = rowIndex.value;
+    if(index !== undefined){
+        nIndex = index;
+    } 
+   
+  await clientKey(authStore.token)
+    .get("/api/fetch/asset-info/by/asset-code/" + result)
+    .then((res) => {  
+        assetDataObj.value[nIndex].item_description = res.data.asset_name; 
+        assetDataObj.value[nIndex].asset_code = result;  
+        enableBarcode.value = false; 
+    })
+    .catch((err) => {});
+}; 
+ 
 const locationTitleFrom = ref("");
 const locationTitleTo = ref("");
 const locationList = ref([]);
