@@ -187,12 +187,11 @@ class RequestAssetController extends Controller
             return;
         }
         $query = RequestAsset::where('id','=', $request->ID)->first();
-        if($request->status == 'cancelled'){
-
-            $query->update(array('status' => $request->status, 'reminder_date' => null));
+        if($request->status == 'cancelled'){ 
+            $query->update(array('status' => $request->status, 'reminder_date' => null, 'reminder_profile_id' => null));
         }else{
-
-            $query->update(array('status' => $request->status, 'reminder_date' => Carbon::now()->addDay(1)));
+            $getApprover = RequestApproval::where(array('request_asset_id' => $request->ID, 'status' => 'awaiting-approval'))->first();
+            $query->update(array('status' => $request->status, 'reminder_date' => Carbon::now()->addDay(1), 'reminder_profile_id' => $getApprover->profile_id));
         }
 
         $helper = new GlobalHelper;

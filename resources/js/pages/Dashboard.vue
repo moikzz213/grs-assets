@@ -9,7 +9,7 @@
                     @click="goTo('Scan')"
                 > 
                 <v-card-text>
-                     SCAN BARCODE
+                     SCAN QRCODE
                     </v-card-text>
                 </v-card>
             </div>
