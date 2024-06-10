@@ -239,7 +239,7 @@
                                     D.Created<br />
                                     <small>(DD/MM/YY)</small>
                                 </th>
-                                <th class="text-right text-capitalize"></th>
+                                <th class="text-right text-capitalize last-child-action"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -308,7 +308,7 @@
                                             : ""
                                     }}
                                 </td>
-                                <td>
+                                <td class="last-child-action">
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
