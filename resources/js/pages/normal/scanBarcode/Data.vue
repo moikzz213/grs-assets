@@ -141,8 +141,7 @@
 <script setup>
 import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
-import { mdiBarcodeScan } from "@mdi/js";
-import { StreamBarcodeReader } from "vue-barcode-reader";
+import { mdiBarcodeScan } from "@mdi/js"; 
 import { QrcodeStream } from 'qrcode-reader-vue3'
 import { useAuthStore } from "@/stores/auth";
 import { useFormatDate } from "@/composables/formatDate.js";
