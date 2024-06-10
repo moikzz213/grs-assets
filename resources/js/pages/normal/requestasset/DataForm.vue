@@ -153,7 +153,7 @@
                         <!-- For printing only -->
                         <v-row class="for-print-flex mx-2 mb-1">
                             <div class="wd-100">
-                                REQUEST NO: SN-5{{ pad(formObjData.id) }}
+                                REQUEST NO:  {{ formObjData.id ? "SN-5" + pad(formObjData.id) : '' }}
                             </div>
                             <div class="wd-60">
                                 TYPE OF REQUEST: {{ requestTypeTitle }}
