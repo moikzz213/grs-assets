@@ -71,8 +71,8 @@ function validateAccess(data) {
     
     let hasAccess = false;
     if (
-        authStore?.user?.status.toLowerCase() == "active" && (
-        authStore?.authRole == "superadmin" || authStore?.authRole == 'commercial-manager' )
+        authStore?.user?.status.toLowerCase() == "active" &&
+        authStore?.authRole == "superadmin"
     ) {
         hasAccess = true;
     } else if ( data?.title?.toLowerCase() == 'report-incident' ||  
