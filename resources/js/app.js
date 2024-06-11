@@ -86,6 +86,7 @@ function validateAccess(data) {
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
     ) {
         hasAccess = true;
+        console.log("hasAcceess");
     }
 
     return hasAccess;
