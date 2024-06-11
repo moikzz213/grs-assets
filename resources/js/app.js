@@ -71,8 +71,8 @@ function validateAccess(data) {
     
     let hasAccess = false;
     if (
-        authStore?.user?.status.toLowerCase() == "active" &&
-        authStore?.authRole == "superadmin"
+        authStore?.user?.status.toLowerCase() == "active" && (
+        authStore?.authRole == "superadmin" || authStore?.authRole == 'commercial-manager' )
     ) {
         hasAccess = true;
     } else if ( data?.title?.toLowerCase() == 'report-incident' ||  
@@ -86,7 +86,6 @@ function validateAccess(data) {
         authStore?.user?.status.toLowerCase() == "active" && returnAccess(data)
     ) {
         hasAccess = true;
-        console.log("hasAcceess");
     }
 
     return hasAccess;
