@@ -99,7 +99,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="!check_auth">
       <v-col>
         <v-card>
           <v-card-text class="text-center">
@@ -132,7 +132,7 @@ import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore(); 
  
 const check_auth = computed(() => {
-  return authStore.user.role == "superadmin" || authStore.user.role == "asset-supervisor" ? true : false;
+  return authStore.user.role == "superadmin" || authStore.user.role == "asset-supervisor" || authStore.user.role == "commercial-manager" ? true : false;
 });
 
 const baseURL = ref(window.location.origin);
