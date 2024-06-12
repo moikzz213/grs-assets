@@ -225,7 +225,7 @@ class IncidentController extends Controller
                 'status_id' => $request->status_id
             );
             if($request->status_id == 8){
-                $updateData = array_merge($updateData,array('reminder_date' => null)); 
+                $updateData = array_merge($updateData,array('reminder_date' => null, 'date_closed' => Carbon::now())); 
             } 
 
             $query->update($updateData);
