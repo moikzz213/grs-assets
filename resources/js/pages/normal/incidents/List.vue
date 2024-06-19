@@ -382,7 +382,12 @@ const getAllData = async () => {
     })
     .catch((err) => {
       users.value.loading = false;
-     
+      localStorage.setItem("incident-search", null);
+      localStorage.setItem("incident-filter-company", null); 
+      localStorage.setItem("incident-filter-location", null); 
+      localStorage.setItem("incident-filter-type", null); 
+      localStorage.setItem("incident-filter-status", null);
+      localStorage.setItem("incident-filter-row", 10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {

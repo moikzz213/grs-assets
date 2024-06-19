@@ -389,7 +389,10 @@ const getAllData = async () => {
     })
     .catch((err) => {
       users.value.loading = false;
-      console.log(err);
+      localStorage.setItem("maintenance-filter-company", null); 
+      localStorage.setItem("maintenance-filter-location", null);  
+      localStorage.setItem("maintenance-filter-status", null);
+      localStorage.setItem("maintenance-filter-row", 10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {

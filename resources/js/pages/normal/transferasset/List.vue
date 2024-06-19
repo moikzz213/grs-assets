@@ -39,19 +39,34 @@
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
+                v-model="objFIlter.from"
+                @update:modelValue="filterSearch('from')"
+                variant="outlined"
+                density="compact"
+                hide-details
+                label="Location From"
+                item-value="id"
+                clearable
+                item-title="title"
+                @click:clear="clearSearch('from')"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="locationList"
                 v-model="objFIlter.location_id"
                 @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
-                label="Location"
+                label="Location To"
                 item-value="id"
                 clearable
                 item-title="title"
                 @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
-            <div class="v-col-12 v-col-md">
+            <div class="v-col-12 v-col-md-2">
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status"
@@ -66,7 +81,7 @@
                 label="Status"
               ></v-autocomplete>
             </div>
-            <div class="v-col-12 v-col-md">
+            <div class="v-col-12 v-col-md-2">
               <v-autocomplete
                 :items="showRows"
                 v-model="showPerPage"
@@ -91,9 +106,15 @@
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
+                  @click="OrderByField('transferred_from')"
+                >
+                  From
+                </th>
+                <th
+                  class="text-left text-capitalize cursor-pointer"
                   @click="OrderByField('transferred_to')"
                 >
-                  Location
+                  To
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
@@ -141,6 +162,7 @@
               <tr v-for="item in dataobj.data" :key="item.id" :class="`${authStore.user.profile.id == item.reminder_profile_id ? 'bg-blue-lighten-5' : ''} `">
                 <td>SN-3{{ pad(item.id) }}</td>
                 <td>{{ item.company?.title }}</td>
+                <td>{{ item.transfer_from?.title }}</td>
                 <td>{{ item.transfer_to?.title }}</td>
                 <td>{{ item.subject }}</td>
                 <td>{{ item.profile?.display_name }}</td>
@@ -250,6 +272,8 @@ const filterSearch = (v) => {
         localStorage.setItem("transfer-filter-company", encryptData(objFIlter.value.company_id));
       }else if(v == 'location'){ 
         localStorage.setItem("transfer-filter-location", encryptData(objFIlter.value.location_id));
+      }else if(v == 'from'){ 
+        localStorage.setItem("transfer-filter-from", encryptData(objFIlter.value.from));
       } else if(v == 'status'){ 
         localStorage.setItem("transfer-filter-status", encryptData(objFIlter.value.status));
       }
@@ -274,6 +298,8 @@ const clearSearch = (v) => {
       localStorage.setItem("transfer-filter-company", '');
   }else if(v == 'location'){  
     localStorage.setItem("transfer-filter-location", '');
+  }else if(v == 'from'){  
+    localStorage.setItem("transfer-filter-from", '');
   }else if(v == 'status'){  
     localStorage.setItem("transfer-filter-status", '');
   }
@@ -367,7 +393,11 @@ const getAllData = async () => {
     })
     .catch((err) => {
       dataobj.value.loading = false;
-      console.log(err);
+      localStorage.setItem("transfer-filter-company", null); 
+      localStorage.setItem("transfer-filter-location", null);  
+      localStorage.setItem("transfer-filter-from", null);  
+      localStorage.setItem("transfer-filter-status", null);
+      localStorage.setItem("transfer-filter-row", 10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {
@@ -411,6 +441,7 @@ onMounted(() => {
 
   let vcomp = localStorage.getItem("transfer-filter-company"); 
   let vlocation = localStorage.getItem("transfer-filter-location");  
+  let vfrom = localStorage.getItem("transfer-filter-from");  
   let vstatus = localStorage.getItem("transfer-filter-status");
   let vrows = localStorage.getItem("transfer-filter-row");
      
@@ -422,6 +453,10 @@ onMounted(() => {
   }
   if(vlocation){
     objFIlter.value.location_id = decryptData(vlocation);
+  }
+
+  if(vfrom){
+    objFIlter.value.from = decryptData(vfrom);
   }
   
   if(vstatus){
