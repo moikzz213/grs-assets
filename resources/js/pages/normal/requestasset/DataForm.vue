@@ -7,7 +7,7 @@
                     <v-card-title
                         class="my-0 ml-3 text-uppercase text-h6 d-flex justify-space-between font-weight-bold"
                     >
-                        <div>{{ props.headertitle }}</div>
+                        <div>{{ props.headertitle }} {{ isDraft ?  "(Draft)" : "" }}</div>
                         <div v-if="!hasSignatories" class="text-error text-h6">
                             {{ errorMsg }}
                         </div>
@@ -745,6 +745,15 @@
                                                 : "Submit For Approval"
                                         }}</v-btn
                                     >
+
+                                    <v-btn
+                                        size="small" 
+                                        class="mx-3"
+                                        @click="saveDraft"
+                                        color="warning"
+                                        v-if="!route.params.id"
+                                        >Save Draft</v-btn
+                                    >
                                 </div>
                             </v-row>
                         </template>
@@ -792,6 +801,7 @@ import { useAuthStore } from "@/stores/auth";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { clientKey } from "@/services/axiosToken";
 import { QrcodeStream } from 'qrcode-reader-vue3'
+import { encryptData, decryptData } from "@/composables/encrypt";
 import {
     mdiTrashCan,
     mdiAccountCheck,
@@ -957,6 +967,37 @@ const deleteData = (id, index) => {
     requiredData();
 };
 
+const saveDraft = () => {
+    sbOptions.value = {
+        status: true,
+        type: "info",
+        text: "Please wait...",
+    };
+
+    let formData = {
+        data: objData.value,
+        assets: assetDataObj.value,
+        approval: approvalSetupList.value,
+        profile_id: authStore.user.profile.id,
+        role: authStore.user.profile.role,
+        type: "request",
+    };
+
+    localStorage.setItem("draft-request", encryptData(formData));
+
+    isDraft.value = true;
+
+    setTimeout(() => {
+
+        sbOptions.value = {
+                status: true,
+                type: 'success',
+                text: 'Data has been saved to Draft',
+            };
+    }, 800);
+ 
+}
+
 const errorMsg = ref("Note: Administrator needs to setup signatories first.");
 const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 const submitRequest = () => {
@@ -1121,6 +1162,8 @@ const setupApprovals = async () => {
         .catch((err) => {});
 };
 
+const isDraft = ref(false);
+
 const requiredData = () => {
     let checkObj = false;
     isValidate.value = false;
@@ -1219,6 +1262,34 @@ onMounted(() => {
         setupApprovals();
     } else {
         objData.value.company_id = authStore.user.profile.company_id;
+
+        let getDraft = localStorage.getItem("draft-request");
+        
+        if(getDraft){
+            getDraft = decryptData(getDraft);
+            isDraft.value = true;
+            
+            objData.value.request_type_id = getDraft?.data?.request_type_id;
+            objData.value.transferred_from = getDraft?.data?.transferred_from;
+            objData.value.transferred_to = getDraft?.data?.transferred_to;
+            objData.value.subject = getDraft?.data?.subject;
+
+            if(objData.value.request_type_id){
+                setupApprovals().then(() =>{
+                    onUpdateApproval.value = getDraft.approval;
+                    approvalSetupList.value.map((o, i) => {
+                        o.profile_id = onUpdateApproval.value[i].profile_id;
+                        o.status = onUpdateApproval.value[i].status;
+                        o.date_approved = onUpdateApproval.value[i].date_approved;
+                        o.reason_rejected =
+                            onUpdateApproval.value[i].reason_rejected;
+                        return o;
+                    });
+                });
+            }
+
+            assetDataObj.value = getDraft?.assets;
+        }
     }
 });
 

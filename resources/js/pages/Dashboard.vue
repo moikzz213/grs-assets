@@ -4,7 +4,7 @@
             <div class="v-col-12 v-col-md-3 pb-0 scan-barcode">
                 <v-card 
                     width="100%" 
-                    class="rounded-lg text-center my-auto py-4"
+                    class="rounded-lg text-center my-auto py-4 "
                     color="primary"
                     @click="goTo('Scan')"
                 > 
@@ -21,9 +21,10 @@
                 <v-card
                     height="80"
                     width="100%" 
-                    class="rounded-lg text-center pt-3"
+                    class="rounded-lg text-center pt-3 cursor-pointer"
+                    @click="goTo(item.to)"
                 > 
-                    <div class="text-h6 text-capitalize">{{ item.value }}</div>
+                    <div class="text-h6 text-capitalize" >{{ item.value }}</div>
                     <div class="text-capitalize">{{ item.title }}</div>
                   
                 </v-card>
@@ -113,22 +114,26 @@ const fetchQuery = async () => {
                 {
                     id: 1,
                     title: "PENDING MAINTENANCE",
-                    value: res.data.count.maintenance
+                    value: res.data.count.maintenance,
+                    to: 'Maintenance'
                 },
                 {
                     id: 2,
                     title: "PENDING TICKETS",
-                    value: res.data.count.incident
+                    value: res.data.count.incident,
+                    to: 'Incident'
                 },
                 {
                     id: 3,
                     title: "TRANSFER REQUEST",
-                    value: res.data.count.transfer
+                    value: res.data.count.transfer,
+                    to: 'Transferasset'
                 },
                 {
                     id: 4,
                     title: "REQUEST ASSET",
-                    value: res.data.count.request
+                    value: res.data.count.request,
+                    to: 'RequestAsset'
                 },
             ];
         })
