@@ -754,6 +754,14 @@
                                         v-if="!route.params.id"
                                         >Save as Draft</v-btn
                                     >
+                                    <v-btn
+                                        size="small" 
+                                        class="mx-3"
+                                        @click="deleteDraft"
+                                        color="info"
+                                        v-if="isDraft"
+                                        >Delete Draft</v-btn
+                                    >
                                 </div>
                             </v-row>
                         </template>
@@ -967,6 +975,20 @@ const deleteData = (id, index) => {
     requiredData();
 };
 
+const deleteDraft = () => {
+    sbOptions.value = {
+            status: true,
+            type: 'success',
+            text: 'Draft has been removed!',
+        };
+
+    localStorage.removeItem("draft-request");
+    setTimeout(() => { 
+        location.reload();
+    }, 500);
+    
+};
+
 const saveDraft = () => {
     sbOptions.value = {
         status: true,
@@ -983,18 +1005,16 @@ const saveDraft = () => {
         type: "request",
     };
 
-    localStorage.setItem("draft-request", encryptData(formData));
-
-    isDraft.value = true;
+    localStorage.setItem("draft-request", encryptData(formData)); 
 
     setTimeout(() => {
-
+        isDraft.value = true;
         sbOptions.value = {
                 status: true,
                 type: 'success',
                 text: 'Data has been saved to Draft',
             };
-    }, 800);
+    }, 500);
  
 }
 
@@ -1264,8 +1284,7 @@ onMounted(() => {
         objData.value.company_id = authStore.user.profile.company_id;
 
         let getDraft = localStorage.getItem("draft-request");
-        
-        if(getDraft){
+        if(getDraft){ 
             getDraft = decryptData(getDraft);
             isDraft.value = true;
             

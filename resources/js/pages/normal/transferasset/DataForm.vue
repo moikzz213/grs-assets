@@ -582,6 +582,15 @@
                                         v-if="!route.params.id"
                                         >Save as Draft</v-btn
                                     >
+
+                                    <v-btn
+                                        size="small" 
+                                        class="mx-3"
+                                        @click="deleteDraft"
+                                        color="info"
+                                        v-if="isDraft"
+                                        >Delete Draft</v-btn
+                                    >
                                 </div>
                             </v-row>
                         </template>
@@ -767,6 +776,20 @@ const deleteData = (id, index) => {
     requiredData();
 };
 
+const deleteDraft = () => {
+    sbOptions.value = {
+            status: true,
+            type: 'success',
+            text: 'Draft has been removed!',
+        };
+
+    localStorage.removeItem("draft-transfer");
+    setTimeout(() => { 
+        location.reload();
+    }, 500);
+    
+};
+
 const saveDraft = () => {
     sbOptions.value = {
         status: true,
@@ -783,11 +806,10 @@ const saveDraft = () => {
         type: "transfer",
     };
 
-    localStorage.setItem("draft-transfer", encryptData(formData));
-
-    isDraft.value = true;
-
+    localStorage.setItem("draft-transfer", encryptData(formData)); 
+    
     setTimeout(() => {
+        isDraft.value = true;
 
         sbOptions.value = {
                 status: true,
