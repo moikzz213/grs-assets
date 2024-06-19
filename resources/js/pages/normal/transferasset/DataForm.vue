@@ -580,7 +580,7 @@
                                         @click="saveDraft"
                                         color="warning"
                                         v-if="!route.params.id"
-                                        >Save Draft</v-btn
+                                        >Save as Draft</v-btn
                                     >
                                 </div>
                             </v-row>
