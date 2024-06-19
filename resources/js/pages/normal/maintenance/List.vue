@@ -180,7 +180,7 @@
                       :icon="mdiEyeOutline"
                       class="mx-1"
                     />
-                    <v-icon
+                    <!-- <v-icon
                       size="small"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -189,7 +189,7 @@
                       @click="() => deleteUser(item.id)"
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
