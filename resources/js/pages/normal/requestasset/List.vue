@@ -108,13 +108,13 @@
                   class="text-left text-capitalize cursor-pointer"
                   @click="OrderByField('transferred_from')"
                 >
-                  Location From
+                  From
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
                   @click="OrderByField('transferred_to')"
                 >
-                  Location To
+                  To
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
@@ -193,7 +193,7 @@
                       :icon="mdiPencil"
                       class="mx-1"
                     />
-                    <v-icon
+                    <!-- <v-icon
                       size="small"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -202,7 +202,7 @@
                       @click="() => deleteUser(item.id)"
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
