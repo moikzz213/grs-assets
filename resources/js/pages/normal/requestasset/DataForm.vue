@@ -1068,6 +1068,8 @@ const submitRequest = () => {
                 text: msg,
             };
 
+            localStorage.removeItem("draft-request");
+
             if (!route.params.id) {
                 setTimeout(() => {
                     router
