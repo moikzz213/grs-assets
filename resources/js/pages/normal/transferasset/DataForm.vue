@@ -868,8 +868,8 @@ const submitRequest = () => {
             };
 
             isDraft.value = false;
-            localStorage.setItem("draft-transfer", null);
-
+           
+            localStorage.removeItem("draft-transfer");
             if (!route.params.id) {
                 setTimeout(() => {
                     router
