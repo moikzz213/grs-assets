@@ -22,6 +22,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/fetch/request-assets/by-requestor/data/{id}', [RequestAssetController::class, 'fetchDataByID'])->name('fetch.requestor.assets.id');
     Route::post('/request-asset/store-update/data', [RequestAssetController::class, 'storeUpdate'])->name('request.asset-store.update');
     Route::post('/request-asset/change-request/data', [RequestAssetController::class, 'changeRequest'])->name('change.request');
+    Route::post('/user-transfer/approval', [RequestAssetController::class, 'transferApproval'])->name('profile.transfer.approval');
 
     Route::get('/fetch/request-asset/approval-setup-fetch/{id}', [ApprovalSetupController::class, 'fetchDataByIDRequestAsset'])->name('admin.request.asset.fetch.by.id');
 

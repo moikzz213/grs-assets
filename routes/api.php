@@ -110,7 +110,7 @@ Route::middleware('authkey')->group(function () {
     Route::get('/admin/user/single/{id}', [ProfileController::class, 'getProfileById'])->name('profile.fetch.by.id');
     Route::get('/fetch/pages-slug', [PageController::class, 'fetchData'])->name('admin.fetch.slug.pages');
     Route::post('/store-page/settings', [PageController::class, 'storeUpdate'])->name('admin.storeUpdate');
-    Route::post('/store-page/settings-capabilities/profile', [ProfileController::class, 'storePageCapabilities'])->name('profile.page.capabilities');
+    Route::post('/store-page/settings-capabilities/profile', [ProfileController::class, 'storePageCapabilities'])->name('profile.page.capabilities'); 
 
     Route::post('/store-update/setup-status', [StatusController::class, 'storeUpdate'])->name('admin.status.store.update');
     Route::get('/fetch-global/setup-status', [StatusController::class, 'fetchData'])->name('admin.fetch.status.data');
