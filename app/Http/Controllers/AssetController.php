@@ -396,7 +396,7 @@ class AssetController extends Controller
         $req = RequestAsset::where('types','=', 'request')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
         $transfer = RequestAsset::where('types','transfer')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
 
-        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(3);
+        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(5);
         $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(5);
         $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(5); 
 
@@ -432,7 +432,7 @@ class AssetController extends Controller
                     'asset_code' => $v->asset_code,
                     'type' => $v->status ? "asset(".$v->status['title'].')' : '',
                     'author' => $v->created_by ? $v->created_by['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
@@ -448,7 +448,7 @@ class AssetController extends Controller
                     'asset_code' => $v->asset ? $v->asset['asset_code'] : $v->asset_code,
                     'type' => $v->status ? "incident(".$v->status['title'].')' : '',
                     'author' => $v->profile ? $v->profile['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
@@ -460,21 +460,21 @@ class AssetController extends Controller
                     'company' => $v->company ? $v->company['title'] : '',
                     'location' => $v->transfer_to ? $v->transfer_to['title'] : '',
                     'category' => '',
-                    'asset_name' => '',
+                    'asset_name' => $v->subject,
                     'asset_code' => '',
                     'type' => $v->types."(".$v->status.')',
                     'author' => $v->profile ? $v->profile['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
 
         $merge_data = array_merge($newArray, $newArray2, $newArray3);
-
+       
         usort($merge_data, function ($a, $b) {
             return strtotime($b['date']) -strtotime($a['date']);
         });
-
+       
         $merge_data = array_slice($merge_data, 0, 10);
 
         $response = array('count' => array('incident' => $incidents, 'maintenance' => $maintenance, 'request' => $req, 'transfer' => $transfer),
