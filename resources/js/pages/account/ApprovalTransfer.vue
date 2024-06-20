@@ -27,6 +27,9 @@
             <div class="d-flex align-center">
               <v-btn :disabled="!isValidate" :loading="isLoading" color="primary" @click="transferApproval"> Transfer approval confirmation</v-btn>
             </div>
+            <div class="text-caption mt-2">
+                Note: Be sure that the employee has been added in Approval Setup.
+            </div>
           </v-card-text>
        
       </v-card>
