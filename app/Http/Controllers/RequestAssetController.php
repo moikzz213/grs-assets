@@ -374,4 +374,11 @@ class RequestAssetController extends Controller
            // }
           //  return response()->json(array('access' => false, 'data' => null), 200);
     }
+
+
+    public function transferApproval(Request $request){
+        RequestAsset::where(['reminder_profile_id' => $request->from])->update(['reminder_profile_id' => $request->to]);
+        $query = RequestApproval::where(['profile_id' => $request->from])->whereIn('status', ['pending', 'awaiting-approval'])->update(['profile_id' => $request->to]);
+        return response()->json(array('success' => true, 'data' => $query), 200);
+    }
 }
