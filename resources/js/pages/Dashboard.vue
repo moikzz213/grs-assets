@@ -48,7 +48,7 @@
                                 <th class="text-left"> Company </th>
                                 <th class="text-left"> Location </th>
                                 <th class="text-left"> Category </th>
-                                <th class="text-left"> AssetName</th>
+                                <th class="text-left"> AssetName / Subject</th>
                                 <th class="text-left"> AssetCode</th>
                                 <th class="text-left"> Type</th>
                                 <th class="text-left"> Author</th>
@@ -65,7 +65,7 @@
                                 <td>{{ item.asset_code }}</td>
                                 <td class="text-capitalize">{{ item.type }}</td>
                                 <td>{{ item.author }}</td>
-                                <td>{{ item.date }} </td> 
+                                <td>{{ useFormatDate(item.date) }} </td> 
                                </tr>
                             </tbody>
                           </v-table>
@@ -83,6 +83,7 @@ import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
+import { useFormatDate } from "@/composables/formatDate"
 const authStore = useAuthStore();
 const router = useRouter();
 const cards = ref([
