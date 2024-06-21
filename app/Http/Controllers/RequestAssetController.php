@@ -377,8 +377,21 @@ class RequestAssetController extends Controller
 
 
     public function transferApproval(Request $request){
-        RequestAsset::where(['reminder_profile_id' => $request->from])->update(['reminder_profile_id' => $request->to]);
-        $query = RequestApproval::where(['profile_id' => $request->from])->whereIn('status', ['pending', 'awaiting-approval'])->update(['profile_id' => $request->to]);
+        if($request->type == 'all'){
+            $query = RequestApproval::where(['profile_id' => $request->from])->whereIn('status', ['pending', 'awaiting-approval'])->update(['profile_id' => $request->to]);
+            RequestAsset::where(['reminder_profile_id' => $request->from])->whereIn('status', ['pending', 'awaiting-approval'])->update(['reminder_profile_id' => $request->to]);
+        }else{
+            $query = RequestApproval::where(['profile_id' => $request->from, 'approval_type' => $request->type])->whereIn('status', ['pending', 'awaiting-approval'])->get();
+            if($query && count($query) > 0){
+                foreach ($query as $key => $value) { 
+                    RequestAsset::where(['id' => $value->request_asset_id])->whereIn('status', ['pending', 'awaiting-approval'])->update(['reminder_profile_id' => $request->to]);
+                }
+            }
+            
+            $query = RequestApproval::where(['profile_id' => $request->from, 'approval_type' => $request->type])->whereIn('status', ['pending', 'awaiting-approval'])->update(['profile_id' => $request->to]);
+        }
+
+        
         return response()->json(array('success' => true, 'data' => $query), 200);
     }
 }
