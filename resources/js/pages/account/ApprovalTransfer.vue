@@ -99,7 +99,7 @@
     isValidate.value = false;
     employeeValidate.value = false;
     isLoading.value = true;  
-    
+    employeeCode.value = employeeCode.value.trim()
     await clientKey(authStore.token)
       .get("/api/admin/add-new/profile-by/ecode/"+ employeeCode.value)
       .then((response) => {

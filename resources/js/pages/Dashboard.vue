@@ -40,8 +40,7 @@
                   <v-row>
                     <v-col col="12">
                       <v-table
-                            fixed-header
-                            height="590px"
+                            fixed-header 
                           >
                             <thead>
                               <tr>
