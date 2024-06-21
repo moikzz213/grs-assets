@@ -8,7 +8,7 @@
           class="mr-3 mb-3"
           :color="`${isActive == 'details' ? 'primary' : 'white'}`"
           >Details</v-btn
-        >
+        > 
         <v-btn
           v-if="isEdit"
           class="mr-3 mb-3"
@@ -22,6 +22,7 @@
             (authStore.user.profile.role == 'facility' ||
               authStore.user.profile.role == 'admin' ||
               authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'commercial-manager' ||
               authStore.user.profile.role == 'technical-operation')
           "
           class="mr-3 mb-3"
@@ -35,6 +36,7 @@
             (authStore.user.profile.role == 'facility' ||
               authStore.user.profile.role == 'admin' ||
               authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'commercial-manager' ||
               authStore.user.profile.role == 'technical-operation')
           "
           class="mr-3 mb-3"
@@ -236,6 +238,7 @@
               <h4 class="headline mb-0 text-center">WARRANTY INFORMATION</h4>
             </v-card-text>
           </v-card>
+         
           <v-row v-if="objData.asset?.pivot_warranties?.length > 0">
             <div class="v-col-12 v-col-md-12">
               <v-card
@@ -269,6 +272,7 @@
             </v-card-text>
           </v-card>
         </div>
+ 
         <Attachment
           v-else-if="isEdit && isActive == 'attachment'"
           :incident-id="parseInt(route.params.id)"
@@ -276,10 +280,12 @@
           @save="DataUpdateEmit"
           :objectdata="objData"
         />
+
         <Facility
           v-else-if="
             (loggedRole == 'superadmin' ||
               loggedRole == 'admin' ||
+              loggedRole == 'commercial-manager' ||
               loggedRole == 'technical-operation' ||
               loggedRole == 'facility') &&
             isEdit &&

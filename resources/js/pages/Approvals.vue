@@ -118,20 +118,20 @@
                 ></v-textarea>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+               
                 <v-text-field
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="
-                        !is_asset_supervisor || requestStatus == 'cancelled'
+                    :readonly="(!is_asset_supervisor &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'
                     "
                     :class="`${
-                        !is_asset_supervisor || requestStatus == 'cancelled'
+                        (!is_asset_supervisor &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
-                    v-if="is_asset_supervisor && requestStatus != 'cancelled'"
+                    v-if="(is_asset_supervisor || is_realeasing || is_transport) && requestStatus != 'cancelled'"
                 ></v-text-field>
 
                 <div
