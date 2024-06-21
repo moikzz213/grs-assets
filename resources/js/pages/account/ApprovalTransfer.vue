@@ -7,7 +7,7 @@
            <div class="text-caption">TRANSFER ASSET / REQUEST ASSET</div> 
            <div class="text-caption mt-4 text-capitalize">FROM: {{ props.user.display_name }}</div>
           </v-card-title>
-          <v-card-text class="pb-6">
+          <v-card-text class="pb-6"> 
             <v-text-field 
             label="Search Employee Code" 
             v-model="employeeCode"
@@ -21,10 +21,26 @@
             @click:append-inner="searchEmployee"
             @keydown.enter="searchEmployee"
             /> 
+
+            <v-autocomplete
+            v-if="employeeValidate"
+            label="Select Approval Type" 
+            v-model="approvalType"
+            :items="approvalTypes"
+            item-value="value"
+            item-title="label"
+            variant="outlined" 
+            hide-details
+            density="compact"
+             @update:modelValue="selectApprovalType"
+            class="my-4" 
+            /> 
             <div :class="`${responseMode} my-5`">
                 {{ msg }}
             </div>
+         
             <div class="d-flex align-center">
+            
               <v-btn :disabled="!isValidate" :loading="isLoading" color="primary" @click="transferApproval"> Transfer approval confirmation</v-btn>
             </div>
             <div class="text-caption mt-2">
@@ -52,8 +68,36 @@
  
   const dataTransfer = ref({});
   const responseMode = ref('');
+  const approvalType = ref(null);
+
+  const approvalTypes = ref([
+    {
+      label: 'All',
+      value: 'all',
+    },
+    {
+      label: 'Change Receiver only',
+      value: 'receiver',
+    },
+    {
+      label: 'Change Transport only',
+      value: 'transport',
+    },
+    {
+      label: 'Change Releasing only',
+      value: 'releasing',
+    },
+
+  ]);
+
+  const selectApprovalType = () => {  
+    isValidate.value = true;
+  }
+
+  const employeeValidate = ref(false);
   const searchEmployee = async () => {
     isValidate.value = false;
+    employeeValidate.value = false;
     isLoading.value = true;  
     
     await clientKey(authStore.token)
@@ -63,12 +107,11 @@
         msg.value = "Employee Not Found.";
         if(response?.data?.id){
             responseMode.value = 'text-info';
-            dataTransfer.value = response.data;
-            isValidate.value = true;
+            dataTransfer.value = response.data; 
             msg.value = "Employee: "+ response.data.display_name;
+            employeeValidate.value = true;
         }
-        isLoading.value = false;
-        
+        isLoading.value = false; 
       })
       .catch((err) => {
         isLoading.value = false;
@@ -82,7 +125,8 @@
 
         let formData = {
             from: props.user?.id,
-            to: dataTransfer.value.id
+            to: dataTransfer.value.id,
+            type: approvalType.value
         }
         await clientKey(authStore.token)
         .post("/api/user-transfer/approval", formData)
