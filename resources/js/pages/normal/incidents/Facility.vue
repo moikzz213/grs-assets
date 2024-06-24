@@ -60,22 +60,22 @@
                                     label="Status*"
                                 >
                                 </v-autocomplete>
+                                <v-btn class="mt-3" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Save</v-btn>
                             </div>
                             <div class="v-col-12 v-col-md-8">
                                 <v-textarea
-                                class="my-2"
+                                class="mt-2"
                                     variant="outlined"
-                                    density="compact"
+                                    density="compact" 
                                     label="Add some remarks"
-                                    v-model="objData.remarks_data"
+                                    v-model="remarks_data"
                                 ></v-textarea>
+                                <v-btn class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitRemarks" color="primary">Submit Remarks</v-btn>
                             </div>
                         </v-row>
                     </div>
                     <v-divider class="mt-3"></v-divider>
-                    <div class="v-col-12">
-                        <v-btn class="" size="small" :disabled="!objData.priority || !objData.handled_by || !objData.status_id" @click="submitForm" color="primary">Submit</v-btn>
-                    </div>
+                    
                 </v-row>
                 <v-row>
                     <div class="v-col-12">
@@ -127,12 +127,29 @@ const fetchFacilityTeam = async () => {
         .catch((err) => {});
 };
 
+const remarks_data = ref('');
+
 const submitForm = () => {  
     objData.value.profile_id = authStore.user.profile.id;
     clientKey(authStore.token)
         .post("/api/incident/update-facility-team", objData.value)
+        .then((res) => { 
+            emit("saved", res.data.message);
+        })
+        .catch((err) => {});
+}
+
+const submitRemarks = () => {  
+    objData.value.profile_id = authStore.user.profile.id;
+    let formData = {
+        id: objData.value.id,
+        profile_id: authStore.user.profile.id,
+        remarks: remarks_data.value
+    }
+    clientKey(authStore.token)
+        .post("/api/incident/update-facility-team-remarks", formData)
         .then((res) => {
-            objData.value.remarks_data = '';
+            remarks_data.value = '';
             emit("saved", res.data.message);
         })
         .catch((err) => {});

@@ -436,7 +436,8 @@
                         </v-row>
                     </v-card-text>
                 </v-card>
-                <v-card v-if="objData.request_type_id == 2">
+               
+                <v-card v-if="objData.extra_attachment">
                     <v-card-text >
                         <div v-if="!isEdit || (isEdit && objData.requestor_id == authStore.user.profile.id)">
                         <div>Additional File can be upload here</div>
@@ -1108,9 +1109,10 @@ const setupApprovals = async () => {
             "/api/fetch/request-asset/approval-setup-fetch/" +
                 objData.value.request_type_id+"?isEdit="+upIsEdit
         )
-        .then((res) => {
+        .then((res) => { 
+           
+            objData.value.extra_attachment = res.data.enable_attachment;
             approvalSetupList.value = res.data?.stages;
-            console.log("approvalSetupList.value 1111",res.data?.stages);
             if (route.params.id && approvalSetupList.value.length > 0) {
                 approvalSetupList.value.map((o, i) => {
                     o.profile_id = onUpdateApproval.value[i].profile_id;
@@ -1174,7 +1176,7 @@ const setupApprovals = async () => {
                         };
                 }
             }
-            console.log("approvalSetupList.value",approvalSetupList.value);
+        
             if (res.data?.stages.length > 0) {
                 hasSignatories.value = true;
             } else {
