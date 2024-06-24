@@ -53,7 +53,15 @@
                                                 >
                                                     Title
                                                 </th>
-
+                                                <th
+                                                    class="text-left text-capitalize cursor-pointer"
+                                                    @click="
+                                                        OrderByField('title')
+                                                    "
+                                                >
+                                                    Attachment <br/>
+                                                    <small>(enabled)</small>
+                                                </th>
                                                 <th
                                                     class="text-left text-capitalize cursor-pointer"
                                                     @click="
@@ -100,6 +108,7 @@
                                                 :key="item.id"
                                             >
                                                 <td>{{ item.title }}</td>
+                                                <td>{{ item.enable_attachment ? 'Yes' : 'No' }}</td>
                                                 <td>
                                                     {{
                                                         item.profile

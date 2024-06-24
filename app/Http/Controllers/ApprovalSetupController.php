@@ -73,12 +73,13 @@ class ApprovalSetupController extends Controller
         
         if($request->id){
             $query = ApprovalSetup::where('id', $request->id)->first();
-            $query->update(array('title' => $request->title,'profile_id' => $request->profile_id));
+            $query->update(array('title' => $request->title,'profile_id' => $request->profile_id, 'enable_attachment' => $request->enable_attachment));
             $message = 'Data has been updated';
             $log_type = 'update';
             $ID = $request->id;
         }else{
-            $query = ApprovalSetup::create(array('title' => $request->title,'profile_id' => $request->profile_id, 'type' => $request->type));
+            $query = ApprovalSetup::create(array('title' => $request->title,'profile_id' => $request->profile_id, 'type' => $request->type, 
+            'enable_attachment' => $request->enable_attachment));
             $message = 'Data has been created';
             $log_type = 'new';
             $ID = $query->id;
