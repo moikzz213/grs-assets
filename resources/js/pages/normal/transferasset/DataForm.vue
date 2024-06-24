@@ -412,6 +412,131 @@
                         </v-row>
                     </v-card-text>
                 </v-card>
+                <v-card v-if="objData.extra_attachment">
+                    <v-card-text >
+                        <div v-if="!isEdit || (isEdit && objData.requestor_id == authStore.user.profile.id)">
+                        <div>Additional File can be upload here</div>
+                            <Studio
+                                :options="{
+                                    multiSelect: true,
+                                    type: 'transfer-asset',
+                                }"
+                                @select="studioSelectResponseMultiple"
+                            />
+                        </div>
+                        <v-row v-if="selectedFiles?.length > 0" class="px-1 mt-4">
+                            <div
+                                v-for="(file, index) in selectedFiles"
+                                :key="file.id"
+                                class="v-col-12 v-col-md-2 pa-2"
+                                style="position: relative"
+                            >
+                                <v-btn
+                                    v-if="
+                                        isEdit &&
+                                        (formObjData.status == 'pending' ||
+                                            formObjData.status == 'cancelled')
+                                    "
+                                    style="
+                                        position: absolute;
+                                        top: 0;
+                                        right: 0;
+                                        z-index: 1;
+                                    "
+                                    :icon="mdiClose"
+                                    size="20px"
+                                    color="error"
+                                    @click="
+                                        () => removeAttachmentMultiple(file.id)
+                                    "
+                                >
+                                </v-btn>
+                                
+                                <v-card
+                                    @click="() => openAttachmentMultiple(file,index)"
+                                >
+                                    <v-img
+                                        v-if="
+                                            file.mime == 'image/jpeg' ||
+                                            file.mime == 'image/png'
+                                        "
+                                        :src="baseURL + '/file/' + file.path"
+                                        cover
+                                        aspect-ratio="1"
+                                    >
+                                    </v-img>
+                                    <v-img
+                                        v-else
+                                        :src="
+                                            baseURL +
+                                            '/assets/images/pdf-image.png'
+                                        "
+                                        cover
+                                        aspect-ratio="1"
+                                    >
+                                    </v-img>
+                                </v-card>
+                            </div>
+
+                            <v-dialog
+                                v-model="dialogAttachment"
+                                width="95%"
+                                max-width="900"
+                            >
+                                <v-card class="bg-black">
+                                    <v-carousel
+                                        hide-delimiter-background
+                                        show-arrows="hover"
+                                        height="680px"
+                                        v-model="currentSlider"
+                                    >
+                                        <v-carousel-item
+                                            v-for="(item, i) in selectedFiles"
+                                            :key="i"
+                                            reverse-transition="fade"
+                                            transition="fade"
+                                        >
+                                            <div
+                                                :style="`${
+                                                    fileType == 'pdf'
+                                                        ? 'height: 980px;'
+                                                        : 'height: 680px;'
+                                                } 
+                                                        width: 100%;
+                                                        `"
+                                                class="d-flex align-center justify-center"
+                                            >
+                                                <v-img
+                                                    v-if="
+                                                        fileType == 'jpg' ||
+                                                        fileType == 'jpeg' ||
+                                                        fileType == 'png'
+                                                    "
+                                                    :src="
+                                                        baseURL +
+                                                        '/file/' +
+                                                        item.path
+                                                    "
+                                                ></v-img>
+                                                <object
+                                                    v-if="fileType == 'pdf'"
+                                                    :data="
+                                                        baseURL +
+                                                        '/file/' +
+                                                        item.path
+                                                    "
+                                                    type="application/pdf"
+                                                    width="100%"
+                                                    height="800px"
+                                                ></object>
+                                            </div>
+                                        </v-carousel-item>
+                                    </v-carousel>
+                                </v-card>
+                            </v-dialog>
+                        </v-row>
+                    </v-card-text>
+                </v-card>
                 <v-card class="my-2 page-break">
                     <v-card-text>
                         <v-row> 
@@ -638,6 +763,7 @@ import { encryptData, decryptData } from "@/composables/encrypt";
 import { clientKey } from "@/services/axiosToken";
 import {
     mdiTrashCan,
+    mdiClose,
     mdiAccountCheck,
     mdiAccountClockOutline,
     mdiAccountDetails,
@@ -687,6 +813,31 @@ const baseURL = ref(window.location.origin);
 const studioSelectResponse = (index, v) => {
     assetDataObj.value[index].attachment = v[0];
 };
+
+const selectedFiles = ref([]);
+const studioSelectResponseMultiple = (v) => {
+    let fileExist = null;
+    v.map((sudioFile) => {
+        fileExist = selectedFiles.value.find((f) => f.id == sudioFile.id);
+        if (!fileExist) {
+            selectedFiles.value.push(sudioFile);
+        }
+    });
+};
+
+const removeAttachmentMultiple = (theId) => {
+    selectedFiles.value = selectedFiles.value.filter((f) => f.id !== theId);
+};
+
+const fileType = ref("image");
+const openAttachmentMultiple = (file,index) => {
+    let mimeType = file.path.split(".");
+    fileType.value = mimeType[mimeType.length - 1];
+
+    currentSlider.value = index;
+    dialogAttachment.value = true;
+};
+
 const dialogAttachment = ref(false);
 const currentSlider = ref(1);
 const openAttachment = (item) => {
@@ -819,7 +970,7 @@ const saveDraft = () => {
     }, 800);
  
 }
-
+const selectedFilesIds = computed(() => selectedFiles.value.map((sf) => sf.id));
 const submitRequest = () => {
     sbOptions.value = {
         status: true,
@@ -847,6 +998,7 @@ const submitRequest = () => {
         profile_id: authStore.user.profile.id,
         role: authStore.user.profile.role,
         type: "transfer",
+        additionalFiles: selectedFilesIds.value,
     };
 
     clientKey(authStore.token)
@@ -898,7 +1050,7 @@ const setupApprovals = async () => {
         )
         .then((res) => {
             approvalSetupList.value = res.data?.stages;
-
+            objData.value.extra_attachment = res.data.enable_attachment;
             if (route.params.id && approvalSetupList.value.length > 0) {
                 approvalSetupList.value.map((o, i) => {
                     o.profile_id = onUpdateApproval.value[i].profile_id;
@@ -1028,7 +1180,7 @@ onMounted(() => {
 
         assetDataObj.value = v.items;
         getCurrentApprover.value = v.request_approvals?.filter((e)=> e.status == 'awaiting-approval')?.[0];
-       
+        selectedFiles.value = v.attachment;
         setupApprovals();
     } else {
         objData.value.company_id = authStore.user.profile.company_id;

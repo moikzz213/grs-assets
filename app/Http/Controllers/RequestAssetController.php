@@ -180,7 +180,7 @@ class RequestAssetController extends Controller
         $query->request_approvals()->createMany($assetApprovals);
         $query->items()->createMany($request->assets);
          
-        if($request->data['request_type_id'] == 2){
+        if($request->data['extra_attachment'] == 1){
             $query->attachment()->sync($request['additionalFiles']); 
 
         }
