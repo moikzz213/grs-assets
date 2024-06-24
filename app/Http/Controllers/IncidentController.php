@@ -263,6 +263,22 @@ class IncidentController extends Controller
         return false;
     }
 
+    public function updateIncidentFacilityTeamRemarks(Request $request){
+        
+        if($request->id){
+
+            $query = Incident::where('id', $request->id)->first();
+            
+            if($request->remarks){
+                $query->remarks()->create(['remarks' => $request->remarks, 'profile_id' => $request->profile_id]);
+            }
+
+            return response()->json(array('message' => 'Remarks has been added.'), 200);
+        }
+
+        return false;
+    }
+
     public function fetchDataByID($id){
         $query = Incident::where('id', $id)
         ->with(
