@@ -254,7 +254,7 @@
                                             density="compact" 
                                             clearable
                                             ></v-text-field>
-                                             <small class="text-center">Add SN. No for specific transfer approval</small>
+                                             <small class="text-center">Add SN. No for specific transfer approval (SN-300005)</small>
                                         </div>
                                     </v-row>
                                     <v-row> 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="v-col-12 pt-5">
-            <v-row v-if="props.objectdata.profile_id == loggedID">
+            <v-row v-if="props.objectdata.profile_id == loggedID || ( loggedRole == 'technical-operation' || loggedRole == 'facility')">
                 <div class="v-col-12 pb-2">
                     <Studio
                         :options="{ multiSelect: true, type: 'incident' }"
@@ -9,6 +9,7 @@
                     />
                 </div>
             </v-row>
+            
             <v-row v-if="selectedFiles.length > 0" class="px-1">
                 <div
                     v-for="(file, index) in selectedFiles"
@@ -16,12 +17,13 @@
                     class="v-col-12 v-col-md-2 pa-2"
                     style="position: relative"
                 >
+                
                     <v-btn
                         style="position: absolute; top: 0; right: 0; z-index: 1"
                         :icon="mdiClose"
                         size="26px"
                         color="error"
-                        v-if="props.objectdata.profile_id == loggedID"
+                        v-if="props.objectdata.profile_id == loggedID || file.profile_id == loggedID  "
                         @click="() => removeAttachment(file.id)"
                     >
                     </v-btn>
@@ -73,7 +75,7 @@
                     </v-sheet>
                 </div>
             </v-row>
-            <v-row v-if="props.objectdata.profile_id == loggedID">
+            <v-row v-if="props.objectdata.profile_id == loggedID || ( loggedRole == 'technical-operation' || loggedRole == 'facility')">
                 <div class="v-col-12">
                     <v-btn color="primary" @click="saveImage">Save</v-btn>
                 </div>
@@ -147,7 +149,8 @@ const saveImage = () => {
         .catch((err) => {});
 };
 const loggedID = ref(authStore.user.profile.id);
-
+const loggedRole = ref(authStore.user.profile.role);
+ 
 onMounted(() => {
     selectedFiles.value = props.attachment; 
 });
