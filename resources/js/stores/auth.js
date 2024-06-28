@@ -37,6 +37,13 @@ const removeCache = () => {
     localStorage.removeItem("request-asset-search");
     localStorage.removeItem("transfer-asset-search");
     localStorage.removeItem("user-search");
+
+    localStorage.removeItem("incident-filter-row");
+    localStorage.removeItem("incident-filter-company");
+    localStorage.removeItem("incident-filter-location");
+    localStorage.removeItem("incident-filter-type");
+    localStorage.removeItem("incident-filter-status");
+    localStorage.removeItem("incident-search");
 }
 
 export const useAuthStore = defineStore("authUser", {

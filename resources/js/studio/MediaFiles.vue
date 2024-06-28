@@ -2,12 +2,12 @@
   <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <div class="mb-3">
       <v-row v-if="files.length > 0" class="ma-0">
-        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;">
+        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;"> 
           <v-img
-          v-if="file.mime.includes('image/png','image/jpeg','image/gif', 'image/jpg')"
+          v-if="mimeTypes.includes(file.mime)"
             cover
             :aspect-ratio="1"
-            class="cursor-pointer"
+            :class="`${file.mime} cursor-pointer`"
             :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
             :src="baseURL + '/file/' + file.path"
             @click="() => selectFile(file)"
@@ -20,7 +20,7 @@
           v-else
             cover
             :aspect-ratio="1"
-            class="cursor-pointer"
+            :class="`${file.mime} cursor-pointer`"
             :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
             :src="baseURL + '/assets/images/pdf-image.png'"
             @click="() => selectFile(file)"
@@ -85,6 +85,7 @@ const loadingFiles = ref(false);
 const loadMoreNumber = ref(1);
 const getMaxLimit = ref(0);
 const getCurrentLoad= ref(0);
+const mimeTypes = ref(['image/jpeg', 'image/gif','image/png', 'image/jpg']);
 const getFiles = async () => {
   loadingFiles.value = true;
   await clientKey(authStore.token)
