@@ -16,6 +16,7 @@
       v-on:error="handleFilePondError"
       allowProcess="false"
     />
+    <small class="text-center text-caption">Max 4 files uploads at a time. ( .png, .jpg & .pdf )</small>
     <div class="mt-auto d-flex justify-end">
       <v-btn color="primary" @click="handleUpload">Upload</v-btn>
     </div>
