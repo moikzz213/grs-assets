@@ -11,7 +11,7 @@ use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
 
 Route::middleware('authkey')->group(function () {
-    Route::post('/asset/save-history', [AssetController::class, 'saveAssetHistory'])->name('admin.asset.history.save');
+    Route::post('/asset/save-history', [AssetController::class, 'saveAssetHistory'])->name('admin.asset.history.save'); 
 
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
     Route::post('/incident/update-facility-team-remarks', [IncidentController::class, 'updateIncidentFacilityTeamRemarks'])->name('incident.update.facility.remarks');
@@ -48,6 +48,7 @@ Route::middleware('authkey')->group(function () {
     Route::post('/approval-setups/change-signatory', [ApprovalSetupController::class, 'changeSignatory'])->name('admin.approval.change.signatory');
 
 });
+Route::get('/fetch-asset-info/by/asset-code-validation/{code}', [AssetController::class, 'fetchAssetCodeApprovalValidation'])->name('admin.asset.fetch-code.validation');
 Route::post('/send-mail-reset-password', [UserApiController::class, 'resetPasswordMail'])->name('mail.reset.password');
 Route::prefix('pv')->group(function () {
     Route::post('/fetch/request-assets/data', [RequestAssetController::class, 'publicFetchRequest'])->name('public.fetch.request.id');

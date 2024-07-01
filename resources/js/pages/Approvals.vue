@@ -7,6 +7,7 @@
                 >
             </div>
         </v-row>
+ 
         <v-row class="mt-0 pt-0">
             <div class="v-col-12 v-col-md-3 mt-auto font-weight-bold">
                 <div class="d-flex">
@@ -123,15 +124,16 @@
                     v-model="item.asset_code"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    :readonly="(!is_asset_supervisor &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'
+                    hide-details 
+                    @update:modelValue="checkAssetCode(item.asset_code, index)"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'
                     "
                     :class="`${
-                        (!is_asset_supervisor &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
-                    v-if="(is_asset_supervisor || is_realeasing || is_transport) && requestStatus != 'cancelled'"
+                    v-if="(is_asset_supervisor || is_commercial_manager || is_realeasing || is_transport) && requestStatus != 'cancelled'"
                 ></v-text-field>
 
                 <div
@@ -840,6 +842,7 @@ import { useFormatDate } from "@/composables/formatDate.js";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import {
     mdiCheckBold,
+    mdiEye,
     mdiCloseThick,
     mdiCheckboxBlankOutline,
     mdiTruckDelivery,
@@ -983,6 +986,59 @@ const cancelReject = () => {
     rejectReason.value = false;
     reasonOfReject.value = "";
 };
+
+const checkAssetCode = (v, index) => { 
+    if(v.length < 11 || dataObj.value.data.types !== 'request'){
+        return false;
+    }
+
+    sbOptions.value = {
+                status: false, 
+            };
+
+    let code = v.split("-");
+ 
+    if(code.length < 3){
+        return false;
+    }
+
+    sbOptions.value = {
+                status: true,
+                type: "info",
+                text: "Validating asset code...",
+            };
+    axios
+    .get("/api/fetch-asset-info/by/asset-code-validation/"+ v)
+    .then((res) => {
+       setTimeout(() => { 
+            if(!res.data.status){
+                sbOptions.value = {
+                    status: true,
+                    type: "error",
+                    text: "Asset Code is invalid",
+                }; 
+                return;
+            } 
+
+            if(res.data.status.title === "In-Used"){
+                sbOptions.value = {
+                    status: true,
+                    type: "error",
+                    text: "Asset is currently In-Used. You cannot use this asset code.",
+                };
+
+                assetsOnly.value[index].asset_code = '';
+                return;
+            }
+
+            sbOptions.value = {
+                    status: true,
+                    type: "success",
+                    text: "Asset is available.",
+                };
+        }, 1000);
+    }); 
+}
 const approvalFn = (item, isReject = null) => {
     rejectReason.value = false;
     if (requestStatus.value == "cancelled" || item.status == "reject") {
