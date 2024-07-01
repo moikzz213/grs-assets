@@ -324,6 +324,11 @@ class AssetController extends Controller
         return response()->json($warranties, 200);
     }
 
+    public function fetchAssetCodeApprovalValidation($code){
+        $query = Asset::select('id','asset_name','asset_code','status_id')->where('asset_code', '=',$code)->with('status')->first();
+        return response()->json($query, 200);
+    }
+
     public function fetchAssetCode($code){
         $query = Asset::where('asset_code', '=',$code)->with('pivot_warranties.vendor', 'incidents.status', 'incidents.type', 'incidents.remarks','category','company','location','status')->first();
         return response()->json($query, 200);

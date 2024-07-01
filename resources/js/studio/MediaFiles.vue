@@ -2,7 +2,8 @@
   <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <div class="mb-3">
       <v-row v-if="files.length > 0" class="ma-0">
-        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;"> 
+        <div v-for="file in files" :key="file.id" class="v-col-12 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;
+        "> 
           <v-img
           v-if="mimeTypes.includes(file.mime)"
             cover
@@ -29,7 +30,8 @@
             }`"
           >
           </v-img>
-          <small style="font-size:10px;">{{ limitText(file.title, 25) }}.{{ getExtension(file) }}</small> 
+          <small style="font-size:10px;">{{ limitText(file.title, 25) }}.{{ getExtension(file) }}</small>
+          <div style="font-size:10px;">{{ useFormatDateTime(file.created_at) }}</div> 
         </div>
       </v-row>
       <v-sheet
@@ -63,7 +65,7 @@ import { ref, computed } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { limitText } from "@/composables/generateRandomString.js";
-
+import { useFormatDateTime } from "@/composables/formatDate.js"
 const props = defineProps({
   multiSelect: {
     type: Boolean,
