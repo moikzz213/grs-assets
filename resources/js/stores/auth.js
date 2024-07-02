@@ -28,9 +28,17 @@ const removeCache = () => {
     localStorage.removeItem("asset-filter-category");
     localStorage.removeItem("transfer-filter-status");
     localStorage.removeItem("asset-filter-ponum");
+    localStorage.removeItem("request-filter-company");
+    localStorage.removeItem("transfer-filter-company");
+    localStorage.removeItem("transfer-filter-from");
+    localStorage.removeItem("transfer-filter-location");
+    localStorage.removeItem("transfer-filter-row");
+    localStorage.removeItem("asset-filter-row");
     localStorage.removeItem("asset-filter-location");
     localStorage.removeItem("request-filter-status");
     localStorage.removeItem("request-filter-location");
+    localStorage.removeItem("request-filter-row");
+    localStorage.removeItem("request-filter-from");
     localStorage.removeItem("asset-filter-company");
     localStorage.removeItem("asset-filter-status");
     localStorage.removeItem("asset-list-search");
