@@ -331,7 +331,12 @@ class RequestAssetController extends Controller
                     if(count($updateAsset)> 0){
                         $getAssetIds = array();
                         foreach ($updateAsset as $k => $v) {
-                            $v->update(array('location_id' => $queryRequest->transferred_to));
+                            $updateData = array('location_id' => $queryRequest->transferred_to);
+
+                            if($queryRequest->transferred_to === 45){
+                                $updateData = array('location_id' => $queryRequest->transferred_to, 'status_id' => 4);
+                            }
+                            $v->update($updateData);
 
                             //if($pluckAssetCodes[$k] == $v->asset_code){
                                 $getAssetIds[] = array('asset_id' => $v->id, 'location_id' => $queryRequest->transferred_from,
