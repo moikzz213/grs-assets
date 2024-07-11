@@ -43,14 +43,13 @@ const router = createRouter({
 
 function returnAccess(data) { 
     let hasAccess = false;
-    authStore.access.map((o) => {
-     
+    authStore.access.map((o) => { 
         if (data.title == o.slug) {
             hasAccess = true;
            
             if (data.type && (data.type == 'edit' || data.type == 'new')) {
                 hasAccess = false;
-              
+                
                 if (o.capabilities.includes('edit')) {
                     hasAccess = true;
                   
@@ -92,8 +91,8 @@ function validateAccess(data) {
 }
 
 router.beforeEach((to, from, next) => {
- 
-    if (to.name == 'PublicApproval' || to.name == 'ResetPasswordMail' || to.name == 'ResetPassword') { 
+     
+    if (to.name == 'PublicApproval' || to.name == "GenerateInvoice" || to.name == "GeneratePacking" || to.name == 'ResetPasswordMail' || to.name == 'ResetPassword') { 
         next();
     }else if (to.path == '/' && !to.meta.requiresAuth) {
         // public route

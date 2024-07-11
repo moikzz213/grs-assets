@@ -5,6 +5,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ClientKeyController;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\PublicPageController;
@@ -36,15 +37,16 @@ Route::get('/{slug}', [PageController::class, 'home'])->name('admin.slug');
 
 // users
 Route::get('/users/{id}', [PageController::class, 'home'])->name('admin.single.user');
-Route::get('/{slug}/page/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
+Route::get('/{slug}/page/{page}', [PageController::class, 'home'])->name('admin.paginated.users'); 
 Route::get('/approval-setup/{slug}', [PageController::class, 'home'])->name('admin.paginated.users');
 Route::get('/{slug}/update/id/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 Route::get('/{slug}/new', [PageController::class, 'home'])->name('admin.add.new');
 Route::get('/approval-setup/{slug}/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 Route::get('/approval-setup/{type}/{slug}/id/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 // users axios
-Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name('admin.get.single.user');
-
+Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name('admin.get.single.user'); 
+ 
+Route::get('/{slug}/{location}/stamp-signature/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
 
 /**
  *

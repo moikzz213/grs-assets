@@ -2,8 +2,15 @@
     <v-container style="max-width: 90%" class="mt-0 pt-0">
         <v-row class="mt-0 pt-0 no-print mt-2" v-if="assetsOnly?.length > 0">
             <div>
-                <v-btn color="primary" size="small" @click="printFn"
+                <v-btn color="primary" class="mx-1" size="small" @click="printFn"
                     >Print</v-btn
+                >
+              
+                <v-btn v-if="(dataObj.data?.transfer_from.id == 45 || dataObj.data?.transfer_to.id == 45) && isReviewed && dataObj.data.status !== 'reject'" color="primary" class="mx-1" size="small" @click="goTo('GenerateInvoice')"
+                    >GENERATE INVOICE</v-btn
+                >
+                <v-btn v-if="(dataObj.data?.transfer_from.id == 45 || dataObj.data?.transfer_to.id == 45) && isReviewed && dataObj.data.status !== 'reject'" color="primary" class="mx-1" size="small" @click="goTo('GeneratePacking')"
+                    >GENERATE PACKING LIST</v-btn
                 >
             </div>
         </v-row>
@@ -42,9 +49,10 @@
             <div class="v-col-1 v-col-md-1 py-1">QTY</div>
             <div class="v-col-1 v-col-md-1 py-1">UOM</div>
             <div class="v-col-1 v-col-md-1 py-1">WEIGHT</div>
+            <div class="v-col-1 v-col-md-1 py-1">HSCODE</div>
             <div class="v-col-1 v-col-md-1 py-1">ITEM VALUE</div>
             <div class="v-col-1 v-col-md-1 py-1">COUNTRY OF ORIGIN</div>
-            <div class="v-col-2 v-col-md-2 py-1">
+            <div class="v-col-2 v-col-md-1 py-1">
                 REMARKS<br />REASON FOR REQUEST
             </div>
             <div class="v-col-2 v-col-md-2 py-1 d-flex justify-space-between">
@@ -109,13 +117,17 @@
                 </v-card>
 
                 <v-textarea
-                    :value="item.item_description"
+                    v-model="item.item_description"
                     variant="underlined"
                     density="compact"
                     hide-details
-                    rows="2"
-                    class="bg-light-gray d-flex flex-column-reverse"
-                    :readonly="true"
+                    rows="2" 
+                    :class="`${
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-textarea>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -169,15 +181,27 @@
                     v-model="item.weight"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    :readonly="
-                        !is_asset_supervisor || requestStatus == 'cancelled'
-                    "
+                    hide-details 
                     :class="`${
-                        !is_asset_supervisor || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
+                ></v-text-field>
+            </div>
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+                <v-text-field
+                    v-model="item.hscode"
+                    variant="underlined"
+                    density="compact"
+                    hide-details 
+                    :class="`${
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -186,14 +210,13 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="
-                        !is_asset_supervisor || requestStatus == 'cancelled'
-                    "
+                   
                     :class="`${
-                        !is_asset_supervisor || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -202,18 +225,17 @@
                     variant="underlined"
                     density="compact"
                     hide-details
-                    :readonly="
-                        !is_asset_supervisor || requestStatus == 'cancelled'
-                    "
+                    
                     :class="`${
-                        !is_asset_supervisor || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                     style="width: 100%"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
+            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-textarea
                     :value="item.reason_for_request"
                     variant="underlined"
@@ -837,7 +859,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useFormatDate } from "@/composables/formatDate.js";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import {
@@ -852,6 +874,7 @@ import {
 } from "@mdi/js";
 
 const route = useRoute();
+const router = useRouter();
 const isValid = ref(true);
 const dataObj = ref({});
 const sbOptions = ref({});
@@ -868,7 +891,9 @@ const pvID = ref(route.query.id);
 const requestStatus = ref("");
 const requestTypeId = ref(0);
 const selectedFiles = ref([]);
+const isReviewed = ref(false);
 const queryData = async () => {
+   
     let formData = {
         id: route.query.id,
         profile_id: route.query.pid,
@@ -947,6 +972,15 @@ const queryData = async () => {
                     }
                 }
             }
+            isReviewed.value = false;
+            let reviewed = dataObj.value.data.request_approvals.filter(
+                        (o) => 
+                            o.status == "done" &&
+                            o.approval_type == "reviewer"
+                    )[0];
+            if(reviewed){
+                isReviewed.value = true;
+            }
             assetsOnly.value = dataObj.value?.data?.items;
         })
         .catch((err) => {
@@ -987,11 +1021,12 @@ const cancelReject = () => {
     reasonOfReject.value = "";
 };
 
+ 
 const checkAssetCode = (v, index) => { 
-    if(v.length < 11 || dataObj.value.data.types !== 'request'){
+    if(v.length < 11 || dataObj.value.data.types !== 'request'){ 
         return false;
     }
-
+  
     sbOptions.value = {
                 status: false, 
             };
@@ -1143,6 +1178,15 @@ const checkUncheckBox = () => {
         }
     });
 };
+
+const goTo = (page) => { 
+    router
+    .push({
+        name: page, 
+        query: {data: btoa(JSON.stringify(dataObj.value.data))}
+    })
+    .catch((err) => {});
+} 
 
 const pad = (v, size = 6) => {
     let s = "00000" + v;

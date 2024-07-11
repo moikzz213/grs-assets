@@ -88,6 +88,7 @@ const loadMoreNumber = ref(1);
 const getMaxLimit = ref(0);
 const getCurrentLoad= ref(0);
 const mimeTypes = ref(['image/jpeg', 'image/gif','image/png', 'image/jpg']);
+ 
 const getFiles = async () => {
   loadingFiles.value = true;
   await clientKey(authStore.token)
@@ -108,7 +109,8 @@ const getFiles = async () => {
     .catch((err) => { 
       loadingFiles.value = false;
     });
-};
+}; 
+
 getFiles();  
 
 const loadMore = () => {
