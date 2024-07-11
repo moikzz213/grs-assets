@@ -64,13 +64,15 @@
             <div class="v-col-2 v-col-md-2 py-1 font-weight-bold text-center my-auto">VAT</div> 
         </v-row> 
         <v-divider class="my-5"></v-divider>
-        <v-row v-for="(item, index) in dataObj?.items" :key="dataObj.id">
-            <div class="v-col-4 v-col-md-4 py-1">{{ item.item_description }}</div> 
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.qty }}</div>
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value }}</div> 
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value ? (item.item_value * item.qty).toFixed(2) : 0 }}</div> 
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value ?  (item.item_value * item.qty * 0.05).toFixed(2) : 0 }}</div>  
-        </v-row>
+        <template v-for="(item, index) in dataObj?.items" :key="dataObj.id"> 
+            <v-row v-if="item.is_available">
+                <div class="v-col-4 v-col-md-4 py-1">{{ item.item_description }}</div> 
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.qty }}</div>
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value }}</div> 
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value ? (item.item_value * item.qty).toFixed(2) : 0 }}</div> 
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.item_value ?  (item.item_value * item.qty * 0.05).toFixed(2) : 0 }}</div>  
+            </v-row>
+        </template>
         <v-divider class="my-5"></v-divider> 
         <v-row>
             <div class="v-col-12 py-1 font-weight-bold text-center my-auto">
@@ -227,9 +229,10 @@ const calculateTotal = () => {
     let sub = 0;
     let vat = 0;
     dataObj.value?.items?.map((o) => {
-        
-        sub += (parseFloat(o.item_value) * o.qty);
-        vat += parseFloat(o.item_value * o.qty * 0.05);
+        if(o.is_available){
+            sub += (parseFloat(o.item_value) * o.qty);
+            vat += parseFloat(o.item_value * o.qty * 0.05);
+        }
     });
     
     if(!isNaN(sub)){

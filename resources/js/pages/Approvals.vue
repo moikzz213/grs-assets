@@ -48,14 +48,14 @@
             <div class="v-col-1 v-col-md-1 py-1">ASSET NO</div>
             <div class="v-col-1 v-col-md-1 py-1">QTY</div>
             <div class="v-col-1 v-col-md-1 py-1">UOM</div>
-            <div class="v-col-1 v-col-md-1 py-1">WEIGHT</div>
-            <div class="v-col-1 v-col-md-1 py-1">HSCODE</div>
+            <div class="v-col-1 v-col-md-1 py-1">WEIGHT(KG)</div>
+            <!-- <div class="v-col-1 v-col-md-1 py-1">HSCODE</div> -->
             <div class="v-col-1 v-col-md-1 py-1">ITEM VALUE</div>
-            <div class="v-col-1 v-col-md-1 py-1">COUNTRY OF ORIGIN</div>
-            <div class="v-col-2 v-col-md-1 py-1">
+            <!-- <div class="v-col-1 v-col-md-1 py-1">COUNTRY OF ORIGIN</div> -->
+            <div class="v-col-2 v-col-md-2 py-1">
                 REMARKS<br />REASON FOR REQUEST
             </div>
-            <div class="v-col-2 v-col-md-2 py-1 d-flex justify-space-between">
+            <div class="v-col-2 v-col-md-3 py-1 d-flex justify-space-between">
                 REMARKS
                 <div style="position: relative">
                     <div v-if="noticeLoader" class="checkbox-notice"></div>
@@ -182,6 +182,7 @@
                     variant="underlined"
                     density="compact"
                     hide-details 
+                    type="number"
                     :class="`${
                         (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
@@ -190,7 +191,7 @@
                     :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+            <!-- <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.hscode"
                     variant="underlined"
@@ -203,14 +204,14 @@
                     }`"
                     :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-text-field>
-            </div>
+            </div> -->
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.item_value"
                     variant="underlined"
                     density="compact"
                     hide-details
-                   
+                    type="number"
                     :class="`${
                         (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
@@ -219,7 +220,7 @@
                     :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                 ></v-text-field>
             </div>
-            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+            <!-- <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
                     v-model="item.country_of_origin"
                     variant="underlined"
@@ -234,8 +235,8 @@
                     :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
                     style="width: 100%"
                 ></v-text-field>
-            </div>
-            <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
+            </div> -->
+            <div class="v-col-12 v-col-md-2 py-1 px-1 d-flex">
                 <v-textarea
                     :value="item.reason_for_request"
                     variant="underlined"
@@ -277,9 +278,9 @@
             </div>
             <div
                 v-if="is_commercial_manager"
-                class="v-col-12 v-col-md-2 py-1 d-flex"
+                class="v-col-12 v-col-md-3 py-1 d-flex"
             >
-                <div>
+                <div style="width:100%;">
                     <div v-if="item.remarks">
                         <strong> Asset Supervisor - Projects</strong> <br />
                         <p>{{ item.remarks }}</p>
@@ -304,7 +305,7 @@
                     ></v-icon>
                 </div>
             </div>
-            <div v-else-if="is_realeasing" class="v-col-12 v-col-md-2 py-1">
+            <div v-else-if="is_realeasing" class="v-col-12 v-col-md-3 py-1">
                 <div>
                     <div v-if="item.remarks">
                         <strong> Asset Supervisor - Projects</strong> <br />
@@ -343,7 +344,7 @@
                     rows="2"
                 ></v-textarea>
             </div>
-            <div v-else-if="is_transport" class="v-col-12 v-col-md-2 py-1">
+            <div v-else-if="is_transport" class="v-col-12 v-col-md-3 py-1">
                 <div>
                     <div v-if="item.remarks">
                         <strong> Asset Supervisor - Projects</strong> <br />
@@ -377,7 +378,7 @@
             </div>
             <div
                 v-else-if="is_receiver"
-                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between"
+                class="v-col-12 v-col-md-3 py-1 d-flex justify-space-between"
             >
                 <div>
                     <div>
@@ -445,7 +446,7 @@
             </div>
             <div
                 v-else-if="!is_asset_supervisor"
-                class="v-col-12 v-col-md-2 py-1 d-flex justify-space-between ssss"
+                class="v-col-12 v-col-md-3 py-1 d-flex justify-space-between ssss"
             >
                 <div
                     style="border-bottom: 1px solid #000000"
