@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Asset;
 use App\Models\Incident;
+use App\Models\Location;
 use App\Models\Warranty;
 use App\Models\RequestAsset;
 use Illuminate\Database\Eloquent\Model;
@@ -56,6 +57,19 @@ class File extends Model
     {
         return $this->morphedByMany(
             RequestAsset::class,
+            'fileable',
+            'fileables',
+            'file_id',
+            'fileable_id',
+            'id',
+            'id',
+        );
+    }
+
+    public function location()
+    {
+        return $this->morphedByMany(
+            Location::class,
             'fileable',
             'fileables',
             'file_id',

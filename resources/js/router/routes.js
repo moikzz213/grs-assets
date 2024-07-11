@@ -253,6 +253,24 @@ export const routes = [
             title: "locations",
         },
     },
+    {
+        path: "/locations/:location/stamp-signature/:type",
+        component: () => import("../pages/admin/locations/DataForm.vue"),
+        name: "stamp-signature",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
+    {
+        path: "/locations/:location/stamp-signature/:type",
+        component: () => import("../pages/admin/locations/DataForm.vue"),
+        name: "stamp-signature",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
     // categories
     {
         path: "/categories",

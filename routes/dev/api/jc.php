@@ -6,12 +6,15 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\CronJobController;
 use App\Http\Controllers\UserApiController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
 
 Route::middleware('authkey')->group(function () {
     Route::post('/asset/save-history', [AssetController::class, 'saveAssetHistory'])->name('admin.asset.history.save'); 
+    Route::get('/location/{location}/stamp-signature', [LocationController::class, 'stampSignature'])->name('admin.location.stamp');
+    Route::post('/stamp-signature/add-update', [LocationController::class, 'stampAddUpdate'])->name('admin.stamp.signature.update');
 
     Route::post('/incident/update-facility-team', [IncidentController::class, 'updateIncidentFacilityTeam'])->name('incident.update.facility.team');
     Route::post('/incident/update-facility-team-remarks', [IncidentController::class, 'updateIncidentFacilityTeamRemarks'])->name('incident.update.facility.remarks');

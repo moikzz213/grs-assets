@@ -97,10 +97,9 @@ const studioSettings = ref({
  
 watch(
     () => props.options,
-    (newVal) => {
- 
+    (newVal) => { 
         studioSettings.value = { ...studioSettings.value, ...newVal };
-      //  console.log("watch studio settings", studioSettings.value);
+        filepondOptions.value = { ...filepondOptions.value, ...{type: newVal.type } } 
     }
 );
 

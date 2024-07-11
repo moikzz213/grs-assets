@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLoaded" class="parent-main-div">
 
-        <div v-if="authStore.authIsLoggedIn == true && route.name !== 'PublicApproval'" >
+        <div v-if="authStore.authIsLoggedIn == true && ( route.name !== 'PublicApproval' && route.name !== 'GenerateInvoice' && route.name !== 'GeneratePacking' )" >
             <LoggedInLayout>
                 <router-view></router-view>
             </LoggedInLayout>

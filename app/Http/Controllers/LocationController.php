@@ -91,4 +91,19 @@ class LocationController extends Controller
         $data = Location::where('status', 'active')->orderBy('title', 'ASC')->get();
         return response()->json($data, 200);
     }
+
+    public function stampSignature($location){
+      
+        $query = Location::where('code', $location)->with('attachment')->first();
+
+        return response()->json($query, 200);
+    }
+
+    public function stampAddUpdate(Request $request){
+       
+        $query = Location::where('code', $request->location)->first();
+       
+        $query->attachment()->sync($request['stamp']); 
+        return response()->json($query, 200);
+    }
 }

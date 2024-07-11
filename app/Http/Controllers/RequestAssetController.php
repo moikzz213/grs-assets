@@ -272,7 +272,7 @@ class RequestAssetController extends Controller
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
                     $request->assets
-                , ['id','request_asset_id'], ['is_available', 'asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks', 'remarks_commercial', 'remarks_receive', 'remarks_release','remarks_transport','is_received']);
+                , ['id','request_asset_id'], ['is_available','item_description', 'hscode','asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks', 'remarks_commercial', 'remarks_receive', 'remarks_release','remarks_transport','is_received']);
 
 
                 if($stats == 'complete'){
@@ -373,7 +373,7 @@ class RequestAssetController extends Controller
             }
 
             //if($query->status == 'awaiting-approval' || $query->status == 'reject'){
-                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to',  'transfer_from', 'attachment')->first();
+                $query = RequestAsset::where('id', $request->id)->with('items.assets', 'items.attachment','setup','request_approvals.profile', 'profile', 'company', 'transfer_to.attachment',  'transfer_from.attachment', 'attachment')->first();
 
                 return response()->json(array('access' => true, 'data' => $query), 200);
            // }
