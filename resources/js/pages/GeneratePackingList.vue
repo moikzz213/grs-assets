@@ -77,7 +77,7 @@
         <v-row> 
          
             <div class="v-col-6 v-col-md-6 py-1 text-right my-auto font-weight-bold">TOTAL GROSS WEIGHT</div>
-            <div class="v-col-2 v-col-md-2 py-1 font-weight-bold text-center my-auto">{{ subTotal }}</div> 
+            <div class="v-col-2 v-col-md-2 py-1 font-weight-bold text-center my-auto">{{ subTotal }} KG</div> 
             <div class="v-col-4 v-col-md-4 py-1 text-center my-auto"></div> 
         </v-row> 
         
