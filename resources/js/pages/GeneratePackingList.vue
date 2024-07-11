@@ -62,13 +62,15 @@
             <div class="v-col-1 v-col-md-1 py-1 font-weight-bold text-center my-auto">HS CODE</div> 
         </v-row> 
         <v-divider class="my-5"></v-divider>
-        <v-row v-for="(item, index) in dataObj?.items" :key="dataObj.id">
-            <div class="v-col-5 v-col-md-5 py-1">{{ item.item_description }}</div> 
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.qty }}</div>
-            <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.weight }}</div> 
-            <div class="v-col-2 v-col-md-2 py-1 text-center">UAE</div> 
-            <div class="v-col-1 v-col-md-1 py-1 text-center">NA</div>  
-        </v-row>
+        <template v-for="(item, index) in dataObj?.items" :key="dataObj.id"> 
+            <v-row v-if="item.is_available">
+                <div class="v-col-5 v-col-md-5 py-1">{{ item.item_description }}</div> 
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.qty }}</div>
+                <div class="v-col-2 v-col-md-2 py-1 text-center">{{ item.weight }}</div> 
+                <div class="v-col-2 v-col-md-2 py-1 text-center">UAE</div> 
+                <div class="v-col-1 v-col-md-1 py-1 text-center">NA</div>  
+            </v-row>
+        </template>
         <v-divider class="my-5"></v-divider> 
         
         <v-divider class="my-5"></v-divider> 
@@ -149,7 +151,9 @@ const calculateTotal = () => {
     let sub = 0;
  
     dataObj.value?.items?.map((o) => { 
-        sub += (parseFloat(o.weight)); 
+        if(o.is_available){
+            sub += (parseFloat(o.weight)); 
+        }
     });
     
     if(sub && !isNaN(sub)){ 
