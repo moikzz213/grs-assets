@@ -1181,10 +1181,11 @@ const checkUncheckBox = () => {
 };
 
 const goTo = (page) => { 
+    localStorage.removeItem('grs-generate-list');
+    localStorage.setItem('grs-generate-list', btoa(JSON.stringify(dataObj.value.data)));
     router
     .push({
-        name: page, 
-        query: {data: btoa(JSON.stringify(dataObj.value.data))}
+        name: page       
     })
     .catch((err) => {});
 } 
