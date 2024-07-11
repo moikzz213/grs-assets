@@ -263,7 +263,8 @@ const calculateTotal = () => {
 }
 const getTime = ref('');
 onMounted(() => {
-    dataObj.value = JSON.parse(atob(route.query.data)); 
+    let getGeneratedItems = localStorage.getItem('grs-generate-list');
+    dataObj.value = JSON.parse(atob(getGeneratedItems)); 
     //let date = new Date(dataObj.value.created_at); // replace with your date
     let date = new Date(); // replace with your date
     let dddate = new Date();

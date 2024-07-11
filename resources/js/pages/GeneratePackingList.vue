@@ -1,5 +1,5 @@
 <template>
-    <v-container style="max-width: 90%" class="mt-0 pt-5 generate-file">
+    <v-container v-if="pageAccessible" style="max-width: 90%" class="mt-0 pt-5 generate-file">
         <v-row class="mt-0 pt-0 no-print">
             <div>
                 <v-btn color="primary" class="mx-1" size="small" @click="printFn"
@@ -122,6 +122,13 @@
             </div>
         </v-row> 
     </v-container>
+    <v-container v-else style="max-width: 90%" class="mt-5 pt-5 generate-file">
+        <v-row>
+            <v-col>
+                <h3 class="text-center">Page not found.</h3>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script setup>
@@ -180,8 +187,13 @@ const calculateTotal = () => {
     }
 }
 const getTime = ref('');
+const pageAccessible = ref(false);
 onMounted(() => {
-    dataObj.value = JSON.parse(atob(route.query.data)); 
+    let getGeneratedItems = localStorage.getItem('grs-generate-list');
+    if(getGeneratedItems){
+        pageAccessible.value = true;
+    }
+    dataObj.value = JSON.parse(atob(getGeneratedItems)); 
     //let date = new Date(dataObj.value.created_at); // replace with your date
     let date = new Date(); // replace with your date
     let dddate = new Date();
