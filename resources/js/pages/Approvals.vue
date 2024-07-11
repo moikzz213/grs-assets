@@ -157,23 +157,33 @@
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
-                    :value="item.qty"
+                    v-model="item.qty"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    class="bg-light-gray d-flex flex-column-reverse"
+                    hide-details 
                     type="number"
-                    :readonly="true"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager) || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        (!is_asset_supervisor && !is_commercial_manager )  || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
                 <v-text-field
-                    :value="item.uom"
+                    v-model="item.uom"
                     variant="underlined"
                     density="compact"
-                    hide-details
-                    class="bg-light-gray d-flex flex-column-reverse"
-                    :readonly="true"
+                    hide-details 
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager) || requestStatus == 'cancelled'
+                    "
+                    :class="`${
+                        (!is_asset_supervisor && !is_commercial_manager )  || requestStatus == 'cancelled'
+                            ? 'bg-light-gray d-flex flex-column-reverse'
+                            : ''
+                    }`"
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">

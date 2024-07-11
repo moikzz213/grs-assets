@@ -272,7 +272,7 @@ class RequestAssetController extends Controller
             if(count($request->assets) > 0) {
                 RequestAssetDetail::upsert(
                     $request->assets
-                , ['id','request_asset_id'], ['is_available','item_description', 'hscode','asset_code', 'weight', 'item_value', 'country_of_origin', 'remarks', 'remarks_commercial', 'remarks_receive', 'remarks_release','remarks_transport','is_received']);
+                , ['id','request_asset_id'], ['is_available','item_description', 'qty','asset_code', 'weight', 'item_value', 'uom', 'remarks', 'remarks_commercial', 'remarks_receive', 'remarks_release','remarks_transport','is_received']);
 
 
                 if($stats == 'complete'){

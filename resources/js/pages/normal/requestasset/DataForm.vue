@@ -386,27 +386,11 @@
                                     </v-autocomplete>
                             
                             </div>
-                            <div class="v-col-12 v-col-md-1">
-                                <v-text-field
-                                    type="number"
-                                    v-model="item.weight"
-                                    variant="outlined"
-                                    density="compact"
-                                    hide-details
-                                    disabled
-                                    label="WGT(KG)"
-                                ></v-text-field>
+                            <div class="v-col-12 v-col-md-1 mt-3">
+                                 {{item.weight ? item.weight : 0}}  (KG)
                             </div>
-                            <div class="v-col-12 v-col-md-1">
-                                <v-text-field
-                                    type="number"
-                                    v-model="item.item_value"
-                                    variant="outlined"
-                                    density="compact"
-                                    hide-details
-                                    disabled
-                                    label="VALUE"
-                                ></v-text-field>
+                            <div class="v-col-12 v-col-md-1 mt-3">
+                                {{item.item_value ? item.item_value : 0}} AED
                             </div>
                             <div class="v-col-12 v-col-md-2 d-flex">
                                 <v-textarea
