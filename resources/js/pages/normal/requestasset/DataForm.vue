@@ -387,10 +387,10 @@
                             
                             </div>
                             <div class="v-col-12 v-col-md-1 mt-3">
-                                 {{item.weight ? item.weight : 0}}  (KG)
+                                 {{item.weight ? item.weight : 0}}<br/><small>(KG)</small>
                             </div>
                             <div class="v-col-12 v-col-md-1 mt-3">
-                                {{item.item_value ? item.item_value : 0}} AED
+                                {{item.item_value ? item.item_value : 0}}<br/><small>(AED)</small>
                             </div>
                             <div class="v-col-12 v-col-md-2 d-flex">
                                 <v-textarea

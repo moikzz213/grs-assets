@@ -138,14 +138,14 @@
                     density="compact"
                     hide-details 
                     @update:modelValue="checkAssetCode(item.asset_code, index)"
-                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport && !is_receiver ) || requestStatus == 'cancelled'
                     "
                     :class="`${
-                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport && !is_receiver)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
-                    v-if="(is_asset_supervisor || is_commercial_manager || is_realeasing || is_transport) && requestStatus != 'cancelled'"
+                    v-if="(is_asset_supervisor || is_commercial_manager || is_realeasing || is_transport || is_receiver) && requestStatus != 'cancelled'"
                 ></v-text-field>
 
                 <div
@@ -162,10 +162,10 @@
                     density="compact"
                     hide-details 
                     type="number"
-                    :readonly="(!is_asset_supervisor && !is_commercial_manager) || requestStatus == 'cancelled'
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager && !is_realeasing  && !is_transport && !is_receiver) || requestStatus == 'cancelled'
                     "
                     :class="`${
-                        (!is_asset_supervisor && !is_commercial_manager )  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager && !is_realeasing  && !is_transport && !is_receiver)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
@@ -177,10 +177,10 @@
                     variant="underlined"
                     density="compact"
                     hide-details 
-                    :readonly="(!is_asset_supervisor && !is_commercial_manager) || requestStatus == 'cancelled'
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport && !is_receiver) || requestStatus == 'cancelled'
                     "
                     :class="`${
-                        (!is_asset_supervisor && !is_commercial_manager )  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport && !is_receiver)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
@@ -194,11 +194,11 @@
                     hide-details 
                     type="number"
                     :class="`${
-                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport && !is_receiver)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
-                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing && !is_transport ) || requestStatus == 'cancelled'"
+                    :readonly="(!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport && !is_receiver ) || requestStatus == 'cancelled'"
                 ></v-text-field>
             </div>
             <!-- <div class="v-col-12 v-col-md-1 py-1 px-1 d-flex">
@@ -223,7 +223,7 @@
                     hide-details
                     type="number"
                     :class="`${
-                        (!is_asset_supervisor && !is_commercial_manager &&  !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
+                        (!is_asset_supervisor && !is_commercial_manager && !is_realeasing  && !is_transport)  || requestStatus == 'cancelled'
                             ? 'bg-light-gray d-flex flex-column-reverse'
                             : ''
                     }`"
