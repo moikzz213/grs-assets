@@ -160,6 +160,8 @@ class ApprovalSetupController extends Controller
                 ->orWhere('status', 'pending')
                 ->orWhere('status', 'reject');
             })->update(['profile_id' => $request['new']]);
+
+            RequestAsset::where('id', $serial_no)->where('reminder_profile_id', $request['old'])->update(['reminder_profile_id' => $request['new']]);
         }else{ 
        
             RequestApproval::where('profile_id', $request['old'])
@@ -168,6 +170,13 @@ class ApprovalSetupController extends Controller
                             ->orWhere('status', 'pending')
                             ->orWhere('status', 'reject');
                         })->update(['profile_id' => $request['new']]);
+
+            RequestAsset::where('reminder_profile_id', $request['old'])
+            ->where(function($q){
+                $q->where('status', 'awaiting-approval')
+                ->orWhere('status', 'pending')
+                ->orWhere('status', 'reject');
+            })->update(['reminder_profile_id' => $request['new']]);
         }
             $message = 'Approver has been changed successfully.';
         return response()->json(array('message' => $message), 200);

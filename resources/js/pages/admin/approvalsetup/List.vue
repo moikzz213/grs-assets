@@ -290,7 +290,7 @@
                                             
                                 </div>
                                 <v-col md="12" class="text-center pt-0">
-                                    <br/><small>Do not forget to remove the old approver and add the new approver from the Setup.</small>
+                                    <br/><small>Applicable only for Pending request.</small>
                                 </v-col>
                             </v-row>
                             <v-row>
