@@ -309,6 +309,7 @@
                                                 :options="{
                                                     multiSelect: false,
                                                     type: 'request-asset',
+                                                    userID: authStore.user.profile.id
                                                 }"
                                                 @select="
                                                     (e) =>

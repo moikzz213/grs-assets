@@ -74,6 +74,10 @@ const props = defineProps({
   type: {
     type: String,
     default: 'asset'
+  },
+  userID:{
+     type: Number,
+    default: null
   }
 });
 
@@ -91,8 +95,13 @@ const mimeTypes = ref(['image/jpeg', 'image/gif','image/png', 'image/jpg']);
  
 const getFiles = async () => {
   loadingFiles.value = true;
+  let userID = '';
+  console.log("propspropsprops",props);
+  if(props.userID){
+    userID = '&userID='+props.userID;
+  }
   await clientKey(authStore.token)
-    .get("/api/system/file/all/"+props.type+"?page=" + loadMoreNumber.value)
+    .get("/api/system/file/all/"+props.type+"?page=" + loadMoreNumber.value+ userID)
     .then((res) => {
       loadingFiles.value = false; 
 
