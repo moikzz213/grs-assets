@@ -277,6 +277,7 @@
                                                 :options="{
                                                     multiSelect: false,
                                                     type: 'transfer-asset',
+                                                    userID: authStore.user.profile.id
                                                 }"
                                                 @select="
                                                     (e) =>

@@ -55,6 +55,7 @@
                                 v-if="selectedTab == 'studio'"
                                 :multi-select="studioSettings.multiSelect"
                                 :type="filepondOptions.type"
+                                :userID="studioSettings.userID"
                                 @selected="selectedResponse"
                             />
                             <FilePondUploader
@@ -93,6 +94,7 @@ const filepondOptions = ref({
 const studioSettings = ref({
     dialog: false,
     multiSelect: props.options?.multiSelect ? props.options?.multiSelect : false,
+    userID: props.options?.userID ? props.options?.userID : null,
 });
  
 watch(
