@@ -61,5 +61,14 @@ div.page-break {
     
  } 
 
- .last-child-action{ position: sticky; z-index: 2; right:0;}
+ .last-child-action{ position: sticky;   right:0; z-index: 9999; background-color: #fff;}
  td.last-child-action{     box-shadow: -1px 1px #eeeeee47, -2px 2px #eeeeee47, -3px 3px #eeeeee47, -4px 4px #eeeeee47, -5px 5px #eeeeee47; }
+ .asset-page td { 
+  
+    font-family: monospace, monospace;
+ }
+ 
+ 
+@media only screen and  (min-width: 900px) { 
+    .asset-page { max-width: 1920px !important; } 
+}

@@ -1,5 +1,5 @@
 <template>
-    <v-container class="no-print" v-if="!dialogPrintBarcoce">
+    <v-container class="no-print asset-page" v-if="!dialogPrintBarcoce">
         <AppPageHeader title="ASSET list page" />
         <v-row class="mt-0">
             <div class="v-col py-0 d-flex align-center">
@@ -177,12 +177,7 @@
                                         density="compact"
                                     ></v-checkbox>
                                 </th>
-                                <th
-                                    class="text-left text-capitalize cursor-pointer"
-                                    @click="OrderByField('company_id')"
-                                >
-                                    Company
-                                </th>
+                               
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('location_id')"
@@ -203,6 +198,12 @@
                                 </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('model')"
+                                >
+                                    Model
+                                </th>
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('asset_id')"
                                 >
                                     AssetName
@@ -213,13 +214,19 @@
                                 >
                                     AssetCode
                                 </th>
-
+                                <th
+                                    class="text-left text-capitalize cursor-pointer"
+                                    @click="OrderByField('specification')" 
+                                >
+                                    Specification
+                                </th>
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('condition_id')"
                                 >
                                     Condition
                                 </th>
+                               
                                 <th
                                     class="text-left text-capitalize cursor-pointer"
                                     @click="OrderByField('status_id')"
@@ -269,15 +276,19 @@
                                         "
                                     ></v-checkbox>
                                 </td>
-                                <td>{{ item.company?.title }}</td>
+                               
                                 <td>{{ item.location?.title }}</td>
                                 <td>
                                     {{ item.category?.title }}
                                     <strong>({{ item.category?.code }})</strong>
                                 </td>
                                 <td>{{ item.brand }}</td>
-                                <td>{{ item.asset_name }}</td>
-                                <td>{{ item.asset_code }}</td>
+                                <td>{{ item.model }}</td>
+                                <td><pre style="width: 200px; text-wrap: wrap;">{{ item.asset_name }}</pre></td>
+                                <td><pre style="width: 110px; text-wrap: wrap;">{{ item.asset_code }}</pre></td>
+                                <td>
+                                  <pre style="width: 200px; text-wrap: wrap;">{{ item.specification }} </pre>
+                                </td>
                                 <td>
                                     <v-chip
                                         class="text-uppercase"
@@ -286,6 +297,7 @@
                                         >{{ item.condition?.title }}</v-chip
                                     >
                                 </td>
+                               
                                 <td>
                                  
                                     <v-chip
