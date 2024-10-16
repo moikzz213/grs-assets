@@ -102,6 +102,34 @@ class RequestAssetController extends Controller
         return response()->json($query, 200);
     }
 
+    public function requestUpdateLocation(Request $request){
+
+        // Admin or Commercial Manager can update location on request and transfer approval
+       
+        $query = RequestAsset::where('id', $request->data['id'])->first();
+        $query->update(array('transferred_from' => $request->data['transferred_from'], 'transferred_to' => $request->data['transferred_to']));
+
+        $helper = new GlobalHelper;
+        $helper->createLogs($query, $request->authID, 'cm-update-location', $query);
+
+
+        return response()->json($query, 200);
+    }
+
+    public function requestUpdateApprover(Request $request){
+
+        // Admin or Commercial Manager can update Approver on request and transfer approval
+
+        $query = RequestApproval::where(['request_asset_id' => $request->id, 'orders' => $request->orders])->first();
+        $query->update(array('profile_id' => $request->profile_id));
+        
+
+        $helper = new GlobalHelper;
+        $helper->createLogs($query, $request->authID, 'cm-update-approver', $query);
+
+        return response()->json($query, 200);
+    }
+
     public function storeUpdate(Request $request){
         if(!$request->profile_id || !$request->assets || !$request->approval){
             return response()->json(array('error' => "Asset Item or Approval is required! kindly refresh the page and add."), 200);

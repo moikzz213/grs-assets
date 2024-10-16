@@ -127,7 +127,7 @@
                                     label="LOCATION FROM*"
                                 ></v-autocomplete>
                             </div>
-                            <div class="v-col-12 v-col-md-6">
+                            <div class="v-col-12 v-col-md-6 d-flex">
                                 <v-autocomplete
                                     :items="locationList"
                                     v-model="objData.transferred_to"
@@ -137,7 +137,8 @@
                                     item-value="id"
                                     item-title="title"
                                     label="LOCATION TO*"
-                                ></v-autocomplete>
+                                ></v-autocomplete> 
+                                <v-btn size="small" :loading="isLoading" @click="updateLocation" color="success" class="mx-2 my-auto" v-if="isEdit && adminAuthority.includes(authStore.user.profile.role)">Save</v-btn>
                             </div>
                             <div class="v-col-12">
                                 <v-text-field
@@ -568,11 +569,11 @@
                         </v-row>
                         <v-row class="no-print">
                             <div class="v-col-12 v-col-md-2">Requestor</div>
-                            <div class="v-col-12 v-col-md-6">
-                                {{ formObjData?.profile?.display_name }}
-                            </div>
-                            <div class="v-col-12 v-col-md-1">Status</div>
+                            <div class="v-col-12 v-col-md-6 d-flex">
+                                {{ formObjData?.profile?.display_name }} 
+                            </div> 
                             <div class="v-col-12 v-col-md-2">Date Approved</div>
+                            <div class="v-col-12 v-col-md-2" v-if="isEdit && adminAuthority.includes(authStore.user.profile.role)">Change To</div>
                         </v-row>
                         <!-- for printing -->
                         <v-row class="for-print-flex mx-2 mt-5 mb-1">
@@ -635,7 +636,7 @@
                                             : statusTitle(item.approval_type)
                                     }}
                                 </div>
-                                <div class="v-col-12 v-col-md-7 d-flex">
+                                <div class="v-col-12 v-col-md-6 d-flex">
                                     <v-autocomplete
                                         :items="item.signatures"
                                         v-model="item.profile_id"
@@ -693,12 +694,28 @@
                                         >
                                     </v-btn>
                                 </div>
-                                <div class="my-auto">
+                                <div class="my-auto v-col-12 v-col-md-2">
                                     {{
                                         item.date_approved
                                             ? useFormatDate(item.date_approved)
                                             : ""
                                     }}
+                                </div>
+                                <!-- Change to -->
+                                <div class="v-col-12 v-col-md-2">
+                                    <v-autocomplete
+                                        :items="item.signatures"
+                                        v-model="item.profile_id"
+                                        variant="outlined"
+                                        density="compact"
+                                        hide-details
+                                        item-value="id"
+                                        item-title="display_name"
+                                        label="SELECT SIGNATORY*"
+                                        @update:modelValue="updateApprover(item.profile_id, index)"
+                                        
+                                    >
+                                    </v-autocomplete>
                                 </div>
                             </v-row>
                             <v-row>
@@ -826,8 +843,10 @@ const route = useRoute();
 const router = useRouter();
 const objData = ref({});
 const isEdit = ref(false);
+const isLoading = ref(false);
 const assetDataObj = ref([{ qty: 1, attachment: {} }]);
 const currentDate = ref(new Date());
+const adminAuthority = ref(['commercial-manager', 'superadmin']);
 
 const baseURL = ref(window.location.origin);
 const studioSelectResponse = (index, v) => {
@@ -955,6 +974,60 @@ const AddAsset = () => {
     assetDataObj.value.push({ qty: 1, attachment: {} });
     requiredData();
 };
+
+const updateLocation = () => {
+    isLoading.value = true;
+    sbOptions.value = {
+            status: true,
+            type: 'info',
+            text: 'Updating location...',
+        };
+
+        let newObjFrm = {
+            authID: authStore.user.profile.id,
+            data: objData.value
+        };
+  
+     clientKey(authStore.token)
+        .post("/api/request-update/location", newObjFrm)
+        .then((res) => {
+           setTimeout(() => {
+            isLoading.value = false;
+                sbOptions.value = {
+                    status: true,
+                    type: 'success',
+                    text: 'Location updated.',
+                };
+           }, 1000);
+        })
+        .catch((err) => {});
+}
+
+const updateApprover = (user,index) => {
+    sbOptions.value = {
+        status: true,
+        type: 'info',
+        text: 'Updating User...',
+    };
+    let newObjFrm = {
+        authID: authStore.user.profile.id,
+        id: objData.value.id,
+        profile_id: user,
+        orders: index
+    }
+    clientKey(authStore.token)
+        .post("/api/request-update/approver", newObjFrm)
+        .then((res) => {
+           setTimeout(() => {
+                sbOptions.value = {
+                    status: true,
+                    type: 'success',
+                    text: 'User has been updated.',
+                };
+           }, 800);
+        })
+        .catch((err) => {});
+}
 
 const deleteData = (id, index) => {
     assetDataObj.value.splice(index, 1);
