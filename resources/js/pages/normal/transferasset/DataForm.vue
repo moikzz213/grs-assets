@@ -655,7 +655,7 @@
                                     }}
                                 </div>
                                 <!-- Change to -->
-                                <div class="v-col-12 v-col-md-2">
+                                <div class="v-col-12 v-col-md-2" v-if="isEdit && adminAuthority.includes(authStore.user.profile.role)">
                                     <v-autocomplete
                                         :items="item.signatures"
                                         v-model="item.profile_id"
@@ -924,6 +924,7 @@ const AddAsset = () => {
 };
 
 const updateLocation = () => {
+     
     isLoading.value = true;
     sbOptions.value = {
             status: true,
@@ -950,6 +951,8 @@ const updateLocation = () => {
 }
 
 const updateApprover = (user,index) => {
+
+    
     sbOptions.value = {
         status: true,
         type: 'info',
