@@ -20,6 +20,9 @@ Route::middleware('authkey')->group(function () {
     Route::post('/incident/update-facility-team-remarks', [IncidentController::class, 'updateIncidentFacilityTeamRemarks'])->name('incident.update.facility.remarks');
     Route::post('/incident/sync-images/store-update', [IncidentController::class, 'syncImages'])->name('change.request');
 
+    Route::post('/request-update/location', [RequestAssetController::class, 'requestUpdateLocation'])->name('request.update.location');
+    Route::post('/request-update/approver', [RequestAssetController::class, 'requestUpdateApprover'])->name('request.update.approver');
+
 
     Route::get('/fetch-assets/lpo-no-only', [RequestAssetController::class, 'fetchAssetLPOOnly'])->name('fetch.requestor.assets');
     Route::get('/fetch/request-assets/by-requestor/{page}', [RequestAssetController::class, 'fetchData'])->name('fetch.requestor.assets');
