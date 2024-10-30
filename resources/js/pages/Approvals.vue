@@ -784,7 +784,7 @@
                 > 
                     {{
                         item.status == "done" ? (item.approval_type == 'reviewer' ? 'REVIEWED' : 
-                                                (item.approval_type == 'transport' ? 'TRANSPORTED' : 
+                                                (item.approval_type == 'transport' ? 'ARRANGED' : 
                                                 (item.approval_type == 'receiver' ? 'RECEIVED' : 
                                                 (item.approval_type == 'releasing' ? 'RELEASED' :"APPROVED" )))) : "CLICK TO APPROVE"
                     }}
