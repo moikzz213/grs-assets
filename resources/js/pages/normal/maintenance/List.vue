@@ -5,7 +5,8 @@
       <div class="v-col-12">
         <v-card :loading="users.loading">
           <v-card-title class="d-flex align-center mb-3 pa-3">
-            <div class="mr-auto">Maintenance</div>
+            <div class="mr-2">Maintenance</div>
+            <v-btn color="primary" size="small" @click="goTo" class="mr-auto">NEW</v-btn>
             <v-text-field
               v-model="search"
               variant="outlined"
@@ -281,6 +282,14 @@ const filterSearch = (v) => {
     currentPage.value = 1;
   }
 };
+
+const goTo = () => {  
+    router
+    .push({
+        name: 'NewMaintenance'       
+    })
+    .catch((err) => {});
+} 
 
 const searchData = () => {
  

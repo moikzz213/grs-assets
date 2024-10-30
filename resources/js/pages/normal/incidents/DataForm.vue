@@ -66,6 +66,12 @@
                   </div>
                 </div>
                 <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Handled by:</div>
+                  <div>
+                    {{ objData.handled_by?.display_name }}
+                  </div>
+                </div>
+                <div class="v-col-12 v-col-md-4">
                   <div class="font-weight-bold">Status</div>
                   <div>{{ objData.status?.title }}</div>
                 </div>
@@ -161,12 +167,8 @@
                   </Field>
                 </div>
                 <div class="v-col-12 v-col-md-6">
-                  <Field
-                    name="Company"
-                    v-slot="{ field, errors }"
-                    v-model="objData.company_id"
-                  >
-                    <v-select
+                  
+                    <v-autocomplete
                       :items="companyList"
                       v-model="objData.company_id"
                       variant="outlined"
@@ -176,18 +178,13 @@
                       item-title="title"
                       clearable
                       label="Company*"
-                      v-bind="field"
-                      :error-messages="errors"
-                    ></v-select>
-                  </Field>
+                     
+                    ></v-autocomplete>
+               
                 </div>
                 <div class="v-col-12 v-col-md-6">
-                  <Field
-                    name="Location"
-                    v-slot="{ field, errors }"
-                    v-model="objData.location_id"
-                  >
-                    <v-select
+                  
+                    <v-autocomplete
                       :items="locationList"
                       v-model="objData.location_id"
                       variant="outlined"
@@ -197,10 +194,9 @@
                       item-title="title"
                       clearable
                       label="Location*"
-                      v-bind="field"
-                      :error-messages="errors"
-                    ></v-select>
-                  </Field>
+                      
+                    ></v-autocomplete>
+                  
                 </div>
                 <div class="v-col-12">
                   <v-textarea
@@ -408,9 +404,7 @@ const changeIncidentType  =  (e) =>{
 let validation = yup.object({
   Type: yup.string().required(),
   Urgency: yup.string().required(),
-  Title: yup.string().required(),
-  Company: yup.string().required(),
-  Location: yup.string().required(),
+  Title: yup.string().required(), 
 });
 
 const enableBarcode = ref(false);

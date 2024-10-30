@@ -676,7 +676,7 @@
                     } border: 1px solid #ccc; font-size: 17px;`"
                 >
                     {{
-                        requestStatus == "cancelled" ? "CANCELLED" : "APPROVED"
+                        requestStatus == "cancelled" ? "CANCELLED" : "REQUESTED"
                     }}
                 </div>
                 <div class="text-center py-1 font-weight-bold">
@@ -781,9 +781,12 @@
                             ? 'background-color: none;color:rgb(3, 167, 3); font-weight:bold;font-size:17px;padding-top:16px !important;padding-bottom:16px !important;'
                             : 'background-color: gray; color:#fff;'
                     }`"
-                >
+                > 
                     {{
-                        item.status == "done" ? "APPROVED" : "CLICK TO APPROVE"
+                        item.status == "done" ? (item.approval_type == 'reviewer' ? 'REVIEWED' : 
+                                                (item.approval_type == 'transport' ? 'TRANSPORTED' : 
+                                                (item.approval_type == 'receiver' ? 'RECEIVED' : 
+                                                (item.approval_type == 'releasing' ? 'RELEASED' :"APPROVED" )))) : "CLICK TO APPROVE"
                     }}
                 </div>
                 <div

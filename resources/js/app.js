@@ -78,6 +78,7 @@ function validateAccess(data) {
     data?.title?.toLowerCase() == 'scan' || 
     data?.title?.toLowerCase() == 'dashboard' || 
     data?.title?.toLowerCase() == 'request-asset' || 
+    data?.title?.toLowerCase() == 'maintenance' || 
     data?.title?.toLowerCase() == 'transfer-asset' || 
     data?.title?.toLowerCase() == 'account') {
         hasAccess = true;

@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 class IncidentController extends Controller
 {
     public function fetchData(Request $request){
+       
         $paginate = $request->show;
         $search = $request->search;
         $ID = $request->userid;
@@ -25,11 +26,13 @@ class IncidentController extends Controller
         $dataObj = new Incident;
 
         if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
-        }
-
-        $dataObj = $dataObj->whereNot('type_id', 26)->whereNot('type_id', 2); // where not type maintenance
-
+            $dataObj = $dataObj->whereNotIn('type_id', [2,26,27])->where( function($q) use($ID){
+                $q->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+            });
+        }else{
+            $dataObj = $dataObj->whereNotIn('type_id', [2,26,27]); // where not type maintenance  
+        } 
+      
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -290,6 +293,7 @@ class IncidentController extends Controller
             'status',
             'attachment',
             'remarks.profile',
+            'handled_by',
             'urgency'
         )->first();
         return response()->json($query, 200);

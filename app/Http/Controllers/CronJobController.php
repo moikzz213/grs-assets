@@ -110,7 +110,7 @@ class CronJobController extends Controller
 
     private function maintenanceFn($maintenanceReceiver){
 
-        $queryMaintenance = Incident::where('type_id', 2)->orWhere('type_id', 26)
+        $queryMaintenance = Incident::where('type_id', 2)->orWhere('type_id', 26)->orWhere('type_id', 27)
             ->whereDate('reminder_date', Carbon::now()->format('Y-m-d'))
             ->get();
 
