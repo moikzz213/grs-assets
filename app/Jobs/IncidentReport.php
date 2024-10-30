@@ -36,7 +36,7 @@ class IncidentReport implements ShouldQueue
         $data = $publisherData['data']; 
 
         $data =  json_decode($data);
-        if($data->type_id == 2){
+        if($data->type_id == 2 || $data->type_id == 26 || $data->type_id == 27){
             $receiver = 'maintenance-receiver';
             $subject = "Asset System: Asset Maintenance";
             $subLink = '/maintenance/update/id/';

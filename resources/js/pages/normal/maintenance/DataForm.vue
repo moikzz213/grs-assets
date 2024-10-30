@@ -64,6 +64,12 @@
                     </div>
                   </div>
                   <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Handled by:</div>
+                  <div>
+                    {{ objData.handled_by?.display_name }}
+                  </div>
+                </div>
+                  <div class="v-col-12 v-col-md-4">
                     <div class="font-weight-bold">Status</div>
                     <div>{{ objData.status?.title }}</div>
                   </div>
@@ -134,13 +140,8 @@
                       ></v-text-field>
                     </Field>
                   </div>
-                  <div class="v-col-12 v-col-md-6">
-                    <Field
-                      name="Company"
-                      v-slot="{ field, errors }"
-                      v-model="objData.company_id"
-                    >
-                      <v-select
+                  <div class="v-col-12 v-col-md-6"> 
+                      <v-autocomplete
                         :items="companyList"
                         v-model="objData.company_id"
                         variant="outlined"
@@ -149,19 +150,12 @@
                         item-value="id"
                         item-title="title"
                         clearable
-                        label="Company*"
-                        v-bind="field"
-                        :error-messages="errors"
-                      ></v-select>
-                    </Field>
+                        label="Company*" 
+                      ></v-autocomplete> 
                   </div>
                   <div class="v-col-12 v-col-md-6">
-                    <Field
-                      name="Location"
-                      v-slot="{ field, errors }"
-                      v-model="objData.location_id"
-                    >
-                      <v-select
+                    
+                      <v-autocomplete
                         :items="locationList"
                         v-model="objData.location_id"
                         variant="outlined"
@@ -170,11 +164,9 @@
                         item-value="id"
                         item-title="title"
                         clearable
-                        label="Location*"
-                        v-bind="field"
-                        :error-messages="errors"
-                      ></v-select>
-                    </Field>
+                        label="Location*" 
+                      ></v-autocomplete>
+                 
                   </div>
                   <div class="v-col-12">
                     <v-textarea
@@ -328,9 +320,7 @@ if (statusStore.list.length == 0) {
 
 let validation = yup.object({ 
     Urgency: yup.string().required(),
-    Title: yup.string().required(),
-    Company: yup.string().required(),
-    Location: yup.string().required(),
+    Title: yup.string().required(), 
 });  
 
 const searchURL = new URL(window.location);
