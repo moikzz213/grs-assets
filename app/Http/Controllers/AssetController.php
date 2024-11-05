@@ -379,13 +379,12 @@ class AssetController extends Controller
                         ->orWhere('serial_number',  'like', '%'.$search.'%');
             });
 
-            $dataObj = $dataObj->get();
+            // $dataObj = $dataObj->get();
 
-            $dataArray['data'] = $dataObj->toArray();
-        }else{
-            $dataArray = $dataObj->paginate($paginate);
-        }
-
+            // $dataArray['data'] = $dataObj->paginate($paginate);
+        } 
+        
+        $dataArray = $dataObj->paginate($paginate);
         return response()->json($dataArray, 200);
     }
 
