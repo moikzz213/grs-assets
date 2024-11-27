@@ -14,6 +14,7 @@
             :disabled="true"
           />
         </Field>
+        
         <Field
           name="display_name"
           v-slot="{ field, errors }"
@@ -24,6 +25,7 @@
             v-bind="field"
             label="Full name"
             density="compact"
+            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager' && profileData.data.role !== 'asset-supervisor'"
             variant="outlined"
             :error-messages="errors"
           />
@@ -37,6 +39,7 @@
             v-model="profileData.data.first_name"
             v-bind="field"
             label="First name"
+            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
             density="compact"
             variant="outlined"
             :error-messages="errors"
@@ -53,6 +56,7 @@
             label="Last name"
             density="compact"
             variant="outlined"
+            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
             :error-messages="errors"
           />
         </Field>
@@ -60,6 +64,7 @@
             v-model="profileData.data.designation"
             label="Designation"
             density="compact"
+            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
             variant="outlined"
           />
           <v-autocomplete
@@ -69,6 +74,7 @@
           v-model="profileData.data.location_id"
           item-value="id"
           item-title="title"
+          :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
           variant="outlined"
           density="compact"
           class="mb-2"
