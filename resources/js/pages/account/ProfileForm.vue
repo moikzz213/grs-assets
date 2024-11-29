@@ -25,7 +25,7 @@
             v-bind="field"
             label="Full name"
             density="compact"
-            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager' && profileData.data.role !== 'asset-supervisor'"
+            :disabled="authStore.user.profile.role === 'normal'"
             variant="outlined"
             :error-messages="errors"
           />
@@ -39,7 +39,7 @@
             v-model="profileData.data.first_name"
             v-bind="field"
             label="First name"
-            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
+           :disabled="authStore.user.profile.role === 'normal'"
             density="compact"
             variant="outlined"
             :error-messages="errors"
@@ -56,7 +56,7 @@
             label="Last name"
             density="compact"
             variant="outlined"
-            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
+           :disabled="authStore.user.profile.role === 'normal'"
             :error-messages="errors"
           />
         </Field>
@@ -64,7 +64,7 @@
             v-model="profileData.data.designation"
             label="Designation"
             density="compact"
-            :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
+            :disabled="authStore.user.profile.role === 'normal'"
             variant="outlined"
           />
           <v-autocomplete
@@ -74,7 +74,7 @@
           v-model="profileData.data.location_id"
           item-value="id"
           item-title="title"
-          :disabled="profileData.data.role !== 'superadmin' && profileData.data.role !== 'commercial-manager'"
+         :disabled="authStore.user.profile.role === 'normal'"
           variant="outlined"
           density="compact"
           class="mb-2"
