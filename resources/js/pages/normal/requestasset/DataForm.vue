@@ -627,16 +627,17 @@
                             <v-row
                                 class="no-print"
                                 v-for="(item, index) in approvalSetupList"
-                                :key="item.id"
+                                :key="item?.id"
                             >
-                                <div class="v-col-12 v-col-md-2">
+                         
+                                <div v-if="item.id" class="v-col-12 v-col-md-2">
                                     {{
                                         item.types
                                             ? statusTitle(item.types)
                                             : statusTitle(item.approval_type)
                                     }}
                                 </div>
-                                <div class="v-col-12 v-col-md-6 d-flex">
+                                <div v-if="item.id" class="v-col-12 v-col-md-6 d-flex">
                                     <v-autocomplete
                                         :items="item.signatures"
                                         v-model="item.profile_id"
@@ -694,7 +695,7 @@
                                         >
                                     </v-btn>
                                 </div>
-                                <div class="my-auto v-col-12 v-col-md-2">
+                                <div v-if="item.id" class="my-auto v-col-12 v-col-md-2">
                                     {{
                                         item.date_approved
                                             ? useFormatDate(item.date_approved)
@@ -702,7 +703,7 @@
                                     }}
                                 </div>
                                 <!-- Change to -->
-                                <div class="v-col-12 v-col-md-2" v-if="isEdit && adminAuthority.includes(authStore.user.profile.role)">
+                                <div class="v-col-12 v-col-md-2" v-if="item.id && isEdit && adminAuthority.includes(authStore.user.profile.role)">
                                     <v-autocomplete
                                         :items="item.signatures"
                                         v-model="item.profile_id"
@@ -847,6 +848,9 @@ const isLoading = ref(false);
 const assetDataObj = ref([{ qty: 1, attachment: {} }]);
 const currentDate = ref(new Date());
 const adminAuthority = ref(['commercial-manager', 'superadmin']);
+const onUpdateApproval = ref([]);
+const formObjData = ref({});
+const getCurrentApprover = ref({});
 
 const baseURL = ref(window.location.origin);
 const studioSelectResponse = (index, v) => {
@@ -1155,7 +1159,7 @@ const submitRequest = () => {
 const approvalSetupList = ref([]);
 const hasSignatories = ref(true);
 
-const listUom = ref(['Nos', 'Set', 'Pcs','Pack', 'Pallet', 'SqM']);
+const listUom = ref(['Nos', 'Set', 'Pcs','Pack', 'Pallet', 'SqM']); 
 
 const setupApprovals = async () => {
     let upIsEdit = 0;
@@ -1169,20 +1173,99 @@ const setupApprovals = async () => {
         )
         .then((res) => { 
            
-            objData.value.extra_attachment = res.data.enable_attachment;
-            approvalSetupList.value = res.data?.stages;
-            if (route.params.id && approvalSetupList.value.length > 0) {
-                approvalSetupList.value.map((o, i) => {
-                    o.profile_id = onUpdateApproval.value[i].profile_id;
-                    o.status = onUpdateApproval.value[i].status;
-                    o.date_approved = onUpdateApproval.value[i].date_approved;
-                    o.reason_rejected =
-                        onUpdateApproval.value[i].reason_rejected;
-                    return o;
-                });
+            objData.value.extra_attachment = res.data.enable_attachment; 
+           
+            if (route.params.id && res.data?.stages.length > 0) {
 
-                if (approvalSetupList.value.length > 1) {
-                    approvalSetupList.value[onUpdateApproval.value.length - 1] =
+                let currentApproval = onUpdateApproval.value.length - 1;
+                let currentApprovalSetup = res.data?.stages.length;
+              
+              
+                if(currentApproval > currentApprovalSetup){  
+                    approvalSetupList.value = res.data?.stages.map((o, i) => {
+                      
+                        onUpdateApproval.value.map((oo,ii) => {
+                            if (o.sort === oo.orders) {
+                                o.profile_id = oo.profile_id;
+                                o.status = oo.status;
+                                o.date_approved = oo.date_approved;
+                                o.reason_rejected =
+                                    oo.reason_rejected;
+                                return o;
+
+                            }
+                        })
+                        return o;
+                    }); 
+                 
+
+                    if (approvalSetupList.value.length > 1) {
+                    approvalSetupList.value[approvalSetupList.value.length - 1] =
+                        {
+                            id: onUpdateApproval.value[
+                            approvalSetupList.value.length - 1
+                            ].id,
+                            profile_id:
+                                onUpdateApproval.value[
+                                approvalSetupList.value.length - 1
+                                ].profile_id,
+                            status: onUpdateApproval.value[
+                            approvalSetupList.value.length - 1
+                            ].status,
+                            date_approved:
+                                onUpdateApproval.value[
+                                approvalSetupList.value.length - 1
+                                ].date_approved,
+                            status: onUpdateApproval.value[
+                            approvalSetupList.value.length - 1
+                            ].status,
+                            reason_rejected: "",
+                            types: onUpdateApproval.value[
+                            approvalSetupList.value.length - 1
+                            ].approval_type,
+                            sort: onUpdateApproval.value[
+                            approvalSetupList.value.length - 1
+                            ].orders,
+                            request_asset_id:
+                                onUpdateApproval.value[
+                                approvalSetupList.value.length - 1
+                                ].request_asset_id,
+                            signatures: [
+                                {
+                                    id: onUpdateApproval.value[
+                                    approvalSetupList.value.length - 1
+                                    ]?.profile.id,
+                                    display_name:
+                                        onUpdateApproval.value[
+                                        approvalSetupList.value.length - 1
+                                        ]?.profile.display_name,
+                                    first_name:
+                                        onUpdateApproval.value[
+                                        approvalSetupList.value.length - 1
+                                        ]?.profile.first_name,
+                                    last_name:
+                                        onUpdateApproval.value[
+                                        approvalSetupList.value.length - 1
+                                        ]?.profile.last_name,
+                                },
+                            ],
+                        };
+                }
+                   
+                }else{
+                    approvalSetupList.value = res.data?.stages;
+
+                    approvalSetupList.value.map((o, i) => {
+                        o.profile_id = onUpdateApproval.value[i].profile_id;
+                        o.status = onUpdateApproval.value[i].status;
+                        o.date_approved = onUpdateApproval.value[i].date_approved;
+                        o.reason_rejected =
+                            onUpdateApproval.value[i].reason_rejected;
+                        return o;
+                    });
+
+                    if (approvalSetupList.value.length > 1) {
+                        approvalSetupList.value[onUpdateApproval.value.length - 1] =
                         {
                             id: onUpdateApproval.value[
                                 onUpdateApproval.value.length - 1
@@ -1232,9 +1315,13 @@ const setupApprovals = async () => {
                                 },
                             ],
                         };
+                    }
                 }
+
+             
             }
-        
+            console.log("approvalSetupList.value",approvalSetupList.value);
+           
             if (res.data?.stages.length > 0) {
                 hasSignatories.value = true;
             } else {
@@ -1242,8 +1329,8 @@ const setupApprovals = async () => {
             }
         })
         .catch((err) => {});
-};
-
+}; 
+ 
 const isDraft = ref(false);
 
 const requiredData = () => {
@@ -1303,9 +1390,7 @@ const pad = (v, size = 6) => {
     return s.substring(s.length - size);
 };
 
-const onUpdateApproval = ref([]);
-const formObjData = ref({});
-const getCurrentApprover = ref({});
+
 onMounted(() => {
     fetchSetupRequest().then(() => {
         fetchCompanies().then(() => {
