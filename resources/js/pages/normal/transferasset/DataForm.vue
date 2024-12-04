@@ -1108,39 +1108,39 @@ const setupApprovals = async () => {
             approvalSetupList.value = res.data?.stages;
             objData.value.extra_attachment = res.data.enable_attachment;
             if (route.params.id && approvalSetupList.value.length > 0) {
-                approvalSetupList.value.map((o, i) => {
-                    o.profile_id = onUpdateApproval.value[i].profile_id;
-                    o.status = onUpdateApproval.value[i].status;
-                    o.date_approved = onUpdateApproval.value[i].date_approved;
-                    o.reason_rejected =
-                        onUpdateApproval.value[i].reason_rejected;
-                    return o;
-                });
+                let currentApproval = onUpdateApproval.value.length;
+                let currentApprovalSetup = res.data?.stages.length; 
+               
+                if(currentApproval > currentApprovalSetup){  
 
-                // if(approvalSetupList.value.length > 1){
-                //     approvalSetupList.value[onUpdateApproval.value.length-1] = {
-                //         id:onUpdateApproval.value[onUpdateApproval.value.length -1].id,
-                //         profile_id:onUpdateApproval.value[onUpdateApproval.value.length -1].profile_id,
-                //         status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
-                //         date_approved: onUpdateApproval.value[onUpdateApproval.value.length -1].date_approved,
-                //         status: onUpdateApproval.value[onUpdateApproval.value.length -1].status,
-                //         reason_rejected: '',
-                //         types: onUpdateApproval.value[onUpdateApproval.value.length -1].approval_type,
-                //         sort: onUpdateApproval.value[onUpdateApproval.value.length -1].orders,
-                //         request_asset_id: onUpdateApproval.value[onUpdateApproval.value.length -1].request_asset_id,
-                //         signatures:[
-                //             {
-                //                 id: formObjData.value.profile?.id,
-                //                 display_name: formObjData.value.profile?.display_name,
-                //                 first_name: formObjData.value.profile?.first_name,
-                //                 last_name: formObjData.value.profile?.last_name,
-                                 
-                //             }
-                //         ]
-                //     }
-                // } 
+                    approvalSetupList.value.map((o, i) => {  
+                        onUpdateApproval.value.map((oo,ii) => { 
+                            if (o.sort === oo.orders) {
+                                o.profile_id = oo.profile_id;
+                                o.status = oo.status;
+                                o.date_approved = oo.date_approved;
+                                o.reason_rejected =
+                                    oo.reason_rejected;
+                                return o;
+
+                            }
+                        })
+                        return o;
+                    });  
+                  
+                }else{
+                    approvalSetupList.value.map((o, i) => {
+                        o.profile_id = onUpdateApproval.value[i].profile_id;
+                        o.status = onUpdateApproval.value[i].status;
+                        o.date_approved = onUpdateApproval.value[i].date_approved;
+                        o.reason_rejected =
+                            onUpdateApproval.value[i].reason_rejected;
+                        return o;
+                    }); 
+                }
+                 
             }
-
+            console.log("approvalSetupList",approvalSetupList.value);
             if (res.data?.stages.length > 0) {
                 hasSignatories.value = true;
             } else {
