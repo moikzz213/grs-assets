@@ -1179,77 +1179,74 @@ const setupApprovals = async () => {
 
                 let currentApproval = onUpdateApproval.value.length - 1;
                 let currentApprovalSetup = res.data?.stages.length; 
-              
+            
                 if(currentApproval > currentApprovalSetup){  
-                    approvalSetupList.value?.map((o, i) => {
-                      
-                        onUpdateApproval.value.map((oo,ii) => {
+                    approvalSetupList.value?.map((o, i) => { 
+                        onUpdateApproval.value.map((oo,ii) => { 
                             if (o.sort === oo.orders) {
-                                o.profile_id = oo.profile_id;
+                                o.profile_id = oo.profile_id; 
                                 o.status = oo.status;
                                 o.date_approved = oo.date_approved;
-                                o.reason_rejected =
-                                    oo.reason_rejected;
+                                o.reason_rejected = oo.reason_rejected;
+                              
                                 return o;
-
-                            }
+                            } 
                         })
                         return o;
                     }); 
-                 
-
+              
                     if (approvalSetupList.value.length > 1) {
-                    approvalSetupList.value[approvalSetupList.value.length - 1] =
+                    approvalSetupList.value[approvalSetupList.value.length] =
                         {
                             id: onUpdateApproval.value[
-                            approvalSetupList.value.length - 1
+                            onUpdateApproval.value.length - 1
                             ].id,
                             profile_id:
                                 onUpdateApproval.value[
-                                approvalSetupList.value.length - 1
+                                onUpdateApproval.value.length - 1
                                 ].profile_id,
                             status: onUpdateApproval.value[
-                            approvalSetupList.value.length - 1
+                            onUpdateApproval.value.length - 1
                             ].status,
                             date_approved:
                                 onUpdateApproval.value[
-                                approvalSetupList.value.length - 1
+                                onUpdateApproval.value.length - 1
                                 ].date_approved,
                             status: onUpdateApproval.value[
-                            approvalSetupList.value.length - 1
+                            onUpdateApproval.value.length - 1
                             ].status,
                             reason_rejected: "",
                             types: onUpdateApproval.value[
-                            approvalSetupList.value.length - 1
+                            onUpdateApproval.value.length - 1
                             ].approval_type,
                             sort: onUpdateApproval.value[
-                            approvalSetupList.value.length - 1
+                            onUpdateApproval.value.length - 1
                             ].orders,
                             request_asset_id:
                                 onUpdateApproval.value[
-                                approvalSetupList.value.length - 1
+                                onUpdateApproval.value.length - 1
                                 ].request_asset_id,
                             signatures: [
                                 {
                                     id: onUpdateApproval.value[
-                                    approvalSetupList.value.length - 1
+                                    onUpdateApproval.value.length - 1
                                     ]?.profile.id,
                                     display_name:
                                         onUpdateApproval.value[
-                                        approvalSetupList.value.length - 1
+                                        onUpdateApproval.value.length - 1
                                         ]?.profile.display_name,
                                     first_name:
                                         onUpdateApproval.value[
-                                        approvalSetupList.value.length - 1
+                                        onUpdateApproval.value.length - 1
                                         ]?.profile.first_name,
                                     last_name:
                                         onUpdateApproval.value[
-                                        approvalSetupList.value.length - 1
+                                        onUpdateApproval.value.length - 1
                                         ]?.profile.last_name,
                                 },
                             ],
                         };
-                }
+                    } 
                    
                 }else{ 
                     approvalSetupList.value.map((o, i) => {
