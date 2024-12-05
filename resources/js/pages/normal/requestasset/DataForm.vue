@@ -1174,15 +1174,14 @@ const setupApprovals = async () => {
         .then((res) => { 
            
             objData.value.extra_attachment = res.data.enable_attachment; 
-           
+            approvalSetupList.value = res.data?.stages;
             if (route.params.id && res.data?.stages.length > 0) {
 
                 let currentApproval = onUpdateApproval.value.length - 1;
-                let currentApprovalSetup = res.data?.stages.length;
-              
+                let currentApprovalSetup = res.data?.stages.length; 
               
                 if(currentApproval > currentApprovalSetup){  
-                    approvalSetupList.value = res.data?.stages.map((o, i) => {
+                    approvalSetupList.value?.map((o, i) => {
                       
                         onUpdateApproval.value.map((oo,ii) => {
                             if (o.sort === oo.orders) {
@@ -1252,9 +1251,7 @@ const setupApprovals = async () => {
                         };
                 }
                    
-                }else{
-                    approvalSetupList.value = res.data?.stages;
-
+                }else{ 
                     approvalSetupList.value.map((o, i) => {
                         o.profile_id = onUpdateApproval.value[i].profile_id;
                         o.status = onUpdateApproval.value[i].status;
@@ -1316,11 +1313,9 @@ const setupApprovals = async () => {
                             ],
                         };
                     }
-                }
-
-             
+                } 
             }
-            console.log("approvalSetupList.value",approvalSetupList.value);
+           
            
             if (res.data?.stages.length > 0) {
                 hasSignatories.value = true;
