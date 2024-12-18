@@ -47,6 +47,7 @@ Route::get('/approval-setup/{type}/{slug}/id/{page}', [PageController::class, 'h
 Route::get('/user/single/{id}', [UserController::class, 'getSingleUser'])->name('admin.get.single.user'); 
  
 Route::get('/{slug}/{location}/stamp-signature/{page}', [PageController::class, 'home'])->name('admin.paginated.users');
+Route::get('/{slug}/view-assets/history/{id}', [PageController::class, 'home'])->name('admin.paginated.users');
 
 /**
  *
