@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Location;
 use App\Helper\GlobalHelper;
 use Illuminate\Http\Request;
+use App\Models\AllottedInformation;
+use Illuminate\Support\Facades\Cache;
 
 class LocationController extends Controller
 {
@@ -104,6 +106,16 @@ class LocationController extends Controller
         $query = Location::where('code', $request->location)->first();
        
         $query->attachment()->sync($request['stamp']); 
+        return response()->json($query, 200);
+    }
+
+    public function historyLocationAssets(Request $request, $id){
+        $paginate = $request->show;
+        $query = AllottedInformation::where('location_id', $id)->with('asset.location', 'location')->orderBy('id','DESC')->paginate($paginate);
+
+        // $query = Cache::remember('location', 60, function() use($id, $paginate) {
+        //             return  AllottedInformation::where('location_id', $id)->with('asset.location')->paginate($paginate);
+        //         });
         return response()->json($query, 200);
     }
 }
