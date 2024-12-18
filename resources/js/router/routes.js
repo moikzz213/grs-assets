@@ -259,7 +259,7 @@ export const routes = [
         name: "location-asset-log",
         meta: {
             requiresAuth: true,
-            title: "location-asset-log",
+            title: "locations",
         },
     },
     {
