@@ -18,6 +18,12 @@
                         @click="changeType('transfer-asset')"
                         >Transfer Asset Approvals</v-btn
                     >
+                    <v-btn
+                        class="v-col-12 v-col-md-3 mx-2"
+                        color="primary"
+                        @click="changeType('change-approval')"
+                        >Change / Assign Approvals</v-btn
+                    >
                 </div>
                 <v-card>
                     <Form
@@ -30,7 +36,7 @@
                         >
                         <v-card-text>
                             <v-row>
-                                <div class="v-col-12 d-flex my-auto">
+                                <div class="v-col-12 my-0 pb-0 d-flex my-auto">
                                     <Field
                                         name="Title"
                                         v-slot="{ field, errors }"
@@ -44,9 +50,9 @@
                                             variant="outlined"
                                             hide-details="auto"
                                             density="compact"
-                                            class="v-col-10 pt-0"
+                                            class="v-col-10 pt-0 pb-0"
                                         ></v-text-field>
-                                    </Field>
+                                    </Field> 
                                     <v-btn
                                         size="small"
                                         class="mt-1"
@@ -56,6 +62,13 @@
                                         @click="saveData('title')"
                                         >Save</v-btn
                                     >
+                                </div>
+                                <div class="v-col-12 my-0 py-0 d-flex my-auto">
+                                    <v-checkbox
+                                        label="Enable Additional attachment"
+                                        v-model="attachment"
+                                    >
+                                    </v-checkbox>
                                 </div>
                             </v-row>
                             <v-row v-if="isEdit">
@@ -202,7 +215,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import AppSnackBar from "@/components/AppSnackBar.vue";
 import { useAuthStore } from "@/stores/auth";
@@ -226,10 +239,12 @@ const props = defineProps({
 
 const signatoriesObject = ref([]);
 const sbOptions = ref({});
+const attachment = ref(false);
 const dataObj = ref({ title: props.objectdata.title });
 const typeItems = ref([
     { id: "approve", value: "Approval" },
     { id: "releasing", value: "Asset Releasing" },
+    { id: "receiver", value: "Asset Receiving" },
     { id: "reviewer", value: "Reviewer" },
     { id: "transport", value: "Transport Arrangement" },
     { id: "verify", value: "Verify" },
@@ -246,6 +261,12 @@ let validation = yup.object({
 const changeType = (type) => {
     isActive.value = type;
     router.push({ path: "/approval-setup/" + type });
+
+    if (type == "transfer-asset") {
+        typeItems.value = typeItems.value.filter((o) => {
+            return o.id !== "releasing";
+        });
+    }
 };
 
 const addSort = ref(0);
@@ -293,7 +314,6 @@ const btnLoading = ref(false);
 const isEdit = ref(route.params.id ? true : false);
 
 const deleteData = (id, index) => {
-
     let dataForm = {
         id: route.params.id,
         profile_id: authStore.user.profile.id,
@@ -343,6 +363,7 @@ const saveData = (data) => {
     let apiURL = "/api/approval-setups/store-signatory/update-data";
 
     if (data == "title") {
+        
         apiURL = "/api/approval-setups/store-update/data";
 
         submitData = {
@@ -351,13 +372,13 @@ const saveData = (data) => {
             title: dataObj.value.title,
             signatories: signatoriesObject.value,
             profile_id: authStore.user.profile.id,
+            enable_attachment: attachment.value ? 1 : 0
         };
     }
 
     clientKey(authStore.token)
         .post(apiURL, submitData)
         .then((res) => {
-            
             sbOptions.value = {
                 status: true,
                 type: "success",
@@ -388,10 +409,19 @@ onMounted(() => {
     fetchSignatories();
 
     if (route.params.id) {
+        if (isActive.value == "transfer-asset") {
+            typeItems.value = typeItems.value.filter((o) => {
+                return o.id !== "releasing";
+            });
+        }
+
         if (props.objectdata.stages.length > 0) {
             let lastSortNumber =
                 props.objectdata.stages[props.objectdata.stages.length - 1]
                     .sort;
+
+            attachment.value = props.objectdata.enable_attachment ? true : false;
+           
             props.objectdata.stages.map((o, i) => {
                 let sign = [];
                 o.signatures.map((oo) => {

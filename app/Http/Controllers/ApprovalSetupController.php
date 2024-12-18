@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Helper\GlobalHelper;
+use App\Models\RequestAsset;
 use Illuminate\Http\Request;
 use App\Models\ApprovalSetup;
 use App\Models\ApprovalStage;
+use App\Models\RequestApproval;
 
 class ApprovalSetupController extends Controller
 {
@@ -30,10 +32,16 @@ class ApprovalSetupController extends Controller
         return response()->json($query, 200);
     }
 
-    public function fetchDataByIDRequestAsset($id){
-        $query = ApprovalSetup::where('id', $id)->with('stages', function($q) {
+    public function fetchDataByIDRequestAsset(Request $request, $id){
+       $isEdit = $request->input('isEdit');
+
+        $query = ApprovalSetup::where('id', $id)->with('stages', function($q) use($isEdit){
             $q->orderBy('sort', 'ASC');
-            $q->with('signatures');
+            $q->with('signatures', function($qq) use($isEdit){
+                if(!$isEdit){
+                    $qq->whereNot('status','inactive');
+                }
+            });
         })->first(); 
         return response()->json($query, 200);
     }
@@ -65,12 +73,13 @@ class ApprovalSetupController extends Controller
         
         if($request->id){
             $query = ApprovalSetup::where('id', $request->id)->first();
-            $query->update(array('title' => $request->title,'profile_id' => $request->profile_id));
+            $query->update(array('title' => $request->title,'profile_id' => $request->profile_id, 'enable_attachment' => $request->enable_attachment));
             $message = 'Data has been updated';
             $log_type = 'update';
             $ID = $request->id;
         }else{
-            $query = ApprovalSetup::create(array('title' => $request->title,'profile_id' => $request->profile_id, 'type' => $request->type));
+            $query = ApprovalSetup::create(array('title' => $request->title,'profile_id' => $request->profile_id, 'type' => $request->type, 
+            'enable_attachment' => $request->enable_attachment));
             $message = 'Data has been created';
             $log_type = 'new';
             $ID = $query->id;
@@ -136,6 +145,40 @@ class ApprovalSetupController extends Controller
         $helper = new GlobalHelper;
         $helper->createLogs($query, $request->profile_id, $log_type, $query);
 
+        return response()->json(array('message' => $message), 200);
+    }
+
+    public function changeSignatory(Request $request){
+        if($request['serial']){
+            $serial_no = explode("SN-",$request['serial']);
+            $serial_no = substr($serial_no[1], 1); 
+            $serial_no = (int) $serial_no;
+           
+            $query = RequestApproval::where('request_asset_id', $serial_no)->where('profile_id', $request['old'])
+            ->where(function($q){
+                $q->where('status', 'awaiting-approval')
+                ->orWhere('status', 'pending')
+                ->orWhere('status', 'reject');
+            })->update(['profile_id' => $request['new']]);
+
+            RequestAsset::where('id', $serial_no)->where('reminder_profile_id', $request['old'])->update(['reminder_profile_id' => $request['new']]);
+        }else{ 
+       
+            RequestApproval::where('profile_id', $request['old'])
+                        ->where(function($q){
+                            $q->where('status', 'awaiting-approval')
+                            ->orWhere('status', 'pending')
+                            ->orWhere('status', 'reject');
+                        })->update(['profile_id' => $request['new']]);
+
+            RequestAsset::where('reminder_profile_id', $request['old'])
+            ->where(function($q){
+                $q->where('status', 'awaiting-approval')
+                ->orWhere('status', 'pending')
+                ->orWhere('status', 'reject');
+            })->update(['reminder_profile_id' => $request['new']]);
+        }
+            $message = 'Approver has been changed successfully.';
         return response()->json(array('message' => $message), 200);
     }
 }

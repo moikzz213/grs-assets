@@ -142,7 +142,7 @@
                                             :icon="mdiPencil"
                                             class="mx-1"
                                         />
-                                        <v-icon
+                                        <!-- <v-icon
                                             size="small"
                                             v-if="
                                                 authStore.user.role ==
@@ -154,7 +154,7 @@
                                             @click="() => deleteUser(item.id)"
                                             :icon="mdiTrashCan"
                                             class="mx-1"
-                                        />
+                                        /> -->
                                     </div>
                                 </td>
                             </tr>
@@ -418,12 +418,15 @@ const fetchUMSEcode = () => {
                 errorMessage.value = "Profile already registered.";
                 return;
             }
+            
 
+            //SFFjUDI2S1p0bUpWcit2Y21wNlJhQ1p5WndyQUR2Mnpoc0hERmt0RVBUMD0
             authApi
                 .post("/api/fetch-user/other-application", {
                     ecode: employeeCode.value,
-                    key: "SFFjUDI2S1p0bUpWcit2Y21wNlJhQ1p5WndyQUR2Mnpoc0hERmt0RVBUMD0",
+                    key: "SFFjUDI2S1p0bUpWcnp2Y21wNlJhQ1p5WndyQUR2Mnpoc0hERmt0RVBUMD0=",
                     user: "TW9pa3p6q",
+                    app: 'grs-asset-wvukt'
                 })
                 .then((res) => {
                     ecodeLoading.value = false;

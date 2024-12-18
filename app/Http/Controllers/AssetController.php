@@ -40,7 +40,7 @@ class AssetController extends Controller
                     $check = Asset::where('asset_code', $item->asset_code)->first();
 
                     if(!$check){
-                       
+
                         // insert asset and get the id
                         $assetLastInsertedId = Asset::insertGetId([
                            // asset
@@ -165,6 +165,7 @@ class AssetController extends Controller
         DB::beginTransaction();
         try {
             $assetArray = array(
+                'asset_code' => $request['asset_code'],
                 'asset_name' => $request['asset_name'],
                 'serial_number' => $request['serial_number'],
                 'section_code' => $request['section_code'],
@@ -178,12 +179,14 @@ class AssetController extends Controller
                 'specification' => $request['specification'],
                 'model' => $request['model'],
                 'brand' => $request['brand'],
+                'remarks_lpo' => $request['remarks_lpo'],
                 'condition_id' => $request['condition_id'],
 
                 // purchase
                 'price' => isset($request['price']) ? (float)$request['price'] : null, // or number_format($request['price'], 2, '.', '')
                 'vendor_id' => isset($request['vendor_id']) ? $request['vendor_id'] : null,
                 'po_number' => isset($request['po_number']) ? $request['po_number'] : null,
+                'currency' => isset($request['currency']) ? $request['currency'] : null,
                 'purchased_date' => isset($request['purchased_date']) ?  Carbon::parse($request['purchased_date']) : null,
 
                 // edit fields
@@ -216,9 +219,9 @@ class AssetController extends Controller
                 $asset->attachments()->sync($request['file_ids']);
             }else{
                 $asset = Asset::create($assetArray);
-                $generatedAssetCode =  $request['company_code'].'-'.$request['category_code'].'-'. str_pad($asset->id, 5, '0', STR_PAD_LEFT);
-                $asset->asset_code = strtoupper($generatedAssetCode);
-                $asset->save();
+                // $generatedAssetCode =  $request['company_code'].'-'.$request['category_code'].'-'. str_pad($asset->id, 5, '0', STR_PAD_LEFT);
+                // $asset->asset_code = strtoupper($generatedAssetCode);
+                // $asset->save();
                 if($asset && $request['file_ids']){
                     $asset->attachments()->sync($request['file_ids']);
                 }
@@ -272,6 +275,35 @@ class AssetController extends Controller
         ], $statusCode);
     }
 
+    function saveAssetHistory(Request $request) {
+        $globalHelper = new GlobalHelper;
+        $msg = "";
+        $statusCode = 200;
+        $query = array();
+        DB::beginTransaction();
+        try { 
+
+            AllottedInformation::create($request->data);
+
+            $query = Asset::where('id', $request->data['asset_id'])
+                ->with( 
+                    'allotted_informations.location', 
+                )->first();
+       
+            DB::commit();
+            $msg = "Warranty has been saved ";
+        } catch (Exception $e) {
+            DB::rollback();
+            $statusCode = 500;
+            $msg = "Error while saving Warranty";
+        }
+
+        return response()->json([ 
+            'response' => $query,
+            'message' => $msg,
+        ], $statusCode);
+    }
+
     function searchAssets($search){
         $query = Asset::where('asset_name', 'LIKE', '%'.$search.'%')->orWhere('asset_code', 'LIKE', '%'.$search.'%')
         ->orderBy('asset_name', 'ASC')
@@ -282,15 +314,19 @@ class AssetController extends Controller
 
     function getWarrantyByAssetId($assetId) {
         $warranties = Asset::where('id', '=',$assetId)
-        ->with( 'pivot_warranties.vendor')
+        ->with( 'pivot_warranties.vendor', 'pivot_warranties.attachment')
         ->orderBy('id', 'DESC')
-        ->get();
-
+        ->get(); 
 
         if($warranties && count($warranties) > 0){
             $warranties = $warranties[0]->pivot_warranties;
         }
         return response()->json($warranties, 200);
+    }
+
+    public function fetchAssetCodeApprovalValidation($code){
+        $query = Asset::select('id','asset_name','asset_code','status_id')->where('asset_code', '=',$code)->with('status')->first();
+        return response()->json($query, 200);
     }
 
     public function fetchAssetCode($code){
@@ -321,14 +357,17 @@ class AssetController extends Controller
             if(@$filterSearch->location_id){
                 $dataObj = $dataObj->where('location_id', $filterSearch->location_id);
             }
-            
+
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
             if(@$filterSearch->category_id){
                 $dataObj = $dataObj->where('category_id', $filterSearch->category_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with( 'created_by', 'company', 'location','category', 'status', 'condition');
+            if(@$filterSearch->po_number){
+                $dataObj = $dataObj->where('po_number', $filterSearch->po_number);
+            }
+            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->with( 'created_by', 'company', 'location','category', 'status', 'condition');
         }
 
         if($search){
@@ -337,16 +376,15 @@ class AssetController extends Controller
 
                     $q->where('asset_name', 'like', '%'.$search.'%')
                         ->orWhere('asset_code',  'like', '%'.$search.'%')
-                        ->orWhere('serial_number',  'like', '%'.$search.'%'); 
+                        ->orWhere('serial_number',  'like', '%'.$search.'%');
             });
 
-            $dataObj = $dataObj->get();
+            // $dataObj = $dataObj->get();
 
-            $dataArray['data'] = $dataObj->toArray();
-        }else{
-            $dataArray = $dataObj->paginate($paginate);
-        }
-
+            // $dataArray['data'] = $dataObj->paginate($paginate);
+        } 
+        
+        $dataArray = $dataObj->paginate($paginate);
         return response()->json($dataArray, 200);
     }
 
@@ -355,21 +393,18 @@ class AssetController extends Controller
      * Below is for Dashboard
      */
     public function dashboardData(Request $request){
-        $role = 'normal';
-
-        
+        $role = 'normal'; 
 
         $incidents = Incident::whereNot('status_id', 2)->whereNot('status_id', 8);
         $maintenance = Incident::where('type_id',2)->whereNot('status_id', 8);
-        $req = RequestAsset::where('types','=', 'request')->whereNot('status', 'complete');
-        $transfer = RequestAsset::where('types','transfer')->whereNot('status', 'complete');
+        $req = RequestAsset::where('types','=', 'request')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
+        $transfer = RequestAsset::where('types','transfer')->whereNotIn('status', ['cancelled', 'reject', 'complete']);
 
+        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(5);
+        $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(5);
+        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(5); 
 
-        $query_all_asset    = Asset::orderBy('updated_at', 'DESC')->with('category','company','location', 'created_by','status')->limit(10);
-        $query_all_incident = Incident::orderBy('updated_at', 'DESC')->with('company','location','profile', 'asset.category','status')->limit(10);
-        $query_all_request = RequestAsset::orderBy('updated_at', 'DESC')->with('company','profile','transfer_to')->limit(10);
-
-        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor'){
+        if($request->input('role') !== 'superadmin' && $request->input('role') !== 'commercial-manager' && $request->input('role') !== 'asset-supervisor' && $request->input('role') !== 'receiving-releasing' && $request->input('role') !== 'facility'){
             $incidents   = $incidents->where('profile_id', $request->input('id'));
             $maintenance = $maintenance->where('profile_id', $request->input('id'));
             $req         = $req->where('profile_id', $request->input('id'));
@@ -391,8 +426,7 @@ class AssetController extends Controller
 
         $newArray = array();
 
-
-        if(count($query_all_asset) > 0){
+        if(count($query_all_asset) > 0 && $request->input('role') !== 'receiving-releasing' && $request->input('role') !== 'facility'){
             foreach ($query_all_asset as $k => $v) {
                 $newArray[] = array(
                     'company' => $v->company ? $v->company['title'] : '',
@@ -402,7 +436,7 @@ class AssetController extends Controller
                     'asset_code' => $v->asset_code,
                     'type' => $v->status ? "asset(".$v->status['title'].')' : '',
                     'author' => $v->created_by ? $v->created_by['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
@@ -418,7 +452,7 @@ class AssetController extends Controller
                     'asset_code' => $v->asset ? $v->asset['asset_code'] : $v->asset_code,
                     'type' => $v->status ? "incident(".$v->status['title'].')' : '',
                     'author' => $v->profile ? $v->profile['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
@@ -430,21 +464,21 @@ class AssetController extends Controller
                     'company' => $v->company ? $v->company['title'] : '',
                     'location' => $v->transfer_to ? $v->transfer_to['title'] : '',
                     'category' => '',
-                    'asset_name' => '',
+                    'asset_name' => $v->subject,
                     'asset_code' => '',
                     'type' => $v->types."(".$v->status.')',
                     'author' => $v->profile ? $v->profile['display_name'] : '',
-                    'date' => date('d/m/Y', strtotime($v->updated_at))
+                    'date' => date('Y-m-d', strtotime($v->updated_at))
                 );
             }
         }
 
         $merge_data = array_merge($newArray, $newArray2, $newArray3);
-
+       
         usort($merge_data, function ($a, $b) {
             return strtotime($b['date']) -strtotime($a['date']);
         });
-
+       
         $merge_data = array_slice($merge_data, 0, 10);
 
         $response = array('count' => array('incident' => $incidents, 'maintenance' => $maintenance, 'request' => $req, 'transfer' => $transfer),
@@ -454,8 +488,59 @@ class AssetController extends Controller
         return response()->json($response, 200);
     }
 
-    public function downloadAsset(){
-        $query = Asset::with(
+    public function downloadAsset(Request $request){
+        $decoded = json_decode($request['filter']);
+        $location = '';
+        $company = '';
+        $category = '';
+        $status = '';
+        $po_number = '';
+        $search = '';
+        if($decoded){
+            if(@$decoded->location_id){
+                $location = array('location_id' => $decoded->location_id);
+            }
+            if(@$decoded->company_id){
+                $company = array('company_id' => $decoded->company_id);
+            }
+            if(@$decoded->category_id){
+                $category = array('category_id' => $decoded->category_id);
+            }
+            if(@$decoded->status_id){
+                $status = array('status_id' => $decoded->status_id);
+            }
+            if(@$decoded->po_number){
+                $po_number = array('po_number' => $decoded->po_number);
+            }
+            if(@$decoded->search){
+                $search =  $decoded->search;
+            }
+        }
+        $query = Asset::where(function($q) use ($location, $company, $category, $status, $po_number, $search){
+            if($location){
+                $q->where($location);
+            }
+            if($company){
+                $q->where($company);
+            }
+            if($category){
+                $q->where($category);
+            }
+            if($status){
+                $q->where($status);
+            }
+            if($po_number){
+                $q->where($po_number);
+            }
+            if($search){
+                $q->where(function($qq) use($search){
+                    $capSearch = strtoupper($search); 
+                    $qq->where('asset_name', 'like', '%'.$search.'%')
+                        ->orWhere('asset_code',  'like', '%'.$search.'%')
+                        ->orWhere('serial_number',  'like', '%'.$search.'%');
+                });
+            }
+        })->with(
             'warranty_latest',
             'warranties.vendor',
             'allotted_informations.location',

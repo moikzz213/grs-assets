@@ -13,6 +13,7 @@ class ProfileController extends Controller
 {
     public function saveProfile(Request $request)
     {   
+         
         $profileArray = array(
             'display_name' => $request['display_name'],
             'first_name' => $request['first_name'],
@@ -21,8 +22,11 @@ class ProfileController extends Controller
             'contact' => $request['contact'],
             'status' => $request['status'],
             'role' => $request['role'], 
+            'on_leave' => $request['on_leave'] == 'onleave' || $request['on_leave'] == 1 ? 1 : 0, 
+            'email_reliever' => $request['email_reliever'], 
             'designation' => $request['designation'], 
         );
+      
         if(@$request['company_id']){
             $company = array('company_id' => $request['company_id']);
             $profileArray = array_merge($profileArray, $company);
@@ -49,6 +53,7 @@ class ProfileController extends Controller
 
     public function createNewProfile(Request $request)
     { 
+       
         $request->validate([
             'ecode' => 'required|string'          
         ]);

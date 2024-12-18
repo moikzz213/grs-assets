@@ -9,6 +9,24 @@ export const jc = [
         },
     },
     {
+        path: "/pv/employee-signatory/:type/approvals/generate-invoice",
+        component: () => import("../../pages/GenerateInvoice.vue"),
+        name: "GenerateInvoice",
+        meta: {
+            requiresAuth: false,
+            title: "PublicApproval",
+        },
+    },
+    {
+        path: "/pv/employee-signatory/:type/approvals/generate-packing-list",
+        component: () => import("../../pages/GeneratePackingList.vue"),
+        name: "GeneratePacking",
+        meta: {
+            requiresAuth: false,
+            title: "PublicApproval",
+        },
+    },
+    {
         path: "/request-asset",
         component: () => import("../../pages/normal/requestasset/List.vue"),
         name: "RequestAsset",
@@ -171,5 +189,5 @@ export const jc = [
             requiresAuth: false,
             title: "ResetPassword",
         },
-    }, 
+    },  
 ];

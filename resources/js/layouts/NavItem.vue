@@ -87,6 +87,7 @@ const returnAccess = (item, type = null) => {
     item.slug == "scan" ||
     item.slug == "report-incident" || 
     item.slug == "request-asset" ||
+    item.slug == "maintenance" ||
     item.slug == "transfer-asset"
   ) {
     hasAccess = true;

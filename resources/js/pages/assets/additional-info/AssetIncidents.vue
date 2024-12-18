@@ -6,6 +6,7 @@
           <thead>
             <tr>
               <th class="text-left text-primary">ISR ID</th>
+              <th class="text-left text-primary">Type</th>
               <th class="text-left text-primary">Urgency</th>
               <th class="text-left text-primary">Priority</th>
               <th class="text-left text-primary">Reported by</th>
@@ -24,11 +25,12 @@
                 ISR-2{{ pad(item.id) }}
                 <v-icon class="ml-1" size="small" :icon="mdiEye"></v-icon>
               </td>
-              <td>{{ item.urgency.title }}</td>
+              <td>{{ item.type?.title }}</td>
+              <td>{{ item.urgency?.title }}</td>
               <td>{{ item.priority ? statusTitle(item.priority) : "-" }}</td>
               <td>{{ item.profile?.display_name }}</td>
               <td>
-                {{ item.handle_by?.display_name ? item.handle_by?.display_name : "-" }}
+                {{ item.handled_by?.display_name ? item.handled_by?.display_name : "-" }}
               </td>
               <td>
                 {{
@@ -105,7 +107,7 @@ watch(
   () => props.asset,
   (newValue, oldValue) => {
     assetDetail.value = newValue;
-    console.log("assetDetail.value", assetDetail.value);
+     
   },
   { deep: true }
 );

@@ -253,6 +253,33 @@ export const routes = [
             title: "locations",
         },
     },
+    {
+        path: "/location/view-assets/history/:id",
+        component: () => import("../pages/admin/locations/History.vue"),
+        name: "location-asset-log",
+        meta: {
+            requiresAuth: true,
+            title: "location-asset-log",
+        },
+    },
+    {
+        path: "/locations/:location/stamp-signature/:type",
+        component: () => import("../pages/admin/locations/DataForm.vue"),
+        name: "stamp-signature",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
+    {
+        path: "/locations/:location/stamp-signature/:type",
+        component: () => import("../pages/admin/locations/DataForm.vue"),
+        name: "stamp-signature",
+        meta: {
+            requiresAuth: true,
+            title: "locations",
+        },
+    },
     // categories
     {
         path: "/categories",

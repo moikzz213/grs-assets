@@ -16,6 +16,7 @@
       v-on:error="handleFilePondError"
       allowProcess="false"
     />
+    <small class="text-center text-caption">Max 4 files uploads at a time. ( .png, .jpg & .pdf )</small>
     <div class="mt-auto d-flex justify-end">
       <v-btn color="primary" @click="handleUpload">Upload</v-btn>
     </div>
@@ -67,7 +68,7 @@ const uploadOptions = ref({
   //     : "1:1",
   accepted_file_types: props.options.accepted_file_types
     ? props.options.accepted_file_types
-    : "image/jpeg, image/png", // image/jpeg, image/png, application/pdf
+    : "image/jpeg, image/png, application/pdf", // image/jpeg, image/png, application/pdf
   type: props.options.type ? props.options.type : "asset",
   max_parallel_uploads: props.options.max_parallel_uploads
     ? props.options.max_parallel_uploads

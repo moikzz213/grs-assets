@@ -2,11 +2,13 @@
   <div class="pa-3 d-flex flex-column" style="min-height: 400px">
     <div class="mb-3">
       <v-row v-if="files.length > 0" class="ma-0">
-        <div v-for="file in files" :key="file.id" class="v-col-6 v-col-md-2 pa-1">
+        <div v-for="file in files" :key="file.id" class="v-col-12 v-col-md-2 pa-1 text-center" style="border:1px solid #e7e7e7; border-radius: 5px;
+        "> 
           <v-img
+          v-if="mimeTypes.includes(file.mime)"
             cover
             :aspect-ratio="1"
-            class="cursor-pointer"
+            :class="`${file.mime} cursor-pointer`"
             :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
             :src="baseURL + '/file/' + file.path"
             @click="() => selectFile(file)"
@@ -15,6 +17,21 @@
             }`"
           >
           </v-img>
+          <v-img
+          v-else
+            cover
+            :aspect-ratio="1"
+            :class="`${file.mime} cursor-pointer`"
+            :lazy-src="baseURL + '/assets/images/placeholder-image.png'"
+            :src="baseURL + '/assets/images/pdf-image.png'"
+            @click="() => selectFile(file)"
+            :style="`border: 4px solid ${
+              theSelectedFiles.includes(file.id) == true ? '#ffed00' : 'transparent'
+            }`"
+          >
+          </v-img>
+          <small style="font-size:10px;">{{ limitText(file.title, 25) }}.{{ getExtension(file) }}</small>
+          <div style="font-size:10px;">{{ useFormatDateTime(file.created_at) }}</div> 
         </div>
       </v-row>
       <v-sheet
@@ -25,6 +42,13 @@
       >
         No media files at the moment
       </v-sheet>
+
+      <v-row v-if="files.length > 0" class="ma-0 mt-5">
+          <div class="ma-auto">
+            <v-btn color="info" @click="loadMore" v-if="getCurrentLoad < getMaxLimit">Load More</v-btn>
+            <div   v-else>All  Files Loaded.</div>
+          </div>
+      </v-row>
     </div>
     <div class="mt-auto d-flex justify-end">
       <v-btn
@@ -40,7 +64,8 @@
 import { ref, computed } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
-
+import { limitText } from "@/composables/generateRandomString.js";
+import { useFormatDateTime } from "@/composables/formatDate.js"
 const props = defineProps({
   multiSelect: {
     type: Boolean,
@@ -49,6 +74,10 @@ const props = defineProps({
   type: {
     type: String,
     default: 'asset'
+  },
+  userID:{
+     type: Number,
+    default: null
   }
 });
 
@@ -59,31 +88,64 @@ const emit = defineEmits(["selected"]);
 // get files
 const files = ref([]);
 const loadingFiles = ref(false);
+const loadMoreNumber = ref(1);
+const getMaxLimit = ref(0);
+const getCurrentLoad= ref(0);
+const mimeTypes = ref(['image/jpeg', 'image/gif','image/png', 'image/jpg']);
+ 
 const getFiles = async () => {
   loadingFiles.value = true;
+  let userID = '';
+  console.log("propspropsprops",props);
+  if(props.userID){
+    userID = '&userID='+props.userID;
+  }
   await clientKey(authStore.token)
-    .get("/api/system/file/all/"+props.type)
+    .get("/api/system/file/all/"+props.type+"?page=" + loadMoreNumber.value+ userID)
     .then((res) => {
-      loadingFiles.value = false;
-      files.value = res.data.data; 
+      loadingFiles.value = false; 
+
+      if(files.value.length == 0){
+        files.value = res.data.data; 
+       
+      }else{
+        files.value = [...files.value, ...res.data.data];  
+      } 
+       
+      getCurrentLoad.value = res.data.to;
+      getMaxLimit.value = res.data.total;
     })
-    .catch((err) => {
-      console.log("getFiles", err);
+    .catch((err) => { 
       loadingFiles.value = false;
     });
-};
-getFiles();
+}; 
+
+getFiles();  
+
+const loadMore = () => {
+  loadMoreNumber.value = loadMoreNumber.value + 1;
+  getFiles();
+}
+ 
+const getExtension = (ext) => {
+  let mimeType = ext.path.split(".");
+   return mimeType[mimeType.length - 1];
+}
 
 // select file
 const selectedFile = ref([]);
 const selectFile = (file) => {
   const fileExist = selectedFile.value.find((f) => f.id == file.id);
   if (!fileExist) {
-    selectedFile.value.push(file);
+    if(selectedFile.value.length  >= 1 && !props.multiSelect){
+      selectedFile.value[0] = file;
+    }else{
+      selectedFile.value.push(file);
+    }
   } else {
     selectedFile.value = selectedFile.value.filter((f) => f.id !== file.id);
   }
-  console.log("selectedFile.value", selectedFile.value);
+ 
 };
 
 // the selected files

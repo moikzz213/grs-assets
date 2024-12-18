@@ -25,7 +25,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -33,13 +33,14 @@
                 item-title="title"
                 clearable
                 label="Company"
+                @click:clear="clearSearch('company')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -47,19 +48,21 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="typeList"
                 v-model="objFIlter.type_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('type')"
                 variant="outlined"
                 density="compact"
                 hide-details
                 item-value="id"
                 item-title="title"
                 clearable
+                @click:clear="clearSearch('type')"
                 label="Type"
               ></v-autocomplete>
             </div>
@@ -67,13 +70,14 @@
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
                 item-value="id"
                 item-title="title"
                 clearable
+                @click:clear="clearSearch('status')"
                 label="Status"
               ></v-autocomplete>
             </div>
@@ -138,7 +142,7 @@
                   D.Created<br />
                   <small>(DD/MM/YY)</small>
                 </th>
-                <th class="text-right text-capitalize"></th>
+                <th class="text-right text-capitalize last-child-action"></th>
               </tr>
             </thead>
             <tbody>
@@ -156,16 +160,12 @@
                   <v-chip
                     class="text-uppercase"
                     size="small"
-                    :color="`${
-                      item.status?.title.toLowerCase() == 'completed'
-                        ? 'success'
-                        : 'error'
-                    }`"
+                    :color="`${item.status?.color}`"
                     >{{ item.status?.title }}</v-chip
                   >
                 </td>
                 <td>{{ useFormatDate(item.created_at) }}</td>
-                <td>
+                <td class="last-child-action">
                   <div class="d-flex align-center justify-end">
                     <v-icon
                       size="small"
@@ -173,7 +173,7 @@
                       :icon="mdiPencil"
                       class="mx-1"
                     />
-                    <v-icon
+                    <!-- <v-icon
                       size="small"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -182,7 +182,7 @@
                       @click="() => deleteUser(item.id)"
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
@@ -242,12 +242,23 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
+  localStorage.setItem("incident-filter-row", encryptData(showPerPage.value));
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => {
+  sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        localStorage.setItem("incident-filter-company", encryptData(objFIlter.value.company_id));
+      }else if(v == 'location'){ 
+        localStorage.setItem("incident-filter-location", encryptData(objFIlter.value.location_id));
+      }else if(v == 'type'){ 
+        localStorage.setItem("incident-filter-type", encryptData(objFIlter.value.type_id));
+      }else if(v == 'status'){ 
+        localStorage.setItem("incident-filter-status", encryptData(objFIlter.value.status_id));
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
@@ -258,10 +269,26 @@ const searchData = () => {
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("incident-search", "");
-  getAllData();
+const clearSearch = (v) => { 
+  
+  if(v == 'search'){
+    search.value = "";
+    localStorage.setItem("incident-search", "");
+    getAllData();
+  }else if(v == 'company'){ 
+     
+      localStorage.setItem("incident-filter-company", '');
+  }else if(v == 'location'){ 
+   
+    localStorage.setItem("incident-filter-location", '');
+  }else if(v == 'type'){ 
+    
+    localStorage.setItem("incident-filter-type", '');
+  }else if(v == 'status'){ 
+    
+    localStorage.setItem("incident-filter-status", '');
+  }
+  
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -355,7 +382,12 @@ const getAllData = async () => {
     })
     .catch((err) => {
       users.value.loading = false;
-      console.log(err);
+      localStorage.setItem("incident-search", null);
+      localStorage.setItem("incident-filter-company", null); 
+      localStorage.setItem("incident-filter-location", null); 
+      localStorage.setItem("incident-filter-type", null); 
+      localStorage.setItem("incident-filter-status", null);
+      localStorage.setItem("incident-filter-row", 10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {
@@ -382,7 +414,7 @@ const editUser = (id) => {
       query: { type: "details" },
     })
     .catch((err) => {
-      console.log(err);
+      
     });
 };
 
@@ -397,9 +429,29 @@ const pad = (v, size = 5) => {
 
 onMounted(() => {
   let vsearch = localStorage.getItem("incident-search");
-
+  let vcomp = localStorage.getItem("incident-filter-company"); 
+  let vlocation = localStorage.getItem("incident-filter-location"); 
+  let vtype = localStorage.getItem("incident-filter-type"); 
+  let vstatus = localStorage.getItem("incident-filter-status");
+  let vrows = localStorage.getItem("incident-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
+  }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  }
+  if(vtype){
+    objFIlter.value.type_id = decryptData(vtype);
+  }
+  if(vstatus){
+    objFIlter.value.status_id = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
   }
   getAllData().then(() => {
     fetchCompanies();

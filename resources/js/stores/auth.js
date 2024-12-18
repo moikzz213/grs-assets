@@ -22,6 +22,38 @@ const encryptData = (data) => {
     return CryptoJS.AES.encrypt(JSON.stringify(data), dk).toString();
 };
 
+const removeCache = () => {
+    localStorage.removeItem('current-pg')
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("asset-filter-category");
+    localStorage.removeItem("transfer-filter-status");
+    localStorage.removeItem("asset-filter-ponum");
+    localStorage.removeItem("request-filter-company");
+    localStorage.removeItem("transfer-filter-company");
+    localStorage.removeItem("transfer-filter-from");
+    localStorage.removeItem("transfer-filter-location");
+    localStorage.removeItem("transfer-filter-row");
+    localStorage.removeItem("asset-filter-row");
+    localStorage.removeItem("asset-filter-location");
+    localStorage.removeItem("request-filter-status");
+    localStorage.removeItem("request-filter-location");
+    localStorage.removeItem("request-filter-row");
+    localStorage.removeItem("request-filter-from");
+    localStorage.removeItem("asset-filter-company");
+    localStorage.removeItem("asset-filter-status");
+    localStorage.removeItem("asset-list-search");
+    localStorage.removeItem("request-asset-search");
+    localStorage.removeItem("transfer-asset-search");
+    localStorage.removeItem("user-search");
+
+    localStorage.removeItem("incident-filter-row");
+    localStorage.removeItem("incident-filter-company");
+    localStorage.removeItem("incident-filter-location");
+    localStorage.removeItem("incident-filter-type");
+    localStorage.removeItem("incident-filter-status");
+    localStorage.removeItem("incident-search");
+}
+
 export const useAuthStore = defineStore("authUser", {
     state: () => ({
         auth: useLocalStorage("authUser", {}),
@@ -76,7 +108,7 @@ export const useAuthStore = defineStore("authUser", {
                     mergeDefaults: true,
                 }
             );
-        },
+        }, 
 
         setCapabilities(path) {
             this.auth_capabilities = null;
@@ -122,16 +154,14 @@ export const useAuthStore = defineStore("authUser", {
                         }
                     })
                     .catch((err) => {
-                        localStorage.removeItem('current-pg')
-                        localStorage.removeItem("authUser");
+                        removeCache(); 
                         window.location = "/login";
                     });
             }
         },
 
         async logout() {
-            localStorage.removeItem('current-pg')
-            localStorage.removeItem('authUser');
+            removeCache(); 
             useLocalStorage("authUser", {});
             this.auth = {};
         },

@@ -5,7 +5,8 @@
       <div class="v-col-12">
         <v-card :loading="users.loading">
           <v-card-title class="d-flex align-center mb-3 pa-3">
-            <div class="mr-auto">Maintenance</div>
+            <div class="mr-2">Maintenance</div>
+            <v-btn color="primary" size="small" @click="goTo" class="mr-auto">NEW</v-btn>
             <v-text-field
               v-model="search"
               variant="outlined"
@@ -25,7 +26,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -33,13 +34,14 @@
                 item-title="title"
                 clearable
                 label="Company"
+                
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -47,20 +49,21 @@
                 item-value="id"
                 clearable
                 item-title="title"
+                 
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
                 item-value="id"
                 item-title="title"
                 clearable
-                label="Status"
+                label="Status" 
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
@@ -178,7 +181,7 @@
                       :icon="mdiEyeOutline"
                       class="mx-1"
                     />
-                    <v-icon
+                    <!-- <v-icon
                       size="small"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -187,7 +190,7 @@
                       @click="() => deleteUser(item.id)"
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
@@ -247,26 +250,57 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
+  
+  localStorage.setItem("maintenance-filter-row", encryptData(showPerPage.value)); 
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => { 
+  sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        if(objFIlter.value.company_id == ''){  
+            localStorage.setItem("maintenance-filter-company", '');
+        }else{
+          localStorage.setItem("maintenance-filter-company", encryptData(objFIlter.value.company_id));
+        }
+      }else if(v == 'location'){ 
+        if(objFIlter.value.location_id == ''){
+          localStorage.setItem("maintenance-filter-location", '');
+        }else{
+          localStorage.setItem("maintenance-filter-location", encryptData(objFIlter.value.location_id));
+        }
+      } else if(v == 'status'){ 
+        if(objFIlter.value.location_id == ''){
+          localStorage.setItem("maintenance-filter-status", '');
+        }else{
+          localStorage.setItem("maintenance-filter-status", encryptData(objFIlter.value.status_id));
+        }
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
 };
 
+const goTo = () => {  
+    router
+    .push({
+        name: 'NewMaintenance'       
+    })
+    .catch((err) => {});
+} 
+
 const searchData = () => {
+ 
   localStorage.setItem("maintenance-search", encryptData(search.value));
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("maintenance-search", "");
-  getAllData();
+const clearSearch = () => {  
+    search.value = "";
+    localStorage.setItem("maintenance-search", ""); 
+    getAllData();
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -288,6 +322,7 @@ const orderBy = ref([]);
 const sortBy = ref("");
 const orderByCount = ref(0);
 const OrderByField = (v) => {
+ 
   users.value.loading = true;
 
   orderBy.value[0] = v;
@@ -332,12 +367,16 @@ const fetchStatus = async () => {
     .catch((err) => {});
 };
 
-const getAllData = async () => {
-  console.log("objFIlter", objFIlter.value);
+const getAllData = async () => { 
+ 
   users.value.loading = true;
   await clientKey(authStore.token)
     .get(
-      "/api/fetch/maintenance-assets/data?page=" +
+      "/api/fetch/maintenance-assets/data?userid=" +
+        authStore.user.profile.id +
+        "&role=" +
+        authStore.user.profile.role +
+        "&page=" +
         currentPage.value +
         "&show=" +
         showPerPage.value +
@@ -359,10 +398,14 @@ const getAllData = async () => {
     })
     .catch((err) => {
       users.value.loading = false;
-      console.log(err);
+      localStorage.setItem("maintenance-filter-company", null); 
+      localStorage.setItem("maintenance-filter-location", null);  
+      localStorage.setItem("maintenance-filter-status", null);
+      localStorage.setItem("maintenance-filter-row", 10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {
+ 
   if (currentPage.value && newValue != oldValue) {
     router
       .push({
@@ -395,7 +438,7 @@ const editUser = (id, type) => {
       query: queryParam,
     })
     .catch((err) => {
-      console.log(err);
+ 
     });
 };
 
@@ -411,8 +454,25 @@ const pad = (v, size = 5) => {
 onMounted(() => {
   let vsearch = localStorage.getItem("maintenance-search");
 
+  let vcomp = localStorage.getItem("maintenance-filter-company"); 
+  let vlocation = localStorage.getItem("maintenance-filter-location");  
+  let vstatus = localStorage.getItem("maintenance-filter-status");
+  let vrows = localStorage.getItem("maintenance-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
+  }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  } 
+  if(vstatus){
+    objFIlter.value.status_id = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
   }
   getAllData().then(() => {
     fetchCompanies();

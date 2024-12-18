@@ -25,7 +25,7 @@
               <v-autocomplete
                 :items="companyList"
                 v-model="objFIlter.company_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('company')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -33,28 +33,45 @@
                 item-title="title"
                 clearable
                 label="Company"
+                @click:clear="clearSearch('company')"
+              ></v-autocomplete>
+            </div>
+            <div class="v-col-12 v-col-md">
+              <v-autocomplete
+                :items="locationList"
+                v-model="objFIlter.from"
+                @update:modelValue="filterSearch('from')"
+                variant="outlined"
+                density="compact"
+                hide-details
+                label="Location From"
+                item-value="id"
+                clearable
+                item-title="title"
+                @click:clear="clearSearch('from')"
               ></v-autocomplete>
             </div>
             <div class="v-col-12 v-col-md">
               <v-autocomplete
                 :items="locationList"
                 v-model="objFIlter.location_id"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('location')"
                 variant="outlined"
                 density="compact"
                 hide-details
-                label="Location"
+                label="Location To"
                 item-value="id"
                 clearable
                 item-title="title"
+                @click:clear="clearSearch('location')"
               ></v-autocomplete>
             </div>
 
-            <div class="v-col-12 v-col-md">
+            <div class="v-col-12 v-col-md-2">
               <v-autocomplete
                 :items="statusList"
                 v-model="objFIlter.status"
-                @update:modelValue="filterSearch"
+                @update:modelValue="filterSearch('status')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -62,9 +79,10 @@
                 item-title="title"
                 clearable
                 label="Status"
+                @click:clear="clearSearch('status')"
               ></v-autocomplete>
             </div>
-            <div class="v-col-12 v-col-md">
+            <div class="v-col-12 v-col-md-2">
               <v-autocomplete
                 :items="showRows"
                 v-model="showPerPage"
@@ -88,9 +106,15 @@
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
+                  @click="OrderByField('transferred_from')"
+                >
+                  From
+                </th>
+                <th
+                  class="text-left text-capitalize cursor-pointer"
                   @click="OrderByField('transferred_to')"
                 >
-                  Location
+                  To
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
@@ -103,6 +127,13 @@
                   @click="OrderByField('profile_id')"
                 >
                   Requestor
+                </th>
+                <th
+                  class="text-left text-capitalize cursor-pointer"
+                  @click="OrderByField('reminder_profile_id')"
+                >
+                  Approval<br/>
+                  <small>PENDING</small>
                 </th>
                 <th
                   class="text-left text-capitalize cursor-pointer"
@@ -124,22 +155,24 @@
                   D.Closed<br />
                   <small>(DD/MM/YY)</small>
                 </th>
-                <th class="text-right text-capitalize"></th>
+                <th class="text-right text-capitalize last-child-action"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in dataobj.data" :key="item.id">
+              <tr v-for="item in dataobj.data" :key="item.id" :class="`${authStore.user.profile.id == item.reminder_profile_id ? 'bg-blue-lighten-5' : ''} `">
                 <td>SN-5{{ pad(item.id) }}</td>
                 <td>{{ item.company?.title }}</td>
+                <td>{{ item.transfer_from?.title }}</td>
                 <td>{{ item.transfer_to?.title }}</td>
                 <td>{{ item.subject }}</td>
                 <td>{{ item.profile?.display_name }}</td>
+                <td>{{ item.reminder_profile?.display_name }}</td>
                 <td>
                   <v-chip
                     class="text-uppercase"
                     size="small"
                     :color="`${
-                      item.status.toLowerCase() == 'complete' ? 'success' : 'error'
+                      item.status.toLowerCase() == 'complete' ? 'success' :  (item.status.toLowerCase() == 'pending' || item.status.toLowerCase() == 'awaiting-approval') ? 'warning' : 'error'
                     }`"
                     >{{ statusTitle(item.status) }}</v-chip
                   >
@@ -152,7 +185,7 @@
                       : ""
                   }}
                 </td>
-                <td>
+                <td class="last-child-action">
                   <div class="d-flex align-center justify-end">
                     <v-icon
                       size="small"
@@ -160,7 +193,7 @@
                       :icon="mdiPencil"
                       class="mx-1"
                     />
-                    <v-icon
+                    <!-- <v-icon
                       size="small"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -169,7 +202,7 @@
                       @click="() => deleteUser(item.id)"
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
@@ -228,13 +261,23 @@ const showPerPage = ref(10);
 const objFIlter = ref({});
 
 const filterRows = () => {
+  localStorage.setItem("request-filter-row", encryptData(showPerPage.value));
   getAllData();
 };
 
-const filterSearch = () => {
+const filterSearch = (v) => {
   sortBy.value = "";
   if (currentPage.value == 1) {
-    getAllData();
+      if(v == 'company'){ 
+        localStorage.setItem("request-filter-company", encryptData(objFIlter.value.company_id));
+      }else if(v == 'location'){ 
+        localStorage.setItem("request-filter-location", encryptData(objFIlter.value.location_id));
+      }else if(v == 'from'){ 
+        localStorage.setItem("request-filter-from", encryptData(objFIlter.value.from));
+      } else if(v == 'status'){ 
+        localStorage.setItem("request-filter-status", encryptData(objFIlter.value.status));
+      }
+      getAllData();
   } else {
     currentPage.value = 1;
   }
@@ -245,10 +288,21 @@ const searchData = () => {
   getAllData();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  localStorage.setItem("request-asset-search", "");
-  getAllData();
+const clearSearch = (v) => { 
+  if(v == 'search'){
+    search.value = "";
+    localStorage.setItem("request-asset-search", "");
+    getAllData();
+  }else if(v == 'company'){  
+      localStorage.setItem("request-filter-company", '');
+  }else if(v == 'location'){  
+    localStorage.setItem("request-filter-location", '');
+  }else if(v == 'from'){  
+    localStorage.setItem("request-filter-from", '');
+  }else if(v == 'status'){  
+    localStorage.setItem("request-filter-status", '');
+  }
+  
 };
 
 const currentPage = ref(route.params && route.params.page ? route.params.page : 1);
@@ -328,7 +382,7 @@ const getAllData = async () => {
         JSON.stringify(objFIlter.value)
     )
     .then((res) => {
-      console.log("dataobj.value", dataobj.value);
+      
       totalPageCount.value = res.data.last_page ? res.data.last_page : res.data.length;
       currentPage.value = res.data.current_page
         ? res.data.current_page
@@ -339,7 +393,11 @@ const getAllData = async () => {
     })
     .catch((err) => {
       dataobj.value.loading = false;
-      console.log(err);
+      localStorage.setItem("request-filter-company", null); 
+      localStorage.setItem("request-filter-location",null);  
+      localStorage.setItem("request-filter-from",null);  
+      localStorage.setItem("request-filter-status",null);
+      localStorage.setItem("request-filter-row",10);
     });
 };
 watch(currentPage, (newValue, oldValue) => {
@@ -391,8 +449,30 @@ const pad = (v, size = 6) => {
 onMounted(() => {
   let vsearch = localStorage.getItem("request-asset-search");
 
+  let vcomp = localStorage.getItem("request-filter-company"); 
+  let vlocation = localStorage.getItem("request-filter-location");  
+  let vfrom = localStorage.getItem("request-filter-from");  
+  let vstatus = localStorage.getItem("request-filter-status");
+  let vrows = localStorage.getItem("request-filter-row");
+     
   if (vsearch) {
     search.value = decryptData(vsearch);
+  }
+  if(vcomp){
+    objFIlter.value.company_id = decryptData(vcomp);
+  }
+  if(vlocation){
+    objFIlter.value.location_id = decryptData(vlocation);
+  }
+  if(vfrom){
+    objFIlter.value.from = decryptData(vfrom);
+  }
+  
+  if(vstatus){
+    objFIlter.value.status = decryptData(vstatus);
+  } 
+  if(vrows){
+    showPerPage.value = decryptData(vrows);
   }
   getAllData().then(() => {
     fetchCompanies().then(() => {

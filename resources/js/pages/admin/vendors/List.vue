@@ -230,6 +230,7 @@
             :add-new-dialog="addNewDialog"
             title="Vendor"
             :data-object="dataObject"
+            :is-view="false"
             @cancelled="cancelledAction"
             @save="saveData"
         />

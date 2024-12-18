@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Log;
+use App\Models\File;
+use App\Models\Profile;
 use App\Models\ApprovalSetup;
 use App\Models\RequestApproval;
 use App\Models\RequestAssetDetail;
@@ -39,6 +41,11 @@ class RequestAsset extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function reminder_profile()
+    {
+        return $this->belongsTo(Profile::class, 'reminder_profile_id');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);
@@ -52,5 +59,19 @@ class RequestAsset extends Model
     public function transfer_to()
     {
         return $this->belongsTo(Location::class, 'transferred_to');
+    }
+
+    public function attachment()
+    {  
+        return $this->morphToMany(
+            File::class,
+            'fileable',
+            'fileables',
+            'fileable_id',
+            'file_id',
+            '',
+            'id'
+        );
+
     }
 }

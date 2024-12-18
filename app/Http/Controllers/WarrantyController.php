@@ -66,7 +66,7 @@ class WarrantyController extends Controller
 
     public function storeUpdate(Request $request){
         $data = array('warranty_title' => $request->warranty_title, 'warranty_start_date' => $request->warranty_start_date,
-        'warranty_end_date' => $request->warranty_end_date,'vendor_id' => $request->vendor_id, 'amc_start_date'  => $request->vendor_id,  'amc_end_date'  => $request->amc_end_date);
+        'warranty_end_date' => $request->warranty_end_date,'vendor_id' => $request->vendor_id, 'amc_start_date'  => $request->amc_start_date,  'amc_end_date'  => $request->amc_end_date);
         if($request->id){
             $query = Warranty::where('id', $request->id)->first();
             $query->update($data);

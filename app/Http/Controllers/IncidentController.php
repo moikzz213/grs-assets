@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 class IncidentController extends Controller
 {
     public function fetchData(Request $request){
+       
         $paginate = $request->show;
         $search = $request->search;
         $ID = $request->userid;
@@ -24,12 +25,14 @@ class IncidentController extends Controller
 
         $dataObj = new Incident;
 
-        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'facility' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
-            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
-        }
-
-        $dataObj = $dataObj->whereNot('type_id', 2); // where not type maintenance
-
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+            $dataObj = $dataObj->whereNotIn('type_id', [2,26,27])->where( function($q) use($ID){
+                $q->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+            });
+        }else{
+            $dataObj = $dataObj->whereNotIn('type_id', [2,26,27]); // where not type maintenance  
+        } 
+      
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -48,7 +51,7 @@ class IncidentController extends Controller
             if(@$filterSearch->status_id){
                 $dataObj = $dataObj->where('status_id', $filterSearch->status_id);
             }
-            $dataObj = $dataObj->orderBy('status_id', 'ASC')->orderBy('id', 'DESC')->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
+            $dataObj = $dataObj->orderBy('updated_at', 'DESC')->orderBy('status_id', 'ASC')->with('asset', 'profile', 'company', 'location', 'type', 'status','urgency');
         }
 
         if($search){
@@ -81,6 +84,8 @@ class IncidentController extends Controller
     public function fetchMaintenanceData(Request $request){
         $paginate = $request->show;
         $search = $request->search;
+        $ID = $request->userid;
+        $role = $request->role;
 
         $sort = "";
         $orderBy = $request->sort;
@@ -88,7 +93,12 @@ class IncidentController extends Controller
         $filterSearch = json_decode($filter);
 
         $dataObj = new Incident;
-        $dataObj = $dataObj->where('type_id', 2);
+        
+        if($role !== 'admin' && $role !== 'superadmin' && $role !== 'commercial-manager' && $role !== 'technical-operation' && $role !== 'asset-supervisor'){
+            $dataObj = $dataObj->where('profile_id','=', $ID)->orWhere('handled_by','=', $ID);
+        }
+        $dataObj = $dataObj->where('type_id', 26)->orWhere('type_id', 2);
+
         if($orderBy){
             $orderBy = json_decode($orderBy);
             $field = $orderBy[0];
@@ -163,7 +173,7 @@ class IncidentController extends Controller
             );
 
             $query->update($dataForm);
-            if($request->type_id == 2){
+            if($request->type_id == 2 || $request->type_id == 26){
                 $message = 'Maintenance has been updated';
             }else{
                 $message = 'Incident has been updated';
@@ -190,7 +200,7 @@ class IncidentController extends Controller
 
             $dataForm = array_merge(array('id' => $ID), $dataForm);
             IncidentReport::dispatchAfterResponse(['data' => json_encode($dataForm)])->onQueue('default');
-            if($request->type_id == 2){
+            if($request->type_id == 2 || $request->type_id == 26){
                 $message = 'Asset Maintenance has been created';
 
                 Asset::where(['id' => $assetID])->update(['status_id' => 2]);
@@ -212,12 +222,16 @@ class IncidentController extends Controller
         if($request->id){
 
             $query = Incident::where('id', $request->id)->first();
-
-            $query->update(array(
+            $updateData = array(
                 'priority' => $request->priority,
                 'handled_by' => $request->handled_by,
                 'status_id' => $request->status_id
-            ));
+            );
+            if($request->status_id == 8){
+                $updateData = array_merge($updateData,array('reminder_date' => null, 'date_closed' => Carbon::now())); 
+            } 
+
+            $query->update($updateData);
 
             if($request->remarks_data){
                 $query->remarks()->create(['remarks' => $request->remarks_data, 'profile_id' => $request->profile_id]);
@@ -252,6 +266,22 @@ class IncidentController extends Controller
         return false;
     }
 
+    public function updateIncidentFacilityTeamRemarks(Request $request){
+        
+        if($request->id){
+
+            $query = Incident::where('id', $request->id)->first();
+            
+            if($request->remarks){
+                $query->remarks()->create(['remarks' => $request->remarks, 'profile_id' => $request->profile_id]);
+            }
+
+            return response()->json(array('message' => 'Remarks has been added.'), 200);
+        }
+
+        return false;
+    }
+
     public function fetchDataByID($id){
         $query = Incident::where('id', $id)
         ->with(
@@ -263,6 +293,7 @@ class IncidentController extends Controller
             'status',
             'attachment',
             'remarks.profile',
+            'handled_by',
             'urgency'
         )->first();
         return response()->json($query, 200);

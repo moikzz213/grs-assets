@@ -8,7 +8,7 @@
           class="mr-3 mb-3"
           :color="`${isActive == 'details' ? 'primary' : 'white'}`"
           >Details</v-btn
-        >
+        > 
         <v-btn
           v-if="isEdit"
           class="mr-3 mb-3"
@@ -22,6 +22,7 @@
             (authStore.user.profile.role == 'facility' ||
               authStore.user.profile.role == 'admin' ||
               authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'commercial-manager' ||
               authStore.user.profile.role == 'technical-operation')
           "
           class="mr-3 mb-3"
@@ -35,6 +36,7 @@
             (authStore.user.profile.role == 'facility' ||
               authStore.user.profile.role == 'admin' ||
               authStore.user.profile.role == 'superadmin' ||
+              authStore.user.profile.role == 'commercial-manager' ||
               authStore.user.profile.role == 'technical-operation')
           "
           class="mr-3 mb-3"
@@ -64,6 +66,12 @@
                   </div>
                 </div>
                 <div class="v-col-12 v-col-md-4">
+                  <div class="font-weight-bold">Handled by:</div>
+                  <div>
+                    {{ objData.handled_by?.display_name }}
+                  </div>
+                </div>
+                <div class="v-col-12 v-col-md-4">
                   <div class="font-weight-bold">Status</div>
                   <div>{{ objData.status?.title }}</div>
                 </div>
@@ -90,7 +98,7 @@
               </v-row>
               <v-row>
                 <div class="v-col-12 v-col-md-4">
-                  <Field name="Type" v-slot="{ field, errors }" v-model="objData.type_id">
+                  <Field name="Type" v-slot="{ field, errors }" v-model="objData.type_id"     >
                     <v-select
                       :items="typeList"
                       v-model="objData.type_id"
@@ -102,6 +110,7 @@
                       clearable
                       label="Incident Type*"
                       v-bind="field"
+                      @update:modelValue="changeIncidentType"
                       :error-messages="errors"
                     ></v-select>
                   </Field>
@@ -158,12 +167,8 @@
                   </Field>
                 </div>
                 <div class="v-col-12 v-col-md-6">
-                  <Field
-                    name="Company"
-                    v-slot="{ field, errors }"
-                    v-model="objData.company_id"
-                  >
-                    <v-select
+                  
+                    <v-autocomplete
                       :items="companyList"
                       v-model="objData.company_id"
                       variant="outlined"
@@ -173,18 +178,13 @@
                       item-title="title"
                       clearable
                       label="Company*"
-                      v-bind="field"
-                      :error-messages="errors"
-                    ></v-select>
-                  </Field>
+                     
+                    ></v-autocomplete>
+               
                 </div>
                 <div class="v-col-12 v-col-md-6">
-                  <Field
-                    name="Location"
-                    v-slot="{ field, errors }"
-                    v-model="objData.location_id"
-                  >
-                    <v-select
+                  
+                    <v-autocomplete
                       :items="locationList"
                       v-model="objData.location_id"
                       variant="outlined"
@@ -194,10 +194,9 @@
                       item-title="title"
                       clearable
                       label="Location*"
-                      v-bind="field"
-                      :error-messages="errors"
-                    ></v-select>
-                  </Field>
+                      
+                    ></v-autocomplete>
+                  
                 </div>
                 <div class="v-col-12">
                   <v-textarea
@@ -235,6 +234,7 @@
               <h4 class="headline mb-0 text-center">WARRANTY INFORMATION</h4>
             </v-card-text>
           </v-card>
+         
           <v-row v-if="objData.asset?.pivot_warranties?.length > 0">
             <div class="v-col-12 v-col-md-12">
               <v-card
@@ -268,6 +268,7 @@
             </v-card-text>
           </v-card>
         </div>
+ 
         <Attachment
           v-else-if="isEdit && isActive == 'attachment'"
           :incident-id="parseInt(route.params.id)"
@@ -275,10 +276,12 @@
           @save="DataUpdateEmit"
           :objectdata="objData"
         />
+
         <Facility
           v-else-if="
             (loggedRole == 'superadmin' ||
               loggedRole == 'admin' ||
+              loggedRole == 'commercial-manager' ||
               loggedRole == 'technical-operation' ||
               loggedRole == 'facility') &&
             isEdit &&
@@ -293,10 +296,11 @@
     <v-dialog width="500" v-model="enableBarcode">
       <v-card>
         <v-card-text>
-          <StreamBarcodeReader
+          <qrcode-stream @decode="onDecode"></qrcode-stream>
+          <!-- <StreamBarcodeReader
             @decode="onDecode"
             @loaded="onLoaded"
-          ></StreamBarcodeReader>
+          ></StreamBarcodeReader> -->
         </v-card-text>
         <v-card-text v-if="!isScanLoaded">Please wait...</v-card-text>
         <v-card-actions>
@@ -318,7 +322,7 @@ import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { clientKey } from "@/services/axiosToken";
 import { mdiBarcodeScan, mdiMagnify } from "@mdi/js";
-import { StreamBarcodeReader } from "vue-barcode-reader";
+import { QrcodeStream } from 'qrcode-reader-vue3'
 import { useFormatDate } from "@/composables/formatDate.js";
 import { useStatusStore } from "@/stores/status";
 import Attachment from "@/pages/normal/incidents/Attachment.vue";
@@ -378,12 +382,29 @@ if (statusStore.list.length == 0) {
   });
 }
 
+const changeIncidentType  =  (e) =>{
+  if(e === 26){
+    sbOptions.value = {
+    status: true,
+    type: "info",
+    text: "Redirecting to Maintenance Page",
+  };
+     setTimeout(() => {
+      router
+        .push({
+          name: "NewMaintenance", 
+          query: { type: "details" },
+        })
+        .catch((err) => {});
+     }, 1000);
+  }
+  
+}
+
 let validation = yup.object({
   Type: yup.string().required(),
   Urgency: yup.string().required(),
-  Title: yup.string().required(),
-  Company: yup.string().required(),
-  Location: yup.string().required(),
+  Title: yup.string().required(), 
 });
 
 const enableBarcode = ref(false);
@@ -454,7 +475,7 @@ const saveData = async () => {
       }
     })
     .catch((err) => {
-      console.log("save incident error: ", err);
+      
       loadingBtn.value = false;
     });
 };

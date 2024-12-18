@@ -112,6 +112,38 @@
                                     <div
                                         class="d-flex align-center justify-end"
                                     >
+
+                                    <v-btn
+                                        density="compact" 
+                                            :icon="mdiHistory"
+                                            
+                                            @click="
+                                                () =>
+                                                    viewLogs(
+                                                        item.id                                                      
+                                                    )
+                                            "
+                                            title="History"
+                                            class="mx-2"
+                                        >
+                                        </v-btn>
+
+
+                                    <v-btn
+                                    :loading="iconLoading" 
+                                    v-if="
+                                        authStore.user.role ==
+                                            'superadmin' ||
+                                        authStore.capabilities?.includes(
+                                            'edit'
+                                        )
+                                    "
+                                    @click="() => openTo(item.code)"
+                                    color="secondary"
+                                    title="Stamp & Signature"
+                                    density="compact"
+                                    class="mx-2"
+                                        >Inbound & Outbound</v-btn>
                                         <v-btn
                                             :loading="iconLoading" 
                                             v-if="
@@ -203,6 +235,7 @@
             :data-object="dataObject"
             @cancelled="cancelledAction"
             @save="saveData"
+            :is-view="false"
         />
         <AppSnackBar :options="sbOptions" />
     </v-container>
@@ -211,7 +244,7 @@
 <script setup>
 import AppPageHeader from "@/components/ApppageHeader.vue";
 import { onMounted, ref, watch } from "vue";
-import { mdiPencil, mdiEyeOff, mdiEyeCheck } from "@mdi/js";
+import { mdiPencil, mdiEyeOff, mdiEyeCheck, mdiHistory } from "@mdi/js";
 import { useRouter, useRoute } from "vue-router";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
@@ -305,6 +338,15 @@ const fetchAllData = async () => {
             console.log(err);
         });
 };
+
+const openTo = (location) => {
+    router.push({ path: "/locations/" + location.toLowerCase() + '/stamp-signature/request' }); 
+}
+
+const viewLogs = (id) => {
+    router.push({ path: "/location/view-assets/history/" + id }); 
+}
+
 watch(currentPage, (newValue, oldValue) => {
     if (currentPage.value && newValue != oldValue) {
         router

@@ -36,12 +36,14 @@ class IncidentReport implements ShouldQueue
         $data = $publisherData['data']; 
 
         $data =  json_decode($data);
-        if($data->type_id == 2){
+        if($data->type_id == 2 || $data->type_id == 26 || $data->type_id == 27){
             $receiver = 'maintenance-receiver';
             $subject = "Asset System: Asset Maintenance";
+            $subLink = '/maintenance/update/id/';
         }else{
             $receiver = 'incident-receiver';
             $subject = "Asset System: Incident Reported";
+            $subLink = '/report-incident/update/id/';
         }
         if(@$data->handled_by){
             $query = Profile::where('id','=', $data->handled_by)->first(); 
@@ -62,7 +64,7 @@ class IncidentReport implements ShouldQueue
             $message .= '<tr><td>Location:</td><td>'.$location->title.'</td></tr>';
             $message .= '<tr><td>Description</td><td>'.$data->description.'</td></tr></table>';
 
-            $link = env('VITE_APP_URL').'/report-incident/update/id/'. $data->id;
+            $link = env('VITE_APP_URL').$subLink. $data->id;
 
             $incident = array("data" => $data, "link" => $link, "message" => $message,  "date" => Carbon::now(), 'subject' => $subject);
             Mail::to($toEmail)->queue( new IncidentMail( $incident) ); 

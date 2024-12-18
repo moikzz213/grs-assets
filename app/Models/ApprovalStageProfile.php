@@ -14,7 +14,7 @@ class ApprovalStageProfile extends Model
 
     public function profile()
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(Profile::class)->whereNot('status','inactive');
     } 
 
     public function stages()

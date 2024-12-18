@@ -39,6 +39,18 @@
                         @click="() => openForm('change_password')"
                         >Change Password</v-btn
                     >
+                    <v-btn
+                        :color="`${
+                            currentForm == 'approval_transfer'
+                                ? 'primary'
+                                : 'white'
+                        } `"
+                        size="large"
+                        class="mr-3 my-1"
+                        :loading="user.loading"
+                        @click="() => openForm('approval_transfer')"
+                        >APPROVAL TRANSFER</v-btn
+                    >
                 </div>
             </div>
             <div class="v-col-12 v-col-md-5">
@@ -56,6 +68,10 @@
                         />
                         <ChangePassword
                             v-show="currentForm == 'change_password'"
+                            :user="user.data"
+                        />
+                        <ApprovalTransfer
+                            v-show="currentForm == 'approval_transfer'"
                             :user="user.data"
                         />
                     </div>
@@ -158,6 +174,7 @@ import ProfileForm from "@/pages/account/ProfileForm.vue";
 import AppSnackbar from "@/components/AppSnackBar.vue";
 import Capability from "./Capability.vue";
 import ChangePassword from "@/pages/account/ChangePassword.vue";
+import ApprovalTransfer from "@/pages/account/ApprovalTransfer.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { clientKey } from "@/services/axiosToken";
@@ -179,7 +196,7 @@ const getSingleUser = async () => {
     await clientKey(authStore.token)
         .get("/api/admin/user/single/" + route.params.id)
         .then((response) => {
-            user.value.data = response.data;
+            user.value.data = response.data; 
             loadingPage.value = false;
         })
         .catch((err) => {

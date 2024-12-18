@@ -105,6 +105,8 @@ class StatusController extends Controller
                 'title' => $item['title'],
                 'status' => $item['status'],
                 'type' => $item['type'],
+                'color' => $item['color'],
+                // 'bgcolor' => $item['bgcolor'],
                 'notification_interval' => $item['notification_interval'],
                 'profile_id' => $helper->client_auth()->id
             ]);

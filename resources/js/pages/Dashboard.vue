@@ -4,12 +4,12 @@
             <div class="v-col-12 v-col-md-3 pb-0 scan-barcode">
                 <v-card 
                     width="100%" 
-                    class="rounded-lg text-center my-auto py-4"
+                    class="rounded-lg text-center my-auto py-4 "
                     color="primary"
                     @click="goTo('Scan')"
                 > 
                 <v-card-text>
-                     SCAN BARCODE
+                     SCAN QRCODE
                     </v-card-text>
                 </v-card>
             </div>
@@ -21,9 +21,10 @@
                 <v-card
                     height="80"
                     width="100%" 
-                    class="rounded-lg text-center pt-3"
+                    class="rounded-lg text-center pt-3 cursor-pointer"
+                    @click="goTo(item.to)"
                 > 
-                    <div class="text-h6 text-capitalize">{{ item.value }}</div>
+                    <div class="text-h6 text-capitalize" >{{ item.value }}</div>
                     <div class="text-capitalize">{{ item.title }}</div>
                   
                 </v-card>
@@ -39,15 +40,14 @@
                   <v-row>
                     <v-col col="12">
                       <v-table
-                            fixed-header
-                            height="590px"
+                            fixed-header 
                           >
                             <thead>
                               <tr>
                                 <th class="text-left"> Company </th>
                                 <th class="text-left"> Location </th>
                                 <th class="text-left"> Category </th>
-                                <th class="text-left"> AssetName</th>
+                                <th class="text-left"> AssetName / Subject</th>
                                 <th class="text-left"> AssetCode</th>
                                 <th class="text-left"> Type</th>
                                 <th class="text-left"> Author</th>
@@ -64,7 +64,7 @@
                                 <td>{{ item.asset_code }}</td>
                                 <td class="text-capitalize">{{ item.type }}</td>
                                 <td>{{ item.author }}</td>
-                                <td>{{ item.date }} </td> 
+                                <td>{{ useFormatDate(item.date) }} </td> 
                                </tr>
                             </tbody>
                           </v-table>
@@ -82,6 +82,7 @@ import { ref } from "vue";
 import { clientKey } from "@/services/axiosToken";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
+import { useFormatDate } from "@/composables/formatDate"
 const authStore = useAuthStore();
 const router = useRouter();
 const cards = ref([
@@ -113,22 +114,26 @@ const fetchQuery = async () => {
                 {
                     id: 1,
                     title: "PENDING MAINTENANCE",
-                    value: res.data.count.maintenance
+                    value: res.data.count.maintenance,
+                    to: 'Maintenance'
                 },
                 {
                     id: 2,
                     title: "PENDING TICKETS",
-                    value: res.data.count.incident
+                    value: res.data.count.incident,
+                    to: 'Incident'
                 },
                 {
                     id: 3,
                     title: "TRANSFER REQUEST",
-                    value: res.data.count.transfer
+                    value: res.data.count.transfer,
+                    to: 'Transferasset'
                 },
                 {
                     id: 4,
                     title: "REQUEST ASSET",
-                    value: res.data.count.request
+                    value: res.data.count.request,
+                    to: 'RequestAsset'
                 },
             ];
         })
