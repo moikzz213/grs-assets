@@ -23,7 +23,7 @@ const encryptData = (data) => {
 };
 
 const removeCache = () => {
-    localStorage.removeItem('current-pg')
+    localStorage.removeItem('current-pg') 
     localStorage.removeItem("authUser");
     localStorage.removeItem("asset-filter-category");
     localStorage.removeItem("transfer-filter-status");
@@ -161,9 +161,12 @@ export const useAuthStore = defineStore("authUser", {
         },
 
         async logout() {
-            useLocalStorage("authUser", {});
-            this.auth = {};
+          
+            localStorage.removeItem("authUser");
             removeCache(); 
+            this.auth = {};
+            useLocalStorage("authUser", {});
+            localStorage.removeItem("authUser");
         },
     },
 });
