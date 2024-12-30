@@ -152,19 +152,28 @@ export const useAuthStore = defineStore("authUser", {
                                     this.logout();
                                     window.location = "/login";
                                 });
+                        }else{
+                            this.auth = {};
+                            useLocalStorage("authUser", {}); 
                         }
                     })
                     .catch((err) => {
-                        this.logout(); 
-                        window.location = "/login";
+                        this.auth = {};
+                        useLocalStorage("authUser", {}); 
+                        setTimeout(() => {
+                            window.location = "/login";
+                        }, 300);
                     });
             }else{
-                this.logout(); 
+                this.auth = {};
+                useLocalStorage("authUser", {}); 
             }
         },
 
         async logout() { 
             removeCache(); 
+            this.auth = {};
+            useLocalStorage("authUser", {}); 
             this.auth = {};
             useLocalStorage("authUser", {}); 
         },
