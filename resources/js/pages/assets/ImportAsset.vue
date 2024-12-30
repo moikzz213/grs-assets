@@ -130,9 +130,19 @@ const route = useRoute();
 // authStore
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore(); 
- 
+ console.log("authStore.user",authStore.user.profile.access);
+ console.log("route",route.name);
+
+ let accessPage = [];
+ authStore.user.profile?.access?.map((o,i) => {
+  if(o.slug === "asset-list/import"){
+    accessPage.push(o.slug);
+    accessPage.push("import-asset");
+  }
+ }) 
+ console.log("accessPage",accessPage);
 const check_auth = computed(() => {
-  return authStore.user.role == "superadmin" || authStore.user.role == "asset-supervisor" || authStore.user.role == "commercial-manager" ? true : false;
+  return authStore.user.role == "superadmin" || authStore.user.role == "asset-supervisor" || authStore.user.role == "commercial-manager" || accessPage.includes(route.name) ? true : false;
 });
 
 const baseURL = ref(window.location.origin);

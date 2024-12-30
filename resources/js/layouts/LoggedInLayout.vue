@@ -228,6 +228,24 @@ const receiving_releaseing_nav = ref([
       },
     ],
   },
+  {
+    title: "Assets",
+    icon: mdiArchiveOutline,
+    subs: [
+      {
+        title: "Asset List",
+        icon: mdiArchiveStarOutline,
+        path: "/asset-list",
+        slug: "asset-list",
+      },
+      {
+        title: "Import Asset",
+        icon: mdiArchiveArrowUpOutline,
+        path: "/asset-list/import",
+        slug: "asset-list",
+      },
+    ],
+  },
 ]);
 const commonNav = ref([
   {
