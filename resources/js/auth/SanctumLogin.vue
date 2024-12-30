@@ -92,7 +92,7 @@ const login = async () => {
       let redirectPath = "/dashboard";
       let user = res.data.user.username;
       let token = res.data.token;
-
+      localStorage.removeItem("authUser");
       axios
         .get("/api/fetch/log-profile/" + user + "/" + token)
         .then((q) => {
