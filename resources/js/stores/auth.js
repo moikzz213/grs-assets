@@ -160,10 +160,9 @@ export const useAuthStore = defineStore("authUser", {
             }
         },
 
-        async logout() {
-            removeCache(); 
-            useLocalStorage("authUser", {});
+        async logout() { 
             this.auth = {};
+            removeCache(); 
         },
     },
 });

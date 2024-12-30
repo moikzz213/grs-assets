@@ -454,8 +454,7 @@ const authlogout = async () => {
   return response;
 };
 const logout = () => {
-  loadingLogout.value = true;
-  localStorage.removeItem("authUser");
+  loadingLogout.value = true; 
   authlogout()
     .then(() => {
       authStore.logout().then(() => {
