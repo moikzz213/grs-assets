@@ -52,6 +52,7 @@ const removeCache = () => {
     localStorage.removeItem("incident-filter-type");
     localStorage.removeItem("incident-filter-status");
     localStorage.removeItem("incident-search");
+   
 }
 
 export const useAuthStore = defineStore("authUser", {
@@ -154,19 +155,18 @@ export const useAuthStore = defineStore("authUser", {
                         }
                     })
                     .catch((err) => {
-                        removeCache(); 
+                        this.logout(); 
                         window.location = "/login";
                     });
+            }else{
+                this.logout(); 
             }
         },
 
-        async logout() {
-          
-            localStorage.removeItem("authUser");
+        async logout() { 
             removeCache(); 
             this.auth = {};
-            useLocalStorage("authUser", {});
-            localStorage.removeItem("authUser");
+            useLocalStorage("authUser", {}); 
         },
     },
 });
