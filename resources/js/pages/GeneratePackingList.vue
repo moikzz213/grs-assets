@@ -159,7 +159,7 @@ const calculateTotal = () => {
  
     dataObj.value?.items?.map((o) => { 
         if(o.is_available){
-            sub += (parseFloat(o.weight)); 
+            sub += parseFloat(o.qty) * (parseFloat(o.weight)); 
         }
     });
     
