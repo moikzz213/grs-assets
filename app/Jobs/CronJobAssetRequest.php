@@ -39,7 +39,7 @@ class CronJobAssetRequest implements ShouldQueue
         } 
 
         $baseURL = env('VITE_APP_URL').'/pv/employee-signatory/';
-        $message = 'Dear, <br/>You have a pending approval(s)<br/>Kindly do the needful.<br/>';
+        $message = 'Dear, <br/>Waiting for you to sign. Click the link/s to review and sign<br/>';
         $message .= '<table width="600">';
         foreach ($data->reminder_profile as $key => $v) {
 
