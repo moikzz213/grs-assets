@@ -357,6 +357,7 @@ const statusList = ref([
   { id: "reject", title: "Rejected" },
   { id: "cancelled", title: "Cancelled" },
   { id: "complete", title: "Completed" },
+  { id: "trash", title: "Trashed" },
 ]);
 
 const statusTitle = (v) => {

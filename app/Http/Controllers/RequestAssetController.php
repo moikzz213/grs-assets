@@ -55,6 +55,8 @@ class RequestAssetController extends Controller
 
         if(@$filterSearch->status){
             $dataObj = $dataObj->where('status', $filterSearch->status);
+        }else{
+            $dataObj = $dataObj->where('status', '!=', 'trash' );
         }
        
         if($orderBy){
@@ -69,7 +71,7 @@ class RequestAssetController extends Controller
         }
 
         $dataObj = $dataObj->orderBy(DB::raw("FIELD(reminder_profile_id,$ID)"), 'DESC')->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to','transfer_from', 'reminder_profile');
-        $dataObj = $dataObj->where('status', '!=', 'trash' );
+       
         if($search){
 
             $dataObj = $dataObj->where(function($q) use($search){
