@@ -17,6 +17,7 @@ use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\LocationController;
 //use App\Http\Controllers\SpecModelController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RequestAssetController;
 use App\Http\Controllers\ApprovalSetupController;
 
 /*
@@ -61,6 +62,7 @@ Route::middleware('authkey')->group(function () {
     });
 
     Route::get('/admin/add-new/profile-by/ecode/{ecode}', [UserController::class, 'validateUser'])->name('profile.fetch.by.ecode');
+    Route::put('/remove/asset/{item}', [RequestAssetController::class, 'removeData'])->name('remove.data');
 
     // fetch data
     //Route::get('/brands/all', [BrandController::class, 'fetchData'])->name('admin.get.all.brands');

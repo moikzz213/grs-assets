@@ -192,17 +192,23 @@
                       @click="() => editUser(item.id)"
                       :icon="mdiPencil"
                       class="mx-1"
+                      
                     />
-                    <!-- <v-icon
-                      size="small"
+                    <v-btn  size="small" :loading="iconLoading"
+                      text variant="text"
                       v-if="
                         authStore.user.role == 'superadmin' ||
                         authStore.capabilities?.includes('delete')
                       "
-                      @click="() => deleteUser(item.id)"
+                      @click="() => deleteData(item.id)">
+                    <v-icon
+                     
+                     
+                    
                       :icon="mdiTrashCan"
                       class="mx-1"
-                    /> -->
+                    />
+                  </v-btn>
                   </div>
                 </td>
               </tr>
@@ -427,8 +433,33 @@ const editUser = (id) => {
     });
 };
 
-const deleteUser = (item) => {
-  console.log("delete", item);
+const iconLoading = ref(false);
+const deleteData = async (item) => {
+  sbOptions.value = {
+    status: true,
+    type: "info",
+    text: "Removing data...Please wait.",
+  };
+  iconLoading.value = true;
+
+  await clientKey(authStore.token)
+    .put(
+      "/api/remove/asset/"+item  )
+    .then((res) => {
+       
+        getAllData().then(() =>{
+          iconLoading.value = false;
+          sbOptions.value = {
+            status: true,
+            type: "success",
+            text: "Data has been deleted.",
+        };
+        }); 
+    })
+    .catch((err) => {
+      dataobj.value.loading = false;
+     
+    });
 };
 
 // const addNew = () => {

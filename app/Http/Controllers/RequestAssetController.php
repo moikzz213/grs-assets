@@ -69,7 +69,7 @@ class RequestAssetController extends Controller
         }
 
         $dataObj = $dataObj->orderBy(DB::raw("FIELD(reminder_profile_id,$ID)"), 'DESC')->orderBy($field, $sort)->with('items.assets', 'profile', 'company', 'transfer_to','transfer_from', 'reminder_profile');
-         
+        $dataObj = $dataObj->where('status', '!=', 'trash' );
         if($search){
 
             $dataObj = $dataObj->where(function($q) use($search){
@@ -95,6 +95,19 @@ class RequestAssetController extends Controller
         }
 
         return response()->json($dataArray, 200);
+    }
+
+    public function removeData($item){
+        $query = RequestAsset::where('id', $item)->first();
+        if($query){
+            $query->update(array(
+                'status' => 'trash',
+                'reminder_profile_id' => null,
+                'reminder_date' => null
+            ));
+            $query->awaiting_approval()->update(array('status' => 'pending'));
+        }
+        return response()->json($query, 200);
     }
 
     public function fetchDataByID($id){

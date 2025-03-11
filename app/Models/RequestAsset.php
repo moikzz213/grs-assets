@@ -31,6 +31,11 @@ class RequestAsset extends Model
         return $this->hasMany(RequestApproval::class);
     }
 
+    public function awaiting_approval()
+    {
+        return $this->hasOne(RequestApproval::class)->where(array('status' => 'awaiting-approval'));
+    }
+
     public function setup()
     {
         return $this->belongsTo(ApprovalSetup::class, 'request_type_id');
