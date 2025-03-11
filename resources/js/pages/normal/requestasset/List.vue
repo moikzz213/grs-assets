@@ -191,10 +191,10 @@
                       size="small"
                       @click="() => editUser(item.id)"
                       :icon="mdiPencil"
-                      class="mx-1"
+                      class="mr-3"
                       
                     />
-                    <v-btn  size="small" :loading="iconLoading"
+                    <v-btn  size="x-small" :loading="iconLoading"
                       text variant="text"
                       v-if="
                         authStore.user.role == 'superadmin' ||
@@ -357,6 +357,7 @@ const statusList = ref([
   { id: "reject", title: "Rejected" },
   { id: "cancelled", title: "Cancelled" },
   { id: "complete", title: "Completed" },
+  { id: "trash", title: "Trashed" },
 ]);
 
 const statusTitle = (v) => {
