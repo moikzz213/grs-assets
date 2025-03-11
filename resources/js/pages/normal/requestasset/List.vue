@@ -198,7 +198,7 @@
                       text variant="text"
                       v-if="
                         authStore.user.role == 'superadmin' ||
-                        authStore.capabilities?.includes('delete')
+                        authStore.user.role == 'asset-supervisor' || authStore.user.role == 'commercial-manager'
                       "
                       @click="() => deleteData(item.id)">
                     <v-icon
