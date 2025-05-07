@@ -1073,18 +1073,19 @@ const checkAssetCode = (v, index) => {
                 sbOptions.value = {
                     status: true,
                     type: "error",
-                    text: "Asset is currently In-Used. You cannot use this asset code.",
+                    text: "Asset is currently In-Used status, be sure to confirm this.",
                 };
 
-                assetsOnly.value[index].asset_code = '';
-                return;
-            }
+               // assetsOnly.value[index].asset_code = '';
+               // return;
+            }else{
 
             sbOptions.value = {
                     status: true,
                     type: "success",
                     text: "Asset is available.",
                 };
+            }
         }, 1000);
     }); 
 }
