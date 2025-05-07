@@ -201,10 +201,7 @@
                         authStore.user.role == 'asset-supervisor' || authStore.user.role == 'commercial-manager'
                       "
                       @click="() => deleteData(item.id)">
-                    <v-icon
-                     
-                     
-                    
+                    <v-icon 
                       :icon="mdiTrashCan"
                       class="mx-1"
                     />

@@ -2,7 +2,7 @@
 # GRANDIOSE ASSET SYSTEM - Reset Password
 <b>Hello!</b>
  
-{!! $data['message']; !!} 
+{!! $data['message'] !!} 
 
 <div style="margin-top:40px; margin-bottom:40px; text-align:center;margin-left:auto; margin-right:auto;">
     <a href="{{$data['link']}}" target="_blank" rel="noopener noreferrer">
@@ -10,7 +10,7 @@
     </a>
 </div>
 
-{!! $data['message2']; !!}
+{!! $data['message2'] !!}
 
 Regards,
 

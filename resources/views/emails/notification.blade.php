@@ -1,7 +1,7 @@
 @component('mail::message')
 # GRANDIOSE ASSET SYSTEM
  
-{!! $data['message']; !!}
+{!! $data['message'] !!}
   
 <div>Regards,</div> 
 

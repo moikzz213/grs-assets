@@ -1,7 +1,7 @@
 @component('mail::message')
 # GRANDIOSE ASSET SYSTEM
  
-{!! $data['message']; !!}
+{!! $data['message'] !!}
 @if ($data['link'])
 For more details click <a href="{{$data['link']}}">here</a>
 @endif
